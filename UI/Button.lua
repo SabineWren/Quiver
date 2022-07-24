@@ -11,7 +11,7 @@ Quiver_UI_Button_ToggleLock = function(p)
 	f:SetHighlightTexture(nil)
 	f:SetPushedTexture(nil)
 	local tex = f:GetNormalTexture()
-	tex:SetTexCoord(0, 1, 0, 1)-- Maps texture size to button size
+	tex:SetTexCoord(0, 1, 0, 1)
 
 	f:SetScript("OnClick", function()
 		Quiver_Store.IsLockedFrames = not Quiver_Store.IsLockedFrames

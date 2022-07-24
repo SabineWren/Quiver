@@ -12,7 +12,7 @@ Use `/Quiver` or `/qq` to open the configuration menu.
 
 ### Auto Shot Castbar
 - Based on [HSK](https://github.com/anstellaire/HunterSwissKnife).
-- Fixed a bug where moving when shot fires breaks the reload bar
+- Fixed a bug where moving as shot fires breaks the reload bar
 - TODO customize size and vertical position
 
 ### Range Indicator

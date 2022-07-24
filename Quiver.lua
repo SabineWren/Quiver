@@ -2,7 +2,7 @@ local init = function()
 	_, cl = UnitClass("player")
 	if cl ~= "HUNTER" then return Quiver_Lib_Print.Danger("Quiver is for hunters") end
 
-	local frameMainMenu = Quiver_UI_MainMenu_Create()
+	local frameMainMenu = Quiver_MainMenu_Create()
 	SLASH_QUIVER1 = "/qq"
 	SLASH_QUIVER2 = "/quiver"
 	SlashCmdList["QUIVER"] = function(_args, _box) frameMainMenu:Show() end

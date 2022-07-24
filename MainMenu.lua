@@ -1,4 +1,4 @@
-function Quiver_UI_MainMenu_Create()
+function Quiver_MainMenu_Create()
 	local f = Quiver_UI_WithWindowTitle(
 		Quiver_UI_Dialog(300, 300), "Quiver")
 	f:Hide()

@@ -16,17 +16,19 @@ local absClamp = function(vOpt, vMax)
 	end
 end
 
+local GRIP_HANDLE = "Interface\\AddOns\\Quiver\\Textures\\grip-handle-resize"
 local createResizeGripHandle = function(parent, meta)
 	local f = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
 	f:SetWidth(16)
 	f:SetHeight(16)
 	f:SetPoint("BottomRight", parent, "BottomRight", -2, 2)
 
-	f:SetNormalTexture("Interface\\AddOns\\Quiver\\Textures\\grip-handle-resize")
-	f:SetHighlightTexture(nil)
+	f:SetNormalTexture(GRIP_HANDLE)
+	f:SetHighlightTexture(GRIP_HANDLE)
 	f:SetPushedTexture(nil)
-
 	f:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
+	f:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
+	f:GetHighlightTexture():SetBlendMode("ADD")
 
 	parent:SetResizable(true)
 	f:EnableMouse(true)
@@ -43,7 +45,7 @@ local createResizeGripHandle = function(parent, meta)
 	return f
 end
 
-Quiver_Lib_FrameMeta_InitCustomizing = function(f, meta, widthDefault, heightDefault)
+Quiver_UI_FrameMeta_Customize = function(f, meta, widthDefault, heightDefault)
 	meta.W = meta.W or widthDefault
 	meta.H = meta.H or heightDefault
 	f:SetWidth(meta.W)

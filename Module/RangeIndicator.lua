@@ -4,8 +4,7 @@ local fontString = nil
 
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
-	Quiver_Lib_FrameMeta_InitCustomizing(
-		f, Quiver_Store.FrameMeta.RangeIndicator, 135, 35)
+	Quiver_UI_FrameMeta_Customize(f, Quiver_Store.FrameMeta.RangeIndicator, 135, 35)
 
 	f:Hide()
 	f:SetFrameStrata("LOW")
@@ -54,6 +53,7 @@ local render = function(colour, text)
 	frame:SetBackdropColor(r, g, b, a)
 	frame:SetBackdropBorderColor(r, g, b, a)
 	frame.GripHandle:GetNormalTexture():SetVertexColor(r, g, b)
+	frame.GripHandle:GetHighlightTexture():SetVertexColor(r, g, b)
 end
 local showRange = {
 	Melee=function() render({0, 1, 0, 0.7}, "Melee Range") end,
