@@ -1,0 +1,21 @@
+{
+	"editor.insertSpaces": false,
+	"files.exclude": {
+		"LICENSE": true,
+	},
+	"files.eol": "\n",
+	"files.insertFinalNewline": true,
+	"files.trimTrailingWhitespace": true,
+	"Lua.runtime.version": "Lua 5.1",
+	"Lua.diagnostics.globals": [
+		"CheckInteractDistance"
+		"CreateFrame",
+		"DEFAULT_CHAT_FRAME",
+		"GetPlayerMapPosition",
+		"GetScreenWidth",
+		"GetScreenHeight",
+		"GetTime",
+		"UIParent",
+		"UnitRangedDamage",
+	],
+}

@@ -1,0 +1,43 @@
+<Ui
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.blizzard.com/wow/ui/">
+
+	<Script file="RangeIndicator.lua"/>
+
+	<Frame name="Quiver_Module_RangeIndicator_Frame"
+		parent="UIParent"
+		toplevel="true"
+		hidden="true"
+		movable="true"
+		enableMouse="true">
+		<Size>
+			<AbsDimension x="135" y="35" />
+		</Size>
+		<Anchors>
+			<Anchor point="TOPLEFT" relativeTo="UIParent" />
+		</Anchors>
+		<Layers>
+			<Layer>
+				<FontString
+					name="RangeIndicator_FontString"
+					inherits="GameFontNormalSmall"
+					text="Quiver RangeIndicator Text Not Initialized"
+					justifyV="TOP" justifyH="CENTER">
+					<Anchors>
+						<Anchor point="CENTER" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Backdrop tile="true"
+			bgFile="Interface\Tooltips\UI-Tooltip-Background"
+			edgeFile="Interface\Tooltips\UI-Tooltip-Border">
+			<BackgroundInsets>
+				<AbsInset left="4" right="4" top="4" bottom="4" />
+			</BackgroundInsets>
+			<EdgeSize><AbsValue val="16" /></EdgeSize>
+			<TileSize><AbsValue val="8" /></TileSize>
+		</Backdrop>
+	</Frame>
+</Ui>
