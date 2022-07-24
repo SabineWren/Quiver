@@ -36,6 +36,7 @@ local createUI = function()
 	return f, b
 end
 
+-- ************ State ************
 local AIMING_TIME = 0.65
 local isReloading = false
 local isShooting = false
@@ -55,6 +56,27 @@ local position = (function()
 	}
 end)()
 
+local gcd = (function()
+	local gcdStartTime = 0
+	return {
+		HandleSpellcast = function()
+			local cooldownStartTime, spellCD = Quiver_Lib_ActionBar_CheckGCD()
+			if spellCD == 1.5 then gcdStartTime = cooldownStartTime end
+		end,
+		CheckOffOrPreviousSpell = function()
+			local cooldownStartTime, spellCD = Quiver_Lib_ActionBar_CheckGCD()
+			if spellCD ~= 1.5 or gcdStartTime == cooldownStartTime then
+				return true
+			else
+				-- We cast a spell that consumes ammo, but haven't yet handled the spellcast
+				gcdStartTime = cooldownStartTime
+				return false
+			end
+		end
+	}
+end)()
+
+-- ************ Event Handlers ************
 local updateShooting = function()
 	frame:SetAlpha(1)
 	bar:SetBackdropColor(1 ,1 ,0, 0.8)
@@ -98,36 +120,32 @@ local handleUpdate = function()
 	end
 end
 
---[[
-Some addons use "SPELLCAST_STOP", but I think that's a retail thing for Auto Shot.
-https://forum.nostalrius.org/viewtopic.php?t=12765
-
-Private servers trigger "ITEM_LOCK_CHANGED" when equiped items change,
-which works because shooting expends ammunition.
-]]
-local lastCooldownStartTime = 0
 local handleEvent = function()
 	if event == "START_AUTOREPEAT_SPELL" then
 		isShooting = true
-		if not isReloading then timeStart = GetTime() end
 		position.UpdateXY()
+		if not isReloading then timeStart = GetTime() end
 	elseif event == "STOP_AUTOREPEAT_SPELL" then
 		isShooting = false
 		if not isReloading then frame:SetAlpha(0) end
+	elseif event == "SPELLCAST_STOP" then
+		-- If the spell consumes ammo, this will first fire "ITEM_LOCK_CHANGED"
+		gcd.HandleSpellcast()
 	elseif event == "ITEM_LOCK_CHANGED" and isShooting then
-		local cooldownStartTime, cooldownRemaining = Quiver_Lib_ActionBar_CheckGCD()
-		if cooldownRemaining ~= 1.5 or cooldownStartTime == lastCooldownStartTime then
+		-- Auto Shot consumes ammo without triggering GCD
+		-- This event fires when equiped items change, including changing ammo count.
+		-- Swapping weapons will also trigger this and break the swing timer. Oh well.
+		if gcd.CheckOffOrPreviousSpell() then
 			isReloading = true
 			timeStart = GetTime()
 			position.UpdateXY()
 			reloadTime = UnitRangedDamage("player") - AIMING_TIME
-		else
-			lastCooldownStartTime = cooldownStartTime
 		end
 	end
 end
 
-local events = { "START_AUTOREPEAT_SPELL", "STOP_AUTOREPEAT_SPELL", "ITEM_LOCK_CHANGED" }
+-- ************ Initialization ************
+local events = { "ITEM_LOCK_CHANGED", "START_AUTOREPEAT_SPELL", "STOP_AUTOREPEAT_SPELL", "SPELLCAST_STOP" }
 Quiver_Module_AutoShotCastbar_Enable = function()
 	if frame == nil then frame, bar = createUI() end
 	frame:Show()

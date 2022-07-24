@@ -81,7 +81,7 @@ end
 Quiver_Lib_ActionBar_CheckGCD = function()
 	local spellId = getSpellIndexByName(QUIVER_T.Spellbook.Serpent_Sting)
 	if spellId then
-		local cooldownStartTime, cooldownRemaining, _enabled = GetSpellCooldown(spellId, "BOOKTYPE_SPELL")
-		return cooldownStartTime, cooldownRemaining
+		local cooldownStartTime, spellCD, _enabled = GetSpellCooldown(spellId, "BOOKTYPE_SPELL")
+		return cooldownStartTime, spellCD
 	end
 end
