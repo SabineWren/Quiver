@@ -38,11 +38,10 @@ end
 
 -- ************ State ************
 local AIMING_TIME = 0.65
+local reloadTime = 0
 local isReloading = false
 local isShooting = false
-local reloadTime = 0
 local timeStart = GetTime()
-
 local position = (function()
 	local x, y = 0, 0
 	local updateXY = function() x, y = GetPlayerMapPosition("player") end
@@ -55,7 +54,6 @@ local position = (function()
 		end,
 	}
 end)()
-
 local gcd = (function()
 	local gcdStartTime = 0
 	return {
@@ -82,10 +80,10 @@ local updateShooting = function()
 	bar:SetBackdropColor(1 ,1 ,0, 0.8)
 	local timePassed = GetTime() - timeStart
 
-	local width = timePassed <= AIMING_TIME
-		and maxBarWidth * timePassed / AIMING_TIME
-		or maxBarWidth
-	bar:SetWidth(width)
+	if timePassed <= AIMING_TIME
+	then bar:SetWidth(maxBarWidth * timePassed / AIMING_TIME)
+	else bar:SetWidth(maxBarWidth)
+	end
 end
 
 local updateReloading = function()

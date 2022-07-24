@@ -1,5 +1,3 @@
-local println = Quiver_Lib_Print_Factory("Menu")
-
 function Quiver_UI_MainMenu_Create()
 	local f = Quiver_UI_WithWindowTitle(
 		Quiver_UI_Dialog(300, 300), "Quiver")
@@ -14,6 +12,8 @@ function Quiver_UI_MainMenu_Create()
 			-- TODO
 		end,
 	})
+
+	local _ = Quiver_UI_Button_ToggleLock(f)
 
 	_ = Quiver_UI_CheckButton({
 		Parent = f, Y = -55,

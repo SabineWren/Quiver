@@ -14,12 +14,14 @@ Locale\zhCN.lua
 Store.lua
 Lib\Print.lua
 Lib\ActionBar.lua
+Lib\FrameMeta.lua
 Lib\IconsTextures.lua
 
 Module\AutoShotCastbar.lua
-Module\RangeIndicator\RangeIndicator.xml
+Module\RangeIndicator.lua
 Module\TranqAnnouncer.lua
 
+UI\Button.lua
 UI\CheckButton.lua
 UI\Dialog.lua
 UI\EditBox.lua

@@ -8,7 +8,7 @@
 	"files.trimTrailingWhitespace": true,
 	"Lua.runtime.version": "Lua 5.1",
 	"Lua.diagnostics.globals": [
-		"CheckInteractDistance"
+		"CheckInteractDistance",
 		"CreateFrame",
 		"DEFAULT_CHAT_FRAME",
 		"GetPlayerMapPosition",
@@ -17,5 +17,10 @@
 		"GetTime",
 		"UIParent",
 		"UnitRangedDamage",
+		"UnitCanAttack",
+		"UnitExists",
+		"UnitIsDead",
+		"IsActionInRange",
+		"GameTooltip"
 	],
 }

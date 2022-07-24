@@ -11,7 +11,6 @@ Quiver_UI_CheckButton = function(p)
 	f.text:SetText(label)
 	f:SetTextColor(.5, 1, .8, 1)
 	if tooltip ~= nil then f.tooltipText = tooltip end
-
 	f:SetScript("OnClick", function() onClick(f:GetChecked() == 1) end)
 	return f
 end

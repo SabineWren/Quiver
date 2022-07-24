@@ -1,4 +1,34 @@
 local println = Quiver_Lib_Print_Factory("Range Indicator")
+local frame = nil
+local fontString = nil
+
+local createUI = function()
+	local f = CreateFrame("Frame", nil, UIParent)
+	Quiver_Lib_FrameMeta_InitCustomizing(
+		f, Quiver_Store.FrameMeta.RangeIndicator, 135, 35)
+
+	f:Hide()
+	f:SetFrameStrata("LOW")
+	f:SetBackdrop({
+		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+		tile = true,
+		tileSize = 8,
+		edgeSize = 16,
+		insets = { left=4, right=4, top=4, bottom=4 },
+	})
+	f:SetBackdropColor(0, 0, 0, 0.6)
+	f:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
+
+	local fs = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	fs:SetAllPoints(f)
+	fs:SetJustifyH("Center")
+	fs:SetJustifyV("Center")
+	fs:SetText("Quiver RangeIndicator Text Not Initialized")
+	fs:SetTextColor(1, 1, 1)
+
+	return f, fs
+end
 
 local checkActionBarDistance = function(spellName)
 	local slot = Quiver_Lib_ActionBar_FindSlot(println, spellName)
@@ -19,10 +49,11 @@ local checkDistance = {
 }
 
 local render = function(colour, text)
-	RangeIndicator_FontString:SetText(text)
+	fontString:SetText(text)
 	local r, g, b, a = unpack(colour)
-	Quiver_Module_RangeIndicator_Frame:SetBackdropColor(r, g, b, a)
-	Quiver_Module_RangeIndicator_Frame:SetBackdropBorderColor(r, g, b, a)
+	frame:SetBackdropColor(r, g, b, a)
+	frame:SetBackdropBorderColor(r, g, b, a)
+	frame.GripHandle:GetNormalTexture():SetVertexColor(r, g, b)
 end
 local showRange = {
 	Melee=function() render({0, 1, 0, 0.7}, "Melee Range") end,
@@ -49,20 +80,18 @@ local handleUpdate = function()
 end
 
 local handleEvent = function()
-	local isShow = UnitExists("target")
+	if UnitExists("target")
 		and (not UnitIsDead("target"))
 		and UnitCanAttack("player", "target")
-	if isShow
-	then Quiver_Module_RangeIndicator_Frame:Show()
-	else Quiver_Module_RangeIndicator_Frame:Hide()
+	then frame:Show()
+	else frame:Hide()
 	end
 end
 
 -- ************ Initialization ************
 local events = { "PLAYER_TARGET_CHANGED", "UNIT_FACTION" }
-local frame = nil
 Quiver_Module_RangeIndicator_Enable = function()
-	frame = Quiver_Module_RangeIndicator_Frame
+	if frame == nil then frame, fontString = createUI() end
 	-- These print warnings if they fail on first call
 	-- It's better to discover that during init than during combat
 	_ = checkActionBarDistance(QUIVER_T.Spellbook.Auto_Shot)
@@ -70,10 +99,6 @@ Quiver_Module_RangeIndicator_Enable = function()
 	_ = checkActionBarDistance(QUIVER_T.Spellbook.Scatter_Shot)
 	_ = checkActionBarDistance(QUIVER_T.Spellbook.Wing_Clip)
 
-	RangeIndicator_FontString:SetTextColor(1, 1, 1)
-	frame:RegisterForDrag("LeftButton")
-	frame:SetScript("OnDragStart", function() frame:StartMoving() end)
-	frame:SetScript("OnDragStop", function() frame:StopMovingOrSizing() end)
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in events do frame:RegisterEvent(e) end
