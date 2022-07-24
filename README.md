@@ -18,7 +18,7 @@ Use `/Quiver` or `/qq` to open the configuration menu.
 ### Range Indicator
 - Based on [Egnar](https://github.com/Medeah/Egnar)
 - Automatically locates action bar slots
-- Warns you if abilities missing from action bar
+- Warns you when abilities missing from action bar
 - Persists size and position
 
 Requires some raw spellbook abilities on your action bars (not macros). Hidden action bars work fine.
