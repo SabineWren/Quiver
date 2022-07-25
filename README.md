@@ -1,7 +1,5 @@
-WoW 1.12.1 addon.
-Use `/Quiver` or `/qq` to open the configuration menu.
+WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration menu.
 
-# Features
 - [Auto Shot Castbar](#auto-shot-castbar)
 - [Range Indicator](#range-indicator)
 - [Tranq Shot Announcer](#tranq-shot-announcer)
@@ -35,7 +33,7 @@ Roid can't do everything for pets. Amarra made a pet utils addon with features l
 Every hunter needs aspect and trap macros. Mine are copy-pasted Roid macros, but HSK implements its own version of aspect overrides.
 
 ## Localization
-The 1.12 client doesn't support spell lookups by spell ID, so Quiver finds your abilities by name. I use Wowhead to find the spell names for each locale, which should theoretically work (not tested) if Quiver has a locale file matching your client.
+Quiver looks up spells by name, which change with client locale. I use Wowhead to find the spell names for each locale, which should theoretically work if Quiver has a matching locale file with spellbook names translated.
 
 ## Contributing
 Open an issue or PM me on Discord:
@@ -45,15 +43,6 @@ Open an issue or PM me on Discord:
 
 # Module Lifecycle Hooks
 ```
-Quiver_Module_<ModuleName> = {
-	OnRestoreSavedVariables = function(store) return nil end,
-	OnPersistSavedVariables = function() return {} end,
-	OnEnable = function() return nil end,
-	OnDisable = function() return nil end,
-	OnInterfaceLock = function() return nil end,
-	OnInterfaceUnlock = function() return nil end,
-}
-
 OnRestoreSavedVariables
 table -> unit
 GameEvent: "PLAYER_LOGIN"
@@ -69,7 +58,7 @@ Only ever called once.
 OnEnable
 unit -> unit
 Called every time user enables the module.
-Called after RestoreSavedVariables if module already enabled.
+Called during initialization after RestoreSavedVariables.
 
 OnDisable
 unit -> unit
@@ -84,4 +73,15 @@ OnInterfaceUnlock
 unit -> unit
 Not called while module disabled.
 Called every time user unlocks the UI.
+```
+Stub for new modules
+```
+Quiver_Module_<ModuleName> = {
+	OnRestoreSavedVariables = function(store) return nil end,
+	OnPersistSavedVariables = function() return {} end,
+	OnEnable = function() return nil end,
+	OnDisable = function() return nil end,
+	OnInterfaceLock = function() return nil end,
+	OnInterfaceUnlock = function() return nil end,
+}
 ```
