@@ -33,7 +33,7 @@ Roid can't do everything for pets. Amarra made a pet utils addon with features l
 Every hunter needs aspect and trap macros. Mine are copy-pasted Roid macros, but HSK implements its own version of aspect overrides.
 
 ## Localization
-Quiver looks up spells by name, which change with client locale. I use Wowhead to find the spell names for each locale, which should theoretically work if Quiver has a matching locale file with spellbook names translated.
+Quiver looks up spells by name, which change with client locale. I use Wowhead to find the spell names for each locale. Theoretically, Quiver should work with a `/Locale` file matching your client, but the translations aren't complete.
 
 ## Contributing
 Open an issue or PM me on Discord:
@@ -42,18 +42,19 @@ Open an issue or PM me on Discord:
 - Bug reports
 
 # Module Lifecycle Hooks
+The UI code is a bit of mess right now. Soon there will be an event for attaching a frame to the Main Menu.
 ```
 OnRestoreSavedVariables
 table -> unit
 GameEvent: "PLAYER_LOGIN"
 Loads one table from SavedVariables used exclusively by the module.
-Only ever called once.
+Called exactly once, even for disabled modules.
 
 OnPersistSavedVariables
 unit -> table
 GameEvent: "PLAYER_LOGOUT"
 Persists state used exclusively by the module.
-Only ever called once.
+Called exactly once, even for disabled modules.
 
 OnEnable
 unit -> unit
