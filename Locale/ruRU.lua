@@ -9,8 +9,9 @@ QUIVER_T = {
 	DefaultTranqHit = "*** Tranq Shot Hit ***",
 	DefaultTranqMiss = "*** MISSED Tranq Shot ***",
 	Module = {
-		AimedShotCastbar = "Кастбар (приц. выстрел)",
 		AutoShotCastbar = "Кастбар (авт. стрельба)",
+		RangeIndicator = "Range Indicator",
+		TranqAnnouncer = "Tranq Shot Announcer",
 	},
 	Spellbook = {
 		Aspect_Beast = "Дух зверя",

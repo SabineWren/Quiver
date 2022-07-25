@@ -9,8 +9,9 @@ QUIVER_T = {
 	DefaultTranqHit = "*** Tranq Shot Hit ***",
 	DefaultTranqMiss = "*** MISSED Tranq Shot ***",
 	Module = {
-		AimedShotCastbar = "瞄准射击施法条",
 		AutoShotCastbar = "自动射击施法条",
+		RangeIndicator = "Range Indicator",
+		TranqAnnouncer = "Tranq Shot Announcer",
 	},
 	Spellbook = {
 		Aspect_Beast = "野兽守护",

@@ -2,13 +2,9 @@ WoW 1.12.1 addon.
 
 ### Features
 Use `/Quiver` or `/qq` to open the configuration menu.
-- [Aimed Shot Castbar](#aimed-shot-castbar)
 - [Auto Shot Castbar](#auto-shot-castbar)
 - [Range Indicator](#range-indicator)
 - [Tranq Shot Announcer](#tranq-shot-announcer)
-
-### Aimed Shot Castbar
-- TODO public release blocker -- entire module
 
 ### Auto Shot Castbar
 - Based on [HSK](https://github.com/anstellaire/HunterSwissKnife).

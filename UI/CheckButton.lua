@@ -12,11 +12,11 @@ Quiver_UI_CheckButton = function(p)
 	f.Text = f:CreateFontString("Status", "LOW", "GameFontNormal")
 	f.Text:SetPoint("Left", f, "Left", QUIVER_SIZE.Icon + QUIVER_SIZE.Gap, 0)
 	f.Text:SetText(label)
-	f:SetTextColor(.5, 1, .8, 1)
+	--f:SetTextColor(.5, 1, .8, 1)
 	if tooltip ~= nil then f.tooltipText = tooltip end
 	f:SetScript("OnClick", function() onClick(f:GetChecked() == 1) end)
 
-	-- Builtin textures have a ton of padding, so need to upscale
+	-- Builtin textures have tons of padding
 	local fixPadding = function(tex)
 		tex:ClearAllPoints()
 		tex:SetWidth(f:GetWidth() * 1.5)
@@ -26,13 +26,5 @@ Quiver_UI_CheckButton = function(p)
 	fixPadding(f:GetCheckedTexture())
 	fixPadding(f:GetNormalTexture())
 	fixPadding(f:GetHighlightTexture())
-
-
-	local texture = f:GetCheckedTexture()
-	--texture:ClearAllPoints()
-	--texture:SetWidth(f:GetWidth() * 2)
-	--texture:SetHeight(f:GetHeight() * 2)
-	--texture:SetPoint("Center", 0, 0)
-
 	return f
 end

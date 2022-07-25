@@ -1,6 +1,6 @@
 function Quiver_MainMenu_Create()
 	local f = Quiver_UI_WithWindowTitle(
-		Quiver_UI_Dialog(300, 300), "Quiver")
+		Quiver_UI_Dialog(300, 250), "Quiver")
 	f:Hide()
 
 	local btnCloseTop = Quiver_UI_Button_Close(f)
@@ -13,16 +13,6 @@ function Quiver_MainMenu_Create()
 
 	_ = Quiver_UI_CheckButton({
 		Parent = f, Y = -25,
-		IsChecked = Quiver_Store.ModuleEnabled.AimedShotCastbar,
-		Label = QUIVER_T.Module.AimedShotCastbar,
-		OnClick = function (isChecked)
-			Quiver_Store.ModuleEnabled.AimedShotCastbar = isChecked
-			-- TODO
-		end,
-	})
-
-	_ = Quiver_UI_CheckButton({
-		Parent = f, Y = -55,
 		IsChecked = Quiver_Store.ModuleEnabled.AutoShotCastbar,
 		Label = QUIVER_T.Module.AutoShotCastbar,
 		OnClick = function (isChecked)
@@ -35,9 +25,9 @@ function Quiver_MainMenu_Create()
 	})
 
 	_ = Quiver_UI_CheckButton({
-		Parent = f, Y = -85,
+		Parent = f, Y = -55,
 		IsChecked = Quiver_Store.ModuleEnabled.RangeIndicator,
-		Label = "Range Indicator",
+		Label = QUIVER_T.Module.RangeIndicator,
 		Tooltip = "Shows when abilities are in range. Requires spellbook abilities placed somewhere on your action bars.",
 		OnClick = function (isChecked)
 			Quiver_Store.ModuleEnabled.RangeIndicator = isChecked
@@ -49,9 +39,9 @@ function Quiver_MainMenu_Create()
 	})
 
 	_ = Quiver_UI_CheckButton({
-		Parent = f, Y = -115,
+		Parent = f, Y = -85,
 		IsChecked = Quiver_Store.ModuleEnabled.TranqAnnouncer,
-		Label = "Tranq Shot Announcer",
+		Label = QUIVER_T.Module.TranqAnnouncer,
 		Tooltip = "Announces in /Raid chat when your tranquilizing shot hits or misses a target.",
 		OnClick = function (isChecked)
 			Quiver_Store.ModuleEnabled.TranqAnnouncer = isChecked
@@ -63,7 +53,7 @@ function Quiver_MainMenu_Create()
 	})
 
 	local editHit = Quiver_UI_EditBox({
-		Parent = f, YOffset = -150,
+		Parent = f, YOffset = -115,
 		TooltipReset="Reset Hit Message to Default",
 		Text = Quiver_Store.MsgTranqHit,
 	})
@@ -75,7 +65,7 @@ function Quiver_MainMenu_Create()
 	end)
 
 	local editMiss = Quiver_UI_EditBox({
-		Parent = f, YOffset = -180,
+		Parent = f, YOffset = -150,
 		TooltipReset="Reset Miss Message to Default",
 		Text = Quiver_Store.MsgTranqMiss,
 	})

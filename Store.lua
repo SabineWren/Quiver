@@ -4,7 +4,6 @@ Quiver_Store_Restore = function()
 	Quiver_Store.ModuleEnabled = Quiver_Store.ModuleEnabled or {}
 
 	local me = Quiver_Store.ModuleEnabled
-	me.AimedShotCastbar = me.AimedShotCastbar ~= false
 	me.AutoShotCastbar = me.AutoShotCastbar ~= false
 	me.RangeIndicator = me.RangeIndicator ~= false
 	me.TranqAnnouncer = me.TranqAnnouncer ~= false

@@ -147,6 +147,7 @@ local events = { "ITEM_LOCK_CHANGED", "START_AUTOREPEAT_SPELL", "STOP_AUTOREPEAT
 Quiver_Module_AutoShotCastbar_Enable = function()
 	if frame == nil then frame, bar = createUI() end
 	frame:Show()
+	frame:SetAlpha(0)
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in events do frame:RegisterEvent(e) end

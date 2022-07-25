@@ -4,7 +4,6 @@ Quiver_UI_WithWindowTitle = function(window, titleText)
 	fs:SetAllPoints(f)
 	fs:SetJustifyH("Center")
 	fs:SetJustifyV("Center")
-	-- titleText:SetTextColor(1, 1, 1)
 	fs:SetText(titleText)
 
 	f:SetWidth(fs:GetStringWidth() + 30)
