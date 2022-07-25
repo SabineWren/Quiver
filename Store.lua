@@ -22,5 +22,5 @@ end
 QUIVER_SIZE = {
 	Border = 12,
 	Gap = 8,
-	Icon = 20,
+	Icon = 18,
 }

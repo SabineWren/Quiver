@@ -20,8 +20,8 @@ Quiver_UI_Dialog = function(width, height)
 
 	local btnCloseBottom = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
 	btnCloseBottom:SetWidth(70)
-	btnCloseBottom:SetHeight(18)
-	btnCloseBottom:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -12, 12)
+	btnCloseBottom:SetHeight(22)
+	btnCloseBottom:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -QUIVER_SIZE.Border, QUIVER_SIZE.Border)
 	btnCloseBottom:SetText("Close")
 	btnCloseBottom:SetScript("OnClick", function() f:Hide() end)
 

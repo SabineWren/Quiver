@@ -44,8 +44,8 @@ Quiver_UI_Button_Close = function(p)
 	})
 	local texture = f:GetNormalTexture()
 	texture:ClearAllPoints()
-	texture:SetWidth(f:GetWidth() * 0.75)
-	texture:SetHeight(f:GetHeight() * 0.75)
+	texture:SetWidth(f:GetWidth() * 0.7)
+	texture:SetHeight(f:GetHeight() * 0.7)
 	texture:SetPoint("Center", 0, 0)
 	return f
 end
