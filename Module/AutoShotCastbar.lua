@@ -4,9 +4,7 @@ local maxBarWidth = 0
 
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
-
 	f:SetFrameStrata("HIGH")
-	f:SetAlpha(1)
 
 	local borderSize = 1
 	local width = 190
@@ -86,6 +84,10 @@ local updateShooting = function()
 	end
 end
 
+local hideBar = function()
+	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) end
+end
+
 local updateReloading = function()
 	frame:SetAlpha(1)
 	bar:SetBackdropColor(1, 0, 0, 0.8)
@@ -100,7 +102,7 @@ local updateReloading = function()
 			position.UpdateXY()
 			updateShooting()-- Optional. I think this saves a frame
 		else
-			frame:SetAlpha(0)
+			hideBar()
 		end
 	end
 end
@@ -112,7 +114,7 @@ local handleUpdate = function()
 		if position.CheckStandingStill() then
 			updateShooting()
 		else
-			frame:SetAlpha(0)
+			hideBar()
 			timeStart = GetTime()
 		end
 	end
@@ -125,7 +127,7 @@ local handleEvent = function()
 		if not isReloading then timeStart = GetTime() end
 	elseif event == "STOP_AUTOREPEAT_SPELL" then
 		isShooting = false
-		if not isReloading then frame:SetAlpha(0) end
+		if not isReloading then hideBar() end
 	elseif event == "SPELLCAST_STOP" then
 		-- If the spell consumes ammo, this will first fire "ITEM_LOCK_CHANGED"
 		gcd.HandleSpellcast()
@@ -144,16 +146,35 @@ end
 
 -- ************ Initialization ************
 local events = { "ITEM_LOCK_CHANGED", "START_AUTOREPEAT_SPELL", "STOP_AUTOREPEAT_SPELL", "SPELLCAST_STOP" }
-Quiver_Module_AutoShotCastbar_Enable = function()
+local onEnable = function()
 	if frame == nil then frame, bar = createUI() end
-	frame:Show()
-	frame:SetAlpha(0)
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in events do frame:RegisterEvent(e) end
+	frame:Show()
+	if Quiver_Store.IsLockedFrames
+	then frame:SetAlpha(0)
+	else frame:SetAlpha(1)
+	end
 end
-
-Quiver_Module_AutoShotCastbar_Disable = function()
+local onDisable = function()
 	frame:Hide()
 	for _k, e in events do frame:UnregisterEvent(e) end
 end
+
+local onInterfaceLock = function()
+	if (not isShooting) and (not isReloading) then hideBar() end
+end
+local onInterfaceUnlock = function()
+	frame:SetAlpha(1)
+end
+
+Quiver_Module_AutoShotCastbar = {
+	Name = "AutoShotCastbar",
+	OnRestoreSavedVariables = function(store) end,
+	OnPersistSavedVariables = function() return {} end,
+	OnEnable = onEnable,
+	OnDisable = onDisable,
+	OnInterfaceLock = onInterfaceLock,
+	OnInterfaceUnlock = onInterfaceUnlock,
+}

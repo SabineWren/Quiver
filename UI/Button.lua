@@ -1,5 +1,6 @@
 local colourize = function(p)
-	local texture, isHighlight = p.Texture, p.IsHighlight
+	local texture, isHighlight =
+		p.Texture, p.IsHighlight
 	local r, g, b = texture:GetParent():GetTextColor()
 	if isHighlight
 	then texture:SetVertexColor(r+0.3, g-0.2, b)
@@ -8,7 +9,8 @@ local colourize = function(p)
 end
 
 local createIconButton = function(p)
-	local parent, texturePath, tooltipText = p.Parent, p.TexturePath, p.TooltipText
+	local parent, texturePath, tooltipText =
+		p.Parent, p.TexturePath, p.TooltipText
 
 	local f = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
 	f:SetWidth(QUIVER_SIZE.Icon)
@@ -64,7 +66,7 @@ Quiver_UI_Button_Reset = function(p, tooltip)
 	return f
 end
 
-Quiver_UI_Button_ToggleLock = function(p)
+Quiver_UI_Button_ToggleLock = function(p, onclick)
 	local LOCK_OPEN = "Interface\\AddOns\\Quiver\\Textures\\lock-open"
 	local LOCK_CLOSED = "Interface\\AddOns\\Quiver\\Textures\\lock"
 	local f = createIconButton({
@@ -73,11 +75,13 @@ Quiver_UI_Button_ToggleLock = function(p)
 		TooltipText = "Lock/Unlock Frames",
 	})
 	f:SetScript("OnClick", function()
-		Quiver_Store.IsLockedFrames = not Quiver_Store.IsLockedFrames
-		if Quiver_Store.IsLockedFrames
+		-- TODO change this to a CheckButton and use f:GetChecked() == 1
+		local isChecked = not Quiver_Store.IsLockedFrames
+		if isChecked
 		then f:SetNormalTexture(LOCK_CLOSED)
 		else f:SetNormalTexture(LOCK_OPEN)
 		end
+		onclick(isChecked)
 	end)
 	return f
 end

@@ -5,6 +5,9 @@ otherwise each login clears all frame data for disabled addons.
 We use TopLeft origin because GetPoint() uses TopLeft
 ]]
 
+-- Frames to show if and only if UI unlocked
+Quiver_UI_FrameMeta_InteractiveFrames = {}
+
 local absClamp = function(vOpt, vMax)
 	local fallback = vMax / 2
 	if vOpt == nil then return fallback end
@@ -19,6 +22,9 @@ end
 local GRIP_HANDLE = "Interface\\AddOns\\Quiver\\Textures\\grip-handle"
 local createResizeGripHandle = function(parent, meta)
 	local f = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+	if Quiver_Store.IsLockedFrames then f:Hide() else f:Show() end
+	tinsert(Quiver_UI_FrameMeta_InteractiveFrames, f)
+
 	f:SetWidth(QUIVER_SIZE.Icon)
 	f:SetHeight(QUIVER_SIZE.Icon)
 	f:SetPoint("BottomRight", parent, "BottomRight", -2, 2)

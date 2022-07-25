@@ -21,6 +21,7 @@
 		"UnitExists",
 		"UnitIsDead",
 		"IsActionInRange",
-		"GameTooltip"
+		"GameTooltip",
+		"tinsert"
 	],
 }

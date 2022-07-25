@@ -7,7 +7,24 @@ function Quiver_MainMenu_Create()
 	btnCloseTop:SetPoint("TopRight", f, "TopRight", -QUIVER_SIZE.Border, -QUIVER_SIZE.Border)
 	btnCloseTop:SetScript("OnClick", function() f:Hide() end)
 
-	local btnToggleLock = Quiver_UI_Button_ToggleLock(f)
+	local btnToggleLock = Quiver_UI_Button_ToggleLock(f, function(isChecked)
+		Quiver_Store.IsLockedFrames = isChecked
+		if Quiver_Store.IsLockedFrames then
+			for _k, f in Quiver_UI_FrameMeta_InteractiveFrames do
+				f:Hide()
+			end
+			for _k, v in _G.Quiver_Modules do
+				if Quiver_Store.ModuleEnabled[v.Name] then v.OnInterfaceLock() end
+			end
+		else
+			for _k, f in Quiver_UI_FrameMeta_InteractiveFrames do
+				f:Show()
+			end
+			for _k, v in _G.Quiver_Modules do
+				if Quiver_Store.ModuleEnabled[v.Name] then v.OnInterfaceUnlock() end
+			end
+		end
+	end)
 	local lockOffset = QUIVER_SIZE.Border + QUIVER_SIZE.Icon + QUIVER_SIZE.Gap/2
 	btnToggleLock:SetPoint("TopRight", f, "TopRight", -lockOffset, -QUIVER_SIZE.Border)
 
@@ -18,8 +35,8 @@ function Quiver_MainMenu_Create()
 		OnClick = function (isChecked)
 			Quiver_Store.ModuleEnabled.AutoShotCastbar = isChecked
 			if isChecked
-			then Quiver_Module_AutoShotCastbar_Enable()
-			else Quiver_Module_AutoShotCastbar_Disable()
+			then Quiver_Module_AutoShotCastbar.OnEnable()
+			else Quiver_Module_AutoShotCastbar.OnDisable()
 			end
 		end,
 	})
@@ -32,8 +49,8 @@ function Quiver_MainMenu_Create()
 		OnClick = function (isChecked)
 			Quiver_Store.ModuleEnabled.RangeIndicator = isChecked
 			if isChecked
-			then Quiver_Module_RangeIndicator_Enable()
-			else Quiver_Module_RangeIndicator_Disable()
+			then Quiver_Module_RangeIndicator.OnEnable()
+			else Quiver_Module_RangeIndicator.OnDisable()
 			end
 		end,
 	})
@@ -46,35 +63,14 @@ function Quiver_MainMenu_Create()
 		OnClick = function (isChecked)
 			Quiver_Store.ModuleEnabled.TranqAnnouncer = isChecked
 			if isChecked
-			then Quiver_Module_TranqAnnouncer_Enable()
-			else Quiver_Module_TranqAnnouncer_Disable()
+			then Quiver_Module_TranqAnnouncer.OnEnable()
+			else Quiver_Module_TranqAnnouncer.OnDisable()
 			end
 		end,
 	})
 
-	local editHit = Quiver_UI_EditBox({
-		Parent = f, YOffset = -115,
-		TooltipReset="Reset Hit Message to Default",
-		Text = Quiver_Store.MsgTranqHit,
-	})
-	editHit:SetScript("OnTextChanged", function()
-		Quiver_Store.MsgTranqHit = editHit:GetText()
-	end)
-	editHit.BtnReset:SetScript("OnClick", function()
-		editHit:SetText(QUIVER_T.DefaultTranqHit)
-	end)
-
-	local editMiss = Quiver_UI_EditBox({
-		Parent = f, YOffset = -150,
-		TooltipReset="Reset Miss Message to Default",
-		Text = Quiver_Store.MsgTranqMiss,
-	})
-	editMiss:SetScript("OnTextChanged", function()
-		Quiver_Store.MsgTranqMiss = editMiss:GetText()
-	end)
-	editMiss.BtnReset:SetScript("OnClick", function()
-		editMiss:SetText(QUIVER_T.DefaultTranqMiss)
-	end)
+	-- TODO rewrite
+	local _, _ = Quiver_Module_TranqAnnouncer_CreateMenuOptions(f)
 
 	return f
 end

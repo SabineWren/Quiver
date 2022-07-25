@@ -4,9 +4,10 @@ local fontString = nil
 
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
+	if Quiver_Store.IsLockedFrames then f:Hide() end
+
 	Quiver_UI_FrameMeta_Customize(f, Quiver_Store.FrameMeta.RangeIndicator, 135, 35)
 
-	f:Hide()
 	f:SetFrameStrata("LOW")
 	f:SetBackdrop({
 		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
@@ -23,7 +24,7 @@ local createUI = function()
 	fs:SetAllPoints(f)
 	fs:SetJustifyH("Center")
 	fs:SetJustifyV("Center")
-	fs:SetText("Quiver RangeIndicator Text Not Initialized")
+	fs:SetText("Range Indicator")
 	fs:SetTextColor(1, 1, 1)
 
 	return f, fs
@@ -83,14 +84,16 @@ local handleEvent = function()
 	if UnitExists("target")
 		and (not UnitIsDead("target"))
 		and UnitCanAttack("player", "target")
-	then frame:Show()
-	else frame:Hide()
+	then
+		frame:Show()
+	elseif Quiver_Store.IsLockedFrames
+		then frame:Hide()
 	end
 end
 
 -- ************ Initialization ************
 local events = { "PLAYER_TARGET_CHANGED", "UNIT_FACTION" }
-Quiver_Module_RangeIndicator_Enable = function()
+local onEnable = function()
 	if frame == nil then frame, fontString = createUI() end
 	-- These print warnings if they fail on first call
 	-- It's better to discover that during init than during combat
@@ -102,9 +105,20 @@ Quiver_Module_RangeIndicator_Enable = function()
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in events do frame:RegisterEvent(e) end
+	if not Quiver_Store.IsLockedFrames then frame:Show() end
 end
 
-Quiver_Module_RangeIndicator_Disable = function()
+local onDisable = function()
 	frame:Hide()
 	for _k, e in events do frame:UnregisterEvent(e) end
 end
+
+Quiver_Module_RangeIndicator = {
+	Name = "RangeIndicator",
+	OnRestoreSavedVariables = function(store) return nil end,
+	OnPersistSavedVariables = function() return {} end,
+	OnEnable = onEnable,
+	OnDisable = onDisable,
+	OnInterfaceLock = function() handleEvent() end,
+	OnInterfaceUnlock = function() frame:Show() end,
+}
