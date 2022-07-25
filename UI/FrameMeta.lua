@@ -16,11 +16,11 @@ local absClamp = function(vOpt, vMax)
 	end
 end
 
-local GRIP_HANDLE = "Interface\\AddOns\\Quiver\\Textures\\grip-handle-resize"
+local GRIP_HANDLE = "Interface\\AddOns\\Quiver\\Textures\\grip-handle"
 local createResizeGripHandle = function(parent, meta)
 	local f = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-	f:SetWidth(16)
-	f:SetHeight(16)
+	f:SetWidth(QUIVER_SIZE.Icon)
+	f:SetHeight(QUIVER_SIZE.Icon)
 	f:SetPoint("BottomRight", parent, "BottomRight", -2, 2)
 
 	f:SetNormalTexture(GRIP_HANDLE)

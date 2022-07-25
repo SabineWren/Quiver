@@ -1,17 +1,20 @@
-Quiver_UI_EditBox = function(p)
-	local parent, y, label, textValue, onChange =
-		p.Parent, p.Y, p.Label, p.Text, p.OnChange
+local GAP = QUIVER_SIZE.Gap
 
-	local f = CreateFrame("EditBox", nil, parent)-- "InputBoxTemplate"
+Quiver_UI_EditBox = function(p)
+	local parent, yOffset, tooltipReset, textValue =
+		p.Parent, p.YOffset, p.TooltipReset, p.Text
+
+	local f = CreateFrame("EditBox", nil, parent)
+	local fMarginLeft = QUIVER_SIZE.Border + GAP + QUIVER_SIZE.Icon + GAP
+	local fMarginRight = QUIVER_SIZE.Border + GAP
 	f:SetText(textValue)
 	f:SetTextColor(.5, 1, .8, 1)
 	f:SetJustifyH("Left")
 	f:SetMaxLetters(50)
-	f:SetWidth(200)
 	f:SetHeight(25)
-	f:SetPoint("Left", parent, "Left", 60, 0)
-	f:SetPoint("Right", parent, "Right", -20, 0)
-	f:SetPoint("Top", parent, "Top", 0, y)
+	f:SetPoint("Left", parent, "Left", fMarginLeft, 0)
+	f:SetPoint("Right", parent, "Right", -fMarginRight, 0)
+	f:SetPoint("Top", parent, "Top", 0, yOffset)
 	f:SetFontObject(GameFontNormalSmall)
 
 	f:SetBackdrop({
@@ -29,12 +32,8 @@ Quiver_UI_EditBox = function(p)
 	f:SetAutoFocus(false)
 	f:SetScript("OnEscapePressed", function() f:ClearFocus() end)
 	f:SetScript("OnEnterPressed", function() f:ClearFocus() end)
-	f:SetScript("OnTextChanged", function() onChange(f:GetText()) end)
 
-	f.text = f:CreateFontString("Status", "LOW", "GameFontNormalSmall")
-	f.text:SetPoint("Left", f, "Left", -40, 0)
-	f.text:SetPoint("Right", f, "Left", 0, 0)
-	f.text:SetJustifyH("Center")
-	f.text:SetText(label)
+	f.BtnReset = Quiver_UI_Button_Reset(f, tooltipReset)
+	f.BtnReset:SetPoint("Right", f, "Left", -GAP, 0)
 	return f
 end

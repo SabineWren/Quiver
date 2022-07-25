@@ -18,3 +18,9 @@ Quiver_Store_Restore = function()
 	Quiver_Store.MsgTranqHit = Quiver_Store.MsgTranqHit or QUIVER_T.DefaultTranqHit
 	Quiver_Store.MsgTranqMiss = Quiver_Store.MsgTranqMiss or QUIVER_T.DefaultTranqMiss
 end
+
+QUIVER_SIZE = {
+	Border = 12,
+	Gap = 8,
+	Icon = 20,
+}

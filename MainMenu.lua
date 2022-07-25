@@ -3,6 +3,14 @@ function Quiver_MainMenu_Create()
 		Quiver_UI_Dialog(300, 300), "Quiver")
 	f:Hide()
 
+	local btnCloseTop = Quiver_UI_Button_Close(f)
+	btnCloseTop:SetPoint("TopRight", f, "TopRight", -QUIVER_SIZE.Border, -QUIVER_SIZE.Border)
+	btnCloseTop:SetScript("OnClick", function() f:Hide() end)
+
+	local btnToggleLock = Quiver_UI_Button_ToggleLock(f)
+	local lockOffset = QUIVER_SIZE.Border + QUIVER_SIZE.Icon + QUIVER_SIZE.Gap/2
+	btnToggleLock:SetPoint("TopRight", f, "TopRight", -lockOffset, -QUIVER_SIZE.Border)
+
 	_ = Quiver_UI_CheckButton({
 		Parent = f, Y = -25,
 		IsChecked = Quiver_Store.ModuleEnabled.AimedShotCastbar,
@@ -12,8 +20,6 @@ function Quiver_MainMenu_Create()
 			-- TODO
 		end,
 	})
-
-	local _ = Quiver_UI_Button_ToggleLock(f)
 
 	_ = Quiver_UI_CheckButton({
 		Parent = f, Y = -55,
@@ -56,16 +62,29 @@ function Quiver_MainMenu_Create()
 		end,
 	})
 
-	_ = Quiver_UI_EditBox({
-		Parent = f, Y = -150, Label = "Hit",
+	local editHit = Quiver_UI_EditBox({
+		Parent = f, YOffset = -150,
+		TooltipReset="Reset Hit Message to Default",
 		Text = Quiver_Store.MsgTranqHit,
-		OnChange = function(text) Quiver_Store.MsgTranqHit = text end,
 	})
-	_ = Quiver_UI_EditBox({
-		Parent = f, Y = -180, Label = "Miss",
+	editHit:SetScript("OnTextChanged", function()
+		Quiver_Store.MsgTranqHit = editHit:GetText()
+	end)
+	editHit.BtnReset:SetScript("OnClick", function()
+		editHit:SetText(QUIVER_T.DefaultTranqHit)
+	end)
+
+	local editMiss = Quiver_UI_EditBox({
+		Parent = f, YOffset = -180,
+		TooltipReset="Reset Miss Message to Default",
 		Text = Quiver_Store.MsgTranqMiss,
-		OnChange = function(text) Quiver_Store.MsgTranqMiss = text end,
 	})
+	editMiss:SetScript("OnTextChanged", function()
+		Quiver_Store.MsgTranqMiss = editMiss:GetText()
+	end)
+	editMiss.BtnReset:SetScript("OnClick", function()
+		editMiss:SetText(QUIVER_T.DefaultTranqMiss)
+	end)
 
 	return f
 end
