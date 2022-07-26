@@ -5,8 +5,10 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 - [Tranq Shot Announcer](#tranq-shot-announcer)
 
 ### Auto Shot Castbar
-- Based on [HSK](https://github.com/anstellaire/HunterSwissKnife).
-- Fixed a bug where moving as shot fires breaks the reload bar
+- Resets swing timer while casting a shot; taken from [YaHT](https://github.com/Aviana/YaHT/tree/1.12.1)
+- Ignores instant spells such as Arcane Shot; taken from [HSK](https://github.com/anstellaire/HunterSwissKnife)
+- Handles edge cases that break other swing timers, such as moving or casting immediately after a shot fires
+- Works with Trueshot
 - TODO customize size and vertical position
 
 ### Range Indicator
