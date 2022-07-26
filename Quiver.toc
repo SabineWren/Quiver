@@ -16,7 +16,8 @@ Lib\Print.lua
 Lib\ActionBar.lua
 Lib\IconsTextures.lua
 
-UI\Button.lua
+Components\Button.lua
+
 UI\CheckButton.lua
 UI\Dialog.lua
 UI\EditBox.lua

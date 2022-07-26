@@ -12,19 +12,17 @@ Quiver_UI_CheckButton = function(p)
 	f.Text = f:CreateFontString("Status", "LOW", "GameFontNormal")
 	f.Text:SetPoint("Left", f, "Left", QUIVER_SIZE.Icon + QUIVER_SIZE.Gap, 0)
 	f.Text:SetText(label)
-	--f:SetTextColor(.5, 1, .8, 1)
 	if tooltip ~= nil then f.tooltipText = tooltip end
 	f:SetScript("OnClick", function() onClick(f:GetChecked() == 1) end)
 
-	-- Builtin textures have tons of padding
-	local fixPadding = function(tex)
+	local removeDefaultPadding = function(tex)
 		tex:ClearAllPoints()
 		tex:SetWidth(f:GetWidth() * 1.5)
 		tex:SetHeight(f:GetHeight() * 1.5)
 		tex:SetPoint("Center", 0, 0)
 	end
-	fixPadding(f:GetCheckedTexture())
-	fixPadding(f:GetNormalTexture())
-	fixPadding(f:GetHighlightTexture())
+	removeDefaultPadding(f:GetCheckedTexture())
+	removeDefaultPadding(f:GetNormalTexture())
+	removeDefaultPadding(f:GetHighlightTexture())
 	return f
 end

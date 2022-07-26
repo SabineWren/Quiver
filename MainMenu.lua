@@ -1,30 +1,51 @@
-function Quiver_MainMenu_Create()
+local setFrameLock = function(isChecked)
+	Quiver_Store.IsLockedFrames = isChecked
+	if Quiver_Store.IsLockedFrames then
+		for _k, f in Quiver_UI_FrameMeta_InteractiveFrames do
+			f:Hide()
+		end
+		for _k, v in _G.Quiver_Modules do
+			if Quiver_Store.ModuleEnabled[v.Name] then v.OnInterfaceLock() end
+		end
+	else
+		for _k, f in Quiver_UI_FrameMeta_InteractiveFrames do
+			f:Show()
+		end
+		for _k, v in _G.Quiver_Modules do
+			if Quiver_Store.ModuleEnabled[v.Name] then v.OnInterfaceUnlock() end
+		end
+	end
+end
+
+local createIconBtnLock = function(parent)
+	local f = Quiver_Component_Button({
+		Parent=parent, Size=QUIVER_SIZE.Icon, TooltipText="Lock/Unlock Frames" })
+	local updateTexture = function()
+		local LOCK_OPEN = "Interface\\AddOns\\Quiver\\Textures\\lock-open"
+		local LOCK_CLOSED = "Interface\\AddOns\\Quiver\\Textures\\lock"
+		local path = Quiver_Store.IsLockedFrames and LOCK_CLOSED or LOCK_OPEN
+		f.Texture:QuiverSetTexture(1, path)
+	end
+	updateTexture()
+	f:SetScript("OnClick", function(_self)
+		setFrameLock(not Quiver_Store.IsLockedFrames)
+		updateTexture()
+	end)
+	return f
+end
+
+Quiver_MainMenu_Create = function()
 	local f = Quiver_UI_WithWindowTitle(
 		Quiver_UI_Dialog(300, 250), "Quiver")
 	f:Hide()
 
-	local btnCloseTop = Quiver_UI_Button_Close(f)
+	local btnCloseTop = Quiver_Component_Button({
+		Parent=f, Size=QUIVER_SIZE.Icon, TooltipText="Close Window" })
+	btnCloseTop.Texture:QuiverSetTexture(0.7, "Interface\\AddOns\\Quiver\\Textures\\xmark")
 	btnCloseTop:SetPoint("TopRight", f, "TopRight", -QUIVER_SIZE.Border, -QUIVER_SIZE.Border)
 	btnCloseTop:SetScript("OnClick", function() f:Hide() end)
 
-	local btnToggleLock = Quiver_UI_Button_ToggleLock(f, function(isChecked)
-		Quiver_Store.IsLockedFrames = isChecked
-		if Quiver_Store.IsLockedFrames then
-			for _k, f in Quiver_UI_FrameMeta_InteractiveFrames do
-				f:Hide()
-			end
-			for _k, v in _G.Quiver_Modules do
-				if Quiver_Store.ModuleEnabled[v.Name] then v.OnInterfaceLock() end
-			end
-		else
-			for _k, f in Quiver_UI_FrameMeta_InteractiveFrames do
-				f:Show()
-			end
-			for _k, v in _G.Quiver_Modules do
-				if Quiver_Store.ModuleEnabled[v.Name] then v.OnInterfaceUnlock() end
-			end
-		end
-	end)
+	local btnToggleLock = createIconBtnLock(f)
 	local lockOffset = QUIVER_SIZE.Border + QUIVER_SIZE.Icon + QUIVER_SIZE.Gap/2
 	btnToggleLock:SetPoint("TopRight", f, "TopRight", -lockOffset, -QUIVER_SIZE.Border)
 
@@ -72,5 +93,6 @@ function Quiver_MainMenu_Create()
 	-- TODO rewrite
 	local _, _ = Quiver_Module_TranqAnnouncer_CreateMenuOptions(f)
 
+	--test:SetPoint("BottomLeft", f, "BottomLeft", 30, 30)
 	return f
 end
