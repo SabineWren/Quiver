@@ -93,6 +93,22 @@ Quiver_MainMenu_Create = function()
 	-- TODO rewrite
 	local _, _ = Quiver_Module_TranqAnnouncer_CreateMenuOptions(f)
 
-	--test:SetPoint("BottomLeft", f, "BottomLeft", 30, 30)
+	local slider = CreateFrame("Slider", nil, f, "OptionsSliderTemplate")
+	local margin = QUIVER.Size.Gap + QUIVER.Size.Border
+	local sliderWidth = f:GetWidth() - 2 * margin
+	slider:SetWidth(sliderWidth)
+	slider:SetHeight(15)
+	slider:SetPoint("BottomLeft", f, "BottomLeft", margin, margin + 30)
+	local range = GetScreenHeight() * 0.9
+	slider:SetMinMaxValues(-range/2, range/2)
+	slider:SetValue(Quiver_Store.FrameMeta.AutoShotCastbar.Y)
+	slider:SetScript("OnValueChanged", function()
+		local stepSize = 2
+		-- slider:SetValueStep(stepSize) Doesn't work
+		--slider:SetObeyStepOnDrag(true)
+		local meta = Quiver_Store.FrameMeta.AutoShotCastbar
+		meta.Y = math.floor(this:GetValue() / stepSize) * stepSize
+		Quiver_Module_AutoShotCastbar_MoveY()
+	end)
 	return f
 end
