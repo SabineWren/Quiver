@@ -19,25 +19,20 @@ local absClamp = function(vOpt, vMax)
 	end
 end
 
-local GRIP_HANDLE = "Interface\\AddOns\\Quiver\\Textures\\grip-handle"
 local createResizeGripHandle = function(parent, meta)
-	local f = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+	local f = Quiver_Component_Button({ Parent=parent, Size=QUIVER.Size.Icon })
 	if Quiver_Store.IsLockedFrames then f:Hide() else f:Show() end
 	tinsert(Quiver_UI_FrameMeta_InteractiveFrames, f)
 
-	f:SetWidth(QUIVER.Size.Icon)
-	f:SetHeight(QUIVER.Size.Icon)
+	local scale = 0.5
+	f.Texture:QuiverSetTexture(scale, QUIVER.Icon.GripHandle)
+	f.HighlightTexture = Quiver_Components_Button_CreateTexture(f, "OVERLAY")
+	f:SetHighlightTexture(f.HighlightTexture)
+	f.HighlightTexture:QuiverSetTexture(scale, QUIVER.Icon.GripHandle)
+
 	f:SetPoint("BottomRight", parent, "BottomRight", -2, 2)
 
-	f:SetNormalTexture(GRIP_HANDLE)
-	f:SetHighlightTexture(GRIP_HANDLE)
-	f:SetPushedTexture(nil)
-	f:GetNormalTexture():SetTexCoord(0, 1, 0, 1)
-	f:GetHighlightTexture():SetTexCoord(0, 1, 0, 1)
-	f:GetHighlightTexture():SetBlendMode("ADD")
-
 	parent:SetResizable(true)
-	f:EnableMouse(true)
 	f:SetScript("OnMouseDown", function()
 		if not Quiver_Store.IsLockedFrames then
 			parent:StartSizing("BottomRight")

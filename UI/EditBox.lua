@@ -1,12 +1,5 @@
 local GAP = QUIVER.Size.Gap
 
-local createBtnReset = function(parent, tooltipText)
-	local f = Quiver_Component_Button({ Parent=parent, Size=16, TooltipText=tooltipText })
-	local RESET = "Interface\\AddOns\\Quiver\\Textures\\arrow-rotate-right"
-	f.Texture:QuiverSetTexture(0.75, RESET)
-	return f
-end
-
 Quiver_UI_EditBox = function(p)
 	local parent, yOffset, tooltipReset, textValue =
 		p.Parent, p.YOffset, p.TooltipReset, p.Text
@@ -40,7 +33,9 @@ Quiver_UI_EditBox = function(p)
 	f:SetScript("OnEscapePressed", function() f:ClearFocus() end)
 	f:SetScript("OnEnterPressed", function() f:ClearFocus() end)
 
-	f.BtnReset = createBtnReset(f, tooltipReset)
+	f.BtnReset = Quiver_Component_Button({
+		Parent=f, Size=QUIVER.Size.Icon, TooltipText=tooltipReset })
+	f.BtnReset.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
 	f.BtnReset:SetPoint("Right", f, "Left", -GAP, 0)
 	return f
 end

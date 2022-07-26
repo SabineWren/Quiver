@@ -80,7 +80,10 @@ local getSpellIndexByName = function(spellName)
 end
 Quiver_Lib_ActionBar_CheckGCD = function()
 	local spellId = getSpellIndexByName(QUIVER_T.Spellbook.Serpent_Sting)
+	if spellId ~= nil then
 	return GetSpellCooldown(spellId, "BOOKTYPE_SPELL")
+	else return 0, 0
+	end
 end
 
 -- Spellcasting

@@ -10,6 +10,7 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 - Handles edge cases that break other swing timers, such as moving or casting immediately after a shot fires
 - Works with Trueshot
 - TODO customize size and vertical position
+- TODO customize colours
 
 ### Range Indicator
 - Based on [Egnar](https://github.com/Medeah/Egnar)

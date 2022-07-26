@@ -1,4 +1,4 @@
-local createTexture = function(parent, layer)
+Quiver_Components_Button_CreateTexture = function(parent, layer)
 	local t = parent:CreateTexture(nil, layer)
 	t.QuiverSetTexture = function(self, scale, texturePath)
 		-- We could edit the texture file, but it's a raster image
@@ -45,7 +45,7 @@ Quiver_Component_Button = function(args)
 		GameTooltip:ClearLines()
 	end)
 
-	f.Texture = createTexture(f, "OVERLAY")
+	f.Texture = Quiver_Components_Button_CreateTexture(f, "OVERLAY")
 	f:SetNormalTexture(f.Texture)
 	-- TODO add custom glow texture
 	--f:SetHighlightTexture(nil)

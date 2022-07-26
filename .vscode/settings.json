@@ -36,6 +36,7 @@
 		"UnitHealthMax",
 		"UnitBuff",
 		"GetNetStats",
-		"IsCurrentAction"
+		"IsCurrentAction",
+		"GameFontNormalSmall"
 	],
 }

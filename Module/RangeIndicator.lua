@@ -53,8 +53,10 @@ local render = function(colour, text)
 	local r, g, b, a = unpack(colour)
 	frame:SetBackdropColor(r, g, b, a)
 	frame:SetBackdropBorderColor(r, g, b, a)
-	frame.GripHandle:GetNormalTexture():SetVertexColor(r, g, b)
-	frame.GripHandle:GetHighlightTexture():SetVertexColor(r, g, b)
+	if not Quiver_Store.IsLockedFrames then
+		frame.GripHandle:GetNormalTexture():SetVertexColor(r, g, b)
+		frame.GripHandle:GetHighlightTexture():SetVertexColor(r+0.3, g-0.1, b+0.3)
+	end
 end
 local showRange = {
 	Melee=function() render({0, 1, 0, 0.7}, "Melee Range") end,
