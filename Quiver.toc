@@ -17,8 +17,8 @@ Lib\ActionBar.lua
 Lib\IconsTextures.lua
 
 Components\Button.lua
+Components\CheckButton.lua
 
-UI\CheckButton.lua
 UI\Dialog.lua
 UI\EditBox.lua
 UI\FrameMeta.lua

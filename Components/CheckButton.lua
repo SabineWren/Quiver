@@ -1,4 +1,4 @@
-Quiver_UI_CheckButton = function(p)
+Quiver_Components_CheckButton = function(p)
 	local parent, y, isChecked, label, tooltip, onClick =
 		p.Parent, p.Y, p.IsChecked, p.Label, p.Tooltip, p.OnClick
 
@@ -13,7 +13,7 @@ Quiver_UI_CheckButton = function(p)
 	f.Text:SetPoint("Left", f, "Left", QUIVER_SIZE.Icon + QUIVER_SIZE.Gap, 0)
 	f.Text:SetText(label)
 	if tooltip ~= nil then f.tooltipText = tooltip end
-	f:SetScript("OnClick", function() onClick(f:GetChecked() == 1) end)
+	f:SetScript("OnClick", function(_self) onClick(f:GetChecked() == 1) end)
 
 	local removeDefaultPadding = function(tex)
 		tex:ClearAllPoints()

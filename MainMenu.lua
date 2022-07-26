@@ -49,7 +49,7 @@ Quiver_MainMenu_Create = function()
 	local lockOffset = QUIVER_SIZE.Border + QUIVER_SIZE.Icon + QUIVER_SIZE.Gap/2
 	btnToggleLock:SetPoint("TopRight", f, "TopRight", -lockOffset, -QUIVER_SIZE.Border)
 
-	_ = Quiver_UI_CheckButton({
+	_ = Quiver_Components_CheckButton({
 		Parent = f, Y = -25,
 		IsChecked = Quiver_Store.ModuleEnabled.AutoShotCastbar,
 		Label = QUIVER_T.Module.AutoShotCastbar,
@@ -62,7 +62,7 @@ Quiver_MainMenu_Create = function()
 		end,
 	})
 
-	_ = Quiver_UI_CheckButton({
+	_ = Quiver_Components_CheckButton({
 		Parent = f, Y = -55,
 		IsChecked = Quiver_Store.ModuleEnabled.RangeIndicator,
 		Label = QUIVER_T.Module.RangeIndicator,
@@ -76,7 +76,7 @@ Quiver_MainMenu_Create = function()
 		end,
 	})
 
-	_ = Quiver_UI_CheckButton({
+	_ = Quiver_Components_CheckButton({
 		Parent = f, Y = -85,
 		IsChecked = Quiver_Store.ModuleEnabled.TranqAnnouncer,
 		Label = QUIVER_T.Module.TranqAnnouncer,
