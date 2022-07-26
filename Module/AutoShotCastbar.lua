@@ -177,7 +177,7 @@ end
 
 local handleEvent = function()
 	if event == "SPELLCAST_DELAYED" then
-		DEFAULT_CHAT_FRAME:AddMessage("Quiver Spellcast delay not implemented" + arg1 / 1000, 1, 0.5, 0)
+		castTime = castTime + arg1 / 1000
 	elseif event == "START_AUTOREPEAT_SPELL" then
 		isShooting = true
 		-- TODO-REMOVE DEFAULT_CHAT_FRAME:AddMessage("Start Shoot", 1, 1, 0)
