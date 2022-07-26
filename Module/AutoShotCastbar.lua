@@ -30,17 +30,18 @@ local gcd = (function()
 			local cooldownStartTime, spellCD = Quiver_Lib_ActionBar_CheckGCD()
 			if spellCD == 1.5 then gcdStartTime = cooldownStartTime end
 		end,
-		CheckNoCooldownOrInstantShot = function()
+		CheckShotWasAuto = function()
 			local cooldownStartTime, spellCD = Quiver_Lib_ActionBar_CheckGCD()
-			if spellCD ~= 1.5 or gcdStartTime == cooldownStartTime then
-				return true
+			-- Case 1 -- Not on GCD
+			if spellCD ~= 1.5 then return true
+			-- Case 2 -- Still on GCD from previous cast
+			elseif gcdStartTime == cooldownStartTime then return true
+			-- Case 3 -- We triggered GCD at the same time we fired an auto shot
+			elseif isShooting and (not isReloading) then return true
+			-- Case 4 -- Cast an instant shot like Arcane Shot
 			else
-				-- We cast a spell that consumes ammo, but haven't yet handled "SPELLCAST_STOP"
-				-- Case 1: it's instant cast
-				-- Case 2: we started casting the instant we fired an auto shot
-				-- In both cases, we can ignore it
 				gcdStartTime = cooldownStartTime
-				return isCasting
+				return false
 			end
 		end
 	}
@@ -189,7 +190,6 @@ local handleEvent = function()
 	elseif event == "SPELLCAST_STOP" then
 		isCasting = false
 		gcd.HandleSpellcast()
-		-- TODO-REMOVE DEFAULT_CHAT_FRAME:AddMessage("STOP CAST", 1, 0, 0)
 	-- Auto Shot consumes ammo without triggering GCD
 	-- This event fires when equiped items change, including changing ammo count.
 	-- Swapping weapons will also trigger this and break the swing timer. Oh well.
@@ -200,7 +200,7 @@ local handleEvent = function()
 			isCasting = false
 			if not isReloading then timeStartShootOrReload = GetTime() end
 		-- Fired Auto Shot
-		elseif gcd.CheckNoCooldownOrInstantShot() then
+		elseif gcd.CheckShotWasAuto() then
 			timeStartShootOrReload = GetTime()
 			isReloading = true
 			reloadTime = UnitRangedDamage("player") - AIMING_TIME
