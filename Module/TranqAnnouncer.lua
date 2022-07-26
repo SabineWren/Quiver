@@ -65,3 +65,30 @@ Quiver_Module_TranqAnnouncer = {
 	OnInterfaceLock = function() return nil end,
 	OnInterfaceUnlock = function() return nil end,
 }
+
+--[[
+TODO Yaht tranq announce works differently.
+Worth looking into instead of parsing combat log,
+which requries localization.
+
+function YaHT:SPELLCAST_FAILED()
+	self.casting = nil
+	self:CancelScheduledEvent("YaHT_TRANQ")
+end
+
+function YaHT:SPELLCAST_STOP()
+	self.casting = nil
+	self.castblock = nil
+	if incTranq and YaHT.db.profile.channel and YaHT.db.profile.channel ~= "" then
+		local msg = string.gsub(YaHT.db.profile.tranqmsg, "%%t", currTarget)
+		self:Announce(msg)
+	end
+end
+
+function YaHT:CHAT_MSG_SPELL_DAMAGESHIELDS_ON_SELF()
+	if string.find(arg1, L["YaHT_MISS"]) then
+		self:Announce(YaHT.db.profile.tranqfailmsg)
+	end
+end
+
+]]

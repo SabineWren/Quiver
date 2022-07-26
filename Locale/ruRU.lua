@@ -29,6 +29,7 @@ QUIVER_T = {
 		Scatter_Shot = "Дезориентирующий выстрел",
 		Scorpid_Sting = "Укус скорпида",
 		Serpent_Sting = "Укус змеи",
+		Trueshot = "Trueshot",
 		Viper_Sting = "Укус гадюки",
 		Wing_Clip = "Подрезать крылья",
 		Wyvern_Sting = "Укус виверны",

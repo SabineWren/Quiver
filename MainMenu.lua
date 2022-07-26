@@ -19,7 +19,7 @@ end
 
 local createIconBtnLock = function(parent)
 	local f = Quiver_Component_Button({
-		Parent=parent, Size=QUIVER_SIZE.Icon, TooltipText="Lock/Unlock Frames" })
+		Parent=parent, Size=QUIVER.Size.Icon, TooltipText="Lock/Unlock Frames" })
 	local updateTexture = function()
 		local LOCK_OPEN = "Interface\\AddOns\\Quiver\\Textures\\lock-open"
 		local LOCK_CLOSED = "Interface\\AddOns\\Quiver\\Textures\\lock"
@@ -40,14 +40,14 @@ Quiver_MainMenu_Create = function()
 	f:Hide()
 
 	local btnCloseTop = Quiver_Component_Button({
-		Parent=f, Size=QUIVER_SIZE.Icon, TooltipText="Close Window" })
+		Parent=f, Size=QUIVER.Size.Icon, TooltipText="Close Window" })
 	btnCloseTop.Texture:QuiverSetTexture(0.7, "Interface\\AddOns\\Quiver\\Textures\\xmark")
-	btnCloseTop:SetPoint("TopRight", f, "TopRight", -QUIVER_SIZE.Border, -QUIVER_SIZE.Border)
+	btnCloseTop:SetPoint("TopRight", f, "TopRight", -QUIVER.Size.Border, -QUIVER.Size.Border)
 	btnCloseTop:SetScript("OnClick", function() f:Hide() end)
 
 	local btnToggleLock = createIconBtnLock(f)
-	local lockOffset = QUIVER_SIZE.Border + QUIVER_SIZE.Icon + QUIVER_SIZE.Gap/2
-	btnToggleLock:SetPoint("TopRight", f, "TopRight", -lockOffset, -QUIVER_SIZE.Border)
+	local lockOffset = QUIVER.Size.Border + QUIVER.Size.Icon + QUIVER.Size.Gap/2
+	btnToggleLock:SetPoint("TopRight", f, "TopRight", -lockOffset, -QUIVER.Size.Border)
 
 	_ = Quiver_Components_CheckButton({
 		Parent = f, Y = -25,

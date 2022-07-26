@@ -1,10 +1,3 @@
--- TODO these aren't persistent, so make a constants file or something
-QUIVER_SIZE = {
-	Border = 12,
-	Gap = 8,
-	Icon = 18,
-}
-
 -- Might make more sense to use the global table instead of a top level file
 Quiver_Store_Restore = function()
 	Quiver_Store = Quiver_Store or {}

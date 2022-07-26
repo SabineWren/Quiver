@@ -22,6 +22,20 @@
 		"UnitIsDead",
 		"IsActionInRange",
 		"GameTooltip",
-		"tinsert"
+		"tinsert",
+		"GetSpellName",
+		"GetSpellCooldown",
+		"GetSpellTabInfo",
+		"GetNumSpellTabs",
+		"GetSpellTexture",
+		"BOOKTYPE_SPELL",
+		"GetActionText",
+		"HasAction",
+		"GetActionTexture",
+		"UnitHealth",
+		"UnitHealthMax",
+		"UnitBuff",
+		"GetNetStats",
+		"IsCurrentAction"
 	],
 }

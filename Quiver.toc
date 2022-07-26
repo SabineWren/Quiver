@@ -11,6 +11,7 @@ Locale\frFR.lua
 Locale\ruRU.lua
 Locale\zhCN.lua
 
+Constants.lua
 Store.lua
 Lib\Print.lua
 Lib\ActionBar.lua

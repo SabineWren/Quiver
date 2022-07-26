@@ -80,8 +80,66 @@ local getSpellIndexByName = function(spellName)
 end
 Quiver_Lib_ActionBar_CheckGCD = function()
 	local spellId = getSpellIndexByName(QUIVER_T.Spellbook.Serpent_Sting)
-	if spellId then
-		local cooldownStartTime, spellCD, _enabled = GetSpellCooldown(spellId, "BOOKTYPE_SPELL")
-		return cooldownStartTime, spellCD
+	return GetSpellCooldown(spellId, "BOOKTYPE_SPELL")
+end
+
+-- Spellcasting
+-- 10% at full hp, to a max of 30% at 40% hp
+-- That's a line with equation f(hp)= (130-hp) / 3, but capped at 30%
+local getTrollBerserkBonus = function()
+	local percent = UnitHealth("player") / UnitHealthMax("player")
+	return math.min(0.3, (1.30 - percent) / 3.0)
+end
+
+local getAimedShotCastTime = function()
+	local speed = 1.0
+	for i=1,QUIVER.Buff_Cap do
+		if UnitBuff("player", i) == QUIVER.Icon.CurseOfTongues then
+			speed = speed * 0.5
+		elseif UnitBuff("player", i) == QUIVER.Icon.NaxxTrinket then
+			speed = speed * 1.2
+		elseif UnitBuff("player", i) == QUIVER.Icon.Quickshots then
+			speed = speed * 1.3
+		elseif UnitBuff("player", i) == QUIVER.Icon.RapidFire then
+			speed = speed * 1.4
+		elseif UnitBuff("player", i) == QUIVER.Icon.TrollBerserk then
+			speed = speed * (1.0 + getTrollBerserkBonus())
+		end
 	end
+	return 3.0 / speed
+end
+
+Quiver_Lib_ActionBar_GetCastTime = function(spellName)
+	-- TODO lag compensation
+	-- local _,_, latency = GetNetStats()
+	local latency = 0
+
+	if spellName == QUIVER_T.Spellbook.Aimed_Shot then return getAimedShotCastTime()
+	elseif spellName == QUIVER_T.Spellbook.Multi_Shot then return 0.5
+	elseif spellName == QUIVER_T.Spellbook.Trueshot then return 1.0
+	end
+end
+
+local castableShots = {
+	QUIVER_T.Spellbook.Aimed_Shot,
+	QUIVER_T.Spellbook.Multi_Shot,
+	QUIVER_T.Spellbook.Trueshot,
+}
+Quiver_Lib_ActionBar_GetCastableShot = function(slot)
+	local actionName = GetActionText(slot)
+	-- Ignore macros, items, etc.
+	-- Raw abilities always return a nil action name
+	if actionName ~= nil then return nil end
+
+	local actionTexture = GetActionTexture(slot)
+	for _k, v in castableShots do
+		if actionTexture == tryFindTexture(v) then return v end
+	end
+	return nil
+end
+Quiver_Lib_ActionBar_GetIsSpellCastableShot = function(spellName)
+	for _k, v in castableShots do
+		if spellName == v then return true end
+	end
+	return false
 end

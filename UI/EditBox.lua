@@ -1,4 +1,4 @@
-local GAP = QUIVER_SIZE.Gap
+local GAP = QUIVER.Size.Gap
 
 local createBtnReset = function(parent, tooltipText)
 	local f = Quiver_Component_Button({ Parent=parent, Size=16, TooltipText=tooltipText })
@@ -12,8 +12,8 @@ Quiver_UI_EditBox = function(p)
 		p.Parent, p.YOffset, p.TooltipReset, p.Text
 
 	local f = CreateFrame("EditBox", nil, parent)
-	local fMarginLeft = QUIVER_SIZE.Border + GAP + QUIVER_SIZE.Icon + GAP
-	local fMarginRight = QUIVER_SIZE.Border + GAP
+	local fMarginLeft = QUIVER.Size.Border + GAP + QUIVER.Size.Icon + GAP
+	local fMarginRight = QUIVER.Size.Border + GAP
 	f:SetText(textValue)
 	f:SetTextColor(.5, 1, .8, 1)
 	f:SetJustifyH("Left")

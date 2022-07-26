@@ -25,8 +25,8 @@ local createResizeGripHandle = function(parent, meta)
 	if Quiver_Store.IsLockedFrames then f:Hide() else f:Show() end
 	tinsert(Quiver_UI_FrameMeta_InteractiveFrames, f)
 
-	f:SetWidth(QUIVER_SIZE.Icon)
-	f:SetHeight(QUIVER_SIZE.Icon)
+	f:SetWidth(QUIVER.Size.Icon)
+	f:SetHeight(QUIVER.Size.Icon)
 	f:SetPoint("BottomRight", parent, "BottomRight", -2, 2)
 
 	f:SetNormalTexture(GRIP_HANDLE)

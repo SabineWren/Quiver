@@ -29,6 +29,7 @@ QUIVER_T = {
 		Scatter_Shot = "驱散射击",
 		Scorpid_Sting = "毒蝎钉刺",
 		Serpent_Sting = "毒蛇钉刺",
+		Trueshot = "Trueshot",
 		Viper_Sting = "蝰蛇钉刺",
 		Wing_Clip = "摔绊",
 		Wyvern_Sting = "翼龙钉刺",

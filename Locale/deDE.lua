@@ -29,6 +29,7 @@ QUIVER_T = {
 		Scatter_Shot = "Streuschuss",
 		Scorpid_Sting = "Scorpid Sting",
 		Serpent_Sting = "Serpent Sting",
+		Trueshot = "Trueshot",
 		Viper_Sting = "Viper Sting",
 		Wing_Clip = "Zurechtstutzen",
 		Wyvern_Sting = "Wyvern Sting",
