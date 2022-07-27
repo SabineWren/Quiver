@@ -194,18 +194,18 @@ local handleEvent = function()
 	-- This event fires when equiped items change, including changing ammo count.
 	-- Swapping weapons will also trigger this and break the swing timer. Oh well.
 	elseif event == "ITEM_LOCK_CHANGED" then
-		local timeCasting = GetTime() - timeStartCasting
 		-- Fired a non-instant spell
-		if isCasting and timeCasting >= castTime then
+		if isCasting and (GetTime() - timeStartCasting) >= castTime then
 			isCasting = false
 			if not isReloading then timeStartShootOrReload = GetTime() end
 		-- Fired Auto Shot
-		elseif gcd.CheckShotWasAuto() then
+		elseif (isCasting or isShooting) and gcd.CheckShotWasAuto() then
 			timeStartShootOrReload = GetTime()
 			isReloading = true
 			reloadTime = UnitRangedDamage("player") - AIMING_TIME
 			position.UpdateXY()
 		-- Else Fired Instant Shot
+		-- Or was an inventory event such as looting or moving an item
 		end
 	end
 end
