@@ -123,14 +123,14 @@ Quiver_MainMenu_Create = function()
 	sliderLabel:SetText("YOffset     ***     Width     ***     Height")
 
 	local range = GetScreenHeight() * 0.9
+	local meta = Quiver_Store.FrameMeta.AutoShotCastbar
 	local yoffsetSlider = createSlider(f, {
 		Padding=margin, Y=-205,
 		Min=-range/2, Max=range/2,
-		Value=Quiver_Store.FrameMeta.AutoShotCastbar.Y,
+		Value=meta.Y,
 	})
 	yoffsetSlider:SetScript("OnValueChanged", function()
 		local stepSize = 2
-		local meta = Quiver_Store.FrameMeta.AutoShotCastbar
 		meta.Y = math.floor(this:GetValue() / stepSize) * stepSize
 		Quiver_Module_AutoShotCastbar_MoveY()
 	end)
@@ -138,11 +138,10 @@ Quiver_MainMenu_Create = function()
 	local widthSlider = createSlider(f, {
 		Padding=margin, Y=-240,
 		Min=80, Max=400,
-		Value=Quiver_Store.FrameMeta.AutoShotCastbar.W,
+		Value=meta.W,
 	})
 	widthSlider:SetScript("OnValueChanged", function()
 		local stepSize = 1
-		local meta = Quiver_Store.FrameMeta.AutoShotCastbar
 		meta.W = math.floor(this:GetValue() / stepSize) * stepSize
 		Quiver_Module_AutoShotCastbar_Resize()
 	end)
@@ -150,11 +149,10 @@ Quiver_MainMenu_Create = function()
 	local heightSlider = createSlider(f, {
 		Padding=margin, Y=-275,
 		Min=10, Max=25,
-		Value=Quiver_Store.FrameMeta.AutoShotCastbar.H,
+		Value=meta.H,
 	})
 	heightSlider:SetScript("OnValueChanged", function()
 		local stepSize = 1
-		local meta = Quiver_Store.FrameMeta.AutoShotCastbar
 		meta.H = math.floor(this:GetValue() / stepSize) * stepSize
 		Quiver_Module_AutoShotCastbar_Resize()
 	end)

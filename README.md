@@ -34,6 +34,10 @@ Roid can't do everything for pets. Amarra made a pet utils addon with features l
 ### Macro Replacements
 Every hunter needs aspect and trap macros. Mine are copy-pasted Roid macros, but HSK implements its own version of aspect overrides.
 
+### Low Ammo Warning
+
+### Hunter's Mark Timer
+
 ## Localization
 Quiver looks up spells by name, which change with client locale. I use Wowhead to find the spell names for each locale. Theoretically, Quiver should work with a `/Locale` file matching your client, but the translations aren't complete.
 

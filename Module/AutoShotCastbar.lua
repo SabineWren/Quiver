@@ -63,11 +63,6 @@ local createUI = function()
 	f:SetFrameStrata("HIGH")
 	f.Bar = CreateFrame("Frame", nil, f)
 
-	local meta = Quiver_Store.FrameMeta.AutoShotCastbar
-	meta.W = meta.W or 190
-	meta.H = meta.H or 14
-	meta.Y = meta.Y or -180
-
 	f:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 		edgeFile = "Interface/BUTTONS/WHITE8X8", edgeSize = borderSize,
@@ -254,7 +249,12 @@ Quiver_Module_AutoShotCastbar_Resize = updateAllSizes
 
 Quiver_Module_AutoShotCastbar = {
 	Name = "AutoShotCastbar",
-	OnRestoreSavedVariables = function(store) end,
+	OnRestoreSavedVariables = function(store)
+		local meta = Quiver_Store.FrameMeta.AutoShotCastbar
+		meta.W = meta.W or 190
+		meta.H = meta.H or 14
+		meta.Y = meta.Y or -180
+	end,
 	OnPersistSavedVariables = function() return {} end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
