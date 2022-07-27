@@ -1,7 +1,7 @@
 local store = {}
 local restoreState = function(savedVariables)
-	store.MsgTranqHit = store.MsgTranqHit or QUIVER_T.DefaultTranqHit
-	store.MsgTranqMiss = store.MsgTranqMiss or QUIVER_T.DefaultTranqMiss
+	store.MsgTranqHit = savedVariables.MsgTranqHit or QUIVER_T.DefaultTranqHit
+	store.MsgTranqMiss = savedVariables.MsgTranqMiss or QUIVER_T.DefaultTranqMiss
 end
 local persistState = function() return store end
 

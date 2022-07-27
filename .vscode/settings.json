@@ -37,6 +37,10 @@
 		"UnitBuff",
 		"GetNetStats",
 		"IsCurrentAction",
-		"GameFontNormalSmall"
+		"GameFontNormalSmall",
+		"GetInventorySlotInfo",
+		"GetInventoryItemCount",
+		"SlashCmdList",
+		"UnitClass"
 	],
 }
