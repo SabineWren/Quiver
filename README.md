@@ -9,7 +9,6 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 - Ignores instant spells such as Arcane Shot; taken from [HSK](https://github.com/anstellaire/HunterSwissKnife)
 - Handles edge cases that break other swing timers, such as moving or casting immediately after a shot fires
 - Works with Trueshot
-- TODO customize size
 - TODO customize colours
 
 ### Range Indicator

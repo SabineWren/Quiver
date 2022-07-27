@@ -107,7 +107,7 @@ local onEnable = function()
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in events do frame:RegisterEvent(e) end
-	if not Quiver_Store.IsLockedFrames then frame:Show() end
+	if Quiver_Store.IsLockedFrames then handleEvent() else frame:Show() end
 end
 
 local onDisable = function()

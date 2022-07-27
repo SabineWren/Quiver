@@ -34,9 +34,27 @@ local createIconBtnLock = function(parent)
 	return f
 end
 
+local createSlider = function(parent, o)
+	local padding, y, min, max, value =
+		o.Padding, o.Y, o.Min, o.Max, o.Value
+	local f = CreateFrame("Slider", nil, parent, "OptionsSliderTemplate")
+	local sliderWidth = f:GetWidth() - 2 * padding
+	f:SetWidth(sliderWidth)
+	f:SetHeight(15)
+	f:SetPoint("Left", parent, "Left", padding, 0)
+	f:SetPoint("Right", parent, "Right", -padding, 0)
+	f:SetPoint("Top", parent, "Top", 0, y)
+
+	f:SetMinMaxValues(min, max)
+	f:SetValue(value)
+	-- slider:SetValueStep(stepSize) Doesn't work
+	--slider:SetObeyStepOnDrag(true)
+	return f
+end
+
 Quiver_MainMenu_Create = function()
 	local f = Quiver_UI_WithWindowTitle(
-		Quiver_UI_Dialog(300, 250), "Quiver")
+		Quiver_UI_Dialog(300, 350), "Quiver")
 	f:Hide()
 
 	local btnCloseTop = Quiver_Component_Button({
@@ -93,22 +111,53 @@ Quiver_MainMenu_Create = function()
 	-- TODO rewrite
 	local _, _ = Quiver_Module_TranqAnnouncer_CreateMenuOptions(f)
 
-	local slider = CreateFrame("Slider", nil, f, "OptionsSliderTemplate")
 	local margin = QUIVER.Size.Gap + QUIVER.Size.Border
-	local sliderWidth = f:GetWidth() - 2 * margin
-	slider:SetWidth(sliderWidth)
-	slider:SetHeight(15)
-	slider:SetPoint("BottomLeft", f, "BottomLeft", margin, margin + 30)
+
+	local sliderLabel = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+	sliderLabel:SetWidth(f:GetWidth() - 2 * margin)
+	sliderLabel:SetHeight(20)
+	sliderLabel:SetPoint("Left", f, "Left", margin, 0)
+	sliderLabel:SetPoint("Right", f, "Right", -margin, 0)
+	sliderLabel:SetPoint("Top", f, "Top", 0, -185)
+	sliderLabel:SetJustifyH("Center")
+	sliderLabel:SetText("YOffset     ***     Width     ***     Height")
+
 	local range = GetScreenHeight() * 0.9
-	slider:SetMinMaxValues(-range/2, range/2)
-	slider:SetValue(Quiver_Store.FrameMeta.AutoShotCastbar.Y)
-	slider:SetScript("OnValueChanged", function()
+	local yoffsetSlider = createSlider(f, {
+		Padding=margin, Y=-205,
+		Min=-range/2, Max=range/2,
+		Value=Quiver_Store.FrameMeta.AutoShotCastbar.Y,
+	})
+	yoffsetSlider:SetScript("OnValueChanged", function()
 		local stepSize = 2
-		-- slider:SetValueStep(stepSize) Doesn't work
-		--slider:SetObeyStepOnDrag(true)
 		local meta = Quiver_Store.FrameMeta.AutoShotCastbar
 		meta.Y = math.floor(this:GetValue() / stepSize) * stepSize
 		Quiver_Module_AutoShotCastbar_MoveY()
 	end)
+
+	local widthSlider = createSlider(f, {
+		Padding=margin, Y=-240,
+		Min=80, Max=400,
+		Value=Quiver_Store.FrameMeta.AutoShotCastbar.W,
+	})
+	widthSlider:SetScript("OnValueChanged", function()
+		local stepSize = 1
+		local meta = Quiver_Store.FrameMeta.AutoShotCastbar
+		meta.W = math.floor(this:GetValue() / stepSize) * stepSize
+		Quiver_Module_AutoShotCastbar_Resize()
+	end)
+
+	local heightSlider = createSlider(f, {
+		Padding=margin, Y=-275,
+		Min=10, Max=25,
+		Value=Quiver_Store.FrameMeta.AutoShotCastbar.H,
+	})
+	heightSlider:SetScript("OnValueChanged", function()
+		local stepSize = 1
+		local meta = Quiver_Store.FrameMeta.AutoShotCastbar
+		meta.H = math.floor(this:GetValue() / stepSize) * stepSize
+		Quiver_Module_AutoShotCastbar_Resize()
+	end)
+
 	return f
 end

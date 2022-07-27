@@ -1,5 +1,6 @@
 local frame = nil
 local maxBarWidth = 0
+local borderSize = 1
 local AIMING_TIME = 0.65
 local reloadTime = 0
 
@@ -47,19 +48,25 @@ local gcd = (function()
 end)()
 
 -- ************ UI ************
+local updateAllSizes = function()
+	local meta = Quiver_Store.FrameMeta.AutoShotCastbar
+	frame:SetWidth(meta.W)
+	frame:SetHeight(meta.H)
+	frame:SetPoint("Center", 0, meta.Y)
+
+	maxBarWidth = meta.W - 2 * borderSize
+	frame.Bar:SetWidth(1)
+	frame.Bar:SetHeight(meta.H - 2 * borderSize)
+end
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("HIGH")
+	f.Bar = CreateFrame("Frame", nil, f)
 
-	local borderSize = 1
-	local width = 190
-	local height = 14
-	Quiver_Store.FrameMeta.AutoShotCastbar.Y = Quiver_Store.FrameMeta.AutoShotCastbar.Y or -180
-
-	f:SetWidth(width)
-	f:SetHeight(height)
-	f:SetPoint("Center", 0, Quiver_Store.FrameMeta.AutoShotCastbar.Y)
-	maxBarWidth = width - 2 * borderSize
+	local meta = Quiver_Store.FrameMeta.AutoShotCastbar
+	meta.W = meta.W or 190
+	meta.H = meta.H or 14
+	meta.Y = meta.Y or -180
 
 	f:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
@@ -68,14 +75,10 @@ local createUI = function()
 	f:SetBackdropColor(0, 0, 0, 0.8)
 	f:SetBackdropBorderColor(1, 1, 1, 0.8)
 
-	f.Bar = CreateFrame("Frame", nil, f)
 	f.Bar:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 	})
-	f.Bar:SetWidth(0)
-	f.Bar:SetHeight(height - 2 * borderSize)
 	f.Bar:SetPoint("Center", f, "Center", 0, 0)
-
 	return f
 end
 
@@ -126,29 +129,32 @@ end
 -- ************ Frame Update Handlers ************
 local updateShooting = function()
 	frame:SetAlpha(1)
-	frame.bar:SetBackdropColor(1 ,1 ,0, 0.8)
+	frame.Bar:SetBackdropColor(1 ,1 ,0, 0.8)
 	local timePassed = GetTime() - timeStartShootOrReload
 
 	if isCasting then
-		frame.bar:SetWidth(1)-- Can't set to zero
+		frame.Bar:SetWidth(1)-- Can't set to zero
 	elseif timePassed <= AIMING_TIME then
-		frame.bar:SetWidth(maxBarWidth * timePassed / AIMING_TIME)
+		frame.Bar:SetWidth(maxBarWidth * timePassed / AIMING_TIME)
 	else
-		frame.bar:SetWidth(maxBarWidth)
+		frame.Bar:SetWidth(maxBarWidth)
 	end
 end
 
 local hideBar = function()
-	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) end
+	if Quiver_Store.IsLockedFrames
+	then frame:SetAlpha(0)
+	else frame.Bar:SetWidth(1)
+	end
 end
 
 local updateReloading = function()
 	frame:SetAlpha(1)
-	frame.bar:SetBackdropColor(1, 0, 0, 0.8)
+	frame.Bar:SetBackdropColor(1, 0, 0, 0.8)
 	local timePassed = GetTime() - timeStartShootOrReload
 
 	if timePassed <= reloadTime then
-		frame.bar:SetWidth(maxBarWidth - maxBarWidth * timePassed / reloadTime)
+		frame.Bar:SetWidth(maxBarWidth - maxBarWidth * timePassed / reloadTime)
 	else
 		isReloading = false
 		if isShooting then
@@ -217,7 +223,7 @@ local events = {
 	"SPELLCAST_DELAYED",
 }
 local onEnable = function()
-	if frame == nil then frame = createUI() end
+	if frame == nil then frame = createUI(); updateAllSizes() end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in events do frame:RegisterEvent(e) end
@@ -239,9 +245,12 @@ local onInterfaceUnlock = function()
 	frame:SetAlpha(1)
 end
 
-Quiver_Module_AutoShotCastbar_MoveY = function(offset)
-	frame:SetPoint("Center", 0, Quiver_Store.FrameMeta.AutoShotCastbar.Y)
+Quiver_Module_AutoShotCastbar_MoveY = function()
+	local meta = Quiver_Store.FrameMeta.AutoShotCastbar
+	frame:SetPoint("Center", 0, meta.Y)
 end
+
+Quiver_Module_AutoShotCastbar_Resize = updateAllSizes
 
 Quiver_Module_AutoShotCastbar = {
 	Name = "AutoShotCastbar",
