@@ -71,7 +71,7 @@ end
 
 Quiver_MainMenu_Create = function()
 	local f = Quiver_UI_WithWindowTitle(
-		Quiver_UI_Dialog(300, 350), "Quiver")
+		Quiver_UI_Dialog(300, 330), "Quiver")
 	f:Hide()
 
 	local btnCloseTop = Quiver_Component_Button({
@@ -94,17 +94,20 @@ Quiver_MainMenu_Create = function()
 	local margin = QUIVER.Size.Gap + QUIVER.Size.Border
 	local sliderLabel = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
 	sliderLabel:SetWidth(f:GetWidth() - 2 * margin)
-	sliderLabel:SetHeight(20)
+	sliderLabel:SetHeight(18)
 	sliderLabel:SetPoint("Left", f, "Left", margin, 0)
 	sliderLabel:SetPoint("Right", f, "Right", -margin, 0)
 	sliderLabel:SetPoint("Top", f, "Top", 0, yOffset)
 	sliderLabel:SetJustifyH("Center")
 	sliderLabel:SetText("YOffset     ***     Width     ***     Height")
+	yOffset = yOffset - sliderLabel:GetHeight()
+	yOffset = yOffset - QUIVER.Size.Gap
 
 	local range = GetScreenHeight() * 0.9
+	local gapSlider = 18
 	local meta = Quiver_Store.FrameMeta.AutoShotCastbar
 	local yoffsetSlider = createSlider(f, {
-		Padding=margin, Y=-205,
+		Padding=margin, Y=yOffset,
 		Min=-range/2, Max=range/2,
 		Value=meta.Y,
 	})
@@ -113,9 +116,11 @@ Quiver_MainMenu_Create = function()
 		meta.Y = math.floor(this:GetValue() / stepSize) * stepSize
 		Quiver_Module_AutoShotCastbar_UpdateFamePosition()
 	end)
+	yOffset = yOffset - yoffsetSlider:GetHeight()
+	yOffset = yOffset - gapSlider
 
 	local widthSlider = createSlider(f, {
-		Padding=margin, Y=-240,
+		Padding=margin, Y=yOffset,
 		Min=80, Max=400,
 		Value=meta.W,
 	})
@@ -124,9 +129,11 @@ Quiver_MainMenu_Create = function()
 		meta.W = math.floor(this:GetValue() / stepSize) * stepSize
 		Quiver_Module_AutoShotCastbar_Resize()
 	end)
+	yOffset = yOffset - widthSlider:GetHeight()
+	yOffset = yOffset - gapSlider
 
 	local heightSlider = createSlider(f, {
-		Padding=margin, Y=-275,
+		Padding=margin, Y=yOffset,
 		Min=10, Max=25,
 		Value=meta.H,
 	})
@@ -135,6 +142,8 @@ Quiver_MainMenu_Create = function()
 		meta.H = math.floor(this:GetValue() / stepSize) * stepSize
 		Quiver_Module_AutoShotCastbar_Resize()
 	end)
+	yOffset = yOffset - heightSlider:GetHeight()
+	yOffset = yOffset - gapSlider
 
 	return f
 end
