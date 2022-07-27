@@ -97,7 +97,7 @@ Quiver_MainMenu_Create = function()
 	sliderLabel:SetHeight(20)
 	sliderLabel:SetPoint("Left", f, "Left", margin, 0)
 	sliderLabel:SetPoint("Right", f, "Right", -margin, 0)
-	sliderLabel:SetPoint("Top", f, "Top", 0, -185)
+	sliderLabel:SetPoint("Top", f, "Top", 0, yOffset)
 	sliderLabel:SetJustifyH("Center")
 	sliderLabel:SetText("YOffset     ***     Width     ***     Height")
 

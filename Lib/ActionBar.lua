@@ -28,14 +28,16 @@ local tryFindSlot = function(texture)
 	return nil
 end
 
-local cacheSlot = {}
+local actionBarSlotCache = {}
+local requiredSpells = {}
 Quiver_Lib_ActionBar_FindSlot = function(println, nameSeek)
-	if cacheSlot[nameSeek] ~= nil then return cacheSlot[nameSeek] end
+	if actionBarSlotCache[nameSeek] ~= nil then return actionBarSlotCache[nameSeek] end
 
 	local texture = tryFindTexture(nameSeek)
+	tinsert(requiredSpells, nameSeek)
 	if texture == nil then
 		println.Warning("Can't find in spellbook: "..nameSeek)
-		cacheSlot[nameSeek] = 0
+		actionBarSlotCache[nameSeek] = 0
 		return 0
 	end
 
@@ -43,25 +45,35 @@ Quiver_Lib_ActionBar_FindSlot = function(println, nameSeek)
 	if slot == nil then
 		println.Warning("Can't find on action bars: "..nameSeek)
 		println.Warning("Searched for texture: "..texture)
-		cacheSlot[nameSeek] = 0
+		actionBarSlotCache[nameSeek] = 0
 		return 0
 	end
 
-	cacheSlot[nameSeek] = slot
+	actionBarSlotCache[nameSeek] = slot
 	return slot
 end
 
-Quiver_Lib_ActionBar_ValidateCache = function(_slotChanged)
-	for name, texture in pairs(cacheTexture) do
-		local slotNew = tryFindSlot(texture) or 0
-		local slotOld = cacheSlot[name]
-		if slotNew ~= slotOld then
+-- Every texture lookup updates the texture cache, but on slot change
+-- we only care about revalidating the textures needed to run modules
+local printSpellDiscovery = function(spellName, slotOld, slotNew)
+	for _k, requiredName in requiredSpells do
+		if spellName == requiredName then
 			if slotNew > 0 then
-				Quiver_Lib_Print.Success("Discovered " .. name .. " in slot " .. tostring(slotNew))
+				Quiver_Lib_Print.Success("Discovered " .. requiredName .. " in slot " .. tostring(slotNew))
 			else
-				Quiver_Lib_Print.Warning("Lost " .. name .. " from slot " .. tostring(slotOld))
+				Quiver_Lib_Print.Warning("Lost " .. requiredName .. " from slot " .. tostring(slotOld))
 			end
-			cacheSlot[name] = slotNew
+		end
+	end
+end
+
+Quiver_Lib_ActionBar_ValidateCache = function(_slotChanged)
+	for spellName, texture in pairs(cacheTexture) do
+		local slotNew = tryFindSlot(texture) or 0
+		local slotOld = actionBarSlotCache[spellName]
+		if slotNew ~= slotOld then
+			printSpellDiscovery(spellName, slotOld, slotNew)
+			actionBarSlotCache[spellName] = slotNew
 		end
 	end
 end
