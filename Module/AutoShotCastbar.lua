@@ -46,6 +46,20 @@ local gcd = (function()
 		end
 	}
 end)()
+local ammo = (function()
+	local lastCount = 0
+	return {
+		Update = function()
+			local ammoSlot = GetInventorySlotInfo("AmmoSlot")
+			local ammoCount = GetInventoryItemCount("player", ammoSlot)
+			local shots = lastCount - ammoCount
+			lastCount = ammoCount
+			DEFAULT_CHAT_FRAME:AddMessage(shots)
+			return shots
+		end
+	}
+	end
+)()
 
 -- ************ UI ************
 local updateAllSizes = function()
@@ -192,15 +206,22 @@ local handleEvent = function()
 		gcd.HandleSpellcast()
 	-- Auto Shot consumes ammo without triggering GCD
 	-- This event fires when equiped items change, including changing ammo count.
-	-- Swapping weapons will also trigger this and break the swing timer. Oh well.
+	-- Swapping weapons, clicking on bag items, receiving loot, etc. will trigger this.
 	elseif event == "ITEM_LOCK_CHANGED" then
+		local newTime = GetTime()
+		local shotsFired = ammo.Update()
+		-- Ammo check covers edge case of stop-attack right as shot fires
+		-- isCasting check covers edge case where you start a cast right as shot fires
+		-- isShooting check covers all other shots
+		-- If all 3 checks fail, it must be an inventory event
+		local hasProbablyShot = shotsFired ~= 0 or isCasting or isShooting
 		-- Fired a non-instant spell
-		if isCasting and (GetTime() - timeStartCasting) >= castTime then
+		if isCasting and (newTime - timeStartCasting) >= castTime then
 			isCasting = false
-			if not isReloading then timeStartShootOrReload = GetTime() end
+			if not isReloading then timeStartShootOrReload = newTime end
 		-- Fired Auto Shot
-		elseif (isCasting or isShooting) and gcd.CheckShotWasAuto() then
-			timeStartShootOrReload = GetTime()
+		elseif hasProbablyShot and gcd.CheckShotWasAuto() then
+			timeStartShootOrReload = newTime
 			isReloading = true
 			reloadTime = UnitRangedDamage("player") - AIMING_TIME
 			position.UpdateXY()
