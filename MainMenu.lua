@@ -1,18 +1,14 @@
 local setFrameLock = function(isChecked)
 	Quiver_Store.IsLockedFrames = isChecked
 	if Quiver_Store.IsLockedFrames then
-		for _k, f in Quiver_UI_FrameMeta_InteractiveFrames do
-			f:Hide()
-		end
+		for _k, f in Quiver_UI_FrameMeta_InteractiveFrames do f:Hide() end
 		for _k, v in _G.Quiver_Modules do
-			if Quiver_Store.ModuleEnabled[v.Name] then v.OnInterfaceLock() end
+			if Quiver_Store.ModuleEnabled[v.Id] then v.OnInterfaceLock() end
 		end
 	else
-		for _k, f in Quiver_UI_FrameMeta_InteractiveFrames do
-			f:Show()
-		end
+		for _k, f in Quiver_UI_FrameMeta_InteractiveFrames do f:Show() end
 		for _k, v in _G.Quiver_Modules do
-			if Quiver_Store.ModuleEnabled[v.Name] then v.OnInterfaceUnlock() end
+			if Quiver_Store.ModuleEnabled[v.Id] then v.OnInterfaceUnlock() end
 		end
 	end
 end
@@ -52,6 +48,27 @@ local createSlider = function(parent, o)
 	return f
 end
 
+local createCheckboxesModuleEnabled = function(f, yOffset, gap)
+	local height = 0
+	for _k, vLoop in _G.Quiver_Modules do
+		local v = vLoop
+		local isEnabled = Quiver_Store.ModuleEnabled[v.Id]
+		local label = QUIVER_T.ModuleName[v.Id]
+		local tooltip = QUIVER_T.ModuleTooltip[v.Id]
+		local checkbutton = Quiver_Components_CheckButton({
+			Parent = f,
+			Y = yOffset - height,
+			IsChecked = isEnabled, Label = label, Tooltip = tooltip,
+			OnClick = function (isChecked)
+				Quiver_Store.ModuleEnabled[v.Id] = isChecked
+				if isChecked then v.OnEnable() else v.OnDisable() end
+			end,
+		})
+		height = height + checkbutton:GetHeight() + gap
+	end
+	return height - gap
+end
+
 Quiver_MainMenu_Create = function()
 	local f = Quiver_UI_WithWindowTitle(
 		Quiver_UI_Dialog(300, 350), "Quiver")
@@ -67,52 +84,14 @@ Quiver_MainMenu_Create = function()
 	local lockOffset = QUIVER.Size.Border + QUIVER.Size.Icon + QUIVER.Size.Gap/2
 	btnToggleLock:SetPoint("TopRight", f, "TopRight", -lockOffset, -QUIVER.Size.Border)
 
-	_ = Quiver_Components_CheckButton({
-		Parent = f, Y = -25,
-		IsChecked = Quiver_Store.ModuleEnabled.AutoShotCastbar,
-		Label = QUIVER_T.Module.AutoShotCastbar,
-		OnClick = function (isChecked)
-			Quiver_Store.ModuleEnabled.AutoShotCastbar = isChecked
-			if isChecked
-			then Quiver_Module_AutoShotCastbar.OnEnable()
-			else Quiver_Module_AutoShotCastbar.OnDisable()
-			end
-		end,
-	})
+	local yOffset = -25
+	yOffset = yOffset - createCheckboxesModuleEnabled(f, yOffset, QUIVER.Size.Gap)
+	yOffset = yOffset - QUIVER.Size.Gap
 
-	_ = Quiver_Components_CheckButton({
-		Parent = f, Y = -55,
-		IsChecked = Quiver_Store.ModuleEnabled.RangeIndicator,
-		Label = QUIVER_T.Module.RangeIndicator,
-		Tooltip = "Shows when abilities are in range. Requires spellbook abilities placed somewhere on your action bars.",
-		OnClick = function (isChecked)
-			Quiver_Store.ModuleEnabled.RangeIndicator = isChecked
-			if isChecked
-			then Quiver_Module_RangeIndicator.OnEnable()
-			else Quiver_Module_RangeIndicator.OnDisable()
-			end
-		end,
-	})
-
-	_ = Quiver_Components_CheckButton({
-		Parent = f, Y = -85,
-		IsChecked = Quiver_Store.ModuleEnabled.TranqAnnouncer,
-		Label = QUIVER_T.Module.TranqAnnouncer,
-		Tooltip = "Announces in /Raid chat when your tranquilizing shot hits or misses a target.",
-		OnClick = function (isChecked)
-			Quiver_Store.ModuleEnabled.TranqAnnouncer = isChecked
-			if isChecked
-			then Quiver_Module_TranqAnnouncer.OnEnable()
-			else Quiver_Module_TranqAnnouncer.OnDisable()
-			end
-		end,
-	})
-
-	-- TODO rewrite
-	local _, _ = Quiver_Module_TranqAnnouncer_CreateMenuOptions(f)
+	yOffset = yOffset - Quiver_Module_TranqAnnouncer_CreateMenuOptions(f, yOffset, QUIVER.Size.Gap)
+	yOffset = yOffset - QUIVER.Size.Gap
 
 	local margin = QUIVER.Size.Gap + QUIVER.Size.Border
-
 	local sliderLabel = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
 	sliderLabel:SetWidth(f:GetWidth() - 2 * margin)
 	sliderLabel:SetHeight(20)
@@ -132,7 +111,7 @@ Quiver_MainMenu_Create = function()
 	yoffsetSlider:SetScript("OnValueChanged", function()
 		local stepSize = 2
 		meta.Y = math.floor(this:GetValue() / stepSize) * stepSize
-		Quiver_Module_AutoShotCastbar_MoveY()
+		Quiver_Module_AutoShotCastbar_UpdateFamePosition()
 	end)
 
 	local widthSlider = createSlider(f, {

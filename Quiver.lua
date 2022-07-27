@@ -8,16 +8,16 @@ _G.Quiver_Modules = {
 local savedVariablesRestore = function()
 	Quiver_Store_Restore()
 	for _k, v in _G.Quiver_Modules do
-		Quiver_Store.ModuleEnabled[v.Name] = Quiver_Store.ModuleEnabled[v.Name] ~= false
-		Quiver_Store.ModuleStore[v.Name] = Quiver_Store.ModuleStore[v.Name] or {}
-		Quiver_Store.FrameMeta[v.Name] = Quiver_Store.FrameMeta[v.Name] or {}
-		v.OnRestoreSavedVariables(Quiver_Store.ModuleStore[v.Name])
+		Quiver_Store.ModuleEnabled[v.Id] = Quiver_Store.ModuleEnabled[v.Id] ~= false
+		Quiver_Store.ModuleStore[v.Id] = Quiver_Store.ModuleStore[v.Id] or {}
+		Quiver_Store.FrameMeta[v.Id] = Quiver_Store.FrameMeta[v.Id] or {}
+		v.OnRestoreSavedVariables(Quiver_Store.ModuleStore[v.Id], Quiver_Store.FrameMeta[v.Id])
 	end
 end
 local savedVariablesPersist = function()
 	for _k, v in _G.Quiver_Modules do
-		Quiver_Store.ModuleStore[v.Name] = v.OnPersistSavedVariables()
-		Quiver_Store.FrameMeta[v] = Quiver_Store.FrameMeta[v] or {}
+		Quiver_Store.ModuleStore[v.Id] = v.OnPersistSavedVariables()
+		Quiver_Store.FrameMeta[v.Id] = Quiver_Store.FrameMeta[v.Id]
 	end
 end
 
@@ -30,10 +30,9 @@ local init = function()
 	SLASH_QUIVER2 = "/quiver"
 	SlashCmdList["QUIVER"] = function(_args, _box) frameMainMenu:Show() end
 
-	local me = Quiver_Store.ModuleEnabled
-	if me.AutoShotCastbar then Quiver_Module_AutoShotCastbar.OnEnable() end
-	if me.RangeIndicator then Quiver_Module_RangeIndicator.OnEnable() end
-	if me.TranqAnnouncer then Quiver_Module_TranqAnnouncer.OnEnable() end
+	for _k, v in _G.Quiver_Modules do
+		if Quiver_Store.ModuleEnabled[v.Id] then v.OnEnable() end
+	end
 end
 
 -- Ignore ADDON_LOADED so spellbook, action bars, and chat window load first.

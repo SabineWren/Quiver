@@ -1,3 +1,5 @@
+local store = {}-- TODO use for colour customization
+local frameMeta = {}
 local println = Quiver_Lib_Print_Factory("Range Indicator")
 local frame = nil
 local fontString = nil
@@ -6,7 +8,7 @@ local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	if Quiver_Store.IsLockedFrames then f:Hide() end
 
-	Quiver_UI_FrameMeta_Customize(f, Quiver_Store.FrameMeta.RangeIndicator, 135, 35)
+	Quiver_UI_FrameMeta_Customize(f, frameMeta)
 
 	f:SetFrameStrata("LOW")
 	f:SetBackdrop({
@@ -116,9 +118,14 @@ local onDisable = function()
 end
 
 Quiver_Module_RangeIndicator = {
-	Name = "RangeIndicator",
-	OnRestoreSavedVariables = function(store) return nil end,
-	OnPersistSavedVariables = function() return {} end,
+	Id = "RangeIndicator",
+	OnRestoreSavedVariables = function(savedVariables, savedFrameMeta)
+		store = savedVariables
+		frameMeta = savedFrameMeta
+		frameMeta.W = frameMeta.W or 135
+		frameMeta.H = frameMeta.H or 35
+	end,
+	OnPersistSavedVariables = function() return store end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
 	OnInterfaceLock = function() handleEvent() end,

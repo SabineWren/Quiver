@@ -40,19 +40,19 @@ local createResizeGripHandle = function(parent, meta)
 	end)
 	f:SetScript("OnMouseUp", function()
 		parent:StopMovingOrSizing()
-		meta.W = parent:GetWidth()
-		meta.H = parent:GetHeight()
+		meta.W = math.floor(parent:GetWidth())
+		meta.H = math.floor(parent:GetHeight())
+		parent:SetWidth(meta.W)
+		parent:SetHeight(meta.H)
 	end)
 	return f
 end
 
-Quiver_UI_FrameMeta_Customize = function(f, meta, widthDefault, heightDefault)
-	meta.W = meta.W or widthDefault
-	meta.H = meta.H or heightDefault
+Quiver_UI_FrameMeta_Customize = function(f, meta)
 	f:SetWidth(meta.W)
 	f:SetHeight(meta.H)
-	f:SetMinResize(widthDefault, heightDefault)
-	f:SetMaxResize(widthDefault*2, heightDefault*2)
+	f:SetMinResize(QUIVER.Size.Icon, QUIVER.Size.Icon)
+	f:SetMaxResize(GetScreenWidth()/2, GetScreenHeight()/2)
 
 	local xMax = GetScreenWidth() - meta.W
 	local yMax = GetScreenHeight() - meta.H
@@ -68,8 +68,9 @@ Quiver_UI_FrameMeta_Customize = function(f, meta, widthDefault, heightDefault)
 	f:SetScript("OnMouseUp", function()
 		f:StopMovingOrSizing()
 		local _, _, _, x, y = f:GetPoint()
-		meta.X = x
-		meta.Y = y
+		meta.X = math.floor(x)
+		meta.Y = math.floor(y)
+		f:SetPoint("TopLeft", nil, "TopLeft", meta.X, meta.Y)
 	end)
 
 	f.GripHandle = createResizeGripHandle(f, meta)

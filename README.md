@@ -51,10 +51,11 @@ Open an issue or PM me on Discord:
 The UI code is a bit of mess right now. Soon there will be an event for attaching a frame to the Main Menu.
 ```
 OnRestoreSavedVariables
-table -> unit
+table -> table -> unit
 GameEvent: "PLAYER_LOGIN"
 Loads one table from SavedVariables used exclusively by the module.
 Called exactly once, even for disabled modules.
+Second table holds state for one customizable frame { W, H, X, Y }. Mutate the frame metadata to set default values.
 
 OnPersistSavedVariables
 unit -> table
@@ -84,7 +85,7 @@ Called every time user unlocks the UI.
 Stub for new modules
 ```
 Quiver_Module_<ModuleName> = {
-	OnRestoreSavedVariables = function(store) return nil end,
+	OnRestoreSavedVariables = function(savedVariables, savedFrameMeta) return nil end,
 	OnPersistSavedVariables = function() return {} end,
 	OnEnable = function() return nil end,
 	OnDisable = function() return nil end,

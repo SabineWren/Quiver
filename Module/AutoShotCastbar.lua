@@ -1,3 +1,4 @@
+local frameMeta = {}
 local frame = nil
 local maxBarWidth = 0
 local borderSize = 1
@@ -62,14 +63,13 @@ local ammo = (function()
 
 -- ************ UI ************
 local updateAllSizes = function()
-	local meta = Quiver_Store.FrameMeta.AutoShotCastbar
-	frame:SetWidth(meta.W)
-	frame:SetHeight(meta.H)
-	frame:SetPoint("Center", 0, meta.Y)
+	frame:SetWidth(frameMeta.W)
+	frame:SetHeight(frameMeta.H)
+	frame:SetPoint("Center", 0, frameMeta.Y)
 
-	maxBarWidth = meta.W - 2 * borderSize
+	maxBarWidth = frameMeta.W - 2 * borderSize
 	frame.Bar:SetWidth(1)
-	frame.Bar:SetHeight(meta.H - 2 * borderSize)
+	frame.Bar:SetHeight(frameMeta.H - 2 * borderSize)
 end
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
@@ -260,20 +260,19 @@ local onInterfaceUnlock = function()
 	frame:SetAlpha(1)
 end
 
-Quiver_Module_AutoShotCastbar_MoveY = function()
-	local meta = Quiver_Store.FrameMeta.AutoShotCastbar
-	frame:SetPoint("Center", 0, meta.Y)
+Quiver_Module_AutoShotCastbar_UpdateFamePosition = function()
+	frame:SetPoint("Center", 0, frameMeta.Y)
 end
 
 Quiver_Module_AutoShotCastbar_Resize = updateAllSizes
 
 Quiver_Module_AutoShotCastbar = {
-	Name = "AutoShotCastbar",
-	OnRestoreSavedVariables = function(store)
-		local meta = Quiver_Store.FrameMeta.AutoShotCastbar
-		meta.W = meta.W or 190
-		meta.H = meta.H or 14
-		meta.Y = meta.Y or -180
+	Id = "AutoShotCastbar",
+	OnRestoreSavedVariables = function(savedVariables, savedFrameMeta)
+		frameMeta = savedFrameMeta
+		frameMeta.W = frameMeta.W or 220
+		frameMeta.H = frameMeta.H or 14
+		frameMeta.Y = frameMeta.Y or -166
 	end,
 	OnPersistSavedVariables = function() return {} end,
 	OnEnable = onEnable,
