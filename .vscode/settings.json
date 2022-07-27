@@ -41,6 +41,7 @@
 		"GetInventorySlotInfo",
 		"GetInventoryItemCount",
 		"SlashCmdList",
-		"UnitClass"
+		"UnitClass",
+		"SendChatMessage"
 	],
 }

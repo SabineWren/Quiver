@@ -21,17 +21,17 @@ local savedVariablesPersist = function()
 	end
 end
 
-local init = function()
-	_, cl = UnitClass("player")
-	if cl ~= "HUNTER" then return Quiver_Lib_Print.Danger("Quiver is for hunters") end
-
-	local frameMainMenu = Quiver_MainMenu_Create()
+local addSlashCommands = function()
 	SLASH_QUIVER1 = "/qq"
 	SLASH_QUIVER2 = "/quiver"
-	SlashCmdList["QUIVER"] = function(_args, _box) frameMainMenu:Show() end
-
-	for _k, v in _G.Quiver_Modules do
-		if Quiver_Store.ModuleEnabled[v.Id] then v.OnEnable() end
+	_, cl = UnitClass("player")
+	if cl == "HUNTER" then
+		local frameMainMenu = Quiver_MainMenu_Create()
+		SlashCmdList["QUIVER"] = function(_args, _box) frameMainMenu:Show() end
+	else
+		SlashCmdList["QUIVER"] = function(_args, _box)
+			DEFAULT_CHAT_FRAME:AddMessage("Quiver is for hunters", 1, 0, 0)
+		end
 	end
 end
 
@@ -44,7 +44,10 @@ frame:SetScript("OnEvent", function()
 	if event == "PLAYER_LOGIN" then
 		if Quiver_Store == nil then DEFAULT_CHAT_FRAME:AddMessage("Type /Quiver or /qq to show the config dialog.") end
 		savedVariablesRestore()
-		init()
+		addSlashCommands()
+		for _k, v in _G.Quiver_Modules do
+			if Quiver_Store.ModuleEnabled[v.Id] then v.OnEnable() end
+		end
 	elseif event == "PLAYER_LOGOUT" then
 		savedVariablesPersist()
 	elseif event == "ACTIONBAR_SLOT_CHANGED" then
