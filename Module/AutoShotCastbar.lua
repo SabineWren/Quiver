@@ -54,7 +54,6 @@ local ammo = (function()
 			local ammoCount = GetInventoryItemCount("player", ammoSlot)
 			local shots = lastCount - ammoCount
 			lastCount = ammoCount
-			DEFAULT_CHAT_FRAME:AddMessage(shots)
 			return shots
 		end
 	}
