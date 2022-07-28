@@ -10,26 +10,25 @@ pfUI.module[m]()
 ]]
 
 local pfUITurtleHunter = function()
-	pfUI_locale["enUS"]["customcast"]["TRUESHOT"] = "Trueshot"
-	local trueshot = L["customcast"]["TRUESHOT"]
+	pfUI_locale["enUS"]["customcast"]["TRUESHOT"] = QUIVER_T.Spellbook.Trueshot
+	local trueshotName = L["customcast"]["TRUESHOT"]
 	-- Copy-pasted from pf's Multi-Shot implementation in libs/libcast.lua
-	libcast.customcast[strlower(trueshot)] = function(begin, duration)
+	libcast.customcast[strlower(trueshotName)] = function(begin, duration)
 		-- Somehow player isn't defined, but all the other locals from pfUI work
 		local player = UnitName("player")
 		if begin then
-			local duration = 1000
-
-			local _,_, lag = GetNetStats()
-			local start = GetTime() + lag/1000
+			local castTime, start = Quiver_Lib_Spellbook_GetCastTime(QUIVER_T.Spellbook.Trueshot)
+			local duration = duration or (castTime * 1000)
 
 			-- add cast action to the database
-			libcast.db[player].cast = trueshot
+			libcast.db[player].cast = trueshotName
 			libcast.db[player].rank = lastrank
 			libcast.db[player].start = start
 			libcast.db[player].casttime = duration
 			libcast.db[player].icon = "Interface\\Icons\\Ability_Hunter_SteadyShot"
 			libcast.db[player].channel = nil
 		else
+			DEFAULT_CHAT_FRAME:AddMessage("end")
 			-- remove cast action to the database
 			libcast.db[player].cast = nil
 			libcast.db[player].rank = nil
