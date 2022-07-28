@@ -2,6 +2,7 @@ QUIVER = {
 	Buff_Cap = 32,
 	Size = {
 		Border = 12,
+		Button = 22,
 		Gap = 8,
 		Icon = 18,
 	},

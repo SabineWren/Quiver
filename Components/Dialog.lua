@@ -1,7 +1,7 @@
-Quiver_UI_Dialog = function(width, height)
+Quiver_Components_Dialog = function(width, border)
 	local f = CreateFrame("Frame", nil, UIParent)
+	f:Hide()
 	f:SetWidth(width)
-	f:SetHeight(height)
 	f:SetPoint("Center", 0, 0)
 	f:SetBackdrop({
 		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
@@ -20,8 +20,8 @@ Quiver_UI_Dialog = function(width, height)
 
 	local btnCloseBottom = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
 	btnCloseBottom:SetWidth(70)
-	btnCloseBottom:SetHeight(22)
-	btnCloseBottom:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -QUIVER.Size.Border, QUIVER.Size.Border)
+	btnCloseBottom:SetHeight(QUIVER.Size.Button)
+	btnCloseBottom:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -border, border)
 	btnCloseBottom:SetText("Close")
 	btnCloseBottom:SetScript("OnClick", function() f:Hide() end)
 

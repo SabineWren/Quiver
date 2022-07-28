@@ -70,9 +70,10 @@ local createCheckboxesModuleEnabled = function(f, yOffset, gap)
 end
 
 Quiver_MainMenu_Create = function()
-	local f = Quiver_UI_WithWindowTitle(
-		Quiver_UI_Dialog(300, 350), "Quiver")
-	f:Hide()
+	local f = Quiver_Components_Dialog(300, QUIVER.Size.Border)
+
+	local titleBox = Quiver_Components_TitleBox(f, "Quiver")
+	titleBox:SetPoint("Center", f, "Top", 0, -10)
 
 	local btnCloseTop = Quiver_Component_Button({
 		Parent=f, Size=QUIVER.Size.Icon, TooltipText="Close Window" })
@@ -145,5 +146,6 @@ Quiver_MainMenu_Create = function()
 	yOffset = yOffset - heightSlider:GetHeight()
 	yOffset = yOffset - gapSlider
 
+	f:SetHeight(-1 * yOffset + QUIVER.Size.Border + QUIVER.Size.Button)
 	return f
 end

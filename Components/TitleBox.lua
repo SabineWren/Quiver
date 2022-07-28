@@ -1,5 +1,5 @@
-Quiver_UI_WithWindowTitle = function(window, titleText)
-	local f = CreateFrame("Frame", nil, window)
+Quiver_Components_TitleBox = function(parent, titleText)
+	local f = CreateFrame("Frame", nil, parent)
 	local fs = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	fs:SetAllPoints(f)
 	fs:SetJustifyH("Center")
@@ -8,7 +8,6 @@ Quiver_UI_WithWindowTitle = function(window, titleText)
 
 	f:SetWidth(fs:GetStringWidth() + 30)
 	f:SetHeight(35)
-	f:SetPoint("Center", window, "Top", 0, -10)
 	f:SetBackdrop({
 		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
 		edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
@@ -20,5 +19,5 @@ Quiver_UI_WithWindowTitle = function(window, titleText)
 	-- TODO figure out how to clip parent frame instead of 100% opacity
 	f:SetBackdropColor(0, 0, 0, 1)
 	f:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
-	return window
+	return f
 end

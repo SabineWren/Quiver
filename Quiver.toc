@@ -22,11 +22,11 @@ Events\Spellcast.lua
 
 Components\Button.lua
 Components\CheckButton.lua
+Components\Dialog.lua
+Components\TitleBox.lua
 
-UI\Dialog.lua
 UI\EditBox.lua
 UI\FrameMeta.lua
-UI\WindowTitle.lua
 
 Module\AutoShotCastbar.lua
 Module\Castbar.lua

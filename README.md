@@ -1,7 +1,11 @@
 WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration menu.
 
+- [Installation](#installation)
+- [Contributing](#contributing)
+
+## Features
 - [Auto Shot Castbar](#auto-shot-castbar)
-- [Cast Bar](#cast-bar)
+- [Castbar](#castbar)
 - [Range Indicator](#range-indicator)
 - [Tranq Shot Announcer](#tranq-shot-announcer)
 
@@ -11,10 +15,11 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 - Handles edge cases that break other swing timers, such as moving or casting immediately after a shot fires
 - Works with Trueshot
 - TODO customize colours
+- TODO move size/position sliders onto the frame for easier use
 
 ### Castbar
-- Works for Aimed Shot, Multi-Shot, and Trueshot
-- Quiver also includes a module that adds pfUI castbar support for Trueshot
+- Shows Aimed Shot, Multi-Shot, and Trueshot
+- Includes a pfUI module that adds Trueshot support to the pfUI castbar
 
 ### Range Indicator
 - Based on [Egnar](https://github.com/Medeah/Egnar)
@@ -28,6 +33,13 @@ Requires some raw spellbook abilities on your action bars (not macros). Hidden a
 - Based on [Xtranq](https://github.com/unknauwn/XTranqManager/tree/master)
 
 It's deliberately less customizable than Xtranq, so disable this module and run Xtranq if that bothers you. I'm open to adding tranq rotation features, but I'm not a fan of how Xtranq does it. Perhaps letting one hunter configure the rotation for all? Feel free to request features.
+
+# Installation
+1. [Download](https://github.com/SabineWren/Quiver/archive/main.zip) latest version
+2. Extract the Zip file
+3. Remove the `-main` from the directory name
+4. Move directory into `<WoW install>/Interface/AddOns/`
+5. Restart WoW.
 
 # Planned Features
 ### Trueshot Alarm
@@ -43,24 +55,25 @@ Every hunter needs aspect and trap macros. Mine are copy-pasted Roid macros, but
 
 ### Hunter's Mark Timer
 
-## Localization
-Quiver looks up spells by name, which change with client locale. I use Wowhead to find the spell names for each locale. Theoretically, Quiver should work with a `/Locale` file matching your client, but the translations aren't complete.
-
 ## Contributing
 Open an issue or PM me on Discord:
 - Code
 - Translations
 - Bug reports
 
+## Localization
+Quiver looks up spells by name, which change with client locale. I use Wowhead to find the spell names for each locale. Theoretically, Quiver should work with a `/Locale` file matching your client, but the translations aren't complete.
+
 # Module Lifecycle Hooks
-The UI code is a bit of mess right now. Soon there will be an event for attaching a frame to the Main Menu.
+The UI code is a mess right now, but soon there will be an event for attaching a frame to the Main Menu.
 ```
 OnRestoreSavedVariables
 table -> table -> unit
 GameEvent: "PLAYER_LOGIN"
 Loads one table from SavedVariables used exclusively by the module.
 Called exactly once, even for disabled modules.
-Second table holds state for one customizable frame { W, H, X, Y }. Mutate the frame metadata to set default values.
+Second table holds state for one customizable frame { W, H, X, Y }.
+Mutate the frame metadata to set default values.
 
 OnPersistSavedVariables
 unit -> table
