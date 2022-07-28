@@ -18,6 +18,8 @@ Lib\Spellbook.lua
 Lib\ActionBar.lua
 Lib\IconsTextures.lua
 
+Events\Spellcast.lua
+
 Components\Button.lua
 Components\CheckButton.lua
 
@@ -27,6 +29,7 @@ UI\FrameMeta.lua
 UI\WindowTitle.lua
 
 Module\AutoShotCastbar.lua
+Module\Castbar.lua
 Module\RangeIndicator.lua
 Module\pfUI-TurtleHunter.lua
 Module\TranqAnnouncer.lua

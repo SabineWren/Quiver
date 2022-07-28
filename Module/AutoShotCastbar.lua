@@ -68,13 +68,13 @@ local updateAllSizes = function()
 	frame:SetPoint("Center", 0, frameMeta.Y)
 
 	maxBarWidth = frameMeta.W - 2 * borderSize
-	frame.Bar:SetWidth(1)
-	frame.Bar:SetHeight(frameMeta.H - 2 * borderSize)
+	frame.BarAutoShot:SetWidth(1)
+	frame.BarAutoShot:SetHeight(frameMeta.H - 2 * borderSize)
 end
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("HIGH")
-	f.Bar = CreateFrame("Frame", nil, f)
+	f.BarAutoShot = CreateFrame("Frame", nil, f)
 
 	f:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
@@ -83,10 +83,10 @@ local createUI = function()
 	f:SetBackdropColor(0, 0, 0, 0.8)
 	f:SetBackdropBorderColor(1, 1, 1, 0.8)
 
-	f.Bar:SetBackdrop({
+	f.BarAutoShot:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 	})
-	f.Bar:SetPoint("Center", f, "Center", 0, 0)
+	f.BarAutoShot:SetPoint("Center", f, "Center", 0, 0)
 	return f
 end
 
@@ -101,70 +101,37 @@ local onSpellcast = function(spellName)
 	timeStartCasting = GetTime()
 	castTime = Quiver_Lib_Spellbook_GetCastTime(spellName)
 end
-
-local getIsBusy = function()
-	for i=1,120 do
-		if IsCurrentAction(i) then return true end
-	end
-	return false
-end
-
-local super = {
-	CastSpell = CastSpell,
-	CastSpellByName = CastSpellByName,
-	UseAction = UseAction,
-}
-CastSpell = function(spellId, spellbookTabNum)
-	super.CastSpell(spellId, spellbookTabNum)
-	local spellName, _rank = GetSpellName(spellId, spellbookTabNum)
-	if not getIsBusy() then return end
-	local isShot = Quiver_Lib_Spellbook_GetIsSpellCastableShot(spellName)
-	if isShot then onSpellcast(spellName) end
-end
-CastSpellByName = function(spellName, onSelf)
-	super.CastSpellByName(spellName, onSelf)
-	if not getIsBusy() then return end
-	local isShot = Quiver_Lib_Spellbook_GetIsSpellCastableShot(spellName)
-	if isShot then onSpellcast(spellName) end
-end
-UseAction = function(slot, checkCursor, onSelf)
-	super.UseAction(slot, checkCursor, onSelf)
-	-- Raw abilities return a nil action name. Macros, items, etc. don't.
-	if GetActionText(slot) or not IsCurrentAction(slot) or GetActionText(slot) ~= nil then return end
-	local actionTexture = GetActionTexture(slot)
-	local spellName = Quiver_Lib_Spellbook_TryGetCastableShot(actionTexture)
-	if spellName ~= nil then onSpellcast(spellName) end
-end
+Quiver_Events_Spellcast_Subscribe(onSpellcast)
 
 -- ************ Frame Update Handlers ************
 local updateShooting = function()
 	frame:SetAlpha(1)
-	frame.Bar:SetBackdropColor(1 ,1 ,0, 0.8)
+	frame.BarAutoShot:SetBackdropColor(1 ,1 ,0, 0.8)
 	local timePassed = GetTime() - timeStartShootOrReload
 
 	if isCasting then
-		frame.Bar:SetWidth(1)-- Can't set to zero
+		frame.BarAutoShot:SetWidth(1)-- Can't set to zero
 	elseif timePassed <= AIMING_TIME then
-		frame.Bar:SetWidth(maxBarWidth * timePassed / AIMING_TIME)
+		frame.BarAutoShot:SetWidth(maxBarWidth * timePassed / AIMING_TIME)
 	else
-		frame.Bar:SetWidth(maxBarWidth)
+		frame.BarAutoShot:SetWidth(maxBarWidth)
 	end
 end
 
 local hideBar = function()
 	if Quiver_Store.IsLockedFrames
 	then frame:SetAlpha(0)
-	else frame.Bar:SetWidth(1)
+	else frame.BarAutoShot:SetWidth(1)
 	end
 end
 
 local updateReloading = function()
 	frame:SetAlpha(1)
-	frame.Bar:SetBackdropColor(1, 0, 0, 0.8)
+	frame.BarAutoShot:SetBackdropColor(1, 0, 0, 0.8)
 	local timePassed = GetTime() - timeStartShootOrReload
 
 	if timePassed <= reloadTime then
-		frame.Bar:SetWidth(maxBarWidth - maxBarWidth * timePassed / reloadTime)
+		frame.BarAutoShot:SetWidth(maxBarWidth - maxBarWidth * timePassed / reloadTime)
 	else
 		isReloading = false
 		if isShooting then

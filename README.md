@@ -1,6 +1,7 @@
 WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration menu.
 
 - [Auto Shot Castbar](#auto-shot-castbar)
+- [Cast Bar](#cast-bar)
 - [Range Indicator](#range-indicator)
 - [Tranq Shot Announcer](#tranq-shot-announcer)
 
@@ -10,6 +11,10 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 - Handles edge cases that break other swing timers, such as moving or casting immediately after a shot fires
 - Works with Trueshot
 - TODO customize colours
+
+### Cast Bar
+- If you use pfUI, Quiver includes a module that adds castbar support for Trueshot.
+- Non-pfUI castbar coming soon!
 
 ### Range Indicator
 - Based on [Egnar](https://github.com/Medeah/Egnar)
