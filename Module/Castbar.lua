@@ -11,7 +11,15 @@ local timeStartCasting = 0
 local updateCastbarSize = function()
 	maxBarWidth = frameMeta.W - 2 * borderSize
 	frame.Castbar:SetWidth(1)
-	frame.Castbar:SetHeight(frameMeta.H - 2 * borderSize)
+	frame.Castbar:SetHeight(frameMeta.H - 4 * borderSize)
+	frame.SpellName:SetHeight(frameMeta.H - 4 * borderSize)
+	frame.SpellName:SetWidth(maxBarWidth)
+	local path, _size, flags = frame.SpellName:GetFont()
+	local calcFontSize = frameMeta.H - 4 * borderSize
+	local fontSize = calcFontSize > 18 and 18
+		or calcFontSize < 10 and 10
+		or calcFontSize
+	frame.SpellName:SetFont(path, fontSize, flags)
 	frame.Castbar:Show()
 end
 local createUI = function()
@@ -22,6 +30,11 @@ local createUI = function()
 	f.QuiverOnResizeStart = function() frame.Castbar:Hide() end
 	f.QuiverOnResizeEnd = updateCastbarSize
 
+	f.SpellName = f.Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	f.SpellName:SetPoint("Left", f, "Left", 4, 0)
+	f.SpellName:SetJustifyH("Left")
+	f.SpellName:SetTextColor(1, 1, 1)
+
 	f:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 		edgeFile = "Interface/BUTTONS/WHITE8X8", edgeSize = borderSize,
@@ -30,7 +43,7 @@ local createUI = function()
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 	})
 	f:SetBackdropColor(0, 0, 0, 0.8)
-	f:SetBackdropBorderColor(1, 1, 1, 0.8)
+	f:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)
 	f.Castbar:SetBackdropColor(0.42 ,0.41 ,0.53, 1)
 
 	f.Castbar:SetPoint("Left", f, "Left", 0, 0)
@@ -41,6 +54,7 @@ end
 local onSpellcast = function(spellName)
 	if not Quiver_Store.ModuleEnabled.Castbar or isCasting then return end
 	isCasting = true
+	frame.SpellName:SetText(spellName)
 	timeStartCasting = GetTime()
 	castTime = Quiver_Lib_Spellbook_GetCastTime(spellName)
 	frame.Castbar:SetWidth(1)

@@ -84,7 +84,7 @@ local createUI = function()
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 	})
 	f:SetBackdropColor(0, 0, 0, 0.8)
-	f:SetBackdropBorderColor(1, 1, 1, 0.8)
+	f:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)
 
 	f.BarAutoShot:SetPoint("Center", f, "Center", 0, 0)
 	return f

@@ -71,7 +71,7 @@ end
 
 Quiver_MainMenu_Create = function()
 	local f = Quiver_UI_WithWindowTitle(
-		Quiver_UI_Dialog(300, 330), "Quiver")
+		Quiver_UI_Dialog(300, 350), "Quiver")
 	f:Hide()
 
 	local btnCloseTop = Quiver_Component_Button({
