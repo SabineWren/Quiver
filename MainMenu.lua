@@ -89,7 +89,9 @@ Quiver_MainMenu_Create = function()
 	yOffset = yOffset - createCheckboxesModuleEnabled(f, yOffset, QUIVER.Size.Gap)
 	yOffset = yOffset - QUIVER.Size.Gap
 
-	yOffset = yOffset - Quiver_Module_TranqAnnouncer_CreateMenuOptions(f, yOffset, QUIVER.Size.Gap)
+	local tranqOptions = Quiver_Module_TranqAnnouncer_CreateMenuOptions(f, QUIVER.Size.Gap)
+	tranqOptions:SetPoint("Top", f, "Top", 0, yOffset)
+	yOffset = yOffset - tranqOptions:GetHeight()
 	yOffset = yOffset - QUIVER.Size.Gap
 
 	local margin = QUIVER.Size.Gap + QUIVER.Size.Border

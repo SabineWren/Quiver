@@ -23,9 +23,9 @@ Events\Spellcast.lua
 Components\Button.lua
 Components\CheckButton.lua
 Components\Dialog.lua
+Components\EditBox.lua
 Components\TitleBox.lua
 
-UI\EditBox.lua
 UI\FrameMeta.lua
 
 Module\AutoShotCastbar.lua

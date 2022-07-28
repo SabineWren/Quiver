@@ -1,20 +1,17 @@
 local GAP = QUIVER.Size.Gap
 
-Quiver_UI_EditBox = function(p)
-	local parent, yOffset, tooltipReset, textValue =
-		p.Parent, p.YOffset, p.TooltipReset, p.Text
+Quiver_Components_EditBox = function(parent, p)
+	tooltipReset = p.TooltipReset
 
 	local f = CreateFrame("EditBox", nil, parent)
 	local fMarginLeft = QUIVER.Size.Border + GAP + QUIVER.Size.Icon + GAP
 	local fMarginRight = QUIVER.Size.Border + GAP
-	f:SetText(textValue)
 	f:SetTextColor(.5, 1, .8, 1)
 	f:SetJustifyH("Left")
 	f:SetMaxLetters(50)
 	f:SetHeight(25)
 	f:SetPoint("Left", parent, "Left", fMarginLeft, 0)
 	f:SetPoint("Right", parent, "Right", -fMarginRight, 0)
-	f:SetPoint("Top", parent, "Top", 0, yOffset)
 	f:SetFontObject(GameFontNormalSmall)
 
 	f:SetBackdrop({
@@ -34,7 +31,9 @@ Quiver_UI_EditBox = function(p)
 	f:SetScript("OnEnterPressed", function() f:ClearFocus() end)
 
 	f.BtnReset = Quiver_Component_Button({
-		Parent=f, Size=QUIVER.Size.Icon, TooltipText=tooltipReset })
+		Parent=f, Size=QUIVER.Size.Icon,
+		TooltipText=tooltipReset,
+	})
 	f.BtnReset.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
 	f.BtnReset:SetPoint("Right", f, "Left", -GAP, 0)
 	return f

@@ -126,9 +126,9 @@ Quiver_Module_Castbar = {
 		frameMeta = savedFrameMeta
 		local defaultWidth = 240
 		frameMeta.W = frameMeta.W or defaultWidth
-		frameMeta.H = frameMeta.H or 14
+		frameMeta.H = frameMeta.H or 20
 		frameMeta.X = frameMeta.X or (GetScreenWidth() - defaultWidth) / 2
-		frameMeta.Y = frameMeta.Y or -(GetScreenHeight() - 240)
+		frameMeta.Y = frameMeta.Y or -1 * GetScreenHeight() + 246
 	end,
 	OnPersistSavedVariables = function() return {} end,
 	OnEnable = onEnable,
