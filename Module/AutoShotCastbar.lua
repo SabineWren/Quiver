@@ -243,7 +243,7 @@ Quiver_Module_AutoShotCastbar = {
 		frameMeta = savedFrameMeta
 		frameMeta.W = frameMeta.W or 240
 		frameMeta.H = frameMeta.H or 14
-		frameMeta.Y = frameMeta.Y or -166
+		frameMeta.Y = frameMeta.Y or -144
 	end,
 	OnPersistSavedVariables = function() return {} end,
 	OnEnable = onEnable,
