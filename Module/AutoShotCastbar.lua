@@ -97,8 +97,7 @@ local onSpellcast = function(spellName)
 	if isShooting and (not isReloading) then
 		timeStartShootOrReload = GetTime()
 	end
-	timeStartCasting = GetTime()
-	castTime = Quiver_Lib_Spellbook_GetCastTime(spellName)
+	castTime, timeStartCasting = Quiver_Lib_Spellbook_GetCastTime(spellName)
 end
 Quiver_Events_Spellcast_Subscribe(onSpellcast)
 

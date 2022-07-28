@@ -52,7 +52,9 @@ Quiver_Lib_Spellbook_GetCastTime = function(spellName)
 	local baseTime = HUNTER_SPELLS[spellName]
 	local _,_, latency = GetNetStats()
 	local speedMultiplier = getRangedAttackSpeedMultiplier()
-	return latency / 1000 + baseTime / speedMultiplier
+	local start = GetTime() + latency / 1000
+	local casttime = baseTime / speedMultiplier
+	return casttime, start
 end
 
 Quiver_Lib_Spellbook_TryGetCastableShot = function(actionTexture)

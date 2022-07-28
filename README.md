@@ -13,8 +13,8 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 - TODO customize colours
 
 ### Castbar
-- If you use pfUI, Quiver includes a module that adds castbar support for Trueshot.
-- Non-pfUI castbar coming soon!
+- Works for Aimed Shot, Multi-Shot, and Trueshot
+- Quiver also includes a module that adds pfUI castbar support for Trueshot
 
 ### Range Indicator
 - Based on [Egnar](https://github.com/Medeah/Egnar)
