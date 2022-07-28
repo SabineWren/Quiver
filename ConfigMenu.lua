@@ -69,7 +69,7 @@ local createCheckboxesModuleEnabled = function(f, yOffset, gap)
 	return height - gap
 end
 
-Quiver_MainMenu_Create = function()
+Quiver_ConfigMenu_Create = function()
 	local f = Quiver_Components_Dialog(300, QUIVER.Size.Border)
 
 	local titleBox = Quiver_Components_TitleBox(f, "Quiver")

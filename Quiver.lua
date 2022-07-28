@@ -7,7 +7,11 @@ _G.Quiver_Modules = {
 }
 
 local savedVariablesRestore = function()
-	Quiver_Store_Restore()
+	Quiver_Store = Quiver_Store or {}
+	Quiver_Store.IsLockedFrames = Quiver_Store.IsLockedFrames == true
+	Quiver_Store.ModuleEnabled = Quiver_Store.ModuleEnabled or {}
+	Quiver_Store.ModuleStore = Quiver_Store.ModuleStore or {}
+	Quiver_Store.FrameMeta = Quiver_Store.FrameMeta or {}
 	for _k, v in _G.Quiver_Modules do
 		Quiver_Store.ModuleEnabled[v.Id] = Quiver_Store.ModuleEnabled[v.Id] ~= false
 		Quiver_Store.ModuleStore[v.Id] = Quiver_Store.ModuleStore[v.Id] or {}
@@ -27,8 +31,8 @@ local addSlashCommands = function()
 	SLASH_QUIVER2 = "/quiver"
 	_, cl = UnitClass("player")
 	if cl == "HUNTER" then
-		local frameMainMenu = Quiver_MainMenu_Create()
-		SlashCmdList["QUIVER"] = function(_args, _box) frameMainMenu:Show() end
+		local frameConfigMenu = Quiver_ConfigMenu_Create()
+		SlashCmdList["QUIVER"] = function(_args, _box) frameConfigMenu:Show() end
 	else
 		SlashCmdList["QUIVER"] = function(_args, _box)
 			DEFAULT_CHAT_FRAME:AddMessage("Quiver is for hunters", 1, 0, 0)

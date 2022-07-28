@@ -64,7 +64,11 @@ Open an issue or PM me on Discord:
 ## Localization
 Quiver looks up spells by name, which change with client locale. I use Wowhead to find the spell names for each locale. Theoretically, Quiver should work with a `/Locale` file matching your client, but the translations aren't complete.
 
-# Module Lifecycle Hooks
+## Custom Events
+Files in `/Events` hook into game functions. Use these events if possible instead of declaring your own hooks.
+- Spellcast: CastSpell, CastSpellByName, UseAction
+
+## Module Lifecycle Hooks
 The UI code is a mess right now, but soon there will be an event for attaching a frame to the Main Menu.
 ```
 OnRestoreSavedVariables

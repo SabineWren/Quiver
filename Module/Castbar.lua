@@ -67,9 +67,10 @@ local displayTime = function(current)
 	frame.SpellTime:SetText(string.format("%.1f / %.1f", current, castTime))
 end
 local onSpellcast = function(spellName)
-	if not Quiver_Store.ModuleEnabled.Castbar or isCasting then return end
+	if not Quiver_Store.ModuleEnabled.Castbar then return end--  or isCasting
 	isCasting = true
 	castTime, timeStartCasting = Quiver_Lib_Spellbook_GetCastTime(spellName)
+	--DEFAULT_CHAT_FRAME:AddMessage("Casting " .. spellName .. ": " .. castTime)
 	frame.SpellName:SetText(spellName)
 	frame.Castbar:SetWidth(1)
 	displayTime(0)
@@ -95,7 +96,7 @@ end
 local handleEvent = function()
 	if event == "SPELLCAST_DELAYED" then
 		castTime = castTime + arg1 / 1000
-	elseif event == "SPELLCAST_STOP" then
+	else
 		isCasting = false
 		if Quiver_Store.IsLockedFrames then frame:Hide() end
 	end
@@ -103,8 +104,10 @@ end
 
 -- ************ Initialization ************
 local events = {
-	"SPELLCAST_STOP",
 	"SPELLCAST_DELAYED",
+	"SPELLCAST_FAILED",
+	"SPELLCAST_INTERRUPTED",
+	"SPELLCAST_STOP",
 }
 local onEnable = function()
 	if frame == nil then frame = createUI(); updateCastbarSize() end

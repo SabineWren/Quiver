@@ -12,7 +12,6 @@ Locale\ruRU.lua
 Locale\zhCN.lua
 
 Constants.lua
-Store.lua
 Lib\Print.lua
 Lib\Spellbook.lua
 Lib\ActionBar.lua
@@ -34,5 +33,5 @@ Module\RangeIndicator.lua
 Module\pfUI-TurtleHunter.lua
 Module\TranqAnnouncer.lua
 
-MainMenu.lua
+ConfigMenu.lua
 Quiver.lua
