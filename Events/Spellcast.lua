@@ -5,12 +5,15 @@ local getIsBusy = function()
 	return false
 end
 
-local spellcastCallbacks = {}
+local callbacksCastableShot = {}
 local publish = function(spellname)
-	for _i, v in spellcastCallbacks do v(spellname) end
+	for _i, v in callbacksCastableShot do v(spellname) end
 end
-Quiver_Events_Spellcast_Subscribe = function(callback)
-	tinsert(spellcastCallbacks, callback)
+Quiver_Events_Spellcast_Subscribe = function(moduleId, callback)
+	callbacksCastableShot[moduleId] = callback
+end
+Quiver_Events_Spellcast_Unsubscribe = function(moduleId)
+	callbacksCastableShot[moduleId] = nil
 end
 
 local super = {
@@ -18,10 +21,10 @@ local super = {
 	CastSpellByName = CastSpellByName,
 	UseAction = UseAction,
 }
-CastSpell = function(spellId, spellbookTabNum)
-	super.CastSpell(spellId, spellbookTabNum)
-	local spellName, _rank = GetSpellName(spellId, spellbookTabNum)
+CastSpell = function(spellIndex, spellbookTabNum)
+	super.CastSpell(spellIndex, spellbookTabNum)
 	if not getIsBusy() then return end
+	local spellName, _rank = GetSpellName(spellIndex, spellbookTabNum)
 	local isShot = Quiver_Lib_Spellbook_GetIsSpellCastableShot(spellName)
 	if isShot then publish(spellName) end
 end

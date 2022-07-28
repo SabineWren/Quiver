@@ -58,7 +58,8 @@ end
 
 Quiver_Lib_Spellbook_TryGetCastableShot = function(actionTexture)
 	for k, _v in HUNTER_SPELLS do
-		if actionTexture == Quiver_Lib_Spellbook_TryFindTexture(k) then return k end
+		local spellTexture = Quiver_Lib_Spellbook_TryFindTexture(k)
+		if actionTexture == spellTexture then return k end
 	end
 	return nil
 end

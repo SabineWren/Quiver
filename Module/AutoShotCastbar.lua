@@ -1,3 +1,4 @@
+local MODULE_ID = "AutoShotCastbar"
 local frameMeta = {}
 local frame = nil
 local maxBarWidth = 0
@@ -92,14 +93,12 @@ end
 
 -- ************ Custom Event Handlers ************
 local onSpellcast = function(spellName)
-	if not Quiver_Store.ModuleEnabled.AutoShotCastbar or isCasting then return end
 	isCasting = true
 	if isShooting and (not isReloading) then
 		timeStartShootOrReload = GetTime()
 	end
 	castTime, timeStartCasting = Quiver_Lib_Spellbook_GetCastTime(spellName)
 end
-Quiver_Events_Spellcast_Subscribe(onSpellcast)
 
 -- ************ Frame Update Handlers ************
 local updateShooting = function()
@@ -197,7 +196,7 @@ local handleEvent = function()
 end
 
 -- ************ Initialization ************
-local events = {
+local EVENTS = {
 	"ITEM_LOCK_CHANGED",
 	"START_AUTOREPEAT_SPELL", "STOP_AUTOREPEAT_SPELL",
 	"SPELLCAST_STOP",
@@ -207,16 +206,15 @@ local onEnable = function()
 	if frame == nil then frame = createUI(); updateAllSizes() end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
-	for _k, e in events do frame:RegisterEvent(e) end
+	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	frame:Show()
-	if Quiver_Store.IsLockedFrames
-	then frame:SetAlpha(0)
-	else frame:SetAlpha(1)
-	end
+	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) else frame:SetAlpha(1) end
+	Quiver_Events_Spellcast_Subscribe(MODULE_ID, onSpellcast)
 end
 local onDisable = function()
+	Quiver_Events_Spellcast_Unsubscribe(MODULE_ID)
 	frame:Hide()
-	for _k, e in events do frame:UnregisterEvent(e) end
+	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 
 local onInterfaceLock = function()
@@ -231,7 +229,7 @@ end
 Quiver_Module_AutoShotCastbar_Resize = updateAllSizes
 
 Quiver_Module_AutoShotCastbar = {
-	Id = "AutoShotCastbar",
+	Id = MODULE_ID,
 	OnRestoreSavedVariables = function(savedVariables, savedFrameMeta)
 		frameMeta = savedFrameMeta
 		frameMeta.W = frameMeta.W or 240

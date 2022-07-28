@@ -96,18 +96,18 @@ local handleEvent = function()
 end
 
 -- ************ Initialization ************
-local events = { "PLAYER_TARGET_CHANGED", "UNIT_FACTION" }
+local EVENTS = { "PLAYER_TARGET_CHANGED", "UNIT_FACTION" }
 local onEnable = function()
 	if frame == nil then frame, fontString = createUI() end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
-	for _k, e in events do frame:RegisterEvent(e) end
+	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	if Quiver_Store.IsLockedFrames then handleEvent() else frame:Show() end
 end
 
 local onDisable = function()
 	frame:Hide()
-	for _k, e in events do frame:UnregisterEvent(e) end
+	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 
 Quiver_Module_RangeIndicator = {

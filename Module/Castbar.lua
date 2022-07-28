@@ -1,3 +1,4 @@
+local MODULE_ID = "Castbar"
 local frameMeta = {}
 local frame = nil
 local maxBarWidth = 0
@@ -67,7 +68,6 @@ local displayTime = function(current)
 	frame.SpellTime:SetText(string.format("%.1f / %.1f", current, castTime))
 end
 local onSpellcast = function(spellName)
-	if not Quiver_Store.ModuleEnabled.Castbar then return end
 	isCasting = true
 	castTime, timeStartCasting = Quiver_Lib_Spellbook_GetCastTime(spellName)
 	frame.SpellName:SetText(spellName)
@@ -75,7 +75,6 @@ local onSpellcast = function(spellName)
 	displayTime(0)
 	frame:Show()
 end
-Quiver_Events_Spellcast_Subscribe(onSpellcast)
 
 -- ************ Frame Update Handlers ************
 local handleUpdate = function()
@@ -102,7 +101,7 @@ local handleEvent = function()
 end
 
 -- ************ Initialization ************
-local events = {
+local EVENTS = {
 	"SPELLCAST_DELAYED",
 	"SPELLCAST_FAILED",
 	"SPELLCAST_INTERRUPTED",
@@ -113,17 +112,19 @@ local onEnable = function()
 	updateCastbarSize()
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
-	for _k, e in events do frame:RegisterEvent(e) end
+	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	if Quiver_Store.IsLockedFrames then frame:Hide() else frame:Show() end
 	if not Quiver_Store.IsLockedFrames then frame:Show() end
+	Quiver_Events_Spellcast_Subscribe(MODULE_ID, onSpellcast)
 end
 local onDisable = function()
+	Quiver_Events_Spellcast_Unsubscribe(MODULE_ID)
 	frame:Hide()
-	for _k, e in events do frame:UnregisterEvent(e) end
+	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 
 Quiver_Module_Castbar = {
-	Id = "Castbar",
+	Id = MODULE_ID,
 	OnRestoreSavedVariables = function(savedVariables, savedFrameMeta)
 		frameMeta = savedFrameMeta
 		local defaultWidth = 240
