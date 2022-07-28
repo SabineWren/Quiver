@@ -99,13 +99,6 @@ end
 local events = { "PLAYER_TARGET_CHANGED", "UNIT_FACTION" }
 local onEnable = function()
 	if frame == nil then frame, fontString = createUI() end
-	-- These print warnings if they fail on first call
-	-- It's better to discover that during init than during combat
-	_ = checkActionBarDistance(QUIVER_T.Spellbook.Auto_Shot)
-	_ = checkActionBarDistance(QUIVER_T.Spellbook.Hunters_Mark)
-	_ = checkActionBarDistance(QUIVER_T.Spellbook.Scatter_Shot)
-	_ = checkActionBarDistance(QUIVER_T.Spellbook.Wing_Clip)
-
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in events do frame:RegisterEvent(e) end

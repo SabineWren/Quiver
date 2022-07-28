@@ -28,11 +28,11 @@ local gcd = (function()
 	local gcdStartTime = 0
 	return {
 		HandleSpellcast = function()
-			local cooldownStartTime, spellCD = Quiver_Lib_ActionBar_CheckGCD()
+			local cooldownStartTime, spellCD = Quiver_Lib_Spellbook_CheckGCD()
 			if spellCD == 1.5 then gcdStartTime = cooldownStartTime end
 		end,
 		CheckShotWasAuto = function()
-			local cooldownStartTime, spellCD = Quiver_Lib_ActionBar_CheckGCD()
+			local cooldownStartTime, spellCD = Quiver_Lib_Spellbook_CheckGCD()
 			-- Case 1 -- Not on GCD
 			if spellCD ~= 1.5 then return true
 			-- Case 2 -- Still on GCD from previous cast
@@ -99,7 +99,7 @@ local onSpellcast = function(spellName)
 		timeStartShootOrReload = GetTime()
 	end
 	timeStartCasting = GetTime()
-	castTime = Quiver_Lib_ActionBar_GetCastTime(spellName)
+	castTime = Quiver_Lib_Spellbook_GetCastTime(spellName)
 end
 
 local getIsBusy = function()
@@ -118,19 +118,21 @@ CastSpell = function(spellId, spellbookTabNum)
 	super.CastSpell(spellId, spellbookTabNum)
 	local spellName, _rank = GetSpellName(spellId, spellbookTabNum)
 	if not getIsBusy() then return end
-	local isShot = Quiver_Lib_ActionBar_GetIsSpellCastableShot(spellName)
+	local isShot = Quiver_Lib_Spellbook_GetIsSpellCastableShot(spellName)
 	if isShot then onSpellcast(spellName) end
 end
 CastSpellByName = function(spellName, onSelf)
 	super.CastSpellByName(spellName, onSelf)
 	if not getIsBusy() then return end
-	local isShot = Quiver_Lib_ActionBar_GetIsSpellCastableShot(spellName)
+	local isShot = Quiver_Lib_Spellbook_GetIsSpellCastableShot(spellName)
 	if isShot then onSpellcast(spellName) end
 end
 UseAction = function(slot, checkCursor, onSelf)
 	super.UseAction(slot, checkCursor, onSelf)
-	if GetActionText(slot) or not IsCurrentAction(slot) then return end
-	local spellName = Quiver_Lib_ActionBar_GetCastableShot(slot)
+	-- Raw abilities return a nil action name. Macros, items, etc. don't.
+	if GetActionText(slot) or not IsCurrentAction(slot) or GetActionText(slot) ~= nil then return end
+	local actionTexture = GetActionTexture(slot)
+	local spellName = Quiver_Lib_Spellbook_TryGetCastableShot(actionTexture)
 	if spellName ~= nil then onSpellcast(spellName) end
 end
 
@@ -176,8 +178,7 @@ local updateReloading = function()
 end
 
 local handleUpdate = function()
-	if isReloading then
-		updateReloading()
+	if isReloading then updateReloading()
 	elseif isShooting then
 		if position.CheckStandingStill() then
 			updateShooting()
@@ -256,9 +257,7 @@ end
 local onInterfaceLock = function()
 	if (not isShooting) and (not isReloading) then hideBar() end
 end
-local onInterfaceUnlock = function()
-	frame:SetAlpha(1)
-end
+local onInterfaceUnlock = function() frame:SetAlpha(1) end
 
 Quiver_Module_AutoShotCastbar_UpdateFamePosition = function()
 	frame:SetPoint("Center", 0, frameMeta.Y)

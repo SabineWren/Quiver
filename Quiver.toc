@@ -14,6 +14,7 @@ Locale\zhCN.lua
 Constants.lua
 Store.lua
 Lib\Print.lua
+Lib\Spellbook.lua
 Lib\ActionBar.lua
 Lib\IconsTextures.lua
 
@@ -27,6 +28,7 @@ UI\WindowTitle.lua
 
 Module\AutoShotCastbar.lua
 Module\RangeIndicator.lua
+Module\pfUI-TurtleHunter.lua
 Module\TranqAnnouncer.lua
 
 MainMenu.lua

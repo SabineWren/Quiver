@@ -1,39 +1,28 @@
-local cacheTexture = {}
-local tryFindTexture = function(nameSeek)
-	if cacheTexture[nameSeek] ~= nil then
-		return cacheTexture[nameSeek]
-	end
-
-	local i = 0
-	while true do
-		i = i + 1
-		local name, _rank = GetSpellName(i, BOOKTYPE_SPELL)
-		local texture = GetSpellTexture(i, BOOKTYPE_SPELL)
-		if not name then return nil end
-		if name == nameSeek then
-			cacheTexture[nameSeek] = texture
-			return texture
-		end
-	end
-end
+--[[
+DO NOT PRELOAD CACHE
+Occasionally the cache populates incorrectly at login.
+I suspect this might be from Quiver initializing before an action bar addon.
+Not sure what to do about this, since Quiver already delays initialization until "PLAYER_LOGIN".
+We probably don't need the cache for performance, but it's useful for printing spell discovery.
+]]
+local actionBarSlotCache = {}
+local requiredSpells = {}
 
 local tryFindSlot = function(texture)
+	if texture == nil then return nil end
 	for n=0,300 do
 		if HasAction(n) then
-			-- Ignore macros, items, etc. that might use the same texture
-			-- Raw abilities always return a nil action name
+			-- Raw abilities return a nil action name. Macros, items, etc. don't.
 			if GetActionText(n) == nil and GetActionTexture(n) == texture then return n end
 		end
 	end
 	return nil
 end
 
-local actionBarSlotCache = {}
-local requiredSpells = {}
 Quiver_Lib_ActionBar_FindSlot = function(println, nameSeek)
 	if actionBarSlotCache[nameSeek] ~= nil then return actionBarSlotCache[nameSeek] end
 
-	local texture = tryFindTexture(nameSeek)
+	local texture = Quiver_Lib_Spellbook_TryFindTexture(nameSeek)
 	tinsert(requiredSpells, nameSeek)
 	if texture == nil then
 		println.Warning("Can't find in spellbook: "..nameSeek)
@@ -53,108 +42,24 @@ Quiver_Lib_ActionBar_FindSlot = function(println, nameSeek)
 	return slot
 end
 
--- Every texture lookup updates the texture cache, but on slot change
--- we only care about revalidating the textures needed to run modules
-local printSpellDiscovery = function(spellName, slotOld, slotNew)
+local getIsRequiredSpell = function(spellName)
 	for _k, requiredName in requiredSpells do
-		if spellName == requiredName then
-			if slotNew > 0 then
-				Quiver_Lib_Print.Success("Discovered " .. requiredName .. " in slot " .. tostring(slotNew))
-			else
-				Quiver_Lib_Print.Warning("Lost " .. requiredName .. " from slot " .. tostring(slotOld))
-			end
-		end
+		if spellName == requiredName then return true end
 	end
+	return false
 end
 
 Quiver_Lib_ActionBar_ValidateCache = function(_slotChanged)
-	for spellName, texture in pairs(cacheTexture) do
+	for spellName, slotOld in actionBarSlotCache do
+		local texture = Quiver_Lib_Spellbook_TryFindTexture(spellName)
 		local slotNew = tryFindSlot(texture) or 0
-		local slotOld = actionBarSlotCache[spellName]
-		if slotNew ~= slotOld then
-			printSpellDiscovery(spellName, slotOld, slotNew)
-			actionBarSlotCache[spellName] = slotNew
+		actionBarSlotCache[spellName] = slotNew
+		if slotOld ~= slotNew and getIsRequiredSpell(spellName) then
+			if slotNew > 0 then
+				Quiver_Lib_Print.Success("Discovered " .. spellName .. " in slot " .. tostring(slotNew))
+			else
+				Quiver_Lib_Print.Warning("Lost " .. spellName .. " from slot " .. tostring(slotOld))
+			end
 		end
 	end
-end
-
--- Copied from HSK. Not sure how safe or performant this is
-local getSpellIndexByName = function(spellName)
-	local _schoolName, _schoolIcon, indexOffset, numEntries = GetSpellTabInfo(GetNumSpellTabs())
-	local numSpells = indexOffset + numEntries
-	local offset = 0
-	for spellIndex=numSpells, offset+1, -1 do
-		if GetSpellName(spellIndex, "BOOKTYPE_SPELL") == spellName then
-			return spellIndex;
-		end
-	end
-	return nil
-end
-Quiver_Lib_ActionBar_CheckGCD = function()
-	local spellId = getSpellIndexByName(QUIVER_T.Spellbook.Serpent_Sting)
-	if spellId ~= nil then
-	return GetSpellCooldown(spellId, "BOOKTYPE_SPELL")
-	else return 0, 0
-	end
-end
-
--- Spellcasting
--- 10% at full hp, to a max of 30% at 40% hp
--- That's a line with equation f(hp)= (130-hp) / 3, but capped at 30%
-local getTrollBerserkBonus = function()
-	local percent = UnitHealth("player") / UnitHealthMax("player")
-	return math.min(0.3, (1.30 - percent) / 3.0)
-end
-
-local getAimedShotCastTime = function()
-	local speed = 1.0
-	for i=1,QUIVER.Buff_Cap do
-		if UnitBuff("player", i) == QUIVER.Icon.CurseOfTongues then
-			speed = speed * 0.5
-		elseif UnitBuff("player", i) == QUIVER.Icon.NaxxTrinket then
-			speed = speed * 1.2
-		elseif UnitBuff("player", i) == QUIVER.Icon.Quickshots then
-			speed = speed * 1.3
-		elseif UnitBuff("player", i) == QUIVER.Icon.RapidFire then
-			speed = speed * 1.4
-		elseif UnitBuff("player", i) == QUIVER.Icon.TrollBerserk then
-			speed = speed * (1.0 + getTrollBerserkBonus())
-		end
-	end
-	return 3.0 / speed
-end
-
-Quiver_Lib_ActionBar_GetCastTime = function(spellName)
-	-- TODO lag compensation
-	-- local _,_, latency = GetNetStats()
-	local latency = 0
-
-	if spellName == QUIVER_T.Spellbook.Aimed_Shot then return getAimedShotCastTime()
-	elseif spellName == QUIVER_T.Spellbook.Multi_Shot then return 0.5
-	elseif spellName == QUIVER_T.Spellbook.Trueshot then return 1.0
-	end
-end
-
-local castableShots = {
-	QUIVER_T.Spellbook.Aimed_Shot,
-	QUIVER_T.Spellbook.Multi_Shot,
-	QUIVER_T.Spellbook.Trueshot,
-}
-Quiver_Lib_ActionBar_GetCastableShot = function(slot)
-	local actionName = GetActionText(slot)
-	-- Ignore macros, items, etc.
-	-- Raw abilities always return a nil action name
-	if actionName ~= nil then return nil end
-
-	local actionTexture = GetActionTexture(slot)
-	for _k, v in castableShots do
-		if actionTexture == tryFindTexture(v) then return v end
-	end
-	return nil
-end
-Quiver_Lib_ActionBar_GetIsSpellCastableShot = function(spellName)
-	for _k, v in castableShots do
-		if spellName == v then return true end
-	end
-	return false
 end
