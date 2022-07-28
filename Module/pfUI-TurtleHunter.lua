@@ -40,6 +40,6 @@ local pfUITurtleHunter = function()
 	end
 end
 
-if pfUI then
+if pfUI ~= nil and pfUI.RegisterModule ~= nil then
 	pfUI:RegisterModule("turtlehunter", pfUITurtleHunter)
 end
