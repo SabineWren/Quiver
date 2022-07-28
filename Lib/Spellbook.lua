@@ -51,12 +51,8 @@ end
 Quiver_Lib_Spellbook_GetCastTime = function(spellName)
 	local baseTime = HUNTER_SPELLS[spellName]
 	local _,_, latency = GetNetStats()
-	local speedMultiplier = 1.0
-	if spellName ~= QUIVER_T.Spellbook.Trueshot then
-		speedMultiplier = getRangedAttackSpeedMultiplier()
-	end
 	local start = GetTime() + latency / 1000
-	local casttime = baseTime / speedMultiplier
+	local casttime = baseTime / getRangedAttackSpeedMultiplier()
 	return casttime, start
 end
 
