@@ -5,6 +5,8 @@ otherwise each login clears all frame data for disabled addons.
 We use TopLeft origin because GetPoint() uses TopLeft
 ]]
 
+local GRIP_HEIGHT = 12
+
 -- Frames to show if and only if UI unlocked
 Quiver_UI_FrameMeta_InteractiveFrames = {}
 
@@ -19,8 +21,9 @@ local absClamp = function(vOpt, vMax)
 	end
 end
 
-local createResizeGripHandle = function(parent, meta)
-	local f = Quiver_Component_Button({ Parent=parent, Size=QUIVER.Size.Icon })
+local createResizeGripHandle = function(parent, meta, gripOptions)
+	local margin = gripOptions.GripMargin
+	local f = Quiver_Component_Button({ Parent=parent, Size=GRIP_HEIGHT })
 	if Quiver_Store.IsLockedFrames then f:Hide() else f:Show() end
 	tinsert(Quiver_UI_FrameMeta_InteractiveFrames, f)
 
@@ -30,28 +33,30 @@ local createResizeGripHandle = function(parent, meta)
 	f:SetHighlightTexture(f.HighlightTexture)
 	f.HighlightTexture:QuiverSetTexture(scale, QUIVER.Icon.GripHandle)
 
-	f:SetPoint("BottomRight", parent, "BottomRight", -2, 2)
+	f:SetPoint("BottomRight", parent, "BottomRight", -margin, margin)
 
 	parent:SetResizable(true)
 	f:SetScript("OnMouseDown", function()
 		if not Quiver_Store.IsLockedFrames then
 			parent:StartSizing("BottomRight")
+			if parent.QuiverOnResizeStart ~= nil then parent.QuiverOnResizeStart() end
 		end
 	end)
 	f:SetScript("OnMouseUp", function()
 		parent:StopMovingOrSizing()
-		meta.W = math.floor(parent:GetWidth())
-		meta.H = math.floor(parent:GetHeight())
+		meta.W = math.floor(parent:GetWidth() / 2) * 2
+		meta.H = math.floor(parent:GetHeight() / 2) * 2
 		parent:SetWidth(meta.W)
 		parent:SetHeight(meta.H)
+		if parent.QuiverOnResizeEnd ~= nil then parent.QuiverOnResizeEnd() end
 	end)
 	return f
 end
 
-Quiver_UI_FrameMeta_Customize = function(f, meta)
+Quiver_UI_FrameMeta_Customize = function(f, meta, gripOptions)
 	f:SetWidth(meta.W)
 	f:SetHeight(meta.H)
-	f:SetMinResize(QUIVER.Size.Icon, QUIVER.Size.Icon)
+	f:SetMinResize(30, GRIP_HEIGHT)
 	f:SetMaxResize(GetScreenWidth()/2, GetScreenHeight()/2)
 
 	local xMax = GetScreenWidth() - meta.W
@@ -73,5 +78,5 @@ Quiver_UI_FrameMeta_Customize = function(f, meta)
 		f:SetPoint("TopLeft", nil, "TopLeft", meta.X, meta.Y)
 	end)
 
-	f.GripHandle = createResizeGripHandle(f, meta)
+	f.GripHandle = createResizeGripHandle(f, meta, gripOptions)
 end

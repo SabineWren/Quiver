@@ -80,20 +80,19 @@ local createUI = function()
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 		edgeFile = "Interface/BUTTONS/WHITE8X8", edgeSize = borderSize,
 	})
-	f:SetBackdropColor(0, 0, 0, 0.8)
-	f:SetBackdropBorderColor(1, 1, 1, 0.8)
-
 	f.BarAutoShot:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 	})
+	f:SetBackdropColor(0, 0, 0, 0.8)
+	f:SetBackdropBorderColor(1, 1, 1, 0.8)
+
 	f.BarAutoShot:SetPoint("Center", f, "Center", 0, 0)
 	return f
 end
 
--- ************ Spell Event Handlers ************
+-- ************ Custom Event Handlers ************
 local onSpellcast = function(spellName)
-	if not Quiver_Store.ModuleEnabled.AutoShotCastbar then return end
-	if isCasting then return end
+	if not Quiver_Store.ModuleEnabled.AutoShotCastbar or isCasting then return end
 	isCasting = true
 	if isShooting and (not isReloading) then
 		timeStartShootOrReload = GetTime()
@@ -236,7 +235,7 @@ Quiver_Module_AutoShotCastbar = {
 	Id = "AutoShotCastbar",
 	OnRestoreSavedVariables = function(savedVariables, savedFrameMeta)
 		frameMeta = savedFrameMeta
-		frameMeta.W = frameMeta.W or 220
+		frameMeta.W = frameMeta.W or 240
 		frameMeta.H = frameMeta.H or 14
 		frameMeta.Y = frameMeta.Y or -166
 	end,

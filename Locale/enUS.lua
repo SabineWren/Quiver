@@ -9,10 +9,12 @@ QUIVER_T = {
 	DefaultTranqMiss = "*** MISSED Tranq Shot ***",
 	ModuleName = {
 		AutoShotCastbar = "Auto Shot castbar",
+		Castbar = "Castbar",
 		RangeIndicator = "Range Indicator",
 		TranqAnnouncer = "Tranq Shot Announcer",
 	},
 	ModuleTooltip = {
+		Castbar = "Shows Aimed Shot, Multi-Shot, and Trueshot",
 		RangeIndicator = "Shows when abilities are in range. Requires spellbook abilities placed somewhere on your action bars.",
 		TranqAnnouncer = "Announces in /Raid chat when your tranquilizing shot hits or misses a target.",
 	},

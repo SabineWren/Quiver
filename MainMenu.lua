@@ -134,7 +134,7 @@ Quiver_MainMenu_Create = function()
 
 	local heightSlider = createSlider(f, {
 		Padding=margin, Y=yOffset,
-		Min=10, Max=25,
+		Min=12, Max=25,
 		Value=meta.H,
 	})
 	heightSlider:SetScript("OnValueChanged", function()

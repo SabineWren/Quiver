@@ -12,7 +12,7 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 - Works with Trueshot
 - TODO customize colours
 
-### Cast Bar
+### Castbar
 - If you use pfUI, Quiver includes a module that adds castbar support for Trueshot.
 - Non-pfUI castbar coming soon!
 
@@ -90,6 +90,7 @@ Called every time user unlocks the UI.
 Stub for new modules
 ```
 Quiver_Module_<ModuleName> = {
+	Id = "<ModuleName>",
 	OnRestoreSavedVariables = function(savedVariables, savedFrameMeta) return nil end,
 	OnPersistSavedVariables = function() return {} end,
 	OnEnable = function() return nil end,

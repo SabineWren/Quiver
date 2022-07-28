@@ -8,7 +8,7 @@ local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	if Quiver_Store.IsLockedFrames then f:Hide() end
 
-	Quiver_UI_FrameMeta_Customize(f, frameMeta)
+	Quiver_UI_FrameMeta_Customize(f, frameMeta, { GripMargin=4 })
 
 	f:SetFrameStrata("LOW")
 	f:SetBackdrop({

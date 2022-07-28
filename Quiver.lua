@@ -1,6 +1,7 @@
 _G = _G or getfenv()
 _G.Quiver_Modules = {
 	Quiver_Module_AutoShotCastbar,
+	Quiver_Module_Castbar,
 	Quiver_Module_RangeIndicator,
 	Quiver_Module_TranqAnnouncer,
 }
