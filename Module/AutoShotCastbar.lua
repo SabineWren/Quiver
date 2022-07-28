@@ -154,6 +154,9 @@ local handleUpdate = function()
 end
 
 -- ************ Event Handlers ************
+-- This got unexpectedly complicated, and triggers reload from moving ammo in inventory.
+-- TODO As an alternative to "ITEM_LOCK_CHANGED", we could parse the combat log for
+-- player Auto Shot and trigger a custom event. The other events are much more reliable.
 local handleEvent = function()
 	if event == "SPELLCAST_DELAYED" then
 		castTime = castTime + arg1 / 1000
@@ -192,6 +195,10 @@ local handleEvent = function()
 		-- Else Fired Instant Shot
 		-- Or was an inventory event such as looting or moving an item
 		end
+	-- "SPELLCAST_FAILED", "SPELLCAST_INTERRUPTED"
+	-- Rare edge case from spell interrupt.
+	else
+		isCasting = false
 	end
 end
 
@@ -199,8 +206,10 @@ end
 local EVENTS = {
 	"ITEM_LOCK_CHANGED",
 	"START_AUTOREPEAT_SPELL", "STOP_AUTOREPEAT_SPELL",
-	"SPELLCAST_STOP",
 	"SPELLCAST_DELAYED",
+	"SPELLCAST_FAILED",
+	"SPELLCAST_INTERRUPTED",
+	"SPELLCAST_STOP",
 }
 local onEnable = function()
 	if frame == nil then frame = createUI(); updateAllSizes() end
