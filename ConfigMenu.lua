@@ -1,18 +1,3 @@
-local setFrameLock = function(isChecked)
-	Quiver_Store.IsLockedFrames = isChecked
-	if Quiver_Store.IsLockedFrames then
-		for _k, f in Quiver_UI_FrameMeta_InteractiveFrames do f:Hide() end
-		for _k, v in _G.Quiver_Modules do
-			if Quiver_Store.ModuleEnabled[v.Id] then v.OnInterfaceLock() end
-		end
-	else
-		for _k, f in Quiver_UI_FrameMeta_InteractiveFrames do f:Show() end
-		for _k, v in _G.Quiver_Modules do
-			if Quiver_Store.ModuleEnabled[v.Id] then v.OnInterfaceUnlock() end
-		end
-	end
-end
-
 local createIconBtnLock = function(parent)
 	local f = Quiver_Component_Button({
 		Parent=parent, Size=QUIVER.Size.Icon, TooltipText="Lock/Unlock Frames" })
@@ -24,7 +9,7 @@ local createIconBtnLock = function(parent)
 	end
 	updateTexture()
 	f:SetScript("OnClick", function(_self)
-		setFrameLock(not Quiver_Store.IsLockedFrames)
+		Quiver_Event_FrameLock_Set(not Quiver_Store.IsLockedFrames)
 		updateTexture()
 	end)
 	return f
@@ -55,7 +40,7 @@ local createCheckboxesModuleEnabled = function(f, yOffset, gap)
 		local isEnabled = Quiver_Store.ModuleEnabled[v.Id]
 		local label = QUIVER_T.ModuleName[v.Id]
 		local tooltip = QUIVER_T.ModuleTooltip[v.Id]
-		local checkbutton = Quiver_Components_CheckButton({
+		local checkbutton = Quiver_Component_CheckButton({
 			Parent = f,
 			Y = yOffset - height,
 			IsChecked = isEnabled, Label = label, Tooltip = tooltip,
@@ -70,9 +55,9 @@ local createCheckboxesModuleEnabled = function(f, yOffset, gap)
 end
 
 Quiver_ConfigMenu_Create = function()
-	local f = Quiver_Components_Dialog(300, QUIVER.Size.Border)
+	local f = Quiver_Component_Dialog(300, QUIVER.Size.Border)
 
-	local titleBox = Quiver_Components_TitleBox(f, "Quiver")
+	local titleBox = Quiver_Component_TitleBox(f, "Quiver")
 	titleBox:SetPoint("Center", f, "Top", 0, -10)
 
 	local btnCloseTop = Quiver_Component_Button({

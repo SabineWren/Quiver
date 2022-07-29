@@ -8,7 +8,8 @@ local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	if Quiver_Store.IsLockedFrames then f:Hide() end
 
-	Quiver_UI_FrameMeta_Customize(f, frameMeta, { GripMargin=4 })
+	Quiver_Event_FrameLock_MakeMoveable(f, frameMeta)
+	Quiver_Event_FrameLock_MakeResizeable(f, frameMeta, { GripMargin=4 })
 
 	f:SetFrameStrata("LOW")
 	f:SetBackdrop({
@@ -56,8 +57,8 @@ local render = function(colour, text)
 	frame:SetBackdropColor(r, g, b, a)
 	frame:SetBackdropBorderColor(r, g, b, a)
 	if not Quiver_Store.IsLockedFrames then
-		frame.GripHandle:GetNormalTexture():SetVertexColor(r, g, b)
-		frame.GripHandle:GetHighlightTexture():SetVertexColor(r+0.3, g-0.1, b+0.3)
+		frame.QuiverGripHandle:GetNormalTexture():SetVertexColor(r, g, b)
+		frame.QuiverGripHandle:GetHighlightTexture():SetVertexColor(r+0.3, g-0.1, b+0.3)
 	end
 end
 local showRange = {

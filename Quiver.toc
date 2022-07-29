@@ -17,6 +17,7 @@ Lib\Spellbook.lua
 Lib\ActionBar.lua
 Lib\IconsTextures.lua
 
+Events\FrameLock.lua
 Events\Spellcast.lua
 
 Components\Button.lua
@@ -25,13 +26,11 @@ Components\Dialog.lua
 Components\EditBox.lua
 Components\TitleBox.lua
 
-UI\FrameMeta.lua
-
-Module\AutoShotCastbar.lua
-Module\Castbar.lua
-Module\RangeIndicator.lua
-Module\pfUI-TurtleHunter.lua
-Module\TranqAnnouncer.lua
+Modules\AutoShotCastbar.lua
+Modules\Castbar.lua
+Modules\RangeIndicator.lua
+Modules\pfUI-TurtleHunter.lua
+Modules\TranqAnnouncer.lua
 
 ConfigMenu.lua
 Quiver.lua

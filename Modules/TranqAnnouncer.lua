@@ -27,7 +27,7 @@ end
 Quiver_Module_TranqAnnouncer_CreateMenuOptions = function(parent, gap)
 	local f = CreateFrame("Frame", nil, parent)
 
-	local editHit = Quiver_Components_EditBox(f,
+	local editHit = Quiver_Component_EditBox(f,
 		{ TooltipReset="Reset Hit Message to Default" })
 	editHit:SetText(store.MsgTranqHit)
 	editHit:SetScript("OnTextChanged",
@@ -35,7 +35,7 @@ Quiver_Module_TranqAnnouncer_CreateMenuOptions = function(parent, gap)
 	editHit.BtnReset:SetScript("OnClick",
 		function() editHit:SetText(QUIVER_T.DefaultTranqHit) end)
 
-	local editMiss = Quiver_Components_EditBox(f,
+	local editMiss = Quiver_Component_EditBox(f,
 		{ TooltipReset="Reset Miss Message to Default" })
 	editMiss:SetText(store.MsgTranqMiss)
 	editMiss:SetScript("OnTextChanged",

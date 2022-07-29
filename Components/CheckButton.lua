@@ -1,4 +1,4 @@
-Quiver_Components_CheckButton = function(p)
+Quiver_Component_CheckButton = function(p)
 	local parent, y, isChecked, label, tooltip, onClick =
 		p.Parent, p.Y, p.IsChecked, p.Label, p.Tooltip, p.OnClick
 

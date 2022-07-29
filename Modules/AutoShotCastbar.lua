@@ -205,11 +205,12 @@ end
 -- ************ Initialization ************
 local EVENTS = {
 	"ITEM_LOCK_CHANGED",
-	"START_AUTOREPEAT_SPELL", "STOP_AUTOREPEAT_SPELL",
 	"SPELLCAST_DELAYED",
 	"SPELLCAST_FAILED",
 	"SPELLCAST_INTERRUPTED",
 	"SPELLCAST_STOP",
+	"START_AUTOREPEAT_SPELL",
+	"STOP_AUTOREPEAT_SPELL",
 }
 local onEnable = function()
 	if frame == nil then frame = createUI(); updateAllSizes() end
@@ -218,10 +219,10 @@ local onEnable = function()
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	frame:Show()
 	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) else frame:SetAlpha(1) end
-	Quiver_Events_Spellcast_Subscribe(MODULE_ID, onSpellcast)
+	Quiver_Event_Spellcast_Subscribe(MODULE_ID, onSpellcast)
 end
 local onDisable = function()
-	Quiver_Events_Spellcast_Unsubscribe(MODULE_ID)
+	Quiver_Event_Spellcast_Unsubscribe(MODULE_ID)
 	frame:Hide()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end

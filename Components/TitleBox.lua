@@ -1,4 +1,4 @@
-Quiver_Components_TitleBox = function(parent, titleText)
+Quiver_Component_TitleBox = function(parent, titleText)
 	local f = CreateFrame("Frame", nil, parent)
 	local fs = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	fs:SetAllPoints(f)

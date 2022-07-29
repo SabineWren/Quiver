@@ -9,10 +9,10 @@ local callbacksCastableShot = {}
 local publish = function(spellname)
 	for _i, v in callbacksCastableShot do v(spellname) end
 end
-Quiver_Events_Spellcast_Subscribe = function(moduleId, callback)
+Quiver_Event_Spellcast_Subscribe = function(moduleId, callback)
 	callbacksCastableShot[moduleId] = callback
 end
-Quiver_Events_Spellcast_Unsubscribe = function(moduleId)
+Quiver_Event_Spellcast_Unsubscribe = function(moduleId)
 	callbacksCastableShot[moduleId] = nil
 end
 

@@ -1,4 +1,4 @@
-Quiver_Components_Dialog = function(width, border)
+Quiver_Component_Dialog = function(width, border)
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:Hide()
 	f:SetWidth(width)

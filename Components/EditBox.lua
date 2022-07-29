@@ -1,6 +1,6 @@
 local GAP = QUIVER.Size.Gap
 
-Quiver_Components_EditBox = function(parent, p)
+Quiver_Component_EditBox = function(parent, p)
 	tooltipReset = p.TooltipReset
 
 	local f = CreateFrame("EditBox", nil, parent)
