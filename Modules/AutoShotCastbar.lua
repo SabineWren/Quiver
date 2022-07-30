@@ -73,6 +73,7 @@ local updateAllSizes = function()
 end
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
+	f:SetPoint("TopLeft", frameMeta.X, frameMeta.Y)
 	f:SetFrameStrata("HIGH")
 	f.BarAutoShot = CreateFrame("Frame", nil, f)
 
@@ -89,8 +90,11 @@ local createUI = function()
 	f.BarAutoShot:SetPoint("Center", f, "Center", 0, 0)
 
 	Quiver_Event_FrameLock_MakeMoveable(f, frameMeta)
-	Quiver_Event_FrameLock_MakeResizeable(f, frameMeta,
-		{ GripMargin=0, OnResizeEnd=updateAllSizes })
+	Quiver_Event_FrameLock_MakeResizeable(f, frameMeta, {
+		GripMargin=0,
+		OnResizeEnd=updateAllSizes,
+		IsCenterX=true,
+	})
 	return f
 end
 
@@ -235,17 +239,15 @@ local onInterfaceLock = function()
 end
 local onInterfaceUnlock = function() frame:SetAlpha(1) end
 
-Quiver_Module_AutoShotCastbar_UpdateFamePosition = function()
-	frame:SetPoint("Center", 0, frameMeta.Y)
-end
-
 Quiver_Module_AutoShotCastbar = {
 	Id = MODULE_ID,
 	OnRestoreSavedVariables = function(savedVariables, savedFrameMeta)
 		frameMeta = savedFrameMeta
-		frameMeta.W = frameMeta.W or 240
+		local defaultWidth = 240
+		frameMeta.W = frameMeta.W or defaultWidth
 		frameMeta.H = frameMeta.H or 14
-		frameMeta.Y = frameMeta.Y or -144
+		frameMeta.X = frameMeta.X or (GetScreenWidth() - defaultWidth) / 2
+		frameMeta.Y = frameMeta.Y or -1 * GetScreenHeight() + 252
 	end,
 	OnPersistSavedVariables = function() return {} end,
 	OnEnable = onEnable,

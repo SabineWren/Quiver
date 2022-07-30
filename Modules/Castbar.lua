@@ -61,8 +61,11 @@ local createUI = function()
 	centerVertically(f.SpellName)
 
 	Quiver_Event_FrameLock_MakeMoveable(f, frameMeta)
-	Quiver_Event_FrameLock_MakeResizeable(f, frameMeta,
-		{ GripMargin=0, OnResizeEnd=updateCastbarSize })
+	Quiver_Event_FrameLock_MakeResizeable(f, frameMeta, {
+		GripMargin=0,
+		OnResizeEnd=updateCastbarSize,
+		IsCenterX=true,
+	})
 	return f
 end
 

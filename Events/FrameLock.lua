@@ -95,7 +95,18 @@ Quiver_Event_FrameLock_MakeMoveable = function(f, meta)
 end
 
 Quiver_Event_FrameLock_MakeResizeable = function(frame, meta, args)
-	local margin, onResizeEnd = args.GripMargin, args.OnResizeEnd
+	local margin, onResizeEnd, isCenterX = args.GripMargin, args.OnResizeEnd, args.IsCenterX
+
+	if isCenterX then
+		frame:SetScript("OnSizeChanged", function()
+			local wOld = meta.W
+			local delta = frame:GetWidth() - wOld
+			meta.W = wOld + 2 * delta
+			meta.X = meta.X - delta
+			frame:SetWidth(meta.W)
+			frame:SetPoint("TopLeft", meta.X, meta.Y)
+		end)
+	end
 
 	local handle = Quiver_Component_Button({ Parent=frame, Size=GRIP_HEIGHT })
 	addFrameResizable(frame, handle)
@@ -113,8 +124,8 @@ Quiver_Event_FrameLock_MakeResizeable = function(frame, meta, args)
 	end)
 	handle:SetScript("OnMouseUp", function()
 		frame:StopMovingOrSizing()
-		meta.W = math.floor(frame:GetWidth())
-		meta.H = math.floor(frame:GetHeight())
+		meta.W = math.floor(frame:GetWidth() + 0.5)
+		meta.H = math.floor(frame:GetHeight() + 0.5)
 		frame:SetWidth(meta.W)
 		frame:SetHeight(meta.H)
 		if onResizeEnd ~= nil then onResizeEnd() end
