@@ -1,5 +1,9 @@
 QUIVER = {
 	Buff_Cap = 32,
+	Colour = {
+		AutoAttackDefaultShoot = { 1, 1, 0 },
+		AutoAttackDefaultReload = { 1, 0, 0 },
+	},
 	Size = {
 		Border = 12,
 		Button = 22,

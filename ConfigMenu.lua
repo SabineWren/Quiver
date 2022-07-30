@@ -81,6 +81,10 @@ Quiver_ConfigMenu_Create = function()
 	yOffset = yOffset - tranqOptions:GetHeight()
 	yOffset = yOffset - QUIVER.Size.Gap
 
+	local toggleColours = Quiver_Module_AutoShotCastbar_MakeOptionsColour(f)
+	toggleColours:SetPoint("TopLeft", f, "TopLeft", PADDING, yOffset)
+	yOffset = yOffset - toggleColours:GetHeight()
+
 	f:SetHeight(-1 * yOffset + PADDING + QUIVER.Size.Button)
 
 	return f

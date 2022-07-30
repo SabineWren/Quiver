@@ -1,4 +1,5 @@
 local MODULE_ID = "AutoShotCastbar"
+local store = {}
 local frameMeta = {}
 local frame = nil
 local maxBarWidth = 0
@@ -109,7 +110,8 @@ end
 -- ************ Frame Update Handlers ************
 local updateShooting = function()
 	frame:SetAlpha(1)
-	frame.BarAutoShot:SetBackdropColor(1 ,1 ,0, 0.8)
+	local r, g, b = unpack(store.ColourShoot)
+	frame.BarAutoShot:SetBackdropColor(r, g, b, 0.8)
 	local timePassed = GetTime() - timeStartShootOrReload
 
 	if isCasting then
@@ -130,7 +132,8 @@ end
 
 local updateReloading = function()
 	frame:SetAlpha(1)
-	frame.BarAutoShot:SetBackdropColor(1, 0, 0, 0.8)
+	local r, g, b = unpack(store.ColourReload)
+	frame.BarAutoShot:SetBackdropColor(r, g, b, 0.8)
 	local timePassed = GetTime() - timeStartShootOrReload
 
 	if timePassed <= reloadTime then
@@ -239,10 +242,34 @@ local onInterfaceLock = function()
 end
 local onInterfaceUnlock = function() frame:SetAlpha(1) end
 
+-- Temporary code until I figure out how to make a colour picker
+Quiver_Module_AutoShotCastbar_MakeOptionsColour = function(parent)
+	local btn = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+	btn:SetWidth(120)
+	btn:SetHeight(QUIVER.Size.Button)
+	btn:SetText("Toggle Colours")
+	btn:SetScript("OnClick", function()
+		local shoot = QUIVER.Colour.AutoAttackDefaultShoot
+		local reload = QUIVER.Colour.AutoAttackDefaultReload
+		if store.ColourShoot[1] == shoot[1] and store.ColourShoot[2] == shoot[2] then
+			store.ColourShoot = reload
+			store.ColourReload = shoot
+		else
+			store.ColourShoot = shoot
+			store.ColourReload = reload
+		end
+	end)
+	return btn
+end
+
 Quiver_Module_AutoShotCastbar = {
 	Id = MODULE_ID,
-	OnRestoreSavedVariables = function(savedVariables) end,
-	OnPersistSavedVariables = function() return {} end,
+	OnRestoreSavedVariables = function(savedVariables)
+		store = savedVariables
+		store.ColourShoot = store.ColourShoot or QUIVER.Colour.AutoAttackDefaultShoot
+		store.ColourReload = store.ColourReload or QUIVER.Colour.AutoAttackDefaultReload
+	end,
+	OnPersistSavedVariables = function() return store end,
 	OnInitFrames = function(savedFrameMeta, options)
 		frameMeta = savedFrameMeta
 		local defaultOf = function(val, fallback)
