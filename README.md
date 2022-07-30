@@ -72,7 +72,7 @@ Files in `/Events` hook into game functions. Use these events if possible instea
 The UI code is a mess right now, but soon there will be an event for attaching a frame to the Main Menu.
 ```
 OnRestoreSavedVariables
-table -> table -> unit
+table -> unit
 GameEvent: "PLAYER_LOGIN"
 Loads one table from SavedVariables used exclusively by the module.
 Called exactly once, even for disabled modules.
@@ -84,6 +84,12 @@ unit -> table
 GameEvent: "PLAYER_LOGOUT"
 Persists state used exclusively by the module.
 Called exactly once, even for disabled modules.
+
+OnInitFrames
+table -> { IsReset: Boolean } -> unit
+Loads saved frame size and position
+Called with false after restoring saved variables
+Called with true after user resets frames
 
 OnEnable
 unit -> unit
@@ -108,11 +114,12 @@ Stub for new modules
 ```
 Quiver_Module_<ModuleName> = {
 	Id = "<ModuleName>",
-	OnRestoreSavedVariables = function(savedVariables, savedFrameMeta) return nil end,
+	OnRestoreSavedVariables = function(savedVariables) return nil end,
 	OnPersistSavedVariables = function() return {} end,
-	OnEnable = function() return nil end,
-	OnDisable = function() return nil end,
-	OnInterfaceLock = function() return nil end,
-	OnInterfaceUnlock = function() return nil end,
+	OnInitFrames = function(savedFrameMeta, options) end,
+	OnEnable = function() end,
+	OnDisable = function() end,
+	OnInterfaceLock = function() end,
+	OnInterfaceUnlock = function() end,
 }
 ```

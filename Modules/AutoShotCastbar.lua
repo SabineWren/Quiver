@@ -63,17 +63,16 @@ local ammo = (function()
 )()
 
 -- ************ UI ************
-local updateAllSizes = function()
+local updateBarSizes = function()
 	frame:SetWidth(frameMeta.W)
 	frame:SetHeight(frameMeta.H)
-	frame:SetPoint("Center", 0, frameMeta.Y)
 	maxBarWidth = frameMeta.W - 2 * borderSize
 	frame.BarAutoShot:SetWidth(1)
 	frame.BarAutoShot:SetHeight(frameMeta.H - 2 * borderSize)
 end
+
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
-	f:SetPoint("TopLeft", frameMeta.X, frameMeta.Y)
 	f:SetFrameStrata("HIGH")
 	f.BarAutoShot = CreateFrame("Frame", nil, f)
 
@@ -92,7 +91,7 @@ local createUI = function()
 	Quiver_Event_FrameLock_MakeMoveable(f, frameMeta)
 	Quiver_Event_FrameLock_MakeResizeable(f, frameMeta, {
 		GripMargin=0,
-		OnResizeEnd=updateAllSizes,
+		OnResizeEnd=updateBarSizes,
 		IsCenterX=true,
 	})
 	return f
@@ -220,7 +219,8 @@ local EVENTS = {
 	"STOP_AUTOREPEAT_SPELL",
 }
 local onEnable = function()
-	if frame == nil then frame = createUI(); updateAllSizes() end
+	if frame == nil then frame = createUI(); updateBarSizes() end
+
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
@@ -241,15 +241,23 @@ local onInterfaceUnlock = function() frame:SetAlpha(1) end
 
 Quiver_Module_AutoShotCastbar = {
 	Id = MODULE_ID,
-	OnRestoreSavedVariables = function(savedVariables, savedFrameMeta)
-		frameMeta = savedFrameMeta
-		local defaultWidth = 240
-		frameMeta.W = frameMeta.W or defaultWidth
-		frameMeta.H = frameMeta.H or 14
-		frameMeta.X = frameMeta.X or (GetScreenWidth() - defaultWidth) / 2
-		frameMeta.Y = frameMeta.Y or -1 * GetScreenHeight() + 252
-	end,
+	OnRestoreSavedVariables = function(savedVariables) end,
 	OnPersistSavedVariables = function() return {} end,
+	OnInitFrames = function(savedFrameMeta, options)
+		frameMeta = savedFrameMeta
+		local defaultOf = function(val, fallback)
+			if options.IsReset or val == nil then return fallback else return val end
+		end
+		local width = 240
+		frameMeta.W = defaultOf(frameMeta.W, width)
+		frameMeta.H = defaultOf(frameMeta.H, 14)
+		frameMeta.X = defaultOf(frameMeta.X, (GetScreenWidth() - width) / 2)
+		frameMeta.Y = defaultOf(frameMeta.Y, -1 * GetScreenHeight() + 252)
+		if options.IsReset and frame ~= nil then
+			frame:SetPoint("TopLeft", frameMeta.X, frameMeta.Y)
+			updateBarSizes()
+		end
+	end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
 	OnInterfaceLock = onInterfaceLock,

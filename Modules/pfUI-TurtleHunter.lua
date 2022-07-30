@@ -28,7 +28,6 @@ local pfUITurtleHunter = function()
 			libcast.db[player].icon = "Interface\\Icons\\Ability_Hunter_SteadyShot"
 			libcast.db[player].channel = nil
 		else
-			DEFAULT_CHAT_FRAME:AddMessage("end")
 			-- remove cast action to the database
 			libcast.db[player].cast = nil
 			libcast.db[player].rank = nil

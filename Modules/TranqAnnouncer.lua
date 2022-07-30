@@ -54,7 +54,8 @@ end
 
 Quiver_Module_TranqAnnouncer = {
 	Id = "TranqAnnouncer",
-	OnRestoreSavedVariables = function(savedVariables, savedFrameMeta)
+	OnInitFrames = function(savedFrameMeta) end,
+	OnRestoreSavedVariables = function(savedVariables)
 		store.MsgTranqHit = savedVariables.MsgTranqHit or QUIVER_T.DefaultTranqHit
 		store.MsgTranqMiss = savedVariables.MsgTranqMiss or QUIVER_T.DefaultTranqMiss
 	end,

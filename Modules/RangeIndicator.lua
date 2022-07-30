@@ -113,8 +113,11 @@ end
 
 Quiver_Module_RangeIndicator = {
 	Id = "RangeIndicator",
-	OnRestoreSavedVariables = function(savedVariables, savedFrameMeta)
+	OnRestoreSavedVariables = function(savedVariables)
 		store = savedVariables
+	end,
+	OnInitFrames = function(savedFrameMeta)
+		frameMeta = savedFrameMeta
 		frameMeta = savedFrameMeta
 		frameMeta.W = frameMeta.W or 135
 		frameMeta.H = frameMeta.H or 35
