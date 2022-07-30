@@ -15,24 +15,6 @@ local createIconBtnLock = function(parent)
 	return f
 end
 
-local createSlider = function(parent, o)
-	local padding, y, min, max, value =
-		o.Padding, o.Y, o.Min, o.Max, o.Value
-	local f = CreateFrame("Slider", nil, parent, "OptionsSliderTemplate")
-	local sliderWidth = f:GetWidth() - 2 * padding
-	f:SetWidth(sliderWidth)
-	f:SetHeight(15)
-	f:SetPoint("Left", parent, "Left", padding, 0)
-	f:SetPoint("Right", parent, "Right", -padding, 0)
-	f:SetPoint("Top", parent, "Top", 0, y)
-
-	f:SetMinMaxValues(min, max)
-	f:SetValue(value)
-	-- slider:SetValueStep(stepSize) Doesn't work
-	--slider:SetObeyStepOnDrag(true)
-	return f
-end
-
 local createCheckboxesModuleEnabled = function(f, yOffset, gap)
 	local height = 0
 	for _k, vLoop in _G.Quiver_Modules do
@@ -78,60 +60,6 @@ Quiver_ConfigMenu_Create = function()
 	tranqOptions:SetPoint("Top", f, "Top", 0, yOffset)
 	yOffset = yOffset - tranqOptions:GetHeight()
 	yOffset = yOffset - QUIVER.Size.Gap
-
-	local margin = QUIVER.Size.Gap + QUIVER.Size.Border
-	local sliderLabel = f:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
-	sliderLabel:SetWidth(f:GetWidth() - 2 * margin)
-	sliderLabel:SetHeight(18)
-	sliderLabel:SetPoint("Left", f, "Left", margin, 0)
-	sliderLabel:SetPoint("Right", f, "Right", -margin, 0)
-	sliderLabel:SetPoint("Top", f, "Top", 0, yOffset)
-	sliderLabel:SetJustifyH("Center")
-	sliderLabel:SetText("YOffset     ***     Width     ***     Height")
-	yOffset = yOffset - sliderLabel:GetHeight()
-	yOffset = yOffset - QUIVER.Size.Gap
-
-	local range = GetScreenHeight() * 0.9
-	local gapSlider = 18
-	local meta = Quiver_Store.FrameMeta.AutoShotCastbar
-	local yoffsetSlider = createSlider(f, {
-		Padding=margin, Y=yOffset,
-		Min=-range/2, Max=range/2,
-		Value=meta.Y,
-	})
-	yoffsetSlider:SetScript("OnValueChanged", function()
-		local stepSize = 2
-		meta.Y = math.floor(this:GetValue() / stepSize) * stepSize
-		Quiver_Module_AutoShotCastbar_UpdateFamePosition()
-	end)
-	yOffset = yOffset - yoffsetSlider:GetHeight()
-	yOffset = yOffset - gapSlider
-
-	local widthSlider = createSlider(f, {
-		Padding=margin, Y=yOffset,
-		Min=80, Max=400,
-		Value=meta.W,
-	})
-	widthSlider:SetScript("OnValueChanged", function()
-		local stepSize = 1
-		meta.W = math.floor(this:GetValue() / stepSize) * stepSize
-		Quiver_Module_AutoShotCastbar_Resize()
-	end)
-	yOffset = yOffset - widthSlider:GetHeight()
-	yOffset = yOffset - gapSlider
-
-	local heightSlider = createSlider(f, {
-		Padding=margin, Y=yOffset,
-		Min=12, Max=25,
-		Value=meta.H,
-	})
-	heightSlider:SetScript("OnValueChanged", function()
-		local stepSize = 1
-		meta.H = math.floor(this:GetValue() / stepSize) * stepSize
-		Quiver_Module_AutoShotCastbar_Resize()
-	end)
-	yOffset = yOffset - heightSlider:GetHeight()
-	yOffset = yOffset - gapSlider
 
 	f:SetHeight(-1 * yOffset + QUIVER.Size.Border + QUIVER.Size.Button)
 	return f

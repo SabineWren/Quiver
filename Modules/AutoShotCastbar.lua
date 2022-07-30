@@ -67,7 +67,6 @@ local updateAllSizes = function()
 	frame:SetWidth(frameMeta.W)
 	frame:SetHeight(frameMeta.H)
 	frame:SetPoint("Center", 0, frameMeta.Y)
-
 	maxBarWidth = frameMeta.W - 2 * borderSize
 	frame.BarAutoShot:SetWidth(1)
 	frame.BarAutoShot:SetHeight(frameMeta.H - 2 * borderSize)
@@ -88,6 +87,10 @@ local createUI = function()
 	f:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)
 
 	f.BarAutoShot:SetPoint("Center", f, "Center", 0, 0)
+
+	Quiver_Event_FrameLock_MakeMoveable(f, frameMeta)
+	Quiver_Event_FrameLock_MakeResizeable(f, frameMeta,
+		{ GripMargin=0, OnResizeEnd=updateAllSizes })
 	return f
 end
 
@@ -235,8 +238,6 @@ local onInterfaceUnlock = function() frame:SetAlpha(1) end
 Quiver_Module_AutoShotCastbar_UpdateFamePosition = function()
 	frame:SetPoint("Center", 0, frameMeta.Y)
 end
-
-Quiver_Module_AutoShotCastbar_Resize = updateAllSizes
 
 Quiver_Module_AutoShotCastbar = {
 	Id = MODULE_ID,
