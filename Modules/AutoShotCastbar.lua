@@ -279,7 +279,7 @@ Quiver_Module_AutoShotCastbar = {
 		frameMeta.W = defaultOf(frameMeta.W, width)
 		frameMeta.H = defaultOf(frameMeta.H, 14)
 		frameMeta.X = defaultOf(frameMeta.X, (GetScreenWidth() - width) / 2)
-		frameMeta.Y = defaultOf(frameMeta.Y, -1 * GetScreenHeight() + 252)
+		frameMeta.Y = defaultOf(frameMeta.Y, -1 * GetScreenHeight() + 248)
 		if options.IsReset and frame ~= nil then
 			frame:SetPoint("TopLeft", frameMeta.X, frameMeta.Y)
 			updateBarSizes()
