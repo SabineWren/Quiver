@@ -76,6 +76,7 @@ local displayTime = function(current)
 	frame.SpellTime:SetText(string.format("%.1f / %.1f", current, castTime))
 end
 local onSpellcast = function(spellName)
+	if isCasting then return end
 	isCasting = true
 	castTime, timeStartCasting = Quiver_Lib_Spellbook_GetCastTime(spellName)
 	frame.SpellName:SetText(spellName)

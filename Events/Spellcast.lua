@@ -36,6 +36,7 @@ CastSpellByName = function(spellName, onSelf)
 end
 UseAction = function(slot, checkCursor, onSelf)
 	super.UseAction(slot, checkCursor, onSelf)
+	if not IsCurrentAction(slot) then return end
 	-- Raw abilities return a nil action name. Macros, items, etc. don't.
 	if GetActionText(slot) or not IsCurrentAction(slot) or GetActionText(slot) ~= nil then return end
 	local actionTexture = GetActionTexture(slot)

@@ -100,6 +100,7 @@ end
 
 -- ************ Custom Event Handlers ************
 local onSpellcast = function(spellName)
+	if isCasting then return end
 	isCasting = true
 	if isShooting and (not isReloading) then
 		timeStartShootOrReload = GetTime()
