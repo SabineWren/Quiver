@@ -12,10 +12,8 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 ### Auto Shot Castbar
 - Resets swing timer while casting a shot; taken from [YaHT](https://github.com/Aviana/YaHT/tree/1.12.1)
 - Ignores instant spells such as Arcane Shot; taken from [HSK](https://github.com/anstellaire/HunterSwissKnife)
-- Handles edge cases that break other swing timers, such as moving or casting immediately after a shot fires
 - Works with Trueshot
-- TODO customize colours
-- TODO move size/position sliders onto the frame for easier use
+- TODO Replace colour toggle with picker
 
 ### Castbar
 - Shows Aimed Shot, Multi-Shot, and Trueshot
