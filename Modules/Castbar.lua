@@ -123,10 +123,10 @@ local onEnable = function()
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	if Quiver_Store.IsLockedFrames then frame:Hide() else frame:Show() end
-	Quiver_Event_Spellcast_Subscribe(MODULE_ID, onSpellcast)
+	Quiver_Event_CastableShot_Subscribe(MODULE_ID, onSpellcast)
 end
 local onDisable = function()
-	Quiver_Event_Spellcast_Unsubscribe(MODULE_ID)
+	Quiver_Event_CastableShot_Unsubscribe(MODULE_ID)
 	frame:Hide()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end

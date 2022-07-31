@@ -27,6 +27,7 @@ Components\EditBox.lua
 Components\TitleBox.lua
 
 Modules\AutoShotCastbar.lua
+Modules\_experimental_AutoShotCastbar.lua
 Modules\Castbar.lua
 Modules\RangeIndicator.lua
 Modules\pfUI-TurtleHunter.lua

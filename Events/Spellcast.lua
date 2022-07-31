@@ -5,15 +5,30 @@ local getIsBusy = function()
 	return false
 end
 
+-- Castable shot event has 2 triggers:
+-- 1. User starts casting Aimed Shot, Multi-Shot, or Trueshot
+-- 2. User is already casting, but presses the spell again
+-- It's up to the subscriber to differentiate.
 local callbacksCastableShot = {}
-local publish = function(spellname)
+local publishShotCastable = function(spellname)
 	for _i, v in callbacksCastableShot do v(spellname) end
 end
-Quiver_Event_Spellcast_Subscribe = function(moduleId, callback)
+Quiver_Event_CastableShot_Subscribe = function(moduleId, callback)
 	callbacksCastableShot[moduleId] = callback
 end
-Quiver_Event_Spellcast_Unsubscribe = function(moduleId)
+Quiver_Event_CastableShot_Unsubscribe = function(moduleId)
 	callbacksCastableShot[moduleId] = nil
+end
+
+local callbacksInstantShot = {}
+local publishShotInstant = function(spellname)
+	for _i, v in callbacksInstantShot do v(spellname) end
+end
+Quiver_Event_InstantShot_Subscribe = function(moduleId, callback)
+	callbacksInstantShot[moduleId] = callback
+end
+Quiver_Event_InstantShot_Unsubscribe = function(moduleId)
+	callbacksInstantShot[moduleId] = nil
 end
 
 local super = {
@@ -21,18 +36,22 @@ local super = {
 	CastSpellByName = CastSpellByName,
 	UseAction = UseAction,
 }
+local handleCastByName = function(spellName)
+	if Quiver_Lib_Spellbook_GetIsSpellCastableShot(spellName) then
+		if not getIsBusy() then return end
+		publishShotCastable(spellName)
+	elseif Quiver_Lib_Spellbook_GetIsSpellInstantShot(spellName) then
+		publishShotInstant(spellName)
+	end
+end
 CastSpell = function(spellIndex, spellbookTabNum)
 	super.CastSpell(spellIndex, spellbookTabNum)
-	if not getIsBusy() then return end
 	local spellName, _rank = GetSpellName(spellIndex, spellbookTabNum)
-	local isShot = Quiver_Lib_Spellbook_GetIsSpellCastableShot(spellName)
-	if isShot then publish(spellName) end
+	handleCastByName(spellName)
 end
 CastSpellByName = function(spellName, onSelf)
 	super.CastSpellByName(spellName, onSelf)
-	if not getIsBusy() then return end
-	local isShot = Quiver_Lib_Spellbook_GetIsSpellCastableShot(spellName)
-	if isShot then publish(spellName) end
+	handleCastByName(spellName)
 end
 UseAction = function(slot, checkCursor, onSelf)
 	super.UseAction(slot, checkCursor, onSelf)
@@ -40,6 +59,6 @@ UseAction = function(slot, checkCursor, onSelf)
 	-- Raw abilities return a nil action name. Macros, items, etc. don't.
 	if GetActionText(slot) or not IsCurrentAction(slot) or GetActionText(slot) ~= nil then return end
 	local actionTexture = GetActionTexture(slot)
-	local spellName = Quiver_Lib_Spellbook_TryGetCastableShot(actionTexture)
-	if spellName ~= nil then publish(spellName) end
+	local spellName = Quiver_Lib_Spellbook_GetSpellNameFromTexture(actionTexture)
+	handleCastByName(spellName)
 end
