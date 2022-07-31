@@ -7,7 +7,7 @@ local maxBarWidth = 0
 -- Aimed Shot, Multi-Shot, Trueshot
 local castTime = 0
 local isCasting = false
-local isFiredInstantOrSpell = false
+local isFiredInstant = false
 local timeStartCast = 0
 -- Auto Shot
 local AIMING_TIME = 0.65
@@ -128,10 +128,8 @@ end
 
 local handleUpdate = function()
 	if isReloading then
-		--DEFAULT_CHAT_FRAME:AddMessage("Reloading")
 		updateBarReload()
 	elseif isShooting and position.CheckStandingStill() then
-		--DEFAULT_CHAT_FRAME:AddMessage("Shooting")
 		updateBarShooting()
 	else
 		tryHideBar()
@@ -141,7 +139,6 @@ local handleUpdate = function()
 end
 
 local startReload = function()
-	DEFAULT_CHAT_FRAME:AddMessage("Reloading")
 	reloadTime = UnitRangedDamage("player") - AIMING_TIME
 	isReloading = true
 	timeStartShootOrReload = GetTime()
@@ -156,7 +153,7 @@ Rough Event Order
 - ITEM_LOCK_CHANGED
 
 - SPELLCAST_STOP (cast or cancel)
-- Spell delayed
+- SPELLCAST_DELAYED
 
 -- These can also fire when a spell succeedes after we drop target
 - SPELLCAST_INTERRUPTED (cancelled)
@@ -193,32 +190,29 @@ local onSpellcast = function(spellName)
 		timeStartShootOrReload = GetTime()
 	end
 	castTime, timeStartCast = Quiver_Lib_Spellbook_GetCastTime(spellName)
-	DEFAULT_CHAT_FRAME:AddMessage("On Cast -- " .. spellName)
 end
 local onInstant = function(spellName)
-	isFiredInstantOrSpell = true
-	DEFAULT_CHAT_FRAME:AddMessage("On Instant -- " .. spellName)
+	isFiredInstant = true
 end
 local handleEvent = function(e)
-	DEFAULT_CHAT_FRAME:AddMessage(e)
 	-- This works because shooting consumes ammo, which triggers an inventory event
 	if e == "ITEM_LOCK_CHANGED" then
-		if isFiredInstantOrSpell then
-			local ellapsed = timeStartCast - GetTime()
-			DEFAULT_CHAT_FRAME:AddMessage("Casted Shot in -- " .. ellapsed)
+		-- We fired a cast or instant but haven't yet called "SPELLCAST_STOP"
+		-- If we fired an Auto Shot at the same time, then "ITEM_LOCK_CHANGED" will
+		-- get called twice before "SPELLCAST_STOP", so we mark the first one as done
+		if isFiredInstant then
+			isFiredInstant = false
+		elseif isCasting then
+			local ellapsed = GetTime() - timeStartCast
 		-- Case 1 -- Casted Shot
-			if ellapsed < castTime then
+			if isShooting and ellapsed < castTime then
 				-- We started a cast immediately after firing an Auto Shot
 				-- Therefore we're still casting, but need to reload
-				DEFAULT_CHAT_FRAME:AddMessage("Shot after Auto " .. ellapsed)
 				startReload()
-		-- Case 2 -- Instant Shot
+		-- Case 2 -- ??
 			else
-				-- We fired a cast or instant but haven't yet called "SPELLCAST_STOP"
-				-- If we fired an Auto Shot at the same time, then this event will
-				-- get called twice before "SPELLCAST_STOP", so we mark the first one as done
-				DEFAULT_CHAT_FRAME:AddMessage("Was Instant")
-				isFiredInstantOrSpell = false
+				if not isReloading then timeStartShootOrReload = GetTime() end
+				isCasting = false
 			end
 		-- Case 3
 		elseif isShooting then--[[
@@ -226,12 +220,11 @@ local handleEvent = function(e)
 			If we also started a cast before this event fired, we'll hit Case 1 instead.
 			If we cancelled Auto Shot as we fired, this still works because "STOP_AUTOREPEAT_SPELL" is lower priority. ]]
 			startReload()
-			DEFAULT_CHAT_FRAME:AddMessage("Reloading")
 		else
-			DEFAULT_CHAT_FRAME:AddMessage("Ignore")
 			-- this was an inventory event we can safely ignore
 		end
 	elseif e == "SPELLCAST_STOP" or e == "SPELLCAST_FAILED" or e == "SPELLCAST_INTERRUPTED" then
+
 		isCasting = false
 	elseif e == "START_AUTOREPEAT_SPELL" then
 		isShooting = true
