@@ -2,9 +2,7 @@
 DO NOT PRELOAD CACHE
 Occasionally the cache populates incorrectly at login.
 I suspect this might be from Quiver initializing before an action bar addon.
-Not sure what to do about this, since Quiver already delays initialization until "PLAYER_LOGIN".
-We probably don't need the cache for performance, but it's useful for printing spell discovery.
-]]
+We don't need the cache for performance, but it's useful for printing spell discovery. ]]
 local actionBarSlotCache = {}
 local requiredSpells = {}
 

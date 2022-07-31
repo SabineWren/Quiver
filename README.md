@@ -13,7 +13,6 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 - Resets swing timer while casting a shot; taken from [YaHT](https://github.com/Aviana/YaHT/tree/1.12.1)
 - Ignores instant spells such as Arcane Shot; taken from [HSK](https://github.com/anstellaire/HunterSwissKnife)
 - Works with Trueshot
-- TODO Replace colour toggle with picker
 
 ### Castbar
 - Shows Aimed Shot, Multi-Shot, and Trueshot
@@ -66,7 +65,7 @@ Quiver looks up spells by name, which change with client locale. I use Wowhead t
 Files in `/Events` hook into game functions. Use these events if possible instead of declaring your own hooks.
 - Spellcast: CastSpell, CastSpellByName, UseAction
 
-## Module Lifecycle Hooks
+## Module Lifecycle Events
 The UI code is a mess right now, but soon there will be an event for attaching a frame to the Main Menu.
 ```
 OnRestoreSavedVariables
@@ -112,7 +111,7 @@ Stub for new modules
 ```
 Quiver_Module_<ModuleName> = {
 	Id = "<ModuleName>",
-	OnRestoreSavedVariables = function(savedVariables) return nil end,
+	OnRestoreSavedVariables = function(savedVariables) end,
 	OnPersistSavedVariables = function() return {} end,
 	OnInitFrames = function(savedFrameMeta, options) end,
 	OnEnable = function() end,

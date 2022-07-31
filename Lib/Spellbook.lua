@@ -4,7 +4,6 @@ local HUNTER_CASTABLE_SHOTS = {
 	[QUIVER_T.Spellbook.Trueshot] = 1.0,
 }
 local HUNTER_INSTANT_SHOTS = {
-	--Auto_Shot = "Auto Shot",
 	QUIVER_T.Spellbook.Arcane_Shot,
 	QUIVER_T.Spellbook.Concussive_Shot,
 	QUIVER_T.Spellbook.Scatter_Shot,
@@ -99,24 +98,4 @@ Quiver_Lib_Spellbook_GetIsSpellInstantShot = function(spellName)
 		if spellName == name then return true end
 	end
 	return false
-end
-
--- Copied from HSK
-local getSpellIndexByName = function(spellName)
-	local _schoolName, _schoolIcon, indexOffset, numEntries = GetSpellTabInfo(GetNumSpellTabs())
-	local numSpells = indexOffset + numEntries
-	local offset = 0
-	for spellIndex=numSpells, offset+1, -1 do
-		if GetSpellName(spellIndex, "BOOKTYPE_SPELL") == spellName then
-			return spellIndex;
-		end
-	end
-	return nil
-end
-Quiver_Lib_Spellbook_CheckGCD = function()
-	local spellId = getSpellIndexByName(QUIVER_T.Spellbook.Serpent_Sting)
-	if spellId ~= nil then
-	return GetSpellCooldown(spellId, "BOOKTYPE_SPELL")
-	else return 0, 0
-	end
 end
