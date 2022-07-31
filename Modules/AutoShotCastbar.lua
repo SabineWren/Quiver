@@ -1,4 +1,4 @@
-local MODULE_ID = "AutoShotCastbar2"
+local MODULE_ID = "AutoShotCastbar"
 local store = {}
 local frame = nil
 local frameMeta = {}
@@ -197,34 +197,36 @@ end
 local handleEvent = function(e)
 	-- This works because shooting consumes ammo, which triggers an inventory event
 	if e == "ITEM_LOCK_CHANGED" then
+		if isFiredInstant then
+		-- Case 1
 		-- We fired a cast or instant but haven't yet called "SPELLCAST_STOP"
 		-- If we fired an Auto Shot at the same time, then "ITEM_LOCK_CHANGED" will
 		-- get called twice before "SPELLCAST_STOP", so we mark the first one as done
-		if isFiredInstant then
 			isFiredInstant = false
 		elseif isCasting then
 			local ellapsed = GetTime() - timeStartCast
-		-- Case 1 -- Casted Shot
 			if isShooting and ellapsed < castTime then
-				-- We started a cast immediately after firing an Auto Shot
-				-- Therefore we're still casting, but need to reload
+		-- Case 2
+		-- We started casting immediately after firing an Auto Shot. We're both casting and reloading.
 				startReload()
-		-- Case 2 -- ??
 			else
+		-- Case 3
+		-- We finished a cast. If we're done reloading, we can shoot again
 				if not isReloading then timeStartShootOrReload = GetTime() end
 				isCasting = false
 			end
-		-- Case 3
-		elseif isShooting then--[[
-			We check isShooting to reduce false positives from inventory events.
-			If we also started a cast before this event fired, we'll hit Case 1 instead.
-			If we cancelled Auto Shot as we fired, this still works because "STOP_AUTOREPEAT_SPELL" is lower priority. ]]
+		--[[
+		We check isShooting to reduce false positives from inventory events.
+		If we also started a cast before this event fired, we'll hit Case 1 instead.
+		If we cancelled Auto Shot as we fired, this still works because "STOP_AUTOREPEAT_SPELL" is lower priority. ]]
+		elseif isShooting then
+		-- Case 4 -- Fired Auto Shot
 			startReload()
 		else
-			-- this was an inventory event we can safely ignore
+		-- Case 5
+		-- This was an inventory event we can safely ignore.
 		end
 	elseif e == "SPELLCAST_STOP" or e == "SPELLCAST_FAILED" or e == "SPELLCAST_INTERRUPTED" then
-
 		isCasting = false
 	elseif e == "START_AUTOREPEAT_SPELL" then
 		isShooting = true
