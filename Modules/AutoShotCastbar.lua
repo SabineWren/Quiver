@@ -107,8 +107,8 @@ local startReloading = function()
 end
 local startShooting = function()
 	isShooting = true
-	timeStartShootOrReload = GetTime()
 	position.UpdateXY()
+	if not isReloading then timeStartShootOrReload = GetTime() end
 end
 
 local tryHideBar = function()
