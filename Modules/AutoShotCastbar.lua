@@ -191,15 +191,17 @@ local getIsConsumable = function(textOrNil)
 	return false
 end
 
+local isConsumable = false
 local handleEvent = function()
 	local e = event
 	-- Fires after SPELLCAST_STOP, but before ITEM_LOCK_CHANGED
 	if e == "CHAT_MSG_SPELL_SELF_BUFF" then
+		isConsumable = getIsConsumable(arg1)
 	elseif e == "SPELLCAST_DELAYED"
 		then castTime = castTime + arg1 / 1000
 	-- This works because shooting consumes ammo, which triggers an inventory event
 	elseif e == "ITEM_LOCK_CHANGED" then
-		if getIsConsumable(arg1) then
+		if isConsumable then
 		-- Case 1 - We used a consumable, not ammunition.
 			isConsumable = false
 		elseif isFiredInstant then
