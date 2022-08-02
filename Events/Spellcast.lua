@@ -5,6 +5,14 @@ local getIsBusy = function()
 	return false
 end
 
+-- Hooks get called even if spell didn't fire, but successful cast triggers GCD.
+local lastGcdStart = 0
+local checkGCD = function()
+	local isTriggeredGcd, newStart = Quiver_Lib_Spellbook_CheckNewGCD(lastGcdStart)
+	lastGcdStart = newStart
+	return isTriggeredGcd
+end
+
 -- Castable shot event has 2 triggers:
 -- 1. User starts casting Aimed Shot, Multi-Shot, or Trueshot
 -- 2. User is already casting, but presses the spell again
@@ -38,10 +46,9 @@ local super = {
 }
 local handleCastByName = function(spellName)
 	if Quiver_Lib_Spellbook_GetIsSpellCastableShot(spellName) then
-		if not getIsBusy() then return end
-		publishShotCastable(spellName)
+		if getIsBusy() then publishShotCastable(spellName) end
 	elseif Quiver_Lib_Spellbook_GetIsSpellInstantShot(spellName) then
-		publishShotInstant(spellName)
+		if checkGCD() then publishShotInstant(spellName) end
 	end
 end
 CastSpell = function(spellIndex, spellbookTabNum)

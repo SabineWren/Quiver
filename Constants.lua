@@ -4,6 +4,16 @@ QUIVER = {
 		AutoAttackDefaultShoot = { 1, 1, 0 },
 		AutoAttackDefaultReload = { 1, 0, 0 },
 	},
+	CombatLog = {
+		-- You gain <n> Mana from Restore Mana.
+		-- Your Healing Potion heals you for <n>.
+		-- Your Greater Healthstone heals you for <n>.
+		-- Your Tea with Sugar heals you for <n>.
+		ManaPotion = " Mana from Restore Mana.",
+		HealthPotion = "Your Healing Potion heals you for ",
+		Healthstone = " Healthstone heals you for ",
+		Tea = "Your Tea with Sugar heals you for ",
+	},
 	Size = {
 		Border = 12,
 		Button = 22,

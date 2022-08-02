@@ -15,8 +15,6 @@ local isReloading = false
 local isShooting = false
 local reloadTime = 0
 local timeStartShootOrReload = GetTime()
--- Consumables
-local isConsumable
 
 local position = (function()
 	local x, y = 0, 0
@@ -102,10 +100,24 @@ local updateBarShooting = function()
 	end
 end
 
+local startReloading = function()
+	isReloading = true
+	timeStartShootOrReload = GetTime()
+	reloadTime = UnitRangedDamage("player") - AIMING_TIME
+end
+local startShooting = function()
+	isShooting = true
+	timeStartShootOrReload = GetTime()
+	position.UpdateXY()
+end
+
 local tryHideBar = function()
-	if Quiver_Store.IsLockedFrames
-	then frame:SetAlpha(0)
-	else frame.BarAutoShot:SetWidth(1)
+	if Quiver_Store.IsLockedFrames then
+		frame:SetAlpha(0)
+	else
+		-- Reset bar if it's locked open
+		frame.BarAutoShot:SetWidth(1)
+		timeStartShootOrReload = GetTime()
 	end
 end
 
@@ -119,8 +131,7 @@ local updateBarReload = function()
 	else
 		isReloading = false
 		if isShooting then
-			timeStartShootOrReload = GetTime()
-			position.UpdateXY()
+			startShooting()
 			updateBarShooting()-- Optional. I think this saves a frame
 		else
 			tryHideBar()
@@ -134,34 +145,14 @@ local handleUpdate = function()
 	elseif isShooting and position.CheckStandingStill() then
 		updateBarShooting()
 	else
-		tryHideBar()
-		-- Reset bar in case it doesn't hide
+		-- We may have moved while shooting, so reset time
 		timeStartShootOrReload = GetTime()
+		tryHideBar()
 	end
-end
-
-local startReload = function()
-	reloadTime = UnitRangedDamage("player") - AIMING_TIME
-	isReloading = true
-	timeStartShootOrReload = GetTime()
 end
 
 -- ************ Event Handlers ************
 --[[
-Rough Event Order
-- (Hook) Start casting shot
-- (Hook) Cast instant shot
-
-- ITEM_LOCK_CHANGED
-
-- SPELLCAST_STOP (cast or cancel)
-- SPELLCAST_DELAYED
-
--- These can also fire when a spell succeedes after we drop target
-- SPELLCAST_INTERRUPTED (cancelled)
-- SPELLCAST_FAILED (action in progress)
-
-Known Cases:
 Start shooting
 -> START_AUTOREPEAT_SPELL
 Stop shooting
@@ -180,8 +171,6 @@ Cast right as shot fires (assuming state is already shooting)
 -> ITEM_LOCK_CHANGED
 -> ITEM_LOCK_CHANGED
 -> SPELLCAST_STOP
-Various inventory events
--> ITEM_LOCK_CHANGED, sometimes first one with arg1 "LeftButton"
 ]]
 local onSpellcast = function(spellName)
 	-- User can spam the ability while it's already casting
@@ -194,30 +183,24 @@ local onSpellcast = function(spellName)
 	castTime, timeStartCast = Quiver_Lib_Spellbook_GetCastTime(spellName)
 end
 
-local lastInstantGcd = 0
-local onInstant = function(spellName)
-	local isTriggeredGcd, newStart = Quiver_Lib_Spellbook_CheckNewGCD(lastInstantGcd)
-	lastInstantGcd = newStart
-	if isTriggeredGcd then isFiredInstant = true end
+local getIsConsumable = function(textOrNil)
+	if textOrNil == nil then return false end
+	for k, v in QUIVER.CombatLog do
+		if string.find(textOrNil, v) then return true end
+	end
+	return false
 end
+
 local handleEvent = function()
-	-- DEFAULT_CHAT_FRAME:AddMessage(event)
 	local e = event
 	-- Fires after SPELLCAST_STOP, but before ITEM_LOCK_CHANGED
 	if e == "CHAT_MSG_SPELL_SELF_BUFF" then
-		-- You gain <n> Mana from Restore Mana.
-		-- Your Healing Potion heals you for <n>.
-		isConsumable =
-			string.find(arg1, " Mana from Restore Mana.")
-			or string.find(arg1, "Your Healing Potion heals you for ")
-			-- TODO add healthstones and other potion types
-			-- DEFAULT_CHAT_FRAME:AddMessage(arg1)
 	elseif e == "SPELLCAST_DELAYED"
 		then castTime = castTime + arg1 / 1000
 	-- This works because shooting consumes ammo, which triggers an inventory event
 	elseif e == "ITEM_LOCK_CHANGED" then
-		if isConsumable then
-		-- Case 1 -- We used a potion or something. Ignore it.
+		if getIsConsumable(arg1) then
+		-- Case 1 - We used a consumable, not ammunition.
 			isConsumable = false
 		elseif isFiredInstant then
 		-- Case 2
@@ -228,30 +211,23 @@ local handleEvent = function()
 		elseif isCasting then
 			local ellapsed = GetTime() - timeStartCast
 			if isShooting and ellapsed < castTime then
-		-- Case 3
-		-- We started casting immediately after firing an Auto Shot. We're both casting and reloading.
-				startReload()
+		-- Case 3 - We started casting immediately after firing an Auto Shot. We're casting and reloading.
+				startReloading()
 			else
-		-- Case 4
-		-- We finished a cast. If we're done reloading, we can shoot again
+		-- Case 4 - We finished a cast. If we're done reloading, we can shoot again
 				if not isReloading then timeStartShootOrReload = GetTime() end
 				isCasting = false
 			end
-		--[[
-		We check isShooting to reduce false positives from inventory events.
-		If we also started a cast before this event fired, we'll hit Case 1 instead.
-		If we cancelled Auto Shot as we fired, this still works because "STOP_AUTOREPEAT_SPELL" is lower priority. ]]
 		elseif isShooting then
-		-- Case 5 -- Fired Auto Shot
-			startReload()
-		else
-		-- Case 6
-		-- This was an inventory event we can safely ignore.
+		-- Case 5 - Fired Auto Shot
+		-- Works even if we cancelled Auto Shot as we fired because "STOP_AUTOREPEAT_SPELL" is lower priority.
+			startReloading()
+		-- Case 6 - This was an inventory event we can safely ignore.
 		end
 	elseif e == "SPELLCAST_STOP" or e == "SPELLCAST_FAILED" or e == "SPELLCAST_INTERRUPTED" then
 		isCasting = false
 	elseif e == "START_AUTOREPEAT_SPELL" then
-		isShooting = true
+		startShooting()
 	elseif e == "STOP_AUTOREPEAT_SPELL" then
 		isShooting = false
 	end
@@ -261,9 +237,10 @@ end
 local EVENTS = {
 	"CHAT_MSG_SPELL_SELF_BUFF",
 	"ITEM_LOCK_CHANGED",
-	"SPELLCAST_DELAYED",
-	"SPELLCAST_FAILED",
-	"SPELLCAST_INTERRUPTED",
+	-- These can also fire when spell succeedes, but we drop target after starting cast
+	"SPELLCAST_DELAYED",-- Pushback
+	"SPELLCAST_FAILED",-- Spell on CD or already in progress
+	"SPELLCAST_INTERRUPTED",-- Knockback etc.
 	"SPELLCAST_STOP",
 	"START_AUTOREPEAT_SPELL",
 	"STOP_AUTOREPEAT_SPELL",
@@ -276,7 +253,9 @@ local onEnable = function()
 	frame:Show()
 	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) else frame:SetAlpha(1) end
 	Quiver_Event_CastableShot_Subscribe(MODULE_ID, onSpellcast)
-	Quiver_Event_InstantShot_Subscribe(MODULE_ID, onInstant)
+	Quiver_Event_InstantShot_Subscribe(MODULE_ID,
+		function(spellName) isFiredInstant = true
+	end)
 end
 local onDisable = function()
 	Quiver_Event_InstantShot_Unsubscribe(MODULE_ID)
