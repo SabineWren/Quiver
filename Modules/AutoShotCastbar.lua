@@ -15,6 +15,8 @@ local isReloading = false
 local isShooting = false
 local reloadTime = 0
 local timeStartShootOrReload = GetTime()
+-- Consumables
+local isConsumable
 
 local position = (function()
 	local x, y = 0, 0
@@ -191,14 +193,34 @@ local onSpellcast = function(spellName)
 	end
 	castTime, timeStartCast = Quiver_Lib_Spellbook_GetCastTime(spellName)
 end
+
+local lastInstantGcd = 0
 local onInstant = function(spellName)
-	isFiredInstant = true
+	local isTriggeredGcd, newStart = Quiver_Lib_Spellbook_CheckNewGCD(lastInstantGcd)
+	lastInstantGcd = newStart
+	if isTriggeredGcd then isFiredInstant = true end
 end
-local handleEvent = function(e)
+local handleEvent = function()
+	-- DEFAULT_CHAT_FRAME:AddMessage(event)
+	local e = event
+	-- Fires after SPELLCAST_STOP, but before ITEM_LOCK_CHANGED
+	if e == "CHAT_MSG_SPELL_SELF_BUFF" then
+		-- You gain <n> Mana from Restore Mana.
+		-- Your Healing Potion heals you for <n>.
+		isConsumable =
+			string.find(arg1, " Mana from Restore Mana.")
+			or string.find(arg1, "Your Healing Potion heals you for ")
+			-- TODO add healthstones and other potion types
+			-- DEFAULT_CHAT_FRAME:AddMessage(arg1)
+	elseif e == "SPELLCAST_DELAYED"
+		then castTime = castTime + arg1 / 1000
 	-- This works because shooting consumes ammo, which triggers an inventory event
-	if e == "ITEM_LOCK_CHANGED" then
-		if isFiredInstant then
-		-- Case 1
+	elseif e == "ITEM_LOCK_CHANGED" then
+		if isConsumable then
+		-- Case 1 -- We used a potion or something. Ignore it.
+			isConsumable = false
+		elseif isFiredInstant then
+		-- Case 2
 		-- We fired a cast or instant but haven't yet called "SPELLCAST_STOP"
 		-- If we fired an Auto Shot at the same time, then "ITEM_LOCK_CHANGED" will
 		-- get called twice before "SPELLCAST_STOP", so we mark the first one as done
@@ -206,11 +228,11 @@ local handleEvent = function(e)
 		elseif isCasting then
 			local ellapsed = GetTime() - timeStartCast
 			if isShooting and ellapsed < castTime then
-		-- Case 2
+		-- Case 3
 		-- We started casting immediately after firing an Auto Shot. We're both casting and reloading.
 				startReload()
 			else
-		-- Case 3
+		-- Case 4
 		-- We finished a cast. If we're done reloading, we can shoot again
 				if not isReloading then timeStartShootOrReload = GetTime() end
 				isCasting = false
@@ -220,10 +242,10 @@ local handleEvent = function(e)
 		If we also started a cast before this event fired, we'll hit Case 1 instead.
 		If we cancelled Auto Shot as we fired, this still works because "STOP_AUTOREPEAT_SPELL" is lower priority. ]]
 		elseif isShooting then
-		-- Case 4 -- Fired Auto Shot
+		-- Case 5 -- Fired Auto Shot
 			startReload()
 		else
-		-- Case 5
+		-- Case 6
 		-- This was an inventory event we can safely ignore.
 		end
 	elseif e == "SPELLCAST_STOP" or e == "SPELLCAST_FAILED" or e == "SPELLCAST_INTERRUPTED" then
@@ -237,6 +259,7 @@ end
 
 -- ************ Initialization ************
 local EVENTS = {
+	"CHAT_MSG_SPELL_SELF_BUFF",
 	"ITEM_LOCK_CHANGED",
 	"SPELLCAST_DELAYED",
 	"SPELLCAST_FAILED",
@@ -247,12 +270,7 @@ local EVENTS = {
 }
 local onEnable = function()
 	if frame == nil then frame = createUI(); updateBarSizes() end
-	frame:SetScript("OnEvent", function()
-		if event == "SPELLCAST_DELAYED"
-		then castTime = castTime + arg1 / 1000
-		else handleEvent(event)
-		end
-	end)
+	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	frame:Show()

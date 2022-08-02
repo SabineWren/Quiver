@@ -99,3 +99,29 @@ Quiver_Lib_Spellbook_GetIsSpellInstantShot = function(spellName)
 	end
 	return false
 end
+
+-- Copied from HSK
+local getSpellIndexByName = function(spellName)
+	local _schoolName, _schoolIcon, indexOffset, numEntries = GetSpellTabInfo(GetNumSpellTabs())
+	local numSpells = indexOffset + numEntries
+	local offset = 0
+	for spellIndex=numSpells, offset+1, -1 do
+		if GetSpellName(spellIndex, "BOOKTYPE_SPELL") == spellName then
+			return spellIndex;
+		end
+	end
+	return nil
+end
+
+Quiver_Lib_Spellbook_CheckNewGCD = function(lastCdStart)
+	local spellId = getSpellIndexByName(QUIVER_T.Spellbook.Serpent_Sting)
+	if spellId ~= nil then
+		local timeStartCD, durationCD = GetSpellCooldown(spellId, "BOOKTYPE_SPELL")
+		-- Sometimes spells return a CD of 0 when cast fails
+		-- If it's non-zero, we should have a valid timeStart to check
+		if durationCD == 1.5 and timeStartCD ~= lastCdStart then
+			return true, timeStartCD
+		end
+	end
+	return false, lastCdStart
+end
