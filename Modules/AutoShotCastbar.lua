@@ -101,14 +101,14 @@ local updateBarShooting = function()
 end
 
 local startReloading = function()
+	if not isReloading then timeStartShootOrReload = GetTime() end
 	isReloading = true
-	timeStartShootOrReload = GetTime()
 	reloadTime = UnitRangedDamage("player") - AIMING_TIME
 end
 local startShooting = function()
+	if not isReloading then timeStartShootOrReload = GetTime() end
 	isShooting = true
 	position.UpdateXY()
-	if not isReloading then timeStartShootOrReload = GetTime() end
 end
 
 local tryHideBar = function()
