@@ -12,6 +12,7 @@ local createIconBtnLock = function(parent)
 		Quiver_Event_FrameLock_Set(not Quiver_Store.IsLockedFrames)
 		updateTexture()
 	end)
+	Quiver_Event_FrameLock_Init()
 	return f
 end
 

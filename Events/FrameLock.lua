@@ -8,18 +8,25 @@ TopLeft origin because GetPoint() uses TopLeft
 local GRIP_HEIGHT = 12
 local framesMoveable = {}
 local framesResizeable = {}
+local openWarning
 
 -- Tons of users don't read the readme file AT ALL. Not even the first line!
 -- We have to tell them the slash command and make them LOCK THE FRAMES, OKAY?
-local openWarning = CreateFrame("Frame", nil, UIParent)
-openWarning:SetFrameStrata("BACKGROUND")
-openWarning.Text = openWarning:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
-openWarning.Text:SetAllPoints(openWarning)
-openWarning.Text:SetJustifyH("Center")
-openWarning.Text:SetJustifyV("Center")
-openWarning.Text:SetText("Quiver Unlocked.\nType /qq or /quiver and click the lock.")
-openWarning.Text:SetTextColor(1, 1, 1)
-openWarning:SetAllPoints(UIParent)
+Quiver_Event_FrameLock_Init = function()
+	openWarning = CreateFrame("Frame", nil, UIParent)
+	openWarning:SetFrameStrata("BACKGROUND")
+	openWarning.Text = openWarning:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
+	openWarning.Text:SetAllPoints(openWarning)
+	openWarning.Text:SetJustifyH("Center")
+	openWarning.Text:SetJustifyV("Center")
+	openWarning.Text:SetText("Quiver Unlocked.\nType /qq or /quiver and click the lock.")
+	openWarning.Text:SetTextColor(1, 1, 1)
+	openWarning:SetAllPoints(UIParent)
+	if Quiver_Store.IsLockedFrames
+	then openWarning:Hide()
+	else openWarning:Show()
+	end
+end
 
 local addFrameMoveable = function(frame)
 	if not Quiver_Store.IsLockedFrames then
