@@ -9,7 +9,7 @@ Quiver_Component_CheckButton = function(p)
 	f:SetChecked(isChecked)
 	f:SetPoint("Left", parent, "Left", xStart, 0)
 	f:SetPoint("Top", parent, "Top", 0, y)
-	f.Text = f:CreateFontString("Status", "LOW", "GameFontNormal")
+	f.Text = f:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
 	f.Text:SetPoint("Left", f, "Left", QUIVER.Size.Icon + QUIVER.Size.Gap, 0)
 	f.Text:SetText(label)
 	if tooltip ~= nil then f.tooltipText = tooltip end

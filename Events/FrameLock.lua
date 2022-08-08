@@ -9,6 +9,18 @@ local GRIP_HEIGHT = 12
 local framesMoveable = {}
 local framesResizeable = {}
 
+-- Tons of users don't read the readme file AT ALL. Not even the first line!
+-- We have to tell them the slash command and make them LOCK THE FRAMES, OKAY?
+local openWarning = CreateFrame("Frame", nil, UIParent)
+openWarning:SetFrameStrata("BACKGROUND")
+openWarning.Text = openWarning:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
+openWarning.Text:SetAllPoints(openWarning)
+openWarning.Text:SetJustifyH("Center")
+openWarning.Text:SetJustifyV("Center")
+openWarning.Text:SetText("Quiver Unlocked.\nType /qq or /quiver and click the lock.")
+openWarning.Text:SetTextColor(1, 1, 1)
+openWarning:SetAllPoints(UIParent)
+
 local addFrameMoveable = function(frame)
 	if not Quiver_Store.IsLockedFrames then
 		frame:EnableMouse(true)
@@ -26,6 +38,7 @@ local addFrameResizable = function(frame, handle)
 end
 
 local lockFrames = function()
+	openWarning:Hide()
 	for _k, f in framesMoveable do
 		f:EnableMouse(false)
 		f:SetMovable(false)
@@ -39,6 +52,7 @@ local lockFrames = function()
 	end
 end
 local unlockFrames = function()
+	openWarning:Show()
 	for _k, f in framesMoveable do
 		f:EnableMouse(true)
 		f:SetMovable(true)
