@@ -52,7 +52,14 @@ Quiver_Lib_ActionBar_ValidateCache = function(_slotChanged)
 		local texture = Quiver_Lib_Spellbook_TryFindTexture(spellName)
 		local slotNew = tryFindSlot(texture) or 0
 		actionBarSlotCache[spellName] = slotNew
-		if slotOld ~= slotNew and getIsRequiredSpell(spellName) then
+		--[[
+		Auto Shot changes icon when swapping weapon, and other addons
+		can change action bars. This leads to unexpected spam, so we
+		disable debug messages when not in config mode. ]]
+		local isPrintDebug = not Quiver_Store.IsLockedFrames
+			and slotOld ~= slotNew
+			and getIsRequiredSpell(spellName)
+		if isPrintDebug then
 			if slotNew > 0 then
 				Quiver_Lib_Print.Success("Discovered " .. spellName .. " in slot " .. tostring(slotNew))
 			else
