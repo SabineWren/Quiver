@@ -1,5 +1,5 @@
 ## Interface: 11200
-## Title: Quiver - |cff00ff00Hunter |cff19e6a8Q|cff1961e6U|cff7a19e6I|cffff6b84V|cffff0000E|cffff7733R
+## Title: Quiver - |cff00ff00Hunter
 ## Notes: A collection of hunter utilities.
 ## Author: SabineWren, 2022
 ## Version: 0.1

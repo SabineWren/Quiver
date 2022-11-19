@@ -29,6 +29,16 @@ local position = (function()
 	}
 end)()
 
+local getIsConsumable = function(combatLogMsg)
+	if combatLogMsg == nil then return false end
+	for _k, v in QUIVER_T.CombatLog.Consumes do
+		local startPos, _ = string.find(combatLogMsg, v)
+		if startPos then return true end
+	end
+	return false
+end
+local isConsumable = false
+
 -- ************ UI ************
 local updateBarSizes = function()
 	frame:SetWidth(frameMeta.W)
@@ -153,25 +163,33 @@ end
 
 -- ************ Event Handlers ************
 --[[
-Start shooting
--> START_AUTOREPEAT_SPELL
-Stop shooting
--> STOP_AUTOREPEAT_SPELL
-Instant while either moving or in middle of reload
+Some actions trigger multiple events in sequence:
+Instant Shot while either moving or in middle of reload
 -> (hook) OnInstant
 -> ITEM_LOCK_CHANGED
 -> SPELLCAST_STOP
-Instant as shot fires (assuming state is already shooting)
+Instant Shot as Auto Shot fires (assuming state is already shooting)
 -> (hook) OnInstant
 -> ITEM_LOCK_CHANGED
 -> ITEM_LOCK_CHANGED
 -> SPELLCAST_STOP
-Cast right as shot fires (assuming state is already shooting)
+Casted Shot starts as Auto Shot fires (assuming state is already shooting)
 -> (hook) OnCast
 -> ITEM_LOCK_CHANGED
 -> ITEM_LOCK_CHANGED
 -> SPELLCAST_STOP
 ]]
+local EVENTS = {
+	"CHAT_MSG_SPELL_SELF_BUFF",-- To ignore whitelisted inventory events corresponding to consumables
+	"ITEM_LOCK_CHANGED",-- Inventory event, such as using ammo
+	-- Spellcast events can also fire when spell succeedes, but we drop target after starting cast
+	"SPELLCAST_DELAYED",-- Pushback
+	"SPELLCAST_FAILED",-- Spell on CD or already in progress
+	"SPELLCAST_INTERRUPTED",-- Knockback etc.
+	"SPELLCAST_STOP",
+	"START_AUTOREPEAT_SPELL",-- Start shooting
+	"STOP_AUTOREPEAT_SPELL",-- Stop shooting
+}
 local onSpellcast = function(spellName)
 	-- User can spam the ability while it's already casting
 	if isCasting then return end
@@ -183,15 +201,6 @@ local onSpellcast = function(spellName)
 	castTime, timeStartCast = Quiver_Lib_Spellbook_GetCastTime(spellName)
 end
 
-local getIsConsumable = function(textOrNil)
-	if textOrNil == nil then return false end
-	for k, v in QUIVER.CombatLog do
-		if string.find(textOrNil, v) then return true end
-	end
-	return false
-end
-
-local isConsumable = false
 local handleEvent = function()
 	local e = event
 	-- Fires after SPELLCAST_STOP, but before ITEM_LOCK_CHANGED
@@ -236,17 +245,6 @@ local handleEvent = function()
 end
 
 -- ************ Initialization ************
-local EVENTS = {
-	"CHAT_MSG_SPELL_SELF_BUFF",
-	"ITEM_LOCK_CHANGED",
-	-- These can also fire when spell succeedes, but we drop target after starting cast
-	"SPELLCAST_DELAYED",-- Pushback
-	"SPELLCAST_FAILED",-- Spell on CD or already in progress
-	"SPELLCAST_INTERRUPTED",-- Knockback etc.
-	"SPELLCAST_STOP",
-	"START_AUTOREPEAT_SPELL",
-	"STOP_AUTOREPEAT_SPELL",
-}
 local onEnable = function()
 	if frame == nil then frame = createUI(); updateBarSizes() end
 	frame:SetScript("OnEvent", handleEvent)
@@ -255,9 +253,7 @@ local onEnable = function()
 	frame:Show()
 	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) else frame:SetAlpha(1) end
 	Quiver_Event_CastableShot_Subscribe(MODULE_ID, onSpellcast)
-	Quiver_Event_InstantShot_Subscribe(MODULE_ID,
-		function(spellName) isFiredInstant = true
-	end)
+	Quiver_Event_InstantShot_Subscribe(MODULE_ID, function(_spellName) isFiredInstant = true end)
 end
 local onDisable = function()
 	Quiver_Event_InstantShot_Unsubscribe(MODULE_ID)

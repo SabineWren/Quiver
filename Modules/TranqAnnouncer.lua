@@ -3,11 +3,11 @@ local frame = nil
 
 local handleEvent = function()
 	local isHit =
-		string.find(arg1, QUIVER_T.CombatLog.TranqCast)
+		string.find(arg1, QUIVER_T.CombatLog.Tranq.Cast)
 	local isMiss =
-		string.find(arg1, QUIVER_T.CombatLog.TranqMiss)
-		or string.find(arg1, QUIVER_T.CombatLog.TranqResist)
-		or string.find(arg1, QUIVER_T.CombatLog.TranqFail)
+		string.find(arg1, QUIVER_T.CombatLog.Tranq.Miss)
+		or string.find(arg1, QUIVER_T.CombatLog.Tranq.Resist)
+		or string.find(arg1, QUIVER_T.CombatLog.Tranq.Fail)
 	if isHit then
 		Quiver_Lib_Print.Raid(store.MsgTranqHit)
 	elseif isMiss then
@@ -15,13 +15,14 @@ local handleEvent = function()
 	end
 end
 
+local EVENT = "CHAT_MSG_SPELL_SELF_DAMAGE"
 local onEnable = function()
 	if frame == nil then frame = CreateFrame("Frame", nil) end
 	frame:SetScript("OnEvent", handleEvent)
-	frame:RegisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE")
+	frame:RegisterEvent(EVENT)
 end
 local onDisable = function()
-	frame:UnregisterEvent("CHAT_MSG_SPELL_SELF_DAMAGE")
+	frame:UnregisterEvent(EVENT)
 end
 
 Quiver_Module_TranqAnnouncer_CreateMenuOptions = function(parent, gap)

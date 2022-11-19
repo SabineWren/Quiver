@@ -1,9 +1,17 @@
 QUIVER_T = {
 	CombatLog = {
-		TranqCast = "You cast Tranquilizing Shot",
-		TranqMiss = "Your Tranquilizing Shot miss",
-		TranqResist = "Your Tranquilizing Shot was resisted",
-		TranqFail = "You fail to dispel",
+		Consumes = {
+			ManaPotion = "You gain (.*) Mana from Restore Mana.",
+			HealthPotion = "Your Healing Potion heals you for (.*).",
+			Healthstone = "Your (.*) Healthstone heals you for (.*).",
+			Tea = "Your Tea with Sugar heals you for (.*).",
+		},
+		Tranq = {
+			Cast = "You cast Tranquilizing Shot",
+			Fail = "You fail to dispel",
+			Miss = "Your Tranquilizing Shot miss",
+			Resist = "Your Tranquilizing Shot was resisted",
+		},
 	},
 	DefaultTranqHit = "*** Tranq Shot Hit ***",
 	DefaultTranqMiss = "*** MISSED Tranq Shot ***",
