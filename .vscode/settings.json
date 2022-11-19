@@ -22,7 +22,6 @@
 		"UnitIsDead",
 		"IsActionInRange",
 		"GameTooltip",
-		"tinsert",
 		"GetSpellName",
 		"GetSpellCooldown",
 		"GetSpellTabInfo",

@@ -11,7 +11,7 @@ local framesResizeable = {}
 local openWarning
 
 -- Tons of users don't read the readme file AT ALL. Not even the first line!
--- We have to tell them the slash command and make them LOCK THE FRAMES, OKAY?
+-- We have to guide and strongly encourage them to lock the frames.
 Quiver_Event_FrameLock_Init = function()
 	openWarning = CreateFrame("Frame", nil, UIParent)
 	openWarning:SetFrameStrata("BACKGROUND")
@@ -19,7 +19,7 @@ Quiver_Event_FrameLock_Init = function()
 	openWarning.Text:SetAllPoints(openWarning)
 	openWarning.Text:SetJustifyH("Center")
 	openWarning.Text:SetJustifyV("Center")
-	openWarning.Text:SetText("Quiver Unlocked.\nType /qq or /quiver and click the lock.")
+	openWarning.Text:SetText(QUIVER_T.UI.WarnUnlocked)
 	openWarning.Text:SetTextColor(1, 1, 1)
 	openWarning:SetAllPoints(UIParent)
 	if Quiver_Store.IsLockedFrames
@@ -33,7 +33,7 @@ local addFrameMoveable = function(frame)
 		frame:EnableMouse(true)
 		frame:SetMovable(true)
 	end
-	tinsert(framesMoveable, frame)
+	table.insert(framesMoveable, frame)
 end
 local addFrameResizable = function(frame, handle)
 	frame.QuiverGripHandle = handle
@@ -41,7 +41,7 @@ local addFrameResizable = function(frame, handle)
 	then handle:Hide()
 	else frame:SetResizable(true)
 	end
-	tinsert(framesResizeable, frame)
+	table.insert(framesResizeable, frame)
 end
 
 local lockFrames = function()

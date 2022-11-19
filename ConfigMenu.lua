@@ -1,6 +1,6 @@
 local createIconBtnLock = function(parent)
 	local f = Quiver_Component_Button({
-		Parent=parent, Size=QUIVER.Size.Icon, TooltipText="Lock/Unlock Frames" })
+		Parent=parent, Size=QUIVER.Size.Icon, TooltipText=QUIVER_T.UI.FrameLockToggleTooltip })
 	local updateTexture = function()
 		local path = Quiver_Store.IsLockedFrames
 			and QUIVER.Icon.LockClosed
@@ -19,7 +19,7 @@ end
 local createIconResetCastbars = function(parent)
 	local f = Quiver_Component_Button({
 		Parent=parent, Size=QUIVER.Size.Icon,
-		TooltipText="Reset Castbars",
+		TooltipText=QUIVER_T.UI.ResetCastbarsTooltip,
 	})
 	f.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
 	f:SetScript("OnClick", function(_self)
@@ -60,7 +60,7 @@ Quiver_ConfigMenu_Create = function()
 	titleBox:SetPoint("Center", f, "Top", 0, -10)
 
 	local btnCloseTop = Quiver_Component_Button({
-		Parent=f, Size=QUIVER.Size.Icon, TooltipText="Close Window" })
+		Parent=f, Size=QUIVER.Size.Icon, TooltipText=QUIVER_T.UI.CloseWindowTooltip })
 	btnCloseTop.Texture:QuiverSetTexture(0.7, QUIVER.Icon.XMark)
 	btnCloseTop:SetPoint("TopRight", f, "TopRight", -PADDING, -PADDING)
 	btnCloseTop:SetScript("OnClick", function() f:Hide() end)

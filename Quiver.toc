@@ -29,7 +29,7 @@ Components\TitleBox.lua
 Modules\AutoShotCastbar.lua
 Modules\Castbar.lua
 Modules\RangeIndicator.lua
-Modules\pfUI-TurtleHunter.lua
+Modules\pfUIPlugins.lua
 Modules\TranqAnnouncer.lua
 
 ConfigMenu.lua

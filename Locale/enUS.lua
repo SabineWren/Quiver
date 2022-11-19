@@ -64,4 +64,10 @@ QUIVER_T = {
 		Scare_Beast = "Scare Beast",
 		Wing_Clip = "Wing Clip",
 	},
+	UI = {
+		CloseWindowTooltip = "Close Window",
+		FrameLockToggleTooltip ="Lock/Unlock Frames",
+		ResetCastbarsTooltip = "Reset Castbars",
+		WarnUnlocked = "Quiver Unlocked. Show config dialog with /qq or /quiver.\nClick the lock icon when done.",
+	},
 }
