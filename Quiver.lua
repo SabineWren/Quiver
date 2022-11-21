@@ -65,6 +65,7 @@ frame:RegisterEvent("PLAYER_LOGOUT")
 frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function()
 	if event == "ADDON_LOADED" and arg1 == "Quiver" then
+		Quiver_Store = Quiver_Store or {}
 		Quiver_Migrations_Runner()
 		savedVariablesRestore()
 		initSlashCommandsAndModules()

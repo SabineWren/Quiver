@@ -1,16 +1,25 @@
-Quiver_Migrations_Runner = function()
-	local meta = GetAddOnMetadata("Quiver", "Version")
-	local _, _, a, b, c = strfind(tostring(meta), "(%d+)%.(%d+)%.(%d+)")
-	local versionNew = {
+local parseVersion = function(text)
+	local _, _, a, b, c = strfind(text, "(%d+)%.(%d+)%.(%d+)")
+	return {
 		Breaking = tonumber(a),
 		Feature = tonumber(b),
 		Fix = tonumber(c),
 	}
+end
 
-	Quiver_Store = Quiver_Store or {}
-	if Quiver_Store.Version == nil then
-		Quiver_Migrations_M001()
+Quiver_Migrations_Runner = function()
+	local vOldText = Quiver_Store.Version or "0.0.0"
+	local vOld = parseVersion(vOldText)
+	Quiver_Store.Version = GetAddOnMetadata("Quiver", "Version")
+
+	local getIsNewer = function(breaking, feature, fix)
+		if breaking > vOld.Breaking then return true end
+		if feature > vOld.Feature then return true end
+		if fix > vOld.Fix then return true end
+		return false
 	end
 
-	Quiver_Store.Version = versionNew
+	if getIsNewer(1, 0, 0) then
+		Quiver_Migrations_M001()
+	end
 end
