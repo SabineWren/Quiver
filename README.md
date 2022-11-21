@@ -4,12 +4,12 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 - [Contributing](#contributing)
 
 ## Features
-- [Auto Shot Castbar](#auto-shot-castbar)
+- [Auto Shot Timer](#auto-shot-timer)
 - [Castbar](#castbar)
 - [Range Indicator](#range-indicator)
 - [Tranq Shot Announcer](#tranq-shot-announcer)
 
-### Auto Shot Castbar
+### Auto Shot Timer
 - Resets swing timer while casting a shot; taken from [YaHT](https://github.com/Aviana/YaHT/tree/1.12.1)
 - Ignores instant spells such as Arcane Shot; taken from [HSK](https://github.com/anstellaire/HunterSwissKnife)
 - Works with Trueshot
@@ -65,28 +65,13 @@ Quiver looks up spells by name, which change with client locale. I use Wowhead t
 Files in `/Events` hook into game functions. Use these events if possible instead of declaring your own hooks.
 - Spellcast: CastSpell, CastSpellByName, UseAction
 
-## Module Lifecycle Events
+## Module Lifecycle Hooks
 The UI code is a mess right now, but soon there will be an event for attaching a frame to the Main Menu.
 ```
-OnRestoreSavedVariables
-table -> unit
-GameEvent: "PLAYER_LOGIN"
-Loads one table from SavedVariables used exclusively by the module.
-Called exactly once, even for disabled modules.
-Second table holds state for one customizable frame { W, H, X, Y }.
-Mutate the frame metadata to set default values.
-
-OnPersistSavedVariables
-unit -> table
-GameEvent: "PLAYER_LOGOUT"
-Persists state used exclusively by the module.
-Called exactly once, even for disabled modules.
-
 OnInitFrames
-table -> { IsReset: Boolean } -> unit
-Loads saved frame size and position
-Called with false after restoring saved variables
-Called with true after user resets frames
+{ IsReset: Boolean } -> unit
+Called with false after restoring saved variables.
+Called with true after user resets frames.
 
 OnEnable
 unit -> unit
@@ -106,17 +91,18 @@ OnInterfaceUnlock
 unit -> unit
 Not called while module disabled.
 Called every time user unlocks the UI.
-```
-Stub for new modules
-```
-Quiver_Module_<ModuleName> = {
-	Id = "<ModuleName>",
-	OnRestoreSavedVariables = function(savedVariables) end,
-	OnPersistSavedVariables = function() return {} end,
-	OnInitFrames = function(savedFrameMeta, options) end,
-	OnEnable = function() end,
-	OnDisable = function() end,
-	OnInterfaceLock = function() end,
-	OnInterfaceUnlock = function() end,
-}
+
+OnSavedVariablesRestore
+table -> unit
+GameEvent: "PLAYER_LOGIN"
+Loads one table from SavedVariables used exclusively by the module.
+Called exactly once, even for disabled modules.
+Second table holds state for one customizable frame { W, H, X, Y }.
+Mutate the frame metadata to set default values.
+
+OnSavedVariablesPersist
+unit -> table
+GameEvent: "PLAYER_LOGOUT"
+Persists state used exclusively by the module.
+Called exactly once, even for disabled modules.
 ```

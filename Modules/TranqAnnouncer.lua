@@ -1,4 +1,4 @@
-local store = {}
+local store
 local frame = nil
 
 local handleEvent = function()
@@ -28,21 +28,19 @@ end
 Quiver_Module_TranqAnnouncer_CreateMenuOptions = function(parent, gap)
 	local f = CreateFrame("Frame", nil, parent)
 
-	local editHit = Quiver_Component_EditBox(f,
-		{ TooltipReset="Reset Hit Message to Default" })
+	local editHit = Quiver_Component_EditBox(f, { TooltipReset=QUIVER_T.Tranq.TooltipHit })
 	editHit:SetText(store.MsgTranqHit)
 	editHit:SetScript("OnTextChanged",
 		function() store.MsgTranqHit = editHit:GetText() end)
 	editHit.BtnReset:SetScript("OnClick",
-		function() editHit:SetText(QUIVER_T.DefaultTranqHit) end)
+		function() editHit:SetText(QUIVER_T.Tranq.DefaultHit) end)
 
-	local editMiss = Quiver_Component_EditBox(f,
-		{ TooltipReset="Reset Miss Message to Default" })
+	local editMiss = Quiver_Component_EditBox(f, { TooltipReset=QUIVER_T.Tranq.TooltipMiss })
 	editMiss:SetText(store.MsgTranqMiss)
 	editMiss:SetScript("OnTextChanged",
 		function() store.MsgTranqMiss = editMiss:GetText() end)
 	editMiss.BtnReset:SetScript("OnClick",
-		function() editMiss:SetText(QUIVER_T.DefaultTranqMiss) end)
+		function() editMiss:SetText(QUIVER_T.Tranq.DefaultMiss) end)
 
 	local height1 = editHit:GetHeight()
 	editHit:SetPoint("Top", f, "Top", 0, 0)
@@ -55,14 +53,15 @@ end
 
 Quiver_Module_TranqAnnouncer = {
 	Id = "TranqAnnouncer",
-	OnInitFrames = function(savedFrameMeta) end,
-	OnRestoreSavedVariables = function(savedVariables)
-		store.MsgTranqHit = savedVariables.MsgTranqHit or QUIVER_T.DefaultTranqHit
-		store.MsgTranqMiss = savedVariables.MsgTranqMiss or QUIVER_T.DefaultTranqMiss
-	end,
-	OnPersistSavedVariables = function() return store end,
+	OnInitFrames = function(options) end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
 	OnInterfaceLock = function() return nil end,
 	OnInterfaceUnlock = function() return nil end,
+	OnSavedVariablesRestore = function(savedVariables)
+		store = savedVariables
+		store.MsgTranqHit = savedVariables.MsgTranqHit or QUIVER_T.Tranq.DefaultHit
+		store.MsgTranqMiss = savedVariables.MsgTranqMiss or QUIVER_T.Tranq.DefaultMiss
+	end,
+	OnSavedVariablesPersist = function() return store end,
 }

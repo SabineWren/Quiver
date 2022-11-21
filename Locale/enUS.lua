@@ -13,10 +13,8 @@ QUIVER_T = {
 			Resist = "Your Tranquilizing Shot was resisted",
 		},
 	},
-	DefaultTranqHit = "*** Tranq Shot Hit ***",
-	DefaultTranqMiss = "*** MISSED Tranq Shot ***",
 	ModuleName = {
-		AutoShotCastbar = "Auto Shot Castbar",
+		AutoShotTimer = "Auto Shot Timer",
 		Castbar = "Castbar",
 		RangeIndicator = "Range Indicator",
 		TranqAnnouncer = "Tranq Shot Announcer",
@@ -69,5 +67,12 @@ QUIVER_T = {
 		FrameLockToggleTooltip ="Lock/Unlock Frames",
 		ResetCastbarsTooltip = "Reset Castbars",
 		WarnUnlocked = "Quiver Unlocked. Show config dialog with /qq or /quiver.\nClick the lock icon when done.",
+		WrongClass = "Quiver is for hunters.",
+	},
+	Tranq = {
+		DefaultHit = "*** Tranq Shot Hit ***",
+		DefaultMiss = "*** MISSED Tranq Shot ***",
+		TooltipHit = "Reset Hit Message to Default",
+		TooltipMiss = "Reset Miss Message to Default",
 	},
 }

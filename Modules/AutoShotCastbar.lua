@@ -1,7 +1,6 @@
-local MODULE_ID = "AutoShotCastbar"
-local store = {}
+local MODULE_ID = "AutoShotTimer"
+local store
 local frame = nil
-local frameMeta = {}
 local BORDER = 1
 local maxBarWidth = 0
 -- Aimed Shot, Multi-Shot, Trueshot
@@ -41,11 +40,11 @@ local isConsumable = false
 
 -- ************ UI ************
 local updateBarSizes = function()
-	frame:SetWidth(frameMeta.W)
-	frame:SetHeight(frameMeta.H)
-	maxBarWidth = frameMeta.W - 2 * BORDER
+	frame:SetWidth(store.FrameMeta.W)
+	frame:SetHeight(store.FrameMeta.H)
+	maxBarWidth = store.FrameMeta.W - 2 * BORDER
 	frame.BarAutoShot:SetWidth(1)
-	frame.BarAutoShot:SetHeight(frameMeta.H - 2 * BORDER)
+	frame.BarAutoShot:SetHeight(store.FrameMeta.H - 2 * BORDER)
 end
 
 local createUI = function()
@@ -65,8 +64,8 @@ local createUI = function()
 
 	f.BarAutoShot:SetPoint("Center", f, "Center", 0, 0)
 
-	Quiver_Event_FrameLock_MakeMoveable(f, frameMeta)
-	Quiver_Event_FrameLock_MakeResizeable(f, frameMeta, {
+	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
+	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, {
 		GripMargin=0,
 		OnResizeEnd=updateBarSizes,
 		IsCenterX=true,
@@ -75,7 +74,7 @@ local createUI = function()
 end
 
 -- Temporary code until I figure out how to make a colour picker
-Quiver_Module_AutoShotCastbar_MakeOptionsColour = function(parent)
+Quiver_Module_AutoShotTimer_MakeOptionsColour = function(parent)
 	local btn = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
 	btn:SetWidth(120)
 	btn:SetHeight(QUIVER.Size.Button)
@@ -262,26 +261,19 @@ local onDisable = function()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 
-Quiver_Module_AutoShotCastbar = {
+Quiver_Module_AutoShotTimer = {
 	Id = MODULE_ID,
-	OnRestoreSavedVariables = function(savedVariables)
-		store = savedVariables
-		store.ColourShoot = store.ColourShoot or QUIVER.Colour.AutoAttackDefaultShoot
-		store.ColourReload = store.ColourReload or QUIVER.Colour.AutoAttackDefaultReload
-	end,
-	OnPersistSavedVariables = function() return store end,
-	OnInitFrames = function(savedFrameMeta, options)
-		frameMeta = savedFrameMeta
+	OnInitFrames = function(options)
 		local defaultOf = function(val, fallback)
 			if options.IsReset or val == nil then return fallback else return val end
 		end
 		local width = 240
-		frameMeta.W = defaultOf(frameMeta.W, width)
-		frameMeta.H = defaultOf(frameMeta.H, 14)
-		frameMeta.X = defaultOf(frameMeta.X, (GetScreenWidth() - width) / 2)
-		frameMeta.Y = defaultOf(frameMeta.Y, -1 * GetScreenHeight() + 248)
+		store.FrameMeta.W = defaultOf(store.FrameMeta.W, width)
+		store.FrameMeta.H = defaultOf(store.FrameMeta.H, 14)
+		store.FrameMeta.X = defaultOf(store.FrameMeta.X, (GetScreenWidth() - width) / 2)
+		store.FrameMeta.Y = defaultOf(store.FrameMeta.Y, -1 * GetScreenHeight() + 248)
 		if options.IsReset and frame ~= nil then
-			frame:SetPoint("TopLeft", frameMeta.X, frameMeta.Y)
+			frame:SetPoint("TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
 			updateBarSizes()
 		end
 	end,
@@ -291,4 +283,11 @@ Quiver_Module_AutoShotCastbar = {
 		if (not isShooting) and (not isReloading) then tryHideBar() end
 	end,
 	OnInterfaceUnlock = function() frame:SetAlpha(1) end,
+	OnSavedVariablesRestore = function(savedVariables)
+		store = savedVariables
+		store.ColourShoot = store.ColourShoot or QUIVER.Colour.AutoAttackDefaultShoot
+		store.ColourReload = store.ColourReload or QUIVER.Colour.AutoAttackDefaultReload
+		store.FrameMeta = store.FrameMeta or {}
+	end,
+	OnSavedVariablesPersist = function() return store end,
 }

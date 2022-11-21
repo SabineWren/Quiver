@@ -1,5 +1,5 @@
 local MODULE_ID = "Castbar"
-local frameMeta = {}
+local store
 local frame = nil
 local maxBarWidth = 0
 local BORDER = 1
@@ -10,13 +10,13 @@ local timeStartCasting = 0
 
 -- ************ UI ************
 local updateCastbarSize = function()
-	maxBarWidth = frameMeta.W - 2 * BORDER
+	maxBarWidth = store.FrameMeta.W - 2 * BORDER
 	frame.Castbar:SetWidth(1)
 	frame.SpellName:SetWidth(maxBarWidth)
 	frame.SpellTime:SetWidth(maxBarWidth)
 
 	local path, _size, flags = frame.SpellName:GetFont()
-	local calcFontSize = frameMeta.H - 4 * BORDER
+	local calcFontSize = store.FrameMeta.H - 4 * BORDER
 	local fontSize = calcFontSize > 18 and 18
 		or calcFontSize < 10 and 10
 		or calcFontSize
@@ -61,8 +61,8 @@ local createUI = function()
 	centerVertically(fCastbar.SpellTime)
 	centerVertically(fCastbar.SpellName)
 
-	Quiver_Event_FrameLock_MakeMoveable(fCastbar, frameMeta)
-	Quiver_Event_FrameLock_MakeResizeable(fCastbar, frameMeta, {
+	Quiver_Event_FrameLock_MakeMoveable(fCastbar, store.FrameMeta)
+	Quiver_Event_FrameLock_MakeResizeable(fCastbar, store.FrameMeta, {
 		GripMargin=0,
 		OnResizeEnd=updateCastbarSize,
 		IsCenterX=true,
@@ -133,20 +133,17 @@ end
 
 Quiver_Module_Castbar = {
 	Id = MODULE_ID,
-	OnRestoreSavedVariables = function(savedVariables) end,
-	OnPersistSavedVariables = function() return {} end,
-	OnInitFrames = function(savedFrameMeta, options)
-		frameMeta = savedFrameMeta
+	OnInitFrames = function(options)
 		local defaultOf = function(val, fallback)
 			if options.IsReset or val == nil then return fallback else return val end
 		end
 		local width = 240
-		frameMeta.W = defaultOf(frameMeta.W, width)
-		frameMeta.H = defaultOf(frameMeta.H, 20)
-		frameMeta.X = defaultOf(frameMeta.X, (GetScreenWidth() - width) / 2)
-		frameMeta.Y = defaultOf(frameMeta.Y, -1 * GetScreenHeight() + 268)
+		store.FrameMeta.W = defaultOf(store.FrameMeta.W, width)
+		store.FrameMeta.H = defaultOf(store.FrameMeta.H, 20)
+		store.FrameMeta.X = defaultOf(store.FrameMeta.X, (GetScreenWidth() - width) / 2)
+		store.FrameMeta.Y = defaultOf(store.FrameMeta.Y, -1 * GetScreenHeight() + 268)
 		if frame ~= nil then
-			frame:SetPoint("TopLeft", frameMeta.X, frameMeta.Y)
+			frame:SetPoint("TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
 			updateCastbarSize()
 		end
 	end,
@@ -154,4 +151,9 @@ Quiver_Module_Castbar = {
 	OnDisable = onDisable,
 	OnInterfaceLock = function() if not isCasting then frame:Hide() end end,
 	OnInterfaceUnlock = function() frame:Show() end,
+	OnSavedVariablesRestore = function(savedVariables)
+		store = savedVariables
+		store.FrameMeta = store.FrameMeta or {}
+	end,
+	OnSavedVariablesPersist = function() return {} end,
 }

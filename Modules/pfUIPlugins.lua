@@ -19,7 +19,6 @@ Quiver_Module_pfUITurtleTrueshot = function()
 		if begin then
 			local castTime, start = Quiver_Lib_Spellbook_GetCastTime(QUIVER_T.Spellbook.Trueshot)
 			local duration = duration or (castTime * 1000)
-
 			-- add cast action to the database
 			libcast.db[player].cast = trueshotName
 			libcast.db[player].rank = lastrank
@@ -28,7 +27,7 @@ Quiver_Module_pfUITurtleTrueshot = function()
 			libcast.db[player].icon = "Interface\\Icons\\Ability_Hunter_SteadyShot"
 			libcast.db[player].channel = nil
 		else
-			-- remove cast action to the database
+			-- remove cast action from the database
 			libcast.db[player].cast = nil
 			libcast.db[player].rank = nil
 			libcast.db[player].start = nil

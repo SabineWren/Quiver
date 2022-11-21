@@ -24,7 +24,7 @@ local createIconResetCastbars = function(parent)
 	f.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
 	f:SetScript("OnClick", function(_self)
 		for _k, v in _G.Quiver_Modules do
-			v.OnInitFrames(Quiver_Store.FrameMeta[v.Id], { IsReset=true })
+			v.OnInitFrames({ IsReset=true })
 		end
 	end)
 	return f
@@ -32,8 +32,7 @@ end
 
 local createCheckboxesModuleEnabled = function(f, yOffset, gap)
 	local height = 0
-	for _k, vLoop in _G.Quiver_Modules do
-		local v = vLoop
+	for _k, v in _G.Quiver_Modules do
 		local isEnabled = Quiver_Store.ModuleEnabled[v.Id]
 		local label = QUIVER_T.ModuleName[v.Id]
 		local tooltip = QUIVER_T.ModuleTooltip[v.Id]
@@ -54,13 +53,14 @@ end
 Quiver_ConfigMenu_Create = function()
 	-- WoW uses border-box content sizing
 	local PADDING = QUIVER.Size.Border + 4
-	local f = Quiver_Component_Dialog(300, QUIVER.Size.Border, PADDING)
+	local f = Quiver_Component_Dialog(300, PADDING)
 
 	local titleBox = Quiver_Component_TitleBox(f, "Quiver")
 	titleBox:SetPoint("Center", f, "Top", 0, -10)
 
 	local btnCloseTop = Quiver_Component_Button({
-		Parent=f, Size=QUIVER.Size.Icon, TooltipText=QUIVER_T.UI.CloseWindowTooltip })
+		Parent=f, Size=QUIVER.Size.Icon,
+		TooltipText=QUIVER_T.UI.CloseWindowTooltip })
 	btnCloseTop.Texture:QuiverSetTexture(0.7, QUIVER.Icon.XMark)
 	btnCloseTop:SetPoint("TopRight", f, "TopRight", -PADDING, -PADDING)
 	btnCloseTop:SetScript("OnClick", function() f:Hide() end)
@@ -82,11 +82,10 @@ Quiver_ConfigMenu_Create = function()
 	yOffset = yOffset - tranqOptions:GetHeight()
 	yOffset = yOffset - QUIVER.Size.Gap
 
-	local toggleColours = Quiver_Module_AutoShotCastbar_MakeOptionsColour(f)
+	local toggleColours = Quiver_Module_AutoShotTimer_MakeOptionsColour(f)
 	toggleColours:SetPoint("TopLeft", f, "TopLeft", PADDING, yOffset)
 	yOffset = yOffset - toggleColours:GetHeight()
 
 	f:SetHeight(-1 * yOffset + PADDING + QUIVER.Size.Button)
-
 	return f
 end

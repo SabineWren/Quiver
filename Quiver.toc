@@ -2,7 +2,7 @@
 ## Title: Quiver - |cff00ff00Hunter
 ## Notes: A collection of hunter utilities.
 ## Author: SabineWren, 2022
-## Version: 0.1
+## Version: 1.0.0
 ## SavedVariables: Quiver_Store
 
 Locale\enUS.lua
@@ -26,11 +26,14 @@ Components\Dialog.lua
 Components\EditBox.lua
 Components\TitleBox.lua
 
-Modules\AutoShotCastbar.lua
+Modules\AutoShotTimer.lua
 Modules\Castbar.lua
 Modules\RangeIndicator.lua
 Modules\pfUIPlugins.lua
 Modules\TranqAnnouncer.lua
+
+Migrations\M001.lua
+Migrations\Runner.lua
 
 ConfigMenu.lua
 Quiver.lua

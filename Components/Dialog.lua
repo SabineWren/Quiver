@@ -1,4 +1,4 @@
-Quiver_Component_Dialog = function(width, border, padding)
+Quiver_Component_Dialog = function(width, padding)
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:Hide()
 	f:SetWidth(width)
@@ -24,6 +24,5 @@ Quiver_Component_Dialog = function(width, border, padding)
 	btnCloseBottom:SetPoint("BOTTOMRIGHT", f, "BOTTOMRIGHT", -padding, padding)
 	btnCloseBottom:SetText("Close")
 	btnCloseBottom:SetScript("OnClick", function() f:Hide() end)
-
 	return f
 end
