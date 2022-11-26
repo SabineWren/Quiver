@@ -32,7 +32,8 @@ end
 
 local createCheckboxesModuleEnabled = function(f, yOffset, gap)
 	local height = 0
-	for _k, v in _G.Quiver_Modules do
+	for _k, vLoop in _G.Quiver_Modules do
+		local v = vLoop
 		local isEnabled = Quiver_Store.ModuleEnabled[v.Id]
 		local label = QUIVER_T.ModuleName[v.Id]
 		local tooltip = QUIVER_T.ModuleTooltip[v.Id]

@@ -155,5 +155,5 @@ Quiver_Module_Castbar = {
 		store = savedVariables
 		store.FrameMeta = store.FrameMeta or {}
 	end,
-	OnSavedVariablesPersist = function() return {} end,
+	OnSavedVariablesPersist = function() return store end,
 }

@@ -8,7 +8,7 @@ local parseVersion = function(text)
 end
 
 Quiver_Migrations_Runner = function()
-	local vOldText = Quiver_Store.Version or "0.0.0"
+	local vOldText = Quiver_Store.Version or "1.0.0"
 	local vOld = parseVersion(vOldText)
 	Quiver_Store.Version = GetAddOnMetadata("Quiver", "Version")
 
@@ -19,7 +19,7 @@ Quiver_Migrations_Runner = function()
 		return false
 	end
 
-	if getIsNewer(1, 0, 0) then
+	if getIsNewer(2, 0, 0) then
 		Quiver_Migrations_M001()
 	end
 end
