@@ -16,11 +16,11 @@ Quiver_Component_Button_CreateTexture = function(parent, layer)
 		local r, g, b, _ = self:GetParent():GetTextColor()
 		self:SetVertexColor(r+0.3, g-0.2, b)
 	end
-	t.QuiverResetColour = function(self)
+	t.QuiverResetColor = function(self)
 		local r, g, b, _ = self:GetParent():GetTextColor()
 		self:SetVertexColor(r, g, b)
 	end
-	t:QuiverResetColour()
+	t:QuiverResetColor()
 	return t
 end
 
@@ -40,7 +40,7 @@ Quiver_Component_Button = function(args)
 		end
 	end)
 	f:SetScript("OnLeave", function()
-		f.Texture:QuiverResetColour()
+		f.Texture:QuiverResetColor()
 		GameTooltip:Hide()
 		GameTooltip:ClearLines()
 	end)

@@ -73,15 +73,15 @@ local createUI = function()
 	return f
 end
 
--- Temporary code until I figure out how to make a colour picker
-Quiver_Module_AutoShotTimer_MakeOptionsColour = function(parent)
+-- Temporary code until I figure out how to make a color picker
+Quiver_Module_AutoShotTimer_MakeOptionsColor = function(parent)
 	local btn = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
 	btn:SetWidth(120)
 	btn:SetHeight(QUIVER.Size.Button)
-	btn:SetText("Toggle Colours")
+	btn:SetText("Toggle Colors")
 	btn:SetScript("OnClick", function()
-		local shoot = QUIVER.Colour.AutoAttackDefaultShoot
-		local reload = QUIVER.Colour.AutoAttackDefaultReload
+		local shoot = QUIVER.Color.AutoAttackDefaultShoot
+		local reload = QUIVER.Color.AutoAttackDefaultReload
 		if store.ColourShoot[1] == shoot[1] and store.ColourShoot[2] == shoot[2] then
 			store.ColourShoot = reload
 			store.ColourReload = shoot
@@ -285,8 +285,8 @@ Quiver_Module_AutoShotTimer = {
 	OnInterfaceUnlock = function() frame:SetAlpha(1) end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
-		store.ColourShoot = store.ColourShoot or QUIVER.Colour.AutoAttackDefaultShoot
-		store.ColourReload = store.ColourReload or QUIVER.Colour.AutoAttackDefaultReload
+		store.ColourShoot = store.ColourShoot or QUIVER.Color.AutoAttackDefaultShoot
+		store.ColourReload = store.ColourReload or QUIVER.Color.AutoAttackDefaultReload
 		store.FrameMeta = store.FrameMeta or {}
 	end,
 	OnSavedVariablesPersist = function() return store end,

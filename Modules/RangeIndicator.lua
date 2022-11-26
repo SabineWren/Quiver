@@ -53,9 +53,9 @@ local checkDistance = {
 	Scatter=function() return checkActionBarDistance(QUIVER_T.Spellbook.Scatter_Shot) end,-- 15 yards
 }
 
-local render = function(colour, text)
+local render = function(color, text)
 	fontString:SetText(text)
-	local r, g, b, a = unpack(colour)
+	local r, g, b, a = unpack(color)
 	frame:SetBackdropColor(r, g, b, a)
 	frame:SetBackdropBorderColor(r, g, b, a)
 	if not Quiver_Store.IsLockedFrames then
