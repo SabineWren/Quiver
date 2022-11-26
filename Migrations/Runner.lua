@@ -7,17 +7,24 @@ local parseVersion = function(text)
 	}
 end
 
-Quiver_Migrations_Runner = function()
-	local vOldText = Quiver_Store.Version or "1.0.0"
-	local vOld = parseVersion(vOldText)
-	Quiver_Store.Version = GetAddOnMetadata("Quiver", "Version")
-
-	local getIsNewer = function(breaking, feature, fix)
-		if breaking > vOld.Breaking then return true end
-		if feature > vOld.Feature then return true end
-		if fix > vOld.Fix then return true end
+local compareVersion = function(breaking, feature, fix, b)
+	if
+		breaking > b.Breaking
+		or breaking == b.Breaking and feature > b.Feature
+		or breaking == b.Breaking and feature == b.Feature and fix > b.Fix
+	then
+		return true
+	else
 		return false
 	end
+end
+
+Quiver_Migrations_Runner = function()
+	local vOldText = Quiver_Store.Version or "1.0.0"
+	Quiver_Store.Version = GetAddOnMetadata("Quiver", "Version")
+
+	local vOld = parseVersion(vOldText)
+	local getIsNewer = function(a, b, c) return compareVersion(a, b, c, vOld) end
 
 	if getIsNewer(2, 0, 0) then
 		Quiver_Migrations_M001()
