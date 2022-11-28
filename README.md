@@ -32,7 +32,7 @@ Requires some raw spellbook abilities on your action bars (not macros). Hidden a
 It's deliberately less customizable than Xtranq, so disable this module and run Xtranq if that bothers you. I'm open to adding tranq rotation features, but I'm not a fan of how Xtranq does it. Perhaps letting one hunter configure the rotation for all? Feel free to request features.
 
 # Installation
-1. [Download](https://github.com/SabineWren/Quiver/archive/main.zip) latest version
+1. [Download](https://github.com/SabineWren/Quiver/releases) latest version
 2. Extract the Zip file
 3. Remove the `-main` from the directory name
 4. Move directory into `<WoW install>/Interface/AddOns/`
