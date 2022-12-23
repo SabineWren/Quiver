@@ -1,35 +1,46 @@
 local store
 local frame = nil
+local UPDATE_DELAY = 5
 
 local aura = (function()
-	local knowsAura, isActive, lastUpdate, timeLeft =
-		false, false, 1800, 0
+	local knowsAura, isActive, lastUpdate, timeLeft = false, false, 1800, 0
 	local updateState = function()
 		knowsAura = Quiver_Lib_Spellbook_GetIsSpellLearned("Trueshot Aura")
-		lastUpdate, timeLeft = 0, 0
-		for i=1,24 do
-			-- Indexes from 1
-			local texture = UnitBuff("Player", i)
+		lastUpdate, timeLeft, isActive = 0, 0, false
+		-- This seems to check debuffs as well (tested with deserter)
+		-- Turtle supports 24 buffs and 24 debuffs, so up to 48 slots
+		for i=0,47 do
+			local texture = GetPlayerBuffTexture(i)
 			if texture == QUIVER.Icon.Trueshot then
-				-- Indexes from 0
-				timeLeft = GetPlayerBuffTimeLeft(i - 1)
+				isActive = true
+				timeLeft = GetPlayerBuffTimeLeft(i)
+				return
 			end
 		end
 	end
 	return {
 		Print = function()
-			if isActive
+			if isActive and timeLeft < 5 * 60
 			then
-				DEFAULT_CHAT_FRAME:AddMessage("Active " .. timeLeft)
-			else
+				DEFAULT_CHAT_FRAME:AddMessage("Low time " .. timeLeft)
+			elseif not isActive then
 				DEFAULT_CHAT_FRAME:AddMessage("Not Active")
 			end
 		end,
-		Update = function()
-			updateState()
-		end,
+		Update = updateState,
+		ShouldUpdate = function(elapsed)
+			lastUpdate = lastUpdate + elapsed
+			return knowsAura and lastUpdate > UPDATE_DELAY
+		end
 	}
 end)()
+
+local handleUpdate = function()
+	if aura.ShouldUpdate(arg1) then
+		aura.Update()
+		aura.Print()
+	end
+end
 
 local handleEvent = function()
 	if event == "SPELLS_CHANGED" and arg1 ~= "LeftButton" then
@@ -42,14 +53,18 @@ end
 
 local EVENTS = {
 	"PLAYER_AURAS_CHANGED",
-	"SPELLS_CHANGED",
+	"SPELLS_CHANGED",-- Open or click thru spellbook, learn/unlearn spell
 }
 local onEnable = function()
 	if frame == nil then frame = CreateFrame("Frame", nil) end
 	frame:SetScript("OnEvent", handleEvent)
+	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
+	frame:Show()
+	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) else frame:SetAlpha(1) end
 end
 local onDisable = function()
+	frame:Hide()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 
