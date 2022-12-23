@@ -23,5 +23,6 @@ QUIVER = {
 		Quickshots = "Interface\\Icons\\Ability_Warrior_InnerRage",
 		RapidFire = "Interface\\Icons\\Ability_Hunter_RunningShot",
 		TrollBerserk = "Interface\\Icons\\Racial_Troll_Berserk",
+		Trueshot = "Interface\\Icons\\Ability_TrueShot",
 	},
 }

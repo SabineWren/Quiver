@@ -1,18 +1,47 @@
 local store
 local frame = nil
 
+local aura = (function()
+	local knowsAura, isActive, lastUpdate, timeLeft =
+		false, false, 1800, 0
+	local updateState = function()
+		knowsAura = Quiver_Lib_Spellbook_GetIsSpellLearned("Trueshot Aura")
+		lastUpdate, timeLeft = 0, 0
+		for i=1,24 do
+			-- Indexes from 1
+			local texture = UnitBuff("Player", i)
+			if texture == QUIVER.Icon.Trueshot then
+				-- Indexes from 0
+				timeLeft = GetPlayerBuffTimeLeft(i - 1)
+			end
+		end
+	end
+	return {
+		Print = function()
+			if isActive
+			then
+				DEFAULT_CHAT_FRAME:AddMessage("Active " .. timeLeft)
+			else
+				DEFAULT_CHAT_FRAME:AddMessage("Not Active")
+			end
+		end,
+		Update = function()
+			updateState()
+		end,
+	}
+end)()
+
 local handleEvent = function()
 	if event == "SPELLS_CHANGED" and arg1 ~= "LeftButton" then
-		if Quiver_Lib_Spellbook_GetIsSpellLearned("Trueshot Aura")
-		then
-			DEFAULT_CHAT_FRAME:AddMessage("yes!", 0.5, 0.8, 1)
-		else
-			DEFAULT_CHAT_FRAME:AddMessage("no!", 0.5, 0.8, 1)
-		end
+		aura.Update()
+	elseif event == "PLAYER_AURAS_CHANGED" then
+		aura.Update()
+		aura.Print()
 	end
 end
 
 local EVENTS = {
+	"PLAYER_AURAS_CHANGED",
 	"SPELLS_CHANGED",
 }
 local onEnable = function()
