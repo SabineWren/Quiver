@@ -18,6 +18,7 @@ QUIVER_T = {
 		Castbar = "Castbar",
 		RangeIndicator = "Range Indicator",
 		TranqAnnouncer = "Tranq Shot Announcer",
+		TrueshotAuraAlarm = "Trueshot Aura Alarm",
 	},
 	ModuleTooltip = {
 		Castbar = "Shows Aimed Shot, Multi-Shot, and Trueshot",

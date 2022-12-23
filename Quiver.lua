@@ -4,6 +4,7 @@ _G.Quiver_Modules = {
 	Quiver_Module_Castbar,
 	Quiver_Module_RangeIndicator,
 	Quiver_Module_TranqAnnouncer,
+	Quiver_Module_TrueshotAuraAlarm,
 }
 
 local savedVariablesRestore = function()

@@ -34,6 +34,17 @@ Quiver_Lib_Spellbook_GetSpellNameFromTexture = function(textureSeek)
 	end
 end
 
+Quiver_Lib_Spellbook_GetIsSpellLearned = function(spellName)
+	local i = 0
+	while true do
+		i = i + 1
+		local name, _rank = GetSpellName(i, BOOKTYPE_SPELL)
+		if not name then return false
+		elseif name == spellName then return true
+		end
+	end
+end
+
 -- Spells can change texture, such as Auto Shot when equipping a ranged weapon.
 -- Therefore, don't rely on this always returning the correct texture
 local cacheNameTexture = {}

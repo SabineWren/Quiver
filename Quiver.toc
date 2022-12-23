@@ -31,6 +31,7 @@ Modules\Castbar.lua
 Modules\RangeIndicator.lua
 Modules\pfUIPlugins.lua
 Modules\TranqAnnouncer.lua
+Modules\TrueshotAuraAlarm.lua
 
 Migrations\M001.lua
 Migrations\Runner.lua

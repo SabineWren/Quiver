@@ -35,6 +35,7 @@ local createCheckboxesModuleEnabled = function(f, yOffset, gap)
 	for _k, vLoop in _G.Quiver_Modules do
 		local v = vLoop
 		local isEnabled = Quiver_Store.ModuleEnabled[v.Id]
+		DEFAULT_CHAT_FRAME:AddMessage(v.Id, 1, 0.6, 1)
 		local label = QUIVER_T.ModuleName[v.Id]
 		local tooltip = QUIVER_T.ModuleTooltip[v.Id]
 		local checkbutton = Quiver_Component_CheckButton({
