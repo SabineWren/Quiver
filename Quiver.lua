@@ -47,11 +47,11 @@ end
 
 --[[
 https://wowpedia.fandom.com/wiki/AddOn_loading_process
-All of these events fire on login and UI reload. The sooner we initialize, the fewer
-other addons (action bars, chat windows) will be available. We don't need to clutter chat
-until the user interacts with Quiver, and we don't pre-cache action bars.
-Therefore, we load as soon as possible. Quiver comes alphabetically after pfUI,
-but it's safer to use a later event to avoid depending on arbitrary names.
+All of these events fire on login and UI reload. We don't need to clutter chat
+until the user interacts with Quiver, and we don't pre-cache action bars. That
+means it's okay to load before other addons (action bars, chat windows).
+pfUI loads before we register plugins for it. Quiver comes alphabetically later,
+but it's safer to use a later event in case names change.
 
 ADDON_LOADED Fires each time any addon loads, but can't yet print to pfUI's chat menu
 PLAYER_LOGIN Fires once, but can't yet read talent tree
@@ -65,12 +65,14 @@ frame:RegisterEvent("PLAYER_LOGOUT")
 frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function()
 	if event == "ADDON_LOADED" and arg1 == "Quiver" then
-		Quiver_Store = Quiver_Store or {}
-		Quiver_Migrations_Runner()
+		Quiver_Migrations_UpdateVersion()
 		savedVariablesRestore()
 		initSlashCommandsAndModules()
-	elseif event == "PLAYER_LOGIN" then loadPlugins()
-	elseif event == "PLAYER_LOGOUT" then savedVariablesPersist()
-	elseif event == "ACTIONBAR_SLOT_CHANGED" then Quiver_Lib_ActionBar_ValidateCache(arg1)
+	elseif event == "PLAYER_LOGIN" then
+		loadPlugins()
+	elseif event == "PLAYER_LOGOUT" then
+		savedVariablesPersist()
+	elseif event == "ACTIONBAR_SLOT_CHANGED" then
+		Quiver_Lib_ActionBar_ValidateCache(arg1)
 	end
 end)

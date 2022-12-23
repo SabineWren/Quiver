@@ -2,7 +2,7 @@ Quiver_Migrations_M001 = function()
 	local mstore = Quiver_Store.ModuleStore
 	if mstore == nil or Quiver_Store.FrameMeta == nil then return end
 
-	-- Rename swing timer module
+	-- Rename Auto Shot timer module
 	Quiver_Store.ModuleEnabled[Quiver_Module_AutoShotTimer.Id] = Quiver_Store.ModuleEnabled["AutoShotCastbar"]
 	Quiver_Store.ModuleEnabled["AutoShotCastbar"] = nil
 
