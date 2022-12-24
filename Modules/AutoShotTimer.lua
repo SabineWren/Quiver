@@ -267,10 +267,9 @@ Quiver_Module_AutoShotTimer = {
 		local defaultOf = function(val, fallback)
 			if options.IsReset or val == nil then return fallback else return val end
 		end
-		local width = 240
-		store.FrameMeta.W = defaultOf(store.FrameMeta.W, width)
+		store.FrameMeta.W = defaultOf(store.FrameMeta.W, 240)
 		store.FrameMeta.H = defaultOf(store.FrameMeta.H, 14)
-		store.FrameMeta.X = defaultOf(store.FrameMeta.X, (GetScreenWidth() - width) / 2)
+		store.FrameMeta.X = defaultOf(store.FrameMeta.X, (GetScreenWidth() - store.FrameMeta.W) / 2)
 		store.FrameMeta.Y = defaultOf(store.FrameMeta.Y, -1 * GetScreenHeight() + 248)
 		if options.IsReset and frame ~= nil then
 			frame:SetPoint("TopLeft", store.FrameMeta.X, store.FrameMeta.Y)

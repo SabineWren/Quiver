@@ -28,8 +28,8 @@ Quiver_Component_Button = function(args)
 	local parent, size, tooltipText =
 		args.Parent, args.Size, args.TooltipText
 	local f = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-	f:SetHeight(size)
 	f:SetWidth(size)
+	f:SetHeight(size)
 
 	f:SetScript("OnEnter", function()
 		f.Texture:QuiverHighlight()

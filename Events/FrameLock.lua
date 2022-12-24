@@ -10,6 +10,27 @@ local framesMoveable = {}
 local framesResizeable = {}
 local openWarning
 
+Quiver_Event_FrameLock_RestoreSize = (function()
+	-- Screensize scales after initializing, but we can read the scaling beforehand
+	local s = UIParent:GetEffectiveScale()
+	local sw = s * GetScreenWidth()
+	local sh = s * GetScreenHeight()
+
+	local defaultOf = function(val, fallback)
+		if val == nil then return fallback else return val end
+	end
+
+	return function(savedFrameMeta, args)
+		local m = savedFrameMeta or {}
+		local w, h, dx, dy = args.w, args.h, args.dx, args.dy
+		m.W = defaultOf(m.W, w)
+		m.H = defaultOf(m.H, h)
+		m.X = defaultOf(m.X, sw / 2 + dx)
+		m.Y = defaultOf(m.Y, -1 * sh / 2 + dy)
+		return m
+	end
+end)()
+
 -- Tons of users don't read the readme file AT ALL. Not even the first line!
 -- We have to guide and strongly encourage them to lock the frames.
 Quiver_Event_FrameLock_Init = function()
@@ -100,7 +121,6 @@ Quiver_Event_FrameLock_MakeMoveable = function(f, meta)
 	local x = absClamp(meta.X, xMax)
 	local y = -1 * absClamp(meta.Y, yMax)
 	f:SetPoint("TopLeft", nil, "TopLeft", x, y)
-
 	f:SetScript("OnMouseDown", function()
 		if not Quiver_Store.IsLockedFrames then f:StartMoving() end
 	end)
@@ -116,7 +136,8 @@ Quiver_Event_FrameLock_MakeMoveable = function(f, meta)
 end
 
 Quiver_Event_FrameLock_MakeResizeable = function(frame, meta, args)
-	local margin, onResizeEnd, isCenterX = args.GripMargin, args.OnResizeEnd, args.IsCenterX
+	local margin, isCenterX, onResizeEnd, onResizeDrag =
+		args.GripMargin, args.IsCenterX, args.OnResizeEnd, args.OnResizeDrag
 
 	if isCenterX then
 		frame:SetScript("OnSizeChanged", function()
@@ -126,7 +147,10 @@ Quiver_Event_FrameLock_MakeResizeable = function(frame, meta, args)
 			meta.X = meta.X - delta
 			frame:SetWidth(meta.W)
 			frame:SetPoint("TopLeft", meta.X, meta.Y)
+			if onResizeDrag ~= nil then onResizeDrag() end
 		end)
+	elseif onResizeDrag ~= nil then
+		frame:SetScript("OnSizeChanged", onResizeDrag)
 	end
 
 	local handle = Quiver_Component_Button({ Parent=frame, Size=GRIP_HEIGHT })
@@ -143,6 +167,9 @@ Quiver_Event_FrameLock_MakeResizeable = function(frame, meta, args)
 	handle:SetScript("OnMouseDown", function()
 		if frame:IsResizable() then frame:StartSizing("BottomRight") end
 	end)
+	local saveSize = function()
+
+	end
 	handle:SetScript("OnMouseUp", function()
 		frame:StopMovingOrSizing()
 		meta.W = math.floor(frame:GetWidth() + 0.5)
