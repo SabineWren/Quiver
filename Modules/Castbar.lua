@@ -134,15 +134,13 @@ end
 Quiver_Module_Castbar = {
 	Id = MODULE_ID,
 	OnInitFrames = function(options)
-		local defaultOf = function(val, fallback)
-			if options.IsReset or val == nil then return fallback else return val end
-		end
-		local width = 240
-		store.FrameMeta.W = defaultOf(store.FrameMeta.W, width)
-		store.FrameMeta.H = defaultOf(store.FrameMeta.H, 20)
-		store.FrameMeta.X = defaultOf(store.FrameMeta.X, (GetScreenWidth() - width) / 2)
-		store.FrameMeta.Y = defaultOf(store.FrameMeta.Y, -1 * GetScreenHeight() + 268)
+		if options.IsReset then store.FrameMeta = nil end
+		store.FrameMeta = Quiver_Event_FrameLock_RestoreSize(store.FrameMeta, {
+			w=240, h=20, dx=240 * -0.5, dy=-116,
+		})
 		if frame ~= nil then
+			frame:SetWidth(store.FrameMeta.W)
+			frame:SetHeight(store.FrameMeta.H)
 			frame:SetPoint("TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
 			updateCastbarSize()
 		end

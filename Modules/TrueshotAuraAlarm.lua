@@ -44,6 +44,11 @@ local aura = (function()
 end)()
 
 -- ************ UI ************
+local resizeIcon = function()
+	frame.Icon:SetWidth(frame:GetWidth())
+	frame.Icon:SetHeight(frame:GetHeight())
+	frame.Icon:SetPoint("Center", 0, 0)
+end
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("HIGH")
@@ -55,11 +60,6 @@ local createUI = function()
 	f.Icon:SetPoint("Center", 0, 0)
 	f.Icon:SetBackdrop({ bgFile = QUIVER.Icon.Trueshot, tile = false })
 
-	local resizeIcon = function()
-		f.Icon:SetWidth(f:GetWidth())
-		f.Icon:SetHeight(f:GetHeight())
-		f.Icon:SetPoint("Center", 0, 0)
-	end
 	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
 	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, {
 		GripMargin=0,
@@ -108,8 +108,11 @@ Quiver_Module_TrueshotAuraAlarm = {
 			dx=DEFAULT_ICON_SIZE * -0.5,
 			dy=DEFAULT_ICON_SIZE * -0.5,
 		})
-		if options.IsReset and frame ~= nil then
+		if frame ~= nil then
+			frame:SetWidth(store.FrameMeta.W)
+			frame:SetHeight(store.FrameMeta.H)
 			frame:SetPoint("TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
+			resizeIcon()
 		end
 	end,
 	OnEnable = onEnable,

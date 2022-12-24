@@ -118,11 +118,15 @@ end
 Quiver_Module_RangeIndicator = {
 	Id = "RangeIndicator",
 	OnInitFrames = function(options)
-		local defaultOf = function(val, fallback)
-			if options.IsReset or val == nil then return fallback else return val end
+		if options.IsReset then store.FrameMeta = nil end
+		store.FrameMeta = Quiver_Event_FrameLock_RestoreSize(store.FrameMeta, {
+			w=190, h=35, dx=190 * -0.5, dy=-183,
+		})
+		if frame ~= nil then
+			frame:SetWidth(store.FrameMeta.W)
+			frame:SetHeight(store.FrameMeta.H)
+			frame:SetPoint("TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
 		end
-		store.FrameMeta.W = defaultOf(store.FrameMeta.W, 135)
-		store.FrameMeta.H = defaultOf(store.FrameMeta.H, 35)
 	end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
