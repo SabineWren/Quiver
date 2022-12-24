@@ -8,6 +8,7 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 - [Castbar](#castbar)
 - [Range Indicator](#range-indicator)
 - [Tranq Shot Announcer](#tranq-shot-announcer)
+- [Trueshot Aura Alarm](#trueshot-aura-alarm)
 
 ### Auto Shot Timer
 - Resets swing timer while casting a shot; taken from [YaHT](https://github.com/Aviana/YaHT/tree/1.12.1)
@@ -31,6 +32,9 @@ Requires some raw spellbook abilities on your action bars (not macros). Hidden a
 
 It's deliberately less customizable than Xtranq, so disable this module and run Xtranq if that bothers you. I'm open to adding tranq rotation features, but I'm not a fan of how Xtranq does it. Perhaps letting one hunter configure the rotation for all? Feel free to request features.
 
+### Trueshot Aura Alarm
+This checks if you have Trueshot Aura talented. If so, Quiver tracks the buff and duration, and warns you with a texture overlay to recast it.
+
 # Installation
 1. [Download](https://github.com/SabineWren/Quiver/releases) latest version
 2. Extract the Zip file
@@ -39,9 +43,9 @@ It's deliberately less customizable than Xtranq, so disable this module and run 
 5. Restart WoW.
 
 # Planned Features
-### Trueshot Alarm
-Power Auras works great for PvE, although it's not spec aware. I don't want a constant reminder to recast Trueshot Aura while it's not talented, and Quiver already has code implemented to monitor available spells on action bars.
+### Aspect Tracker
 
+# Possible Features??
 ### Pet Pamper
 Roid can't do everything for pets. Amarra made a pet utils addon with features like auto-find food when feeding pet. This might be a deep rabbit hole.
 
