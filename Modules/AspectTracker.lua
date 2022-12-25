@@ -6,23 +6,15 @@ local BORDER_SIZE = 4
 local TRANSPARENCY = 0.5
 
 local createTooltip = function()
-	-- This code doesn't work, so return GameTooltip instead
-	-- TODO debug this to avoid clearing the user's tooltip.
-
 	-- https://wowwiki-archive.fandom.com/wiki/UIOBJECT_GameTooltip
-	--[[
-	tt = CreateFrame("GameTooltip", QuiverScanningTooltip, nil, "GameTooltipTemplate")
-	tt:SetOwner(WorldFrame, "ANCHOR_NONE")
+	tt = CreateFrame("GameTooltip", "QuiverScanningTooltip", nil, "GameTooltipTemplate")
 	tt:SetScript("OnHide", function() tt:SetOwner(WorldFrame,"ANCHOR_NONE") end)
-
+	tt:Hide()
 	tt:SetFrameStrata("TOOLTIP")
 	local fs1 = tt:CreateFontString("$parentTextLeft1", nil, "GameTooltipText")
 	local fs2 = tt:CreateFontString("$parentTextRight1", nil, "GameTooltipText")
 	tt:AddFontStrings(fs1, fs2)
-
 	return tt
-	]]
-	return GameTooltip
 end
 local getIsBuffActive = function(buffname)
 	if not tooltip then tooltip = createTooltip() end
@@ -32,15 +24,14 @@ local getIsBuffActive = function(buffname)
 		if buffIndex >= 0 then
 			tooltip:ClearLines()
 			tooltip:SetPlayerBuff(buffIndex)
-			local fontString = _G["GameTooltipTextLeft1"]
-			-- DEFAULT_CHAT_FRAME:AddMessage(isCancellable .. " " .. fontString:GetText())
+			--local fontString = _G["GameTooltipTextLeft1"]
+			local fontString = _G["QuiverScanningTooltipTextLeft1"]
+			--DEFAULT_CHAT_FRAME:AddMessage(isCancellable .. " " .. fontString:GetText())
 			if fontString and fontString:GetText() == buffname then
-				tooltip:Hide()
 				return true
 			end
 		end
 	end
-	tooltip:Hide()
 	return false
 end
 
@@ -84,13 +75,12 @@ local aura = (function()
 			frame:SetBackdrop({
 				bgFile = "Interface/Tooltips/UI-Tooltip-Background",
 				edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-				--edgeFile = "Interface/BUTTONS/WHITE8X8",
 				tile = true,
 				tileSize = 8,
 				edgeSize = 16,
 				insets = { left=BORDER_SIZE, right=BORDER_SIZE, top=BORDER_SIZE, bottom=BORDER_SIZE },
 			})
-			frame:SetBackdropBorderColor(1, 1, 1, 1.0)
+			frame:SetBackdropBorderColor(0.8, 0.9, 1.0, 1.0)
 		else
 			frame:SetBackdrop({ bgFile = "Interface/BUTTONS/WHITE8X8", tile = false })
 		end
