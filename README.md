@@ -49,7 +49,7 @@ This checks if you have Trueshot Aura talented. If so, Quiver tracks the buff an
 4. Move directory into `<WoW install>/Interface/AddOns/`
 5. Restart WoW.
 
-# Possible Futre Features
+# Possible Future Features
 ### Pet Pamper
 Roid can't do everything for pets. Amarra made a pet utils addon with features like auto-find food when feeding pet. This might be a deep rabbit hole.
 

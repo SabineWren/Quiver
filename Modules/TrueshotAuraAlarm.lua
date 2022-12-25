@@ -1,6 +1,6 @@
 local store
 local frame = nil
-local UPDATE_DELAY = 15
+local UPDATE_DELAY = 1
 local DEFAULT_ICON_SIZE = 48
 local MINUTES_LEFT_WARNING = 5
 
