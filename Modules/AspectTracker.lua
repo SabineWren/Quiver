@@ -35,10 +35,12 @@ local getIsBuffActive = function(buffname)
 			local fontString = _G["GameTooltipTextLeft1"]
 			-- DEFAULT_CHAT_FRAME:AddMessage(isCancellable .. " " .. fontString:GetText())
 			if fontString and fontString:GetText() == buffname then
+				tooltip:Hide()
 				return true
 			end
 		end
 	end
+	tooltip:Hide()
 	return false
 end
 
