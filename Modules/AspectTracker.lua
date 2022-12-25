@@ -1,10 +1,10 @@
 local store
 local frame = nil
-local tooltip = nil
 local DEFAULT_ICON_SIZE = 32
 local BORDER_SIZE = 4
 local TRANSPARENCY = 0.5
 
+local tooltip = nil
 local createTooltip = function()
 	-- https://wowwiki-archive.fandom.com/wiki/UIOBJECT_GameTooltip
 	tt = CreateFrame("GameTooltip", "QuiverScanningTooltip", nil, "GameTooltipTemplate")
@@ -24,7 +24,6 @@ local getIsBuffActive = function(buffname)
 		if buffIndex >= 0 then
 			tooltip:ClearLines()
 			tooltip:SetPlayerBuff(buffIndex)
-			--local fontString = _G["GameTooltipTextLeft1"]
 			local fontString = _G["QuiverScanningTooltipTextLeft1"]
 			--DEFAULT_CHAT_FRAME:AddMessage(isCancellable .. " " .. fontString:GetText())
 			if fontString and fontString:GetText() == buffname then
@@ -36,60 +35,53 @@ local getIsBuffActive = function(buffname)
 end
 
 -- ************ State ************
-local aura = (function()
-	local knowsHawk = false
-	local isPackActive = false
+local updateUI = function()
+	local knowsHawk = Quiver_Lib_Spellbook_GetIsSpellLearned(QUIVER_T.Spellbook.Aspect_Hawk)
+		or not Quiver_Store.IsLockedFrames
+
 	local activeTexture = nil
-	local updateState = function()
-		knowsHawk = Quiver_Lib_Spellbook_GetIsSpellLearned(QUIVER_T.Spellbook.Aspect_Hawk)
-			or not Quiver_Store.IsLockedFrames
-
-		if getIsBuffActive(QUIVER_T.Spellbook.Aspect_Beast) then
-			activeTexture = QUIVER.Icon.Aspect_Beast
-		elseif getIsBuffActive(QUIVER_T.Spellbook.Aspect_Cheetah) then
-			activeTexture = QUIVER.Icon.Aspect_Cheetah
-		elseif getIsBuffActive(QUIVER_T.Spellbook.Aspect_Monkey) then
-			activeTexture = QUIVER.Icon.Aspect_Monkey
-		elseif getIsBuffActive(QUIVER_T.Spellbook.Aspect_Wild) then
-			activeTexture = QUIVER.Icon.Aspect_Wild
-		elseif getIsBuffActive(QUIVER_T.Spellbook.Aspect_Wolf) then
-			activeTexture = QUIVER.Icon.Aspect_Wolf
-		elseif knowsHawk and not getIsBuffActive(QUIVER_T.Spellbook.Aspect_Hawk) then
-			activeTexture = QUIVER.Icon.Aspect_Hawk
-		elseif not Quiver_Store.IsLockedFrames then
-			activeTexture = QUIVER.Icon.Aspect_Hawk
-		else
-			activeTexture = nil
-		end
-
-		if activeTexture then
-			frame.Icon:SetBackdrop({ bgFile = activeTexture, tile = false })
-			frame.Icon:SetAlpha(TRANSPARENCY)
-		else
-			frame.Icon:SetAlpha(0.0)
-		end
-
-		-- Exclude Pack from main texture, since party members can apply it.
-		-- I don't have a simple way of detecting who cast it.
-		if getIsBuffActive(QUIVER_T.Spellbook.Aspect_Pack) then
-			frame:SetBackdrop({
-				bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-				edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-				tile = true,
-				tileSize = 8,
-				edgeSize = 16,
-				insets = { left=BORDER_SIZE, right=BORDER_SIZE, top=BORDER_SIZE, bottom=BORDER_SIZE },
-			})
-			frame:SetBackdropBorderColor(0.8, 0.9, 1.0, 1.0)
-		else
-			frame:SetBackdrop({ bgFile = "Interface/BUTTONS/WHITE8X8", tile = false })
-		end
-		frame:SetBackdropColor(0, 0, 0, 0)
+	if getIsBuffActive(QUIVER_T.Spellbook.Aspect_Beast) then
+		activeTexture = QUIVER.Icon.Aspect_Beast
+	elseif getIsBuffActive(QUIVER_T.Spellbook.Aspect_Cheetah) then
+		activeTexture = QUIVER.Icon.Aspect_Cheetah
+	elseif getIsBuffActive(QUIVER_T.Spellbook.Aspect_Monkey) then
+		activeTexture = QUIVER.Icon.Aspect_Monkey
+	elseif getIsBuffActive(QUIVER_T.Spellbook.Aspect_Wild) then
+		activeTexture = QUIVER.Icon.Aspect_Wild
+	elseif getIsBuffActive(QUIVER_T.Spellbook.Aspect_Wolf) then
+		activeTexture = QUIVER.Icon.Aspect_Wolf
+	elseif knowsHawk and not getIsBuffActive(QUIVER_T.Spellbook.Aspect_Hawk) then
+		activeTexture = QUIVER.Icon.Aspect_Hawk
+	elseif not Quiver_Store.IsLockedFrames then
+		activeTexture = QUIVER.Icon.Aspect_Hawk
+	else
+		activeTexture = nil
 	end
-	return {
-		UpdateUI = updateState,
-	}
-end)()
+
+	if activeTexture then
+		frame.Icon:SetBackdrop({ bgFile = activeTexture, tile = false })
+		frame.Icon:SetAlpha(TRANSPARENCY)
+	else
+		frame.Icon:SetAlpha(0.0)
+	end
+
+	-- Exclude Pack from main texture, since party members can apply it.
+	-- I don't have a simple way of detecting who cast it.
+	if getIsBuffActive(QUIVER_T.Spellbook.Aspect_Pack) then
+		frame:SetBackdrop({
+			bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+			edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+			tile = true,
+			tileSize = 8,
+			edgeSize = 16,
+			insets = { left=BORDER_SIZE, right=BORDER_SIZE, top=BORDER_SIZE, bottom=BORDER_SIZE },
+		})
+		frame:SetBackdropBorderColor(0.8, 0.9, 1.0, 1.0)
+	else
+		frame:SetBackdrop({ bgFile = "Interface/BUTTONS/WHITE8X8", tile = false })
+	end
+	frame:SetBackdropColor(0, 0, 0, 0)
+end
 
 -- ************ UI ************
 local resizeIcon = function()
@@ -100,7 +92,6 @@ end
 
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
-	--f:SetFrameStrata("HIGH")
 	f:SetFrameStrata("LOW")
 	f.Icon = CreateFrame("Frame", nil, f)
 
@@ -110,7 +101,6 @@ local createUI = function()
 		OnResizeDrag=resizeIcon,
 		OnResizeEnd=resizeIcon,
 	})
-
 	return f
 end
 
@@ -123,7 +113,7 @@ local handleEvent = function()
 	if event == "SPELLS_CHANGED" and arg1 ~= "LeftButton"
 		or event == "PLAYER_AURAS_CHANGED"
 	then
-		aura.UpdateUI()
+		updateUI()
 	end
 end
 
@@ -133,7 +123,7 @@ local onEnable = function()
 	frame:SetScript("OnEvent", handleEvent)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	frame:Show()
-	aura.UpdateUI()
+	updateUI()
 end
 local onDisable = function()
 	frame:Hide()
@@ -159,8 +149,8 @@ Quiver_Module_AspectTracker = {
 	end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
-	OnInterfaceLock = function() aura.UpdateUI() end,
-	OnInterfaceUnlock = function() aura.UpdateUI() end,
+	OnInterfaceLock = function() updateUI() end,
+	OnInterfaceUnlock = function() updateUI() end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 		store.FrameMeta = store.FrameMeta or {}
