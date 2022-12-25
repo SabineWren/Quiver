@@ -14,6 +14,7 @@ QUIVER_T = {
 		},
 	},
 	ModuleName = {
+		AspectTracker = "Aspect Tracker",
 		AutoShotTimer = "Auto Shot Timer",
 		Castbar = "Castbar",
 		RangeIndicator = "Range Indicator",
@@ -61,6 +62,7 @@ QUIVER_T = {
 		Rapid_Fire = "Rapid Fire",
 		Hunters_Mark = "Hunter's Mark",
 		Scare_Beast = "Scare Beast",
+		TrueshotAura = "Trueshot Aura",
 		Wing_Clip = "Wing Clip",
 	},
 	UI = {

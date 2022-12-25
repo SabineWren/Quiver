@@ -1,5 +1,8 @@
 QUIVER = {
-	Buff_Cap = 32,
+	-- I don't know if hidden auras show via GameTooltip.
+	Buff_Cap = 32,-- I think UI shows up to 24.
+	Debuff_Cap = 24,-- UI shows 16. Turtle allows 8 more hidden.
+	Aura_Cap = 32 + 24,
 	Color = {
 		AutoAttackDefaultShoot = { 1, 1, 0 },
 		AutoAttackDefaultReload = { 1, 0, 0 },
@@ -18,6 +21,13 @@ QUIVER = {
 		Reset = "Interface\\AddOns\\Quiver\\Textures\\arrow-rotate-right",
 		XMark = "Interface\\AddOns\\Quiver\\Textures\\xmark",
 		-- Client
+		Aspect_Beast = "Interface\\Icons\\Ability_Mount_WhiteTiger",
+		Aspect_Cheetah = "Interface\\Icons\\Ability_Mount_JungleTiger",
+		Aspect_Hawk = "Interface\\Icons\\Spell_Nature_RavenForm",
+		Aspect_Monkey = "Interface\\Icons\\Ability_Hunter_AspectOfTheMonkey",
+		Aspect_Pack = "Interface\\Icons\\Ability_Mount_WhiteTiger",
+		Aspect_Wild = "Interface\\Icons\\Spell_Nature_ProtectionformNature",-- 'form' is not a typo.
+		Aspect_Wolf = "Interface\\Icons\\Ability_Mount_WhiteDireWolf",
 		CurseOfTongues = "Interface\\Icons\\Spell_Shadow_CurseOfTounges",
 		NaxxTrinket = "Interface\\Icons\\Inv_Trinket_Naxxramas04",
 		Quickshots = "Interface\\Icons\\Ability_Warrior_InnerRage",

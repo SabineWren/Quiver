@@ -26,6 +26,7 @@ Components\Dialog.lua
 Components\EditBox.lua
 Components\TitleBox.lua
 
+Modules\AspectTracker.lua
 Modules\AutoShotTimer.lua
 Modules\Castbar.lua
 Modules\RangeIndicator.lua

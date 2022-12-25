@@ -8,19 +8,10 @@ local MINUTES_LEFT_WARNING = 5
 local aura = (function()
 	local knowsAura, isActive, lastUpdate, timeLeft = false, false, 1800, 0
 	local updateState = function()
-		knowsAura = Quiver_Lib_Spellbook_GetIsSpellLearned("Trueshot Aura")
+		knowsAura = Quiver_Lib_Spellbook_GetIsSpellLearned(QUIVER_T.Spellbook.TrueshotAura)
 			or not Quiver_Store.IsLockedFrames
-		lastUpdate, timeLeft, isActive = 0, 0, false
-		-- This seems to check debuffs as well (tested with deserter)
-		-- Turtle supports 24 buffs and 24 debuffs, so up to 48 slots
-		for i=0,47 do
-			local texture = GetPlayerBuffTexture(i)
-			if texture == QUIVER.Icon.Trueshot then
-				isActive = true
-				timeLeft = GetPlayerBuffTimeLeft(i)
-				return
-			end
-		end
+		isActive, timeLeft = Quiver_Lib_Spellbook_GetAuraByTexture(QUIVER.Icon.Trueshot)
+		lastUpdate = 0
 	end
 	return {
 		ShouldUpdate = function(elapsed)

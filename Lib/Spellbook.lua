@@ -13,6 +13,32 @@ local HUNTER_INSTANT_SHOTS = {
 	QUIVER_T.Spellbook.Wyvern_Sting,
 }
 
+-- This doesn't work for duplicate textures (ex. cheetah + zg mount).
+-- For those you have to scan using the GameTooltip.
+Quiver_Lib_Spellbook_GetAuraByTexture = function(targetTexture)
+	-- This seems to check debuffs as well (tested with deserter)
+	local maxIndex = QUIVER.Aura_Cap - 1
+	for i=0,maxIndex do
+		local texture = GetPlayerBuffTexture(i)
+		if texture == targetTexture then
+			local timeLeft = GetPlayerBuffTimeLeft(i)
+			return true, timeLeft
+		end
+	end
+	return false, 0
+end
+
+Quiver_Lib_Spellbook_GetIsSpellLearned = function(spellName)
+	local i = 0
+	while true do
+		i = i + 1
+		local name, _rank = GetSpellName(i, BOOKTYPE_SPELL)
+		if not name then return false
+		elseif name == spellName then return true
+		end
+	end
+end
+
 -- This assumes every Hunter spell has a unique texture. I don't
 -- know if that's true for all spells, but at time of writing
 -- we only care about spells that consume ammo.
@@ -30,17 +56,6 @@ Quiver_Lib_Spellbook_GetSpellNameFromTexture = function(textureSeek)
 		if texture == textureSeek then
 			cacheTextureName[textureSeek] = name
 			return name
-		end
-	end
-end
-
-Quiver_Lib_Spellbook_GetIsSpellLearned = function(spellName)
-	local i = 0
-	while true do
-		i = i + 1
-		local name, _rank = GetSpellName(i, BOOKTYPE_SPELL)
-		if not name then return false
-		elseif name == spellName then return true
 		end
 	end
 end

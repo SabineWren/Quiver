@@ -4,11 +4,18 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 - [Contributing](#contributing)
 
 ## Features
+- [Aspect Tracker](#aspect-tracker)
 - [Auto Shot Timer](#auto-shot-timer)
 - [Castbar](#castbar)
 - [Range Indicator](#range-indicator)
 - [Tranq Shot Announcer](#tranq-shot-announcer)
 - [Trueshot Aura Alarm](#trueshot-aura-alarm)
+
+### Aspect Tracker
+Never lose track of your current aspect:
+- Shows nothing while in Aspect of the Hawk
+- Shows Hawk when no aspect enabled
+- Shows current aspect otherwise
 
 ### Auto Shot Timer
 - Resets swing timer while casting a shot; taken from [YaHT](https://github.com/Aviana/YaHT/tree/1.12.1)
@@ -42,10 +49,7 @@ This checks if you have Trueshot Aura talented. If so, Quiver tracks the buff an
 4. Move directory into `<WoW install>/Interface/AddOns/`
 5. Restart WoW.
 
-# Planned Features
-### Aspect Tracker
-
-# Possible Features??
+# Possible Futre Features
 ### Pet Pamper
 Roid can't do everything for pets. Amarra made a pet utils addon with features like auto-find food when feeding pet. This might be a deep rabbit hole.
 
@@ -70,7 +74,7 @@ Files in `/Events` hook into game functions. Use these events if possible instea
 - Spellcast: CastSpell, CastSpellByName, UseAction
 
 ## Module Lifecycle Hooks
-The UI code is a mess right now, but soon there will be an event for attaching a frame to the Main Menu.
+The UI code is a mess right now, but soon there will be an event for attaching a frame to the Main Menu. If creating a new module, include a name for it in the locale file.
 ```
 OnInitFrames
 { IsReset: Boolean } -> unit
@@ -101,8 +105,6 @@ table -> unit
 GameEvent: "PLAYER_LOGIN"
 Loads one table from SavedVariables used exclusively by the module.
 Called exactly once, even for disabled modules.
-Second table holds state for one customizable frame { W, H, X, Y }.
-Mutate the frame metadata to set default values.
 
 OnSavedVariablesPersist
 unit -> table
