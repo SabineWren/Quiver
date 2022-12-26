@@ -21,23 +21,27 @@ local callbacksCastableShot = {}
 local publishShotCastable = function(spellname)
 	for _i, v in callbacksCastableShot do v(spellname) end
 end
-Quiver_Event_CastableShot_Subscribe = function(moduleId, callback)
-	callbacksCastableShot[moduleId] = callback
-end
-Quiver_Event_CastableShot_Unsubscribe = function(moduleId)
-	callbacksCastableShot[moduleId] = nil
-end
+Quiver_Event_Spellcast_CastableShot = {
+	Subscribe = function(moduleId, callback)
+		callbacksCastableShot[moduleId] = callback
+	end,
+	Dispose = function(moduleId)
+		callbacksCastableShot[moduleId] = nil
+	end,
+}
 
-local callbacksInstantShot = {}
-local publishShotInstant = function(spellname)
-	for _i, v in callbacksInstantShot do v(spellname) end
+local callbacksInstant = {}
+local publishInstant = function(spellname)
+	for _i, v in callbacksInstant do v(spellname) end
 end
-Quiver_Event_InstantShot_Subscribe = function(moduleId, callback)
-	callbacksInstantShot[moduleId] = callback
-end
-Quiver_Event_InstantShot_Unsubscribe = function(moduleId)
-	callbacksInstantShot[moduleId] = nil
-end
+Quiver_Event_Spellcast_Instant = {
+	Subscribe = function(moduleId, callback)
+		callbacksInstant[moduleId] = callback
+	end,
+	Dispose = function(moduleId)
+		callbacksInstant[moduleId] = nil
+	end,
+}
 
 local super = {
 	CastSpell = CastSpell,
@@ -45,10 +49,12 @@ local super = {
 	UseAction = UseAction,
 }
 local handleCastByName = function(spellName)
+	-- We pre-hook the cast, so confirm we actually cast it before triggering callbacks.
+	-- If it's castable, then check we're casting it, else check that we triggered GCD.
 	if Quiver_Lib_Spellbook_GetIsSpellCastableShot(spellName) then
 		if getIsBusy() then publishShotCastable(spellName) end
-	elseif Quiver_Lib_Spellbook_GetIsSpellInstantShot(spellName) then
-		if checkGCD() then publishShotInstant(spellName) end
+	elseif checkGCD() then
+		publishInstant(spellName)
 	end
 end
 CastSpell = function(spellIndex, spellbookTabNum)

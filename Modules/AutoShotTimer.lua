@@ -252,12 +252,14 @@ local onEnable = function()
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	frame:Show()
 	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) else frame:SetAlpha(1) end
-	Quiver_Event_CastableShot_Subscribe(MODULE_ID, onSpellcast)
-	Quiver_Event_InstantShot_Subscribe(MODULE_ID, function(_spellName) isFiredInstant = true end)
+	Quiver_Event_Spellcast_CastableShot.Subscribe(MODULE_ID, onSpellcast)
+	Quiver_Event_Spellcast_Instant.Subscribe(MODULE_ID, function(spellName)
+		isFiredInstant = Quiver_Lib_Spellbook_GetIsSpellInstantShot(spellName)
+	end)
 end
 local onDisable = function()
-	Quiver_Event_InstantShot_Unsubscribe(MODULE_ID)
-	Quiver_Event_CastableShot_Unsubscribe(MODULE_ID)
+	Quiver_Event_Spellcast_Instant.Dispose(MODULE_ID)
+	Quiver_Event_Spellcast_CastableShot.Dispose(MODULE_ID)
 	frame:Hide()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end

@@ -2,26 +2,24 @@ local MODULE_ID = "TrueshotAuraAlarm"
 local store = nil
 local frame = nil
 
-local UPDATE_DELAY = 1
+local UPDATE_DELAY = 5-- used for tracking time remaining
 local DEFAULT_ICON_SIZE = 48
 local MINUTES_LEFT_WARNING = 5
 
 -- ************ State ************
 local aura = (function()
 	local knowsAura, isActive, lastUpdate, timeLeft = false, false, 1800, 0
-	local updateState = function()
-		knowsAura = Quiver_Lib_Spellbook_GetIsSpellLearned(QUIVER_T.Spellbook.TrueshotAura)
-			or not Quiver_Store.IsLockedFrames
-		isActive, timeLeft = Quiver_Lib_Aura_GetIsActiveTimeLeftByTexture(QUIVER.Icon.Trueshot)
-		lastUpdate = 0
-	end
 	return {
 		ShouldUpdate = function(elapsed)
 			lastUpdate = lastUpdate + elapsed
 			return knowsAura and lastUpdate > UPDATE_DELAY
 		end,
 		UpdateUI = function()
-			updateState()
+			knowsAura = Quiver_Lib_Spellbook_GetIsSpellLearned(QUIVER_T.Spellbook.TrueshotAura)
+				or not Quiver_Store.IsLockedFrames
+			isActive, timeLeft = Quiver_Lib_Aura_GetIsActiveTimeLeftByTexture(QUIVER.Icon.Trueshot)
+			lastUpdate = 0
+
 			if not Quiver_Store.IsLockedFrames or knowsAura and not isActive then
 				frame.Icon:SetAlpha(0.75)
 				frame:SetBackdropColor(0.8, 0, 0, 0.8)
@@ -85,8 +83,14 @@ local onEnable = function()
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	frame:Show()
 	aura.UpdateUI()
+	Quiver_Event_Spellcast_Instant.Subscribe(MODULE_ID, function(spellName)
+		if spellName == QUIVER_T.Spellbook.TrueshotAura then
+			aura.UpdateUI()
+		end
+	end)
 end
 local onDisable = function()
+	Quiver_Event_Spellcast_Instant.Dispose(MODULE_ID)
 	frame:Hide()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
