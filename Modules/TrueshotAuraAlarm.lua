@@ -2,7 +2,10 @@ local MODULE_ID = "TrueshotAuraAlarm"
 local store = nil
 local frame = nil
 
-local UPDATE_DELAY = 5-- used for tracking time remaining
+local UPDATE_DELAY_SLOW = 5
+local UPDATE_DELAY_FAST = 0.1
+local updateDelay = UPDATE_DELAY_SLOW
+
 local DEFAULT_ICON_SIZE = 48
 local MINUTES_LEFT_WARNING = 5
 
@@ -12,7 +15,7 @@ local aura = (function()
 	return {
 		ShouldUpdate = function(elapsed)
 			lastUpdate = lastUpdate + elapsed
-			return knowsAura and lastUpdate > UPDATE_DELAY
+			return knowsAura and lastUpdate > updateDelay
 		end,
 		UpdateUI = function()
 			knowsAura = Quiver_Lib_Spellbook_GetIsSpellLearned(QUIVER_T.Spellbook.TrueshotAura)
@@ -27,6 +30,7 @@ local aura = (function()
 				frame.Icon:SetAlpha(0.4)
 				frame:SetBackdropColor(0, 0, 0, 0.1)
 			else
+				updateDelay = UPDATE_DELAY_SLOW
 				frame.Icon:SetAlpha(0.0)
 				frame:SetBackdropColor(0, 0, 0, 0)
 			end
@@ -85,7 +89,8 @@ local onEnable = function()
 	aura.UpdateUI()
 	Quiver_Event_Spellcast_Instant.Subscribe(MODULE_ID, function(spellName)
 		if spellName == QUIVER_T.Spellbook.TrueshotAura then
-			aura.UpdateUI()
+			-- Buffs don't update right away, but we want fast user feedback
+			updateDelay = UPDATE_DELAY_FAST
 		end
 	end)
 end
