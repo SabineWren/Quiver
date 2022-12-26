@@ -73,9 +73,12 @@ Quiver looks up spells by name, which change with client locale. I use Wowhead t
 Files in `/Events` hook into game functions. Use these events if possible instead of declaring your own hooks.
 - Spellcast: CastSpell, CastSpellByName, UseAction
 
-## Module Lifecycle Hooks
-The UI code is a mess right now, but soon there will be an event for attaching a frame to the Main Menu. If creating a new module, include a name for it in the locale file.
+## Module Fields and Lifecycle Hooks
+The UI code is a mess right now, but soon there will be an event for attaching a frame to the Main Menu.
 ```
+Id: string
+Name: string (use locale)
+
 OnInitFrames
 { IsReset: Boolean } -> unit
 Called with false after restoring saved variables.

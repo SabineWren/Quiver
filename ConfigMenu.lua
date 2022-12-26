@@ -32,18 +32,17 @@ end
 
 local createCheckboxesModuleEnabled = function(f, yOffset, gap)
 	local height = 0
-	for _k, vLoop in _G.Quiver_Modules do
-		local v = vLoop
-		local isEnabled = Quiver_Store.ModuleEnabled[v.Id]
-		local label = QUIVER_T.ModuleName[v.Id]
-		local tooltip = QUIVER_T.ModuleTooltip[v.Id]
+	for _k, mLoop in _G.Quiver_Modules do
+		local m = mLoop
 		local checkbutton = Quiver_Component_CheckButton({
 			Parent = f,
 			Y = yOffset - height,
-			IsChecked = isEnabled, Label = label, Tooltip = tooltip,
+			IsChecked = Quiver_Store.ModuleEnabled[m.Id],
+			Label = m.Name,
+			Tooltip = QUIVER_T.ModuleTooltip[m.Id],
 			OnClick = function (isChecked)
-				Quiver_Store.ModuleEnabled[v.Id] = isChecked
-				if isChecked then v.OnEnable() else v.OnDisable() end
+				Quiver_Store.ModuleEnabled[m.Id] = isChecked
+				if isChecked then m.OnEnable() else m.OnDisable() end
 			end,
 		})
 		height = height + checkbutton:GetHeight() + gap

@@ -1,9 +1,9 @@
 local MODULE_ID = "Castbar"
-local store
+local store = nil
 local frame = nil
-local maxBarWidth = 0
-local BORDER = 1
 
+local BORDER = 1
+local maxBarWidth = 0
 local castTime = 0
 local isCasting = false
 local timeStartCasting = 0
@@ -133,6 +133,7 @@ end
 
 Quiver_Module_Castbar = {
 	Id = MODULE_ID,
+	Name = QUIVER_T.ModuleName[MODULE_ID],
 	OnInitFrames = function(options)
 		if options.IsReset then store.FrameMeta = nil end
 		store.FrameMeta = Quiver_Event_FrameLock_RestoreSize(store.FrameMeta, {

@@ -1,4 +1,5 @@
-local store
+local MODULE_ID = "TranqAnnouncer"
+local store = nil
 local frame = nil
 
 local handleEvent = function()
@@ -52,7 +53,8 @@ Quiver_Module_TranqAnnouncer_CreateMenuOptions = function(parent, gap)
 end
 
 Quiver_Module_TranqAnnouncer = {
-	Id = "TranqAnnouncer",
+	Id = MODULE_ID,
+	Name = QUIVER_T.ModuleName[MODULE_ID],
 	OnInitFrames = function(options) end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,

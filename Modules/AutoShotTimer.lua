@@ -1,6 +1,7 @@
 local MODULE_ID = "AutoShotTimer"
-local store
+local store = nil
 local frame = nil
+
 local BORDER = 1
 local maxBarWidth = 0
 -- Aimed Shot, Multi-Shot, Trueshot
@@ -263,6 +264,7 @@ end
 
 Quiver_Module_AutoShotTimer = {
 	Id = MODULE_ID,
+	Name = QUIVER_T.ModuleName[MODULE_ID],
 	OnInitFrames = function(options)
 		if options.IsReset then store.FrameMeta = nil end
 		store.FrameMeta = Quiver_Event_FrameLock_RestoreSize(store.FrameMeta, {

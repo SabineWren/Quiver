@@ -1,6 +1,8 @@
-local store
-local println = Quiver_Lib_Print_Factory("Range Indicator")
+local MODULE_ID = "RangeIndicator"
+local store = nil
 local frame = nil
+
+local println = Quiver_Lib_Print_Factory(MODULE_ID)
 local fontString = nil
 
 local createUI = function()
@@ -116,7 +118,8 @@ local onDisable = function()
 end
 
 Quiver_Module_RangeIndicator = {
-	Id = "RangeIndicator",
+	Id = MODULE_ID,
+	Name = QUIVER_T.ModuleName[MODULE_ID],
 	OnInitFrames = function(options)
 		if options.IsReset then store.FrameMeta = nil end
 		store.FrameMeta = Quiver_Event_FrameLock_RestoreSize(store.FrameMeta, {

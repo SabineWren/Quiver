@@ -13,21 +13,6 @@ local HUNTER_INSTANT_SHOTS = {
 	QUIVER_T.Spellbook.Wyvern_Sting,
 }
 
--- This doesn't work for duplicate textures (ex. cheetah + zg mount).
--- For those you have to scan using the GameTooltip.
-Quiver_Lib_Spellbook_GetAuraByTexture = function(targetTexture)
-	-- This seems to check debuffs as well (tested with deserter)
-	local maxIndex = QUIVER.Aura_Cap - 1
-	for i=0,maxIndex do
-		local texture = GetPlayerBuffTexture(i)
-		if texture == targetTexture then
-			local timeLeft = GetPlayerBuffTimeLeft(i)
-			return true, timeLeft
-		end
-	end
-	return false, 0
-end
-
 Quiver_Lib_Spellbook_GetIsSpellLearned = function(spellName)
 	local i = 0
 	while true do
@@ -80,36 +65,11 @@ Quiver_Lib_Spellbook_TryFindTexture = function(nameSeek)
 	end
 end
 
--- 10% at full hp, to a max of 30% at 40% hp
--- That's a line with equation f(hp)= (130-hp) / 3, but capped at 30%
-local getTrollBerserkBonus = function()
-	local percent = UnitHealth("player") / UnitHealthMax("player")
-	return math.min(0.3, (1.30 - percent) / 3.0)
-end
-
-local getRangedAttackSpeedMultiplier = function()
-	local speed = 1.0
-	for i=1,QUIVER.Buff_Cap do
-		if UnitBuff("player", i) == QUIVER.Icon.CurseOfTongues then
-			speed = speed * 0.5
-		elseif UnitBuff("player", i) == QUIVER.Icon.NaxxTrinket then
-			speed = speed * 1.2
-		elseif UnitBuff("player", i) == QUIVER.Icon.Quickshots then
-			speed = speed * 1.3
-		elseif UnitBuff("player", i) == QUIVER.Icon.RapidFire then
-			speed = speed * 1.4
-		elseif UnitBuff("player", i) == QUIVER.Icon.TrollBerserk then
-			speed = speed * (1.0 + getTrollBerserkBonus())
-		end
-	end
-	return speed
-end
-
 Quiver_Lib_Spellbook_GetCastTime = function(spellName)
 	local baseTime = HUNTER_CASTABLE_SHOTS[spellName]
 	local _,_, latency = GetNetStats()
 	local start = GetTime() + latency / 1000
-	local casttime = baseTime / getRangedAttackSpeedMultiplier()
+	local casttime = baseTime / Quiver_Lib_Aura_GetRangedAttackSpeedMultiplier()
 	return casttime, start
 end
 

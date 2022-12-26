@@ -1,5 +1,7 @@
-local store
+local MODULE_ID = "TrueshotAuraAlarm"
+local store = nil
 local frame = nil
+
 local UPDATE_DELAY = 1
 local DEFAULT_ICON_SIZE = 48
 local MINUTES_LEFT_WARNING = 5
@@ -10,7 +12,7 @@ local aura = (function()
 	local updateState = function()
 		knowsAura = Quiver_Lib_Spellbook_GetIsSpellLearned(QUIVER_T.Spellbook.TrueshotAura)
 			or not Quiver_Store.IsLockedFrames
-		isActive, timeLeft = Quiver_Lib_Spellbook_GetAuraByTexture(QUIVER.Icon.Trueshot)
+		isActive, timeLeft = Quiver_Lib_Aura_GetIsActiveTimeLeftByTexture(QUIVER.Icon.Trueshot)
 		lastUpdate = 0
 	end
 	return {
@@ -90,7 +92,8 @@ local onDisable = function()
 end
 
 Quiver_Module_TrueshotAuraAlarm = {
-	Id = "TrueshotAuraAlarm",
+	Id = MODULE_ID,
+	Name = QUIVER_T.ModuleName[MODULE_ID],
 	OnInitFrames = function(options)
 		if options.IsReset then store.FrameMeta = nil end
 		store.FrameMeta = Quiver_Event_FrameLock_RestoreSize(store.FrameMeta, {
