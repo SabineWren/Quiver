@@ -39,22 +39,34 @@ local aura = (function()
 end)()
 
 -- ************ UI ************
-local resizeIcon = function()
-	frame.Icon:SetWidth(frame:GetWidth())
-	frame.Icon:SetHeight(frame:GetHeight())
-	frame.Icon:SetPoint("Center", 0, 0)
+local setIconSize = function(f)
+	f.Icon:SetWidth(f:GetWidth())
+	f.Icon:SetHeight(f:GetHeight())
+	f.Icon:SetPoint("Center", 0, 0)
 end
+
+local setFramePosition = function(f, s)
+	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
+		w=DEFAULT_ICON_SIZE,
+		h=DEFAULT_ICON_SIZE,
+		dx=DEFAULT_ICON_SIZE * -0.5,
+		dy=DEFAULT_ICON_SIZE * -0.5,
+	})
+	f:SetWidth(s.FrameMeta.W)
+	f:SetHeight(s.FrameMeta.H)
+	f:SetPoint("TopLeft", s.FrameMeta.X, s.FrameMeta.Y)
+	setIconSize(f)
+end
+
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("HIGH")
 	f:SetBackdrop({ bgFile = "Interface/BUTTONS/WHITE8X8", tile = false })
-
 	f.Icon = CreateFrame("Frame", nil, f)
-	f.Icon:SetWidth(store.FrameMeta.W)
-	f.Icon:SetHeight(store.FrameMeta.H)
-	f.Icon:SetPoint("Center", 0, 0)
 	f.Icon:SetBackdrop({ bgFile = QUIVER.Icon.Trueshot, tile = false })
 
+	setFramePosition(f, store)
+	local resizeIcon = function() setIconSize(f) end
 	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
 	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, {
 		GripMargin=0,
@@ -103,25 +115,14 @@ end
 Quiver_Module_TrueshotAuraAlarm = {
 	Id = MODULE_ID,
 	Name = QUIVER_T.ModuleName[MODULE_ID],
-	OnInitFrames = function(options)
-		if options.IsReset then store.FrameMeta = nil end
-		store.FrameMeta = Quiver_Event_FrameLock_RestoreSize(store.FrameMeta, {
-			w=DEFAULT_ICON_SIZE,
-			h=DEFAULT_ICON_SIZE,
-			dx=DEFAULT_ICON_SIZE * -0.5,
-			dy=DEFAULT_ICON_SIZE * -0.5,
-		})
-		if frame ~= nil then
-			frame:SetWidth(store.FrameMeta.W)
-			frame:SetHeight(store.FrameMeta.H)
-			frame:SetPoint("TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
-			resizeIcon()
-		end
-	end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
 	OnInterfaceLock = function() aura.UpdateUI() end,
 	OnInterfaceUnlock = function() aura.UpdateUI() end,
+	ResetUI = function()
+		store.FrameMeta = nil
+		setFramePosition(frame, store)
+	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 		store.FrameMeta = store.FrameMeta or {}

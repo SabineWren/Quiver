@@ -16,7 +16,6 @@ local savedVariablesRestore = function()
 		Quiver_Store.ModuleEnabled[v.Id] = Quiver_Store.ModuleEnabled[v.Id] ~= false
 		Quiver_Store.ModuleStore[v.Id] = Quiver_Store.ModuleStore[v.Id] or {}
 		v.OnSavedVariablesRestore(Quiver_Store.ModuleStore[v.Id])
-		v.OnInitFrames({ IsReset=false })
 	end
 end
 local savedVariablesPersist = function()

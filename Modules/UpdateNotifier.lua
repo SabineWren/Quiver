@@ -42,7 +42,7 @@ local handleEvent = function()
 			and Quiver_Lib_Version_GetIsNewer(CURRENT, version)
 			and not hasNotified
 		then
-			DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00Quiver|r - New version available at https://github.com/SabineWren/Quiver")
+			DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00Quiver|r - New version " .. version .. " available at https://github.com/SabineWren/Quiver")
 			DEFAULT_CHAT_FRAME:AddMessage("|cffddddddIt's always safe to upgrade Quiver. |cffddddddYou won't lose any of your configuration.")
 			hasNotified = true
 		end

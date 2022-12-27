@@ -24,7 +24,7 @@ local createIconResetCastbars = function(parent)
 	f.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
 	f:SetScript("OnClick", function(_self)
 		for _k, v in _G.Quiver_Modules do
-			v.OnInitFrames({ IsReset=true })
+			if v.ResetUI ~= nil then v.ResetUI() end
 		end
 	end)
 	return f

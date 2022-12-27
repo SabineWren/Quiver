@@ -79,38 +79,30 @@ The UI code is a mess right now, but soon there will be an event for attaching a
 Id: string
 Name: string (use locale)
 
-OnInitFrames
-{ IsReset: Boolean } -> unit
-Called with false after restoring saved variables.
-Called with true after user resets frames.
+(optional) ResetUI: unit -> unit
+Called when triggered by user.
 
-OnEnable
-unit -> unit
+OnEnable: unit -> unit
 Called every time user enables the module.
 Called during initialization after RestoreSavedVariables.
 
-OnDisable
-unit -> unit
+OnDisable: unit -> unit
 Called every time user disables the module.
 
-OnInterfaceLock
-unit -> unit
+OnInterfaceLock: unit -> unit
 Not called while module disabled.
 Called every time user locks the UI.
 
-OnInterfaceUnlock
-unit -> unit
+OnInterfaceUnlock: unit -> unit
 Not called while module disabled.
 Called every time user unlocks the UI.
 
-OnSavedVariablesRestore
-table -> unit
+OnSavedVariablesRestore: table -> unit
 GameEvent: "PLAYER_LOGIN"
 Loads one table from SavedVariables used exclusively by the module.
 Called exactly once, even for disabled modules.
 
-OnSavedVariablesPersist
-unit -> table
+OnSavedVariablesPersist: unit -> table
 GameEvent: "PLAYER_LOGOUT"
 Persists state used exclusively by the module.
 Called exactly once, even for disabled modules.

@@ -55,7 +55,6 @@ end
 Quiver_Module_TranqAnnouncer = {
 	Id = MODULE_ID,
 	Name = QUIVER_T.ModuleName[MODULE_ID],
-	OnInitFrames = function(options) end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
 	OnInterfaceLock = function() return nil end,

@@ -5,10 +5,20 @@ local frame = nil
 local println = Quiver_Lib_Print_Factory(MODULE_ID)
 local fontString = nil
 
+local setFramePosition = function(f, s)
+	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
+		w=190, h=35, dx=190 * -0.5, dy=-183,
+	})
+	f:SetWidth(s.FrameMeta.W)
+	f:SetHeight(s.FrameMeta.H)
+	f:SetPoint("TopLeft", s.FrameMeta.X, s.FrameMeta.Y)
+end
+
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	if Quiver_Store.IsLockedFrames then f:Hide() end
 
+	setFramePosition(f, store)
 	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
 	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, { GripMargin=4 })
 
@@ -120,21 +130,14 @@ end
 Quiver_Module_RangeIndicator = {
 	Id = MODULE_ID,
 	Name = QUIVER_T.ModuleName[MODULE_ID],
-	OnInitFrames = function(options)
-		if options.IsReset then store.FrameMeta = nil end
-		store.FrameMeta = Quiver_Event_FrameLock_RestoreSize(store.FrameMeta, {
-			w=190, h=35, dx=190 * -0.5, dy=-183,
-		})
-		if frame ~= nil then
-			frame:SetWidth(store.FrameMeta.W)
-			frame:SetHeight(store.FrameMeta.H)
-			frame:SetPoint("TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
-		end
-	end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
 	OnInterfaceLock = function() handleEvent() end,
 	OnInterfaceUnlock = function() frame:Show() end,
+	ResetUI = function()
+		store.FrameMeta = nil
+		setFramePosition(frame, store)
+	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 		store.FrameMeta = store.FrameMeta or {}

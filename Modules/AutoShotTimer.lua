@@ -40,12 +40,22 @@ end
 local isConsumable = false
 
 -- ************ UI ************
-local updateBarSizes = function()
-	frame:SetWidth(store.FrameMeta.W)
-	frame:SetHeight(store.FrameMeta.H)
-	maxBarWidth = store.FrameMeta.W - 2 * BORDER
-	frame.BarAutoShot:SetWidth(1)
-	frame.BarAutoShot:SetHeight(store.FrameMeta.H - 2 * BORDER)
+local setBarSizes = function(f, s)
+	f:SetWidth(s.FrameMeta.W)
+	f:SetHeight(s.FrameMeta.H)
+	maxBarWidth = s.FrameMeta.W - 2 * BORDER
+	f.BarAutoShot:SetWidth(1)
+	f.BarAutoShot:SetHeight(s.FrameMeta.H - 2 * BORDER)
+end
+
+local setFramePosition = function(f, s)
+	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
+		w=240, h=14, dx=240 * -0.5, dy=-136,
+	})
+	f:SetWidth(s.FrameMeta.W)
+	f:SetHeight(s.FrameMeta.H)
+	f:SetPoint("TopLeft", s.FrameMeta.X, s.FrameMeta.Y)
+	setBarSizes(f, s)
 end
 
 local createUI = function()
@@ -65,10 +75,11 @@ local createUI = function()
 
 	f.BarAutoShot:SetPoint("Center", f, "Center", 0, 0)
 
+	setFramePosition(f, store)
 	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
 	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, {
 		GripMargin=0,
-		OnResizeEnd=updateBarSizes,
+		OnResizeEnd=function() setBarSizes(f, store) end,
 		IsCenterX=true,
 	})
 	return f
@@ -83,12 +94,12 @@ Quiver_Module_AutoShotTimer_MakeOptionsColor = function(parent)
 	btn:SetScript("OnClick", function()
 		local shoot = QUIVER.Color.AutoAttackDefaultShoot
 		local reload = QUIVER.Color.AutoAttackDefaultReload
-		if store.ColourShoot[1] == shoot[1] and store.ColourShoot[2] == shoot[2] then
-			store.ColourShoot = reload
-			store.ColourReload = shoot
+		if store.ColorShoot[1] == shoot[1] and store.ColorShoot[2] == shoot[2] then
+			store.ColorShoot = reload
+			store.ColorReload = shoot
 		else
-			store.ColourShoot = shoot
-			store.ColourReload = reload
+			store.ColorShoot = shoot
+			store.ColorReload = reload
 		end
 	end)
 	return btn
@@ -97,7 +108,7 @@ end
 -- ************ Frame Update Handlers ************
 local updateBarShooting = function()
 	frame:SetAlpha(1)
-	local r, g, b = unpack(store.ColourShoot)
+	local r, g, b = unpack(store.ColorShoot)
 	frame.BarAutoShot:SetBackdropColor(r, g, b, 0.8)
 	local timePassed = GetTime() - timeStartShootOrReload
 
@@ -133,7 +144,7 @@ end
 
 local updateBarReload = function()
 	frame:SetAlpha(1)
-	local r, g, b = unpack(store.ColourReload)
+	local r, g, b = unpack(store.ColorReload)
 	frame.BarAutoShot:SetBackdropColor(r, g, b, 0.8)
 	local timePassed = GetTime() - timeStartShootOrReload
 	if timePassed <= reloadTime then
@@ -246,49 +257,41 @@ end
 
 -- ************ Initialization ************
 local onEnable = function()
-	if frame == nil then frame = createUI(); updateBarSizes() end
+	if frame == nil then frame = createUI() end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
-	frame:Show()
 	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) else frame:SetAlpha(1) end
 	Quiver_Event_Spellcast_CastableShot.Subscribe(MODULE_ID, onSpellcast)
 	Quiver_Event_Spellcast_Instant.Subscribe(MODULE_ID, function(spellName)
 		isFiredInstant = Quiver_Lib_Spellbook_GetIsSpellInstantShot(spellName)
 	end)
+	frame:Show()
 end
 local onDisable = function()
+	frame:Hide()
 	Quiver_Event_Spellcast_Instant.Dispose(MODULE_ID)
 	Quiver_Event_Spellcast_CastableShot.Dispose(MODULE_ID)
-	frame:Hide()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 
 Quiver_Module_AutoShotTimer = {
 	Id = MODULE_ID,
 	Name = QUIVER_T.ModuleName[MODULE_ID],
-	OnInitFrames = function(options)
-		if options.IsReset then store.FrameMeta = nil end
-		store.FrameMeta = Quiver_Event_FrameLock_RestoreSize(store.FrameMeta, {
-			w=240, h=14, dx=240 * -0.5, dy=-136,
-		})
-		if frame ~= nil then
-			frame:SetWidth(store.FrameMeta.W)
-			frame:SetHeight(store.FrameMeta.H)
-			frame:SetPoint("TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
-			updateBarSizes()
-		end
-	end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
 	OnInterfaceLock = function()
 		if (not isShooting) and (not isReloading) then tryHideBar() end
 	end,
 	OnInterfaceUnlock = function() frame:SetAlpha(1) end,
+	ResetUI = function()
+		store.FrameMeta = nil
+		setFramePosition(frame, store)
+	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
-		store.ColourShoot = store.ColourShoot or QUIVER.Color.AutoAttackDefaultShoot
-		store.ColourReload = store.ColourReload or QUIVER.Color.AutoAttackDefaultReload
+		store.ColorShoot = store.ColorShoot or QUIVER.Color.AutoAttackDefaultShoot
+		store.ColorReload = store.ColorReload or QUIVER.Color.AutoAttackDefaultReload
 		store.FrameMeta = store.FrameMeta or {}
 	end,
 	OnSavedVariablesPersist = function() return store end,

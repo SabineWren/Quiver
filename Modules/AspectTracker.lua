@@ -2,7 +2,7 @@ local MODULE_ID = "AspectTracker"
 local store = nil
 local frame = nil
 
-local DEFAULT_ICON_SIZE = 32
+local DEFAULT_ICON_SIZE = 40
 local BORDER_SIZE = 4
 local TRANSPARENCY = 0.5
 
@@ -56,10 +56,23 @@ local updateUI = function()
 	frame:SetBackdropColor(0, 0, 0, 0)
 end
 
-local resizeIcon = function()
-	frame.Icon:SetWidth(frame:GetWidth() - BORDER_SIZE * 2)
-	frame.Icon:SetHeight(frame:GetHeight() - BORDER_SIZE * 2)
-	frame.Icon:SetPoint("Center", 0, 0)
+local sizeIconSize = function(f)
+	f.Icon:SetWidth(f:GetWidth() - BORDER_SIZE * 2)
+	f.Icon:SetHeight(f:GetHeight() - BORDER_SIZE * 2)
+	f.Icon:SetPoint("Center", 0, 0)
+end
+
+local setFramePosition = function(f, s)
+	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
+		w=DEFAULT_ICON_SIZE,
+		h=DEFAULT_ICON_SIZE,
+		dx=DEFAULT_ICON_SIZE * -0.5,
+		dy=DEFAULT_ICON_SIZE * -0.5,
+	})
+	f:SetWidth(s.FrameMeta.W)
+	f:SetHeight(s.FrameMeta.H)
+	f:SetPoint("TopLeft", s.FrameMeta.X, s.FrameMeta.Y)
+	sizeIconSize(f)
 end
 
 local createUI = function()
@@ -67,6 +80,8 @@ local createUI = function()
 	f:SetFrameStrata("LOW")
 	f.Icon = CreateFrame("Frame", nil, f)
 
+	setFramePosition(f, store)
+	local resizeIcon = function() sizeIconSize(f) end
 	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
 	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, {
 		GripMargin=0,
@@ -92,10 +107,10 @@ end
 -- ************ Initialization ************
 local onEnable = function()
 	if frame == nil then frame = createUI() end
+	updateUI()
 	frame:SetScript("OnEvent", handleEvent)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	frame:Show()
-	updateUI()
 end
 local onDisable = function()
 	frame:Hide()
@@ -105,25 +120,14 @@ end
 Quiver_Module_AspectTracker = {
 	Id = MODULE_ID,
 	Name = QUIVER_T.ModuleName[MODULE_ID],
-	OnInitFrames = function(options)
-		if options.IsReset then store.FrameMeta = nil end
-		store.FrameMeta = Quiver_Event_FrameLock_RestoreSize(store.FrameMeta, {
-			w=DEFAULT_ICON_SIZE,
-			h=DEFAULT_ICON_SIZE,
-			dx=DEFAULT_ICON_SIZE * -0.5,
-			dy=DEFAULT_ICON_SIZE * -0.5,
-		})
-		if frame ~= nil then
-			frame:SetWidth(store.FrameMeta.W)
-			frame:SetHeight(store.FrameMeta.H)
-			frame:SetPoint("TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
-			resizeIcon()
-		end
-	end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
 	OnInterfaceLock = function() updateUI() end,
 	OnInterfaceUnlock = function() updateUI() end,
+	ResetUI = function()
+		store.FrameMeta = nil
+		setFramePosition(frame, store)
+	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 		store.FrameMeta = store.FrameMeta or {}

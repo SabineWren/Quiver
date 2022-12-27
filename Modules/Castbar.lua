@@ -9,65 +9,76 @@ local isCasting = false
 local timeStartCasting = 0
 
 -- ************ UI ************
-local updateCastbarSize = function()
-	maxBarWidth = store.FrameMeta.W - 2 * BORDER
-	frame.Castbar:SetWidth(1)
-	frame.SpellName:SetWidth(maxBarWidth)
-	frame.SpellTime:SetWidth(maxBarWidth)
+local setCastbarSize = function(f, s)
+	maxBarWidth = s.FrameMeta.W - 2 * BORDER
+	f.Castbar:SetWidth(1)
+	f.SpellName:SetWidth(maxBarWidth)
+	f.SpellTime:SetWidth(maxBarWidth)
 
-	local path, _size, flags = frame.SpellName:GetFont()
-	local calcFontSize = store.FrameMeta.H - 4 * BORDER
+	local path, _size, flags = f.SpellName:GetFont()
+	local calcFontSize = s.FrameMeta.H - 4 * BORDER
 	local fontSize = calcFontSize > 18 and 18
 		or calcFontSize < 10 and 10
 		or calcFontSize
 
-	frame.SpellName:SetFont(path, fontSize, flags)
-	frame.SpellTime:SetFont(path, fontSize, flags)
+	f.SpellName:SetFont(path, fontSize, flags)
+	f.SpellTime:SetFont(path, fontSize, flags)
+end
+
+local setFramePosition = function(f, s)
+	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
+		w=240, h=20, dx=240 * -0.5, dy=-116,
+	})
+	f:SetWidth(s.FrameMeta.W)
+	f:SetHeight(s.FrameMeta.H)
+	f:SetPoint("TopLeft", s.FrameMeta.X, s.FrameMeta.Y)
+	setCastbarSize(f, s)
 end
 
 local createUI = function()
-	local fCastbar = CreateFrame("Frame", nil, UIParent)
-	fCastbar:SetFrameStrata("HIGH")
+	local f = CreateFrame("Frame", nil, UIParent)
+	f:SetFrameStrata("HIGH")
 	local centerVertically = function(ele)
-		ele:SetPoint("Top", fCastbar, "Top", 0, -1 * BORDER)
-		ele:SetPoint("Bottom", fCastbar, "Bottom", 0, BORDER)
+		ele:SetPoint("Top", f, "Top", 0, -1 * BORDER)
+		ele:SetPoint("Bottom", f, "Bottom", 0, BORDER)
 	end
 
-	fCastbar.Castbar = CreateFrame("Frame", nil, fCastbar)
-	fCastbar.Castbar:SetPoint("Left", fCastbar, "Left", BORDER, 0)
+	f.Castbar = CreateFrame("Frame", nil, f)
+	f.Castbar:SetPoint("Left", f, "Left", BORDER, 0)
 
-	fCastbar.SpellName = fCastbar.Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	fCastbar.SpellName:SetPoint("Left", fCastbar, "Left", 4*BORDER, 0)
-	fCastbar.SpellName:SetJustifyH("Left")
-	fCastbar.SpellName:SetTextColor(1, 1, 1)
+	f.SpellName = f.Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	f.SpellName:SetPoint("Left", f, "Left", 4*BORDER, 0)
+	f.SpellName:SetJustifyH("Left")
+	f.SpellName:SetTextColor(1, 1, 1)
 
-	fCastbar.SpellTime = fCastbar.Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	fCastbar.SpellTime:SetPoint("Right", fCastbar, "Right", -4*BORDER, 0)
-	fCastbar.SpellTime:SetJustifyH("Right")
-	fCastbar.SpellTime:SetTextColor(1, 1, 1)
+	f.SpellTime = f.Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+	f.SpellTime:SetPoint("Right", f, "Right", -4*BORDER, 0)
+	f.SpellTime:SetJustifyH("Right")
+	f.SpellTime:SetTextColor(1, 1, 1)
 
-	fCastbar:SetBackdrop({
+	f:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 		edgeFile = "Interface/BUTTONS/WHITE8X8", edgeSize = BORDER,
 	})
-	fCastbar.Castbar:SetBackdrop({
+	f.Castbar:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 	})
-	fCastbar:SetBackdropColor(0, 0, 0, 0.8)
-	fCastbar:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)
-	fCastbar.Castbar:SetBackdropColor(0.42 ,0.41 ,0.53, 1)
+	f:SetBackdropColor(0, 0, 0, 0.8)
+	f:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)
+	f.Castbar:SetBackdropColor(0.42 ,0.41 ,0.53, 1)
 
-	centerVertically(fCastbar.Castbar)
-	centerVertically(fCastbar.SpellTime)
-	centerVertically(fCastbar.SpellName)
+	centerVertically(f.Castbar)
+	centerVertically(f.SpellTime)
+	centerVertically(f.SpellName)
 
-	Quiver_Event_FrameLock_MakeMoveable(fCastbar, store.FrameMeta)
-	Quiver_Event_FrameLock_MakeResizeable(fCastbar, store.FrameMeta, {
+	setFramePosition(f, store)
+	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
+	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, {
 		GripMargin=0,
-		OnResizeEnd=updateCastbarSize,
+		OnResizeEnd=function() setCastbarSize(f, store) end,
 		IsCenterX=true,
 	})
-	return fCastbar
+	return f
 end
 
 -- ************ Custom Event Handlers ************
@@ -118,7 +129,6 @@ local EVENTS = {
 }
 local onEnable = function()
 	if frame == nil then frame = createUI() end
-	updateCastbarSize()
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
@@ -134,22 +144,14 @@ end
 Quiver_Module_Castbar = {
 	Id = MODULE_ID,
 	Name = QUIVER_T.ModuleName[MODULE_ID],
-	OnInitFrames = function(options)
-		if options.IsReset then store.FrameMeta = nil end
-		store.FrameMeta = Quiver_Event_FrameLock_RestoreSize(store.FrameMeta, {
-			w=240, h=20, dx=240 * -0.5, dy=-116,
-		})
-		if frame ~= nil then
-			frame:SetWidth(store.FrameMeta.W)
-			frame:SetHeight(store.FrameMeta.H)
-			frame:SetPoint("TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
-			updateCastbarSize()
-		end
-	end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
 	OnInterfaceLock = function() if not isCasting then frame:Hide() end end,
 	OnInterfaceUnlock = function() frame:Show() end,
+	ResetUI = function()
+		store.FrameMeta = nil
+		setFramePosition(frame, store)
+	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 		store.FrameMeta = store.FrameMeta or {}
