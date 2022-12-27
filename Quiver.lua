@@ -67,10 +67,11 @@ frame:RegisterEvent("PLAYER_LOGOUT")
 frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function()
 	if event == "ADDON_LOADED" and arg1 == "Quiver" then
-		Quiver_Migrations_UpdateVersion()
+		Quiver_Migrations_Run()
 		savedVariablesRestore()
 		initSlashCommandsAndModules()
 	elseif event == "PLAYER_LOGIN" then
+		Quiver_Module_UpdateNotifier_Init()
 		loadPlugins()
 	elseif event == "PLAYER_LOGOUT" then
 		savedVariablesPersist()

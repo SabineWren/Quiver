@@ -2,7 +2,7 @@
 ## Title: Quiver - |cff00ff00Hunter
 ## Notes: A collection of hunter utilities.
 ## Author: SabineWren, 2022
-## Version: 2.2.1
+## Version: 2.3.0
 ## SavedVariables: Quiver_Store
 
 Constants.lua
@@ -14,10 +14,9 @@ Locale\zhCN.lua
 
 Lib\Aura.lua
 Lib\Print.lua
-# Spellbook depends on Aura
 Lib\Spellbook.lua
-# ActionBar Depends on Spellbook and Print
 Lib\ActionBar.lua
+Lib\Version.lua
 
 Events\FrameLock.lua
 Events\Spellcast.lua
@@ -35,6 +34,7 @@ Modules\RangeIndicator.lua
 Modules\pfUIPlugins.lua
 Modules\TranqAnnouncer.lua
 Modules\TrueshotAuraAlarm.lua
+Modules\UpdateNotifier.lua
 
 Migrations\M001.lua
 Migrations\Runner.lua
