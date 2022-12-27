@@ -16,10 +16,10 @@ local createIconBtnLock = function(parent)
 	return f
 end
 
-local createIconResetCastbars = function(parent)
+local createIconResetAll = function(parent)
 	local f = Quiver_Component_Button({
 		Parent=parent, Size=QUIVER.Size.Icon,
-		TooltipText=QUIVER_T.UI.ResetCastbarsTooltip,
+		TooltipText=QUIVER_T.UI.ResetFramesTooltip,
 	})
 	f.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
 	f:SetScript("OnClick", function(_self)
@@ -30,22 +30,52 @@ local createIconResetCastbars = function(parent)
 	return f
 end
 
-local createCheckboxesModuleEnabled = function(f, yOffset, gap)
+local createModuleControlButtons = function(f, yOffset, gap)
 	local height = 0
 	for _k, mLoop in _G.Quiver_Modules do
 		local m = mLoop
-		local checkbutton = Quiver_Component_CheckButton({
+
+		local x = QUIVER.Size.Border + QUIVER.Size.Gap
+		local sizeReset = QUIVER.Size.Icon
+		local btnReset = nil
+		if m.ResetUI then
+			btnReset = Quiver_Component_Button({
+				Parent=f, Size=sizeReset,
+				TooltipText=QUIVER_T.UI.ResetFramesTooltip,
+			})
+			btnReset.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
+
+			btnReset:SetScript("OnClick", function(_self)
+				m.ResetUI()
+			end)
+			btnReset:SetPoint("Left", f, "Left", x, 0)
+			btnReset:SetPoint("Top", f, "Top", 0, yOffset - height)
+
+			if not Quiver_Store.ModuleEnabled[m.Id] then
+				btnReset.QuiverDisable()
+			end
+		end
+
+		x = x + sizeReset + QUIVER.Size.Gap
+		local btnSwitch = Quiver_Component_CheckButton({
 			Parent = f,
+			X = x,
 			Y = yOffset - height,
 			IsChecked = Quiver_Store.ModuleEnabled[m.Id],
 			Label = m.Name,
 			Tooltip = QUIVER_T.ModuleTooltip[m.Id],
 			OnClick = function (isChecked)
 				Quiver_Store.ModuleEnabled[m.Id] = isChecked
-				if isChecked then m.OnEnable() else m.OnDisable() end
+				if isChecked then
+					m.OnEnable()
+					if btnReset then btnReset.QuiverEnable() end
+				else
+					m.OnDisable()
+					if btnReset then btnReset.QuiverDisable() end
+				end
 			end,
 		})
-		height = height + checkbutton:GetHeight() + gap
+		height = height + btnSwitch:GetHeight() + gap
 	end
 	return height - gap
 end
@@ -69,12 +99,12 @@ Quiver_ConfigMenu_Create = function()
 	local lockOffsetX = PADDING + QUIVER.Size.Icon + QUIVER.Size.Gap/2
 	btnToggleLock:SetPoint("TopRight", f, "TopRight", -lockOffsetX, -PADDING)
 
-	local btnResetFrames = createIconResetCastbars(f)
+	local btnResetFrames = createIconResetAll(f)
 	local resetOffsetX = lockOffsetX + QUIVER.Size.Icon + QUIVER.Size.Gap/2
 	btnResetFrames:SetPoint("TopRight", f, "TopRight", -resetOffsetX, -PADDING)
 
 	local yOffset = -(PADDING + QUIVER.Size.Icon)
-	yOffset = yOffset - createCheckboxesModuleEnabled(f, yOffset, QUIVER.Size.Gap)
+	yOffset = yOffset - createModuleControlButtons(f, yOffset, QUIVER.Size.Gap)
 	yOffset = yOffset - QUIVER.Size.Gap
 
 	local tranqOptions = Quiver_Module_TranqAnnouncer_CreateMenuOptions(f, QUIVER.Size.Gap)

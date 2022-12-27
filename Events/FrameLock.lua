@@ -164,9 +164,6 @@ Quiver_Event_FrameLock_MakeResizeable = function(frame, meta, args)
 	handle:SetScript("OnMouseDown", function()
 		if frame:IsResizable() then frame:StartSizing("BottomRight") end
 	end)
-	local saveSize = function()
-
-	end
 	handle:SetScript("OnMouseUp", function()
 		frame:StopMovingOrSizing()
 		meta.W = math.floor(frame:GetWidth() + 0.5)

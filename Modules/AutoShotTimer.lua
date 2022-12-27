@@ -40,12 +40,15 @@ end
 local isConsumable = false
 
 -- ************ UI ************
+local setBarAutoShot = function(f)
+	maxBarWidth = f:GetWidth() - 2 * BORDER
+	f.BarAutoShot:SetWidth(1)
+	f.BarAutoShot:SetHeight(f:GetHeight() - 2 * BORDER)
+end
 local setBarSizes = function(f, s)
 	f:SetWidth(s.FrameMeta.W)
 	f:SetHeight(s.FrameMeta.H)
-	maxBarWidth = s.FrameMeta.W - 2 * BORDER
-	f.BarAutoShot:SetWidth(1)
-	f.BarAutoShot:SetHeight(s.FrameMeta.H - 2 * BORDER)
+	setBarAutoShot(f)
 end
 
 local setFramePosition = function(f, s)
@@ -76,10 +79,12 @@ local createUI = function()
 	f.BarAutoShot:SetPoint("Center", f, "Center", 0, 0)
 
 	setFramePosition(f, store)
+	local resizeBarAutoShot = function() setBarAutoShot(f) end
 	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
 	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, {
 		GripMargin=0,
-		OnResizeEnd=function() setBarSizes(f, store) end,
+		OnResizeDrag=resizeBarAutoShot,
+		OnResizeEnd=resizeBarAutoShot,
 		IsCenterX=true,
 	})
 	return f
@@ -286,7 +291,7 @@ Quiver_Module_AutoShotTimer = {
 	OnInterfaceUnlock = function() frame:SetAlpha(1) end,
 	ResetUI = function()
 		store.FrameMeta = nil
-		setFramePosition(frame, store)
+		if frame then setFramePosition(frame, store) end
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables

@@ -136,7 +136,7 @@ Quiver_Module_RangeIndicator = {
 	OnInterfaceUnlock = function() frame:Show() end,
 	ResetUI = function()
 		store.FrameMeta = nil
-		setFramePosition(frame, store)
+		if frame then setFramePosition(frame, store) end
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables

@@ -19,13 +19,4 @@ Quiver_Migrations_M001 = function()
 		end
 	end
 	Quiver_Store.FrameMeta = nil
-
-	-- Change colour to color
-	if mstore[Quiver_Module_AutoShotTimer.Id] ~= nil then
-		local s = mstore[Quiver_Module_AutoShotTimer.Id]
-		s.ColorShoot = s.ColourShoot
-		s.ColorReload = s.ColourReload
-		s.ColourShoot = nil
-		s.ColourReload = nil
-	end
 end

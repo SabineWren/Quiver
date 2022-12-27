@@ -121,7 +121,7 @@ Quiver_Module_TrueshotAuraAlarm = {
 	OnInterfaceUnlock = function() aura.UpdateUI() end,
 	ResetUI = function()
 		store.FrameMeta = nil
-		setFramePosition(frame, store)
+		if frame then setFramePosition(frame, store) end
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables

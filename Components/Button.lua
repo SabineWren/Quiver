@@ -3,13 +3,12 @@ Quiver_Component_Button_CreateTexture = function(parent, layer)
 	t.QuiverSetTexture = function(self, scale, texturePath)
 		-- We could edit the texture file, but it's a raster image
 		-- SetAllPoints() doesn't let us adjust padding
-		-- SetTexCoord clips instead of overflowing
+		-- SetTexCoord(0, 1, 0, 1) clips instead of overflowing
 		-- This scaling approach is the easiest way to customize padding
 		local parent = self:GetParent()
 		self:SetWidth(parent:GetWidth() * scale)
 		self:SetHeight(parent:GetHeight() * scale)
 		self:SetPoint("Center", parent, "Center", 0, 0)
-		-- t:SetTexCoord(0, 1, 0, 1)
 		self:SetTexture(texturePath)
 	end
 	t.QuiverHighlight = function(self)
@@ -50,5 +49,15 @@ Quiver_Component_Button = function(args)
 	-- TODO add custom glow texture
 	--f:SetHighlightTexture(nil)
 	f:SetPushedTexture(nil)
+	f:SetDisabledTexture(nil)
+
+	f.QuiverDisable = function()
+		f:Disable()
+		f.Texture:SetVertexColor(0.6, 0.6, 0.6)
+	end
+	f.QuiverEnable = function()
+		f:Enable()
+		f.Texture:QuiverResetColor()
+	end
 	return f
 end
