@@ -55,7 +55,7 @@ Quiver_ConfigMenu_Create = function()
 	local PADDING = QUIVER.Size.Border + 4
 	local f = Quiver_Component_Dialog(300, PADDING)
 
-	local titleBox = Quiver_Component_TitleBox(f, "Quiver")
+	local titleBox = Quiver_Component_TitleBox(f)
 	titleBox:SetPoint("Center", f, "Top", 0, -10)
 
 	local btnCloseTop = Quiver_Component_Button({
