@@ -112,9 +112,9 @@ Quiver_ConfigMenu_Create = function()
 	yOffset = yOffset - tranqOptions:GetHeight()
 	yOffset = yOffset - QUIVER.Size.Gap
 
-	local toggleColors = Quiver_Module_AutoShotTimer_MakeOptionsColor(f)
-	toggleColors:SetPoint("TopLeft", f, "TopLeft", PADDING, yOffset)
-	yOffset = yOffset - toggleColors:GetHeight()
+	local autoShotTimerOptions = Quiver_Module_AutoShotTimer_MakeOptionsColor(f)
+	autoShotTimerOptions:SetPoint("TopLeft", f, "TopLeft", PADDING, yOffset)
+	yOffset = yOffset - autoShotTimerOptions:GetHeight()
 
 	f:SetHeight(-1 * yOffset + PADDING + QUIVER.Size.Button)
 	return f
