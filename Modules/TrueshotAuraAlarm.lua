@@ -6,7 +6,8 @@ local UPDATE_DELAY_SLOW = 5
 local UPDATE_DELAY_FAST = 0.1
 local updateDelay = UPDATE_DELAY_SLOW
 
-local DEFAULT_ICON_SIZE = 48
+local BORDER_SIZE = 4
+local DEFAULT_ICON_SIZE = 40
 local MINUTES_LEFT_WARNING = 5
 
 -- ************ State ************
@@ -25,14 +26,14 @@ local aura = (function()
 
 			if not Quiver_Store.IsLockedFrames or knowsAura and not isActive then
 				frame.Icon:SetAlpha(0.75)
-				frame:SetBackdropColor(0.8, 0, 0, 0.8)
+				frame:SetBackdropBorderColor(1, 0, 0, 0.8)
 			elseif knowsAura and isActive and timeLeft < MINUTES_LEFT_WARNING * 60 then
 				frame.Icon:SetAlpha(0.4)
-				frame:SetBackdropColor(0, 0, 0, 0.1)
+				frame:SetBackdropBorderColor(0, 0, 0, 0.1)
 			else
 				updateDelay = UPDATE_DELAY_SLOW
 				frame.Icon:SetAlpha(0.0)
-				frame:SetBackdropColor(0, 0, 0, 0)
+				frame:SetBackdropBorderColor(0, 0, 0, 0)
 			end
 		end,
 	}
@@ -40,17 +41,14 @@ end)()
 
 -- ************ UI ************
 local setIconSize = function(f)
-	f.Icon:SetWidth(f:GetWidth())
-	f.Icon:SetHeight(f:GetHeight())
+	f.Icon:SetWidth(f:GetWidth() - BORDER_SIZE * 2)
+	f.Icon:SetHeight(f:GetHeight() - BORDER_SIZE * 2)
 	f.Icon:SetPoint("Center", 0, 0)
 end
 
 local setFramePosition = function(f, s)
 	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
-		w=DEFAULT_ICON_SIZE,
-		h=DEFAULT_ICON_SIZE,
-		dx=DEFAULT_ICON_SIZE * -0.5,
-		dy=DEFAULT_ICON_SIZE * -0.5,
+		w=DEFAULT_ICON_SIZE, h=DEFAULT_ICON_SIZE, dx=150, dy=40,
 	})
 	f:SetWidth(s.FrameMeta.W)
 	f:SetHeight(s.FrameMeta.H)
@@ -61,7 +59,12 @@ end
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("Low")
-	f:SetBackdrop({ bgFile = "Interface/BUTTONS/WHITE8X8", tile = false })
+	f:SetBackdrop({
+		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+		edgeSize = 16,
+		insets = { left=BORDER_SIZE, right=BORDER_SIZE, top=BORDER_SIZE, bottom=BORDER_SIZE },
+	})
+
 	f.Icon = CreateFrame("Frame", nil, f)
 	f.Icon:SetBackdrop({ bgFile = QUIVER.Icon.Trueshot, tile = false })
 

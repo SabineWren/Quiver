@@ -64,10 +64,7 @@ end
 
 local setFramePosition = function(f, s)
 	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
-		w=DEFAULT_ICON_SIZE,
-		h=DEFAULT_ICON_SIZE,
-		dx=DEFAULT_ICON_SIZE * -0.5,
-		dy=DEFAULT_ICON_SIZE * -0.5,
+		w=DEFAULT_ICON_SIZE, h=DEFAULT_ICON_SIZE, dx=110, dy=40,
 	})
 	f:SetWidth(s.FrameMeta.W)
 	f:SetHeight(s.FrameMeta.H)
