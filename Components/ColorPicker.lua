@@ -15,7 +15,7 @@ end
 
 local createColorPicker = function(parent, color)
 	local f = CreateFrame("Button", nil, parent)
-	f:SetWidth(48)
+	f:SetWidth(40)
 	f:SetHeight(20)
 
 	f:SetBackdrop({

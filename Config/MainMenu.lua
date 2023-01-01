@@ -83,7 +83,7 @@ end
 Quiver_Config_MainMenu_Create = function()
 	-- WoW uses border-box content sizing
 	local PADDING = QUIVER.Size.Border + 4
-	local f = Quiver_Component_Dialog(300, PADDING)
+	local f = Quiver_Component_Dialog(PADDING)
 
 	local titleBox = Quiver_Component_TitleBox(f)
 	titleBox:SetPoint("Center", f, "Top", 0, -10)
@@ -107,16 +107,25 @@ Quiver_Config_MainMenu_Create = function()
 	yOffset = yOffset - createModuleControlButtons(f, yOffset, QUIVER.Size.Gap)
 	yOffset = yOffset - QUIVER.Size.Gap
 
-	local autoShotTimerOptions = Quiver_Config_Color(f, QUIVER.Size.Gap)
-	autoShotTimerOptions:SetPoint("TopLeft", f, "TopLeft", PADDING, yOffset)
-	yOffset = yOffset - autoShotTimerOptions:GetHeight()
-	yOffset = yOffset - QUIVER.Size.Gap
+	-- *** Split Start ***
+	local x = PADDING
+	local colorPickersLeft = Quiver_Config_Color_Bars(f, QUIVER.Size.Gap)
+	colorPickersLeft:SetPoint("TopLeft", f, "TopLeft", x, yOffset)
+	x = x + colorPickersLeft:GetWidth() + PADDING
+	local colorPickersRight = Quiver_Config_Color_Range(f, QUIVER.Size.Gap)
+	colorPickersRight:SetPoint("TopLeft", f, "TopLeft", x, yOffset)
+	local y1 = colorPickersLeft:GetHeight()
+	local y2 = colorPickersRight:GetHeight()
+	local yMax = y1 > y2 and y1 or y2
+	yOffset = yOffset - yMax - QUIVER.Size.Gap
+	-- *** Split End ***
 
 	local tranqOptions = Quiver_Config_InputText_TranqAnnouncer(f, QUIVER.Size.Gap)
-	tranqOptions:SetPoint("Top", f, "Top", 0, yOffset)
+	tranqOptions:SetPoint("TopLeft", f, "TopLeft", 0, yOffset)
 	yOffset = yOffset - tranqOptions:GetHeight()
 	yOffset = yOffset - QUIVER.Size.Gap
 
+	f:SetWidth(x + PADDING + colorPickersRight:GetWidth())
 	f:SetHeight(-1 * yOffset + PADDING + QUIVER.Size.Button)
 	return f
 end

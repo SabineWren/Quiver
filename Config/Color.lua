@@ -3,7 +3,7 @@ local TEXT_PADDING_H = 12
 local createBtnColorSwap = function(parent, f1, f2, c1, c2)
 	local f = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
 	f:SetHeight(QUIVER.Size.Button)
-	f:SetText("Swap Shoot / Reload")
+	f:SetText("Swap")
 
 	-- Size button to fit text
 	local fs = f:GetFontString()
@@ -23,15 +23,16 @@ local createBtnColorSwap = function(parent, f1, f2, c1, c2)
 	return f
 end
 
-local findMax = function(xs)
+local findMaxWidth = function(frames)
 	local max = 0
-	for _k, v in xs do
-		if v > max then max = v end
+	for _k, f in frames do
+		local w = f:GetWidth()
+		if w > max then max = w end
 	end
 	return max
 end
 
-Quiver_Config_Color = function(parent, gap)
+Quiver_Config_Color_Bars = function(parent, gap)
 	local storeAutoShotTimer = Quiver_Store.ModuleStore[Quiver_Module_AutoShotTimer.Id]
 	local storeCastbar = Quiver_Store.ModuleStore[Quiver_Module_Castbar.Id]
 	local f = CreateFrame("Frame", nil, parent)
@@ -43,39 +44,86 @@ Quiver_Config_Color = function(parent, gap)
 	local colorReload = Quiver_Component_ColorPicker_WrapColor(
 		storeAutoShotTimer, "ColorReload", QUIVER.ColorDefault.AutoShotReload)
 
-	local fc = Quiver_Component_ColorPicker_WithResetLabel(f, "Casting", colorCast)
-	local fs1 = Quiver_Component_ColorPicker_WithResetLabel(f, "Shooting", colorShoot)
-	local fs2 = Quiver_Component_ColorPicker_WithResetLabel(f, "Reloading", colorReload)
-	local fsBtn = createBtnColorSwap(f, fs1, fs2, colorShoot, colorReload)
+	local fc = Quiver_Component_ColorPicker_WithResetLabel(
+		f, "Casting", colorCast)
+	local fs1 = Quiver_Component_ColorPicker_WithResetLabel(
+		f, "Shooting", colorShoot)
+	local fs2 = Quiver_Component_ColorPicker_WithResetLabel(
+		f, "Reloading", colorReload)
+
+	local frames = { fc, fs1, fs2 }
+	local labels = {}; for _,frame in frames do table.insert(labels, frame.Label) end
 
 	-- Right align buttons using minimum amount of space
-	local labelMaxWidth = findMax({
-		fc.Label:GetWidth(),
-		fs1.Label:GetWidth(),
-		fs2.Label:GetWidth(),
-	})
-	local _, _, _, labelX, _y = fs1.Label:GetPoint()
-	local width = labelX + labelMaxWidth + QUIVER.Size.Gap + fs1.Button:GetWidth()
-	fc:SetWidth(width)
-	fs1:SetWidth(width)
-	fs2:SetWidth(width)
+	local labelMaxWidth = findMaxWidth(labels)
+	local _, _, _, labelX, _ = fc.Label:GetPoint()
+	local w = labelX + labelMaxWidth + QUIVER.Size.Gap + fc.Button:GetWidth()
+	local h = fc:GetHeight()
+	local y = 0
+	for _,frame in frames do
+		frame:SetWidth(w)
+		frame:SetPoint("Left", f, "Left", 0, 0)
+		frame:SetPoint("Top", f, "Top", 0, y)
+		y = y - h - gap
+	end
 
-	fc:SetPoint("Left", f, "Left", 0, 0)
-	fs1:SetPoint("Left", f, "Left", 0, 0)
-	fs2:SetPoint("Left", f, "Left", 0, 0)
-	fsBtn:SetPoint("Left", f, "Left", labelX, 0)
+	local _, _, _, labelX, _ = fs1.Label:GetPoint()
+	local button = createBtnColorSwap(f, fs1, fs2, colorShoot, colorReload)
+	button:SetPoint("Left", f, "Left", labelX, 0)
+	button:SetPoint("Top", f, "Top", 0, y)
 
-	local h1, h2, h3, h4 = fc:GetHeight(), fs1:GetHeight(), fs2:GetHeight(), fsBtn:GetHeight()
-	local y2 = -1 * (h1 + gap)
-	local y3 = y2 - h2 - gap
-	local y4 = y3 - h3 - gap
+	f:SetWidth(findMaxWidth(frames))
+	f:SetHeight(3*h + 3*gap + button:GetHeight())
+	return f
+end
 
-	fc:SetPoint("Top", f, "Top", 0, 0)
-	fs1:SetPoint("Top", f, "Top", 0, y2)
-	fs2:SetPoint("Top", f, "Top", 0, y3)
-	fsBtn:SetPoint("Top", f, "Top", 0, y4)
+Quiver_Config_Color_Range = function(parent, gap)
+	local store = Quiver_Store.ModuleStore[Quiver_Module_RangeIndicator.Id]
+	local f = CreateFrame("Frame", nil, parent)
 
-	f:SetWidth(parent:GetWidth())
-	f:SetHeight(h1 + gap + h2 + gap + h3 + gap + h4)
+	local wrap = Quiver_Component_ColorPicker_WrapColor
+	local f1 = Quiver_Component_ColorPicker_WithResetLabel(
+		f, QUIVER_T.Range.Melee,
+		wrap(store, "ColorMelee", QUIVER.ColorDefault.Range.Melee))
+	local f2 = Quiver_Component_ColorPicker_WithResetLabel(
+		f, QUIVER_T.Range.DeadZone,
+		wrap(store, "ColorDeadZone", QUIVER.ColorDefault.Range.DeadZone))
+	local f3 = Quiver_Component_ColorPicker_WithResetLabel(
+		f, QUIVER_T.Range.ScareBeast,
+		wrap(store, "ColorScareBeast", QUIVER.ColorDefault.Range.ScareBeast))
+	local f4 = Quiver_Component_ColorPicker_WithResetLabel(
+		f, QUIVER_T.Range.ScatterShot,
+		wrap(store, "ColorScatterShot", QUIVER.ColorDefault.Range.ScatterShot))
+	local f5 = Quiver_Component_ColorPicker_WithResetLabel(
+		f, QUIVER_T.Range.Short,
+		wrap(store, "ColorShort", QUIVER.ColorDefault.Range.Short))
+	local f6 = Quiver_Component_ColorPicker_WithResetLabel(
+		f, QUIVER_T.Range.Long,
+		wrap(store, "ColorLong", QUIVER.ColorDefault.Range.Long))
+	local f7 = Quiver_Component_ColorPicker_WithResetLabel(
+		f, QUIVER_T.Range.Mark,
+		wrap(store, "ColorMark", QUIVER.ColorDefault.Range.Mark))
+	local f8 = Quiver_Component_ColorPicker_WithResetLabel(
+		f, QUIVER_T.Range.TooFar,
+		wrap(store, "ColorTooFar", QUIVER.ColorDefault.Range.TooFar))
+
+	local frames = { f1, f2, f3, f4, f5, f6, f7, f8 }
+	local labels = {}; for _,frame in frames do table.insert(labels, frame.Label) end
+
+	-- Right align buttons using minimum amount of space
+	local labelMaxWidth = findMaxWidth(labels)
+	local _, _, _, labelX, _ = f1.Label:GetPoint()
+	local w = labelX + labelMaxWidth + QUIVER.Size.Gap + f1.Button:GetWidth()
+	local h = f1:GetHeight()
+	local y = 0
+	for _,frame in frames do
+		frame:SetWidth(w)
+		frame:SetPoint("Left", f, "Left", 0, 0)
+		frame:SetPoint("Top", f, "Top", 0, y)
+		y = y - h - gap
+	end
+
+	f:SetWidth(findMaxWidth(frames))
+	f:SetHeight(8*h + 7*gap)
 	return f
 end

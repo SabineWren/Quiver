@@ -1,7 +1,6 @@
-Quiver_Component_Dialog = function(width, padding)
+Quiver_Component_Dialog = function(padding)
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:Hide()
-	f:SetWidth(width)
 	f:SetPoint("Center", 0, 0)
 	f:SetBackdrop({
 		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
