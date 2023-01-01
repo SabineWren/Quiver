@@ -74,7 +74,6 @@ Files in `/Events` hook into game functions. Use these events if possible instea
 - Spellcast: CastSpell, CastSpellByName, UseAction
 
 ## Module Fields and Lifecycle Hooks
-Some modules expose a `CreateConfig` function for making a config UI. However, it's called explicitly for individual modules, so it isn't part of the module interface. There's no provider/service for editing config variables, so the `/Config` code mutates a store parameter given to it by the module. There's no event notification for when that mutation happens, so modules need to re-fetch those variables when using them.
 ```
 Id: string
 Name: string (use locale)
