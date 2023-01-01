@@ -82,8 +82,9 @@ end
 
 Quiver_Config_MainMenu_Create = function()
 	-- WoW uses border-box content sizing
-	local PADDING = QUIVER.Size.Border + 4
-	local f = Quiver_Component_Dialog(PADDING)
+	local PADDING_CLOSE = QUIVER.Size.Border + 4
+	local PADDING_FAR = QUIVER.Size.Border + QUIVER.Size.Gap
+	local f = Quiver_Component_Dialog(PADDING_CLOSE)
 	f:SetFrameStrata("Dialog")
 
 	local titleBox = Quiver_Component_TitleBox(f)
@@ -93,26 +94,26 @@ Quiver_Config_MainMenu_Create = function()
 		Parent=f, Size=QUIVER.Size.Icon,
 		TooltipText=QUIVER_T.UI.CloseWindowTooltip })
 	btnCloseTop.Texture:QuiverSetTexture(0.7, QUIVER.Icon.XMark)
-	btnCloseTop:SetPoint("TopRight", f, "TopRight", -PADDING, -PADDING)
+	btnCloseTop:SetPoint("TopRight", f, "TopRight", -PADDING_CLOSE, -PADDING_CLOSE)
 	btnCloseTop:SetScript("OnClick", function() f:Hide() end)
 
 	local btnToggleLock = createIconBtnLock(f)
-	local lockOffsetX = PADDING + QUIVER.Size.Icon + QUIVER.Size.Gap/2
-	btnToggleLock:SetPoint("TopRight", f, "TopRight", -lockOffsetX, -PADDING)
+	local lockOffsetX = PADDING_CLOSE + QUIVER.Size.Icon + QUIVER.Size.Gap/2
+	btnToggleLock:SetPoint("TopRight", f, "TopRight", -lockOffsetX, -PADDING_CLOSE)
 
 	local btnResetFrames = createIconResetAll(f)
 	local resetOffsetX = lockOffsetX + QUIVER.Size.Icon + QUIVER.Size.Gap/2
-	btnResetFrames:SetPoint("TopRight", f, "TopRight", -resetOffsetX, -PADDING)
+	btnResetFrames:SetPoint("TopRight", f, "TopRight", -resetOffsetX, -PADDING_CLOSE)
 
-	local yOffset = -(PADDING + QUIVER.Size.Icon)
+	local yOffset = -(PADDING_CLOSE + QUIVER.Size.Icon)
 	yOffset = yOffset - createModuleControlButtons(f, yOffset, QUIVER.Size.Gap)
 	yOffset = yOffset - QUIVER.Size.Gap
 
 	-- *** Split Start ***
-	local x = PADDING
+	local x = PADDING_FAR
 	local colorPickersLeft = Quiver_Config_Color_Bars(f, QUIVER.Size.Gap)
 	colorPickersLeft:SetPoint("TopLeft", f, "TopLeft", x, yOffset)
-	x = x + colorPickersLeft:GetWidth() + PADDING
+	x = x + colorPickersLeft:GetWidth() + 12
 	local colorPickersRight = Quiver_Config_Color_Range(f, QUIVER.Size.Gap)
 	colorPickersRight:SetPoint("TopLeft", f, "TopLeft", x, yOffset)
 	local y1 = colorPickersLeft:GetHeight()
@@ -121,12 +122,13 @@ Quiver_Config_MainMenu_Create = function()
 	yOffset = yOffset - yMax - QUIVER.Size.Gap
 	-- *** Split End ***
 
+	f:SetWidth(x + colorPickersRight:GetWidth() + PADDING_FAR)
+
 	local tranqOptions = Quiver_Config_InputText_TranqAnnouncer(f, QUIVER.Size.Gap)
 	tranqOptions:SetPoint("TopLeft", f, "TopLeft", 0, yOffset)
 	yOffset = yOffset - tranqOptions:GetHeight()
 	yOffset = yOffset - QUIVER.Size.Gap
 
-	f:SetWidth(x + PADDING + colorPickersRight:GetWidth())
-	f:SetHeight(-1 * yOffset + PADDING + QUIVER.Size.Button)
+	f:SetHeight(-1 * yOffset + PADDING_CLOSE + QUIVER.Size.Button)
 	return f
 end

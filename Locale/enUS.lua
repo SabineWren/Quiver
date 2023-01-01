@@ -81,6 +81,8 @@ QUIVER_T = {
 		ResetColor = "Reset Color",
 		ResetFramesTooltip = "Reset Frame Size and Position",
 		ResetFramesTooltipAll = "Reset All Frame Sizes and Positions",
+		SwapColorsLong = "Swap Shoot and Reload Colours",
+		SwapColorsShort = "Shoot / Reload",
 		WarnUnlocked = "Quiver Unlocked. Show config dialog with /qq or /quiver.\nClick the lock icon when done.",
 		WrongClass = "Quiver is for hunters.",
 	},

@@ -26,6 +26,7 @@ QUIVER = {
 	},
 	Icon = {
 		-- Custom
+		ArrowsSwap = "Interface\\AddOns\\Quiver\\Textures\\arrow-right-arrow-left",
 		GripHandle = "Interface\\AddOns\\Quiver\\Textures\\grip-lines",
 		LockClosed = "Interface\\AddOns\\Quiver\\Textures\\lock",
 		LockOpen = "Interface\\AddOns\\Quiver\\Textures\\lock-open",

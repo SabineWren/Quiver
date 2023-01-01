@@ -1,15 +1,13 @@
-local TEXT_PADDING_H = 12
-
 local createBtnColorSwap = function(parent, f1, f2, c1, c2)
-	local f = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-	f:SetHeight(QUIVER.Size.Button)
-	f:SetText("Swap")
+	local f = Quiver_Component_Button({
+		Parent=parent, Size=QUIVER.Size.Icon,
+		TooltipText=QUIVER_T.UI.SwapColorsLong,
+	})
+	f.Texture:QuiverSetTexture(0.75, QUIVER.Icon.ArrowsSwap)
 
-	-- Size button to fit text
-	local fs = f:GetFontString()
-	f:SetWidth(fs:GetWidth() + 2 * TEXT_PADDING_H)
-	fs:SetPoint("Left", TEXT_PADDING_H, 0)
-	fs:SetPoint("Right", -TEXT_PADDING_H, 0)
+	f.Label = f:CreateFontString(nil, "Background", "GameFontNormal")
+	f.Label:SetPoint("Left", f, "Left", f:GetWidth() + 4, 0)
+	f.Label:SetText(QUIVER_T.UI.SwapColorsShort)
 
 	f:SetScript("OnClick", function()
 		-- Swap colors
@@ -66,9 +64,8 @@ Quiver_Config_Color_Bars = function(parent, gap)
 		y = y - h - gap
 	end
 
-	local _, _, _, btnX, _ = fs1.Button:GetPoint()
 	local button = createBtnColorSwap(f, fs1, fs2, colorShoot, colorReload)
-	button:SetPoint("Right", f, "Right", btnX, 0)
+	button:SetPoint("Left", f, "Left", 0, 0)
 	button:SetPoint("Top", f, "Top", 0, y)
 
 	f:SetWidth(findMaxWidth(frames))
