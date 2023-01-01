@@ -86,7 +86,8 @@ Quiver_Lib_Spellbook_GetIsSpellInstantShot = function(spellName)
 	return false
 end
 
--- Copied from HSK
+-- This function copied from HSK and MIT licensed,
+-- Copyright (c) 2018 Anielle@Lightshope-Lightbringer
 local getSpellIndexByName = function(spellName)
 	local _schoolName, _schoolIcon, indexOffset, numEntries = GetSpellTabInfo(GetNumSpellTabs())
 	local numSpells = indexOffset + numEntries

@@ -29,7 +29,7 @@ local initSlashCommandsAndModules = function()
 	SLASH_QUIVER2 = "/quiver"
 	_, cl = UnitClass("player")
 	if cl == "HUNTER" then
-		local frameConfigMenu = Quiver_ConfigMenu_Create()
+		local frameConfigMenu = Quiver_Config_MainMenu_Create()
 		SlashCmdList["QUIVER"] = function(_args, _box) frameConfigMenu:Show() end
 		for _k, v in _G.Quiver_Modules do
 			if Quiver_Store.ModuleEnabled[v.Id] then v.OnEnable() end

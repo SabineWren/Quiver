@@ -37,11 +37,11 @@ Quiver_Config_Color = function(parent, gap)
 	local f = CreateFrame("Frame", nil, parent)
 
 	local colorCast = Quiver_Component_ColorPicker_WrapColor(
-		storeCastbar, "ColorCastbar", QUIVER.Color.CastbarDefault)
+		storeCastbar, "ColorCastbar", QUIVER.ColorDefault.Castbar)
 	local colorShoot = Quiver_Component_ColorPicker_WrapColor(
-		storeAutoShotTimer, "ColorShoot", QUIVER.Color.AutoAttackDefaultShoot)
+		storeAutoShotTimer, "ColorShoot", QUIVER.ColorDefault.AutoShotShoot)
 	local colorReload = Quiver_Component_ColorPicker_WrapColor(
-		storeAutoShotTimer, "ColorReload", QUIVER.Color.AutoAttackDefaultReload)
+		storeAutoShotTimer, "ColorReload", QUIVER.ColorDefault.AutoShotReload)
 
 	local fc = Quiver_Component_ColorPicker_WithResetLabel(f, "Casting", colorCast)
 	local fs1 = Quiver_Component_ColorPicker_WithResetLabel(f, "Shooting", colorShoot)

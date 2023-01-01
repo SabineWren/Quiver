@@ -44,6 +44,7 @@ local createUI = function()
 	return f, fs
 end
 
+-- IsSpellInRange isn't in 1.12 API, so we need to check action bar
 local checkActionBarDistance = function(spellName)
 	local slot = Quiver_Lib_ActionBar_FindSlot(println, spellName)
 	return IsActionInRange(slot) == 1
@@ -59,8 +60,6 @@ local checkDistance = {
 	Melee=function() return checkActionBarDistance(QUIVER_T.Spellbook.Wing_Clip) end,-- 5 yards
 	Mark=function() return checkActionBarDistance(QUIVER_T.Spellbook.Hunters_Mark) end,-- 100 yards
 	Ranged=function() return checkActionBarDistance(QUIVER_T.Spellbook.Auto_Shot) end,-- 30-36 yards (talents)
-	-- TODO try IsSpellInRange to remove action bar requirement
-	-- https://wowwiki-archive.fandom.com/wiki/API_IsSpellInRange
 	Scare=function() return checkActionBarDistance(QUIVER_T.Spellbook.Scare_Beast) end,-- 10 yards
 	Scatter=function() return checkActionBarDistance(QUIVER_T.Spellbook.Scatter_Shot) end,-- 15 yards
 }
@@ -75,29 +74,27 @@ local render = function(color, text)
 		frame.QuiverGripHandle:GetHighlightTexture():SetVertexColor(r+0.3, g-0.1, b+0.3)
 	end
 end
-local showRange = {
-	Melee=function() render({0, 1, 0, 0.7}, "Melee Range") end,
-	Deadzone=function() render({1, 0.5, 0, 0.7}, "Dead Zone") end,
-	Scare=function() render({0, 1, 0.2, 0.7}, "Scare Beast") end,
-	Scatter=function() render({0, 1, 0.8, 0.7}, "Scatter Range") end,
-	Short=function() render({0, 0.8, 0.8, 0.7}, "Short Range") end,
-	Long=function() render({0, 0.8, 0.8, 0.7}, "Long Range") end,
-	Mark=function() render({1, 0.2, 0, 0.7}, "Mark Range") end,
-	TooFar=function() render({1, 0, 0, 0.7}, "Out of Range") end,
-}
 
 -- ************ Event Handlers ************
 local handleUpdate = function()
-	if checkDistance.Melee() then showRange.Melee()
+	if checkDistance.Melee() then
+		render(store.ColorMelee, "Melee Range")
 	elseif checkDistance.Ranged() then
-		if UnitCreatureType("target") == "Beast" and checkDistance.Scare() then showRange.Scare()
-		elseif checkDistance.Scatter() then showRange.Scatter()
-		elseif checkDistance.Follow() then showRange.Short()
-		else showRange.Long()
+		if UnitCreatureType("target") == "Beast" and checkDistance.Scare() then
+			render(store.ColorScareBeast, "Scare Beast")
+		elseif checkDistance.Scatter() then
+			render(store.ColorScatterShot, "Scatter Range")
+		elseif checkDistance.Follow() then
+			render(store.ColorShort, "Short Range")
+		else
+			render(store.ColorLong, "Long Range")
 		end
-	elseif checkDistance.Follow() then showRange.Deadzone()
-	elseif checkDistance.Mark() then showRange.Mark()
-	else showRange.TooFar()
+	elseif checkDistance.Follow() then
+		render(store.ColorDeadZone, "Dead Zone")
+	elseif checkDistance.Mark() then
+		render(store.ColorMark, "Mark Range")
+	else
+		render(store.ColorTooFar, "Out of Range")
 	end
 end
 
@@ -141,6 +138,14 @@ Quiver_Module_RangeIndicator = {
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 		store.FrameMeta = store.FrameMeta or {}
+		store.ColorMelee = store.ColorMelee or QUIVER.ColorDefault.Range.Melee
+		store.ColorDeadZone = store.ColorDeadZone or QUIVER.ColorDefault.Range.DeadZone
+		store.ColorScareBeast = store.ColorScareBeast or QUIVER.ColorDefault.Range.ScareBeast
+		store.ColorScatterShot = store.ColorScatterShot or QUIVER.ColorDefault.Range.ScatterShot
+		store.ColorShort = store.ColorShort or QUIVER.ColorDefault.Range.Short
+		store.ColorLong = store.ColorLong or QUIVER.ColorDefault.Range.Long
+		store.ColorMark = store.ColorMark or QUIVER.ColorDefault.Range.Mark
+		store.ColorTooFar = store.ColorTooFar or QUIVER.ColorDefault.Range.TooFar
 	end,
 	OnSavedVariablesPersist = function() return store end,
 }

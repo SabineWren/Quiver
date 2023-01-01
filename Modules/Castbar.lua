@@ -157,7 +157,7 @@ Quiver_Module_Castbar = {
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 		store.FrameMeta = store.FrameMeta or {}
-		store.ColorCastbar = store.ColorCastbar or QUIVER.Color.CastbarDefault
+		store.ColorCastbar = store.ColorCastbar or QUIVER.ColorDefault.Castbar
 	end,
 	OnSavedVariablesPersist = function() return store end,
 }

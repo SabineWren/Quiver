@@ -275,8 +275,8 @@ Quiver_Module_AutoShotTimer = {
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
-		store.ColorShoot = store.ColorShoot or QUIVER.Color.AutoAttackDefaultShoot
-		store.ColorReload = store.ColorReload or QUIVER.Color.AutoAttackDefaultReload
+		store.ColorShoot = store.ColorShoot or QUIVER.ColorDefault.AutoShotShoot
+		store.ColorReload = store.ColorReload or QUIVER.ColorDefault.AutoShotReload
 		store.FrameMeta = store.FrameMeta or {}
 	end,
 	OnSavedVariablesPersist = function() return store end,

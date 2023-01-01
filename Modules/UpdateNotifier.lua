@@ -1,4 +1,6 @@
 -- This file based on pfUI's updatenotify.lua
+-- Copyright (c) 2016-2021 Eric Mauser (Shagu)
+-- Copyright (c) 2022 SabineWren
 local hasNotified = false
 local CURRENT = GetAddOnMetadata("Quiver", "Version")
 

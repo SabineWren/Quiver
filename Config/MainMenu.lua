@@ -80,7 +80,7 @@ local createModuleControlButtons = function(f, yOffset, gap)
 	return height - gap
 end
 
-Quiver_ConfigMenu_Create = function()
+Quiver_Config_MainMenu_Create = function()
 	-- WoW uses border-box content sizing
 	local PADDING = QUIVER.Size.Border + 4
 	local f = Quiver_Component_Dialog(300, PADDING)

@@ -1,7 +1,7 @@
 ## Interface: 11200
 ## Title: Quiver - |cff00ff00Hunter
 ## Notes: A collection of hunter utilities.
-## Author: SabineWren, 2022
+## Author: SabineWren, 2022-2023
 ## Version: 2.4.0
 ## SavedVariables: Quiver_Store
 
@@ -39,10 +39,10 @@ Modules\UpdateNotifier.lua
 
 Config\Color.lua
 Config\InputText.lua
+Config\MainMenu.lua
 
 Migrations\M001.lua
 Migrations\M002.lua
 Migrations\Runner.lua
 
-ConfigMenu.lua
 Quiver.lua
