@@ -56,27 +56,27 @@ end
 Quiver_Component_ColorPicker_WithResetLabel = function(parent, labelText, color)
 	local f = CreateFrame("Frame", nil, parent)
 
-	local x = 4
+	local MARGIN_SMALL = 4
+	f.Label = f:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
+	f.Label:SetPoint("Left", f, "Left", MARGIN_SMALL, 0)
+	f.Label:SetText(labelText)
+
 	f.BtnReset = Quiver_Component_Button({
 		Parent=f, Size=QUIVER.Size.Icon,
 		TooltipText=QUIVER_T.UI.ResetColor,
 	})
 	f.BtnReset.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
-	f.BtnReset:SetPoint("Left", f, "Left", x, 0)
+	f.BtnReset:SetPoint("Right", f, "Right", -MARGIN_SMALL, 0)
 	f.BtnReset:SetScript("OnClick", function()
 		color.Reset()
 		f.Button:SetBackdropColor(color.R(), color.G(), color.B(), 1)
 	end)
-	x = x + f.BtnReset:GetWidth() + QUIVER.Size.Gap
 
-	f.Label = f:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
-	f.Label:SetPoint("Left", f, "Left", x, 0)
-	f.Label:SetText(labelText)
-	x = x + f.Label:GetWidth() + QUIVER.Size.Gap
-
+	local x = 0 - 2 * MARGIN_SMALL - f.BtnReset:GetWidth()
 	f.Button = createColorPicker(f, color)
+	f.Button:SetPoint("Right", f, "Right", x, 0)
 
-	f.Button:SetPoint("Right", f, "Right", 0, 0)
 	f:SetHeight(f.Button:GetHeight())
+	f.WidthMinusLabel = 6 + 2 * MARGIN_SMALL + f.BtnReset:GetWidth() + f.Button:GetWidth()
 	return f
 end

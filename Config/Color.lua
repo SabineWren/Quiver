@@ -56,8 +56,7 @@ Quiver_Config_Color_Bars = function(parent, gap)
 
 	-- Right align buttons using minimum amount of space
 	local labelMaxWidth = findMaxWidth(labels)
-	local _, _, _, labelX, _ = fc.Label:GetPoint()
-	local w = labelX + labelMaxWidth + QUIVER.Size.Gap + fc.Button:GetWidth()
+	local w = fc.WidthMinusLabel + labelMaxWidth
 	local h = fc:GetHeight()
 	local y = 0
 	for _,frame in frames do
@@ -67,9 +66,9 @@ Quiver_Config_Color_Bars = function(parent, gap)
 		y = y - h - gap
 	end
 
-	local _, _, _, labelX, _ = fs1.Label:GetPoint()
+	local _, _, _, btnX, _ = fs1.Button:GetPoint()
 	local button = createBtnColorSwap(f, fs1, fs2, colorShoot, colorReload)
-	button:SetPoint("Left", f, "Left", labelX, 0)
+	button:SetPoint("Right", f, "Right", btnX, 0)
 	button:SetPoint("Top", f, "Top", 0, y)
 
 	f:SetWidth(findMaxWidth(frames))
@@ -112,8 +111,7 @@ Quiver_Config_Color_Range = function(parent, gap)
 
 	-- Right align buttons using minimum amount of space
 	local labelMaxWidth = findMaxWidth(labels)
-	local _, _, _, labelX, _ = f1.Label:GetPoint()
-	local w = labelX + labelMaxWidth + QUIVER.Size.Gap + f1.Button:GetWidth()
+	local w = f1.WidthMinusLabel + labelMaxWidth
 	local h = f1:GetHeight()
 	local y = 0
 	for _,frame in frames do

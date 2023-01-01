@@ -4,18 +4,30 @@ Quiver_Component_EditBox = function(parent, p)
 	tooltipReset = p.TooltipReset
 
 	local f = CreateFrame("EditBox", nil, parent)
-	local fMarginLeft = QUIVER.Size.Border + GAP + QUIVER.Size.Icon + GAP
-	local fMarginRight = QUIVER.Size.Border + GAP
+	f:SetWidth(300)
+	f:SetHeight(25)
+
+	local GAP_RESET = 4
+	local fMarginLeft = QUIVER.Size.Border + GAP
+	local fMarginRight = QUIVER.Size.Border + GAP + QUIVER.Size.Icon + GAP_RESET
+
+	f.BtnReset = Quiver_Component_Button({
+		Parent=f, Size=QUIVER.Size.Icon,
+		TooltipText=tooltipReset,
+	})
+	f.BtnReset.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
+	f.BtnReset:SetPoint("Right", f, "Right", GAP_RESET + f.BtnReset:GetWidth(), 0)
+
+	f:SetPoint("Left", parent, "Left", fMarginLeft, 0)
+	f:SetPoint("Right", parent, "Right", -fMarginRight, 0)
 	f:SetTextColor(.5, 1, .8, 1)
 	f:SetJustifyH("Left")
 	f:SetMaxLetters(50)
-	f:SetHeight(25)
-	f:SetPoint("Left", parent, "Left", fMarginLeft, 0)
-	f:SetPoint("Right", parent, "Right", -fMarginRight, 0)
+
 	f:SetFontObject(GameFontNormalSmall)
 
 	f:SetBackdrop({
-		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+		bgFile = "Interface/BUTTONS/WHITE8X8",
 		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
 		tile = true,
 		tileSize = 32,
@@ -29,12 +41,5 @@ Quiver_Component_EditBox = function(parent, p)
 	f:SetAutoFocus(false)
 	f:SetScript("OnEscapePressed", function() f:ClearFocus() end)
 	f:SetScript("OnEnterPressed", function() f:ClearFocus() end)
-
-	f.BtnReset = Quiver_Component_Button({
-		Parent=f, Size=QUIVER.Size.Icon,
-		TooltipText=tooltipReset,
-	})
-	f.BtnReset.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
-	f.BtnReset:SetPoint("Right", f, "Left", -GAP, 0)
 	return f
 end

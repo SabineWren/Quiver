@@ -24,7 +24,7 @@ Quiver_Config_InputText_TranqAnnouncer = function(parent, gap)
 	editHit:SetPoint("Top", f, "Top", 0, 0)
 	editMiss:SetPoint("Top", f, "Top", 0, -1 * (height1 + gap))
 
-	f:SetWidth(300)
+	f:SetWidth(editHit:GetWidth())
 	f:SetHeight(height1 + gap + editMiss:GetHeight())
 	return f
 end
