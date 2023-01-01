@@ -90,116 +90,6 @@ local createUI = function()
 	return f
 end
 
-local SIZE_GAP = 4
-local createColourSwap = function(parent, fShoot, fReload, cs, cr)
-	local btnSwap = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-	btnSwap:SetWidth(120)
-	btnSwap:SetHeight(QUIVER.Size.Button)
-	btnSwap:SetText("Swap Colors")
-	btnSwap:SetScript("OnClick", function()
-		-- Swap colors
-		local r, g, b = cs.Get()
-		cs.Set(cr.Get())
-		cr.Set(r, g, b)
-		-- Update button preview
-		local a, b, c = cs.Get()
-		local d, e, f = cr.Get()
-		fShoot.Button:SetBackdropColor(a, b, c, 1)
-		fReload.Button:SetBackdropColor(d, e, f, 1)
-	end)
-	return btnSwap
-end
-
-local createColorPicker = function(parent, labelText, color)
-	local f = CreateFrame("Frame", nil, parent)
-
-	f.Label = f:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
-	f.Label:SetPoint("Left", f, "Left", QUIVER.Size.Gap, 0)
-	f.Label:SetText(labelText)
-
-	f.Button = CreateFrame("Button", nil, f)
-	f.Button:SetWidth(48)
-	f.Button:SetHeight(20)
-	f.Button:SetPoint("Right", f, "Right", 0, 0)
-
-	f.Button:SetBackdrop({
-		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-		tile = true,
-		tileSize = 8,
-		edgeSize = 8,
-		insets = { left=2, right=2, top=2, bottom=2 },
-	})
-	local a, b, c = color.Get()
-	f.Button:SetBackdropColor(a, b, c, 1)
-
-	f.Button:SetScript("OnClick", function(_self)
-		-- Must replace existing callback before changing anything else,
-		-- or edits can fire previous callback
-		ColorPickerFrame.func = function()
-			local r, g, b = ColorPickerFrame:GetColorRGB()
-			color.Set(r, g, b)
-			f.Button:SetBackdropColor(r, g, b, 1)
-		end
-
-		-- colours at time of opening picker
-		local cr, cg, cb = color.Get()
-		ColorPickerFrame.cancelFunc = function()
-			local r, g, b = cr, cg, cb
-			color.Set(r, g, b)
-			f.Button:SetBackdropColor(r, g, b, 1)
-		end
-
-		ColorPickerFrame.hasOpacity = false
-		ColorPickerFrame:SetColorRGB(cr, cg, cb)
-		ColorPickerFrame:Show()
-	end)
-
-	f:SetWidth(120)
-	f:SetHeight(f.Button:GetHeight())
-	return f
-end
-
-Quiver_Module_AutoShotTimer_MakeOptionsColor = function(parent)
-	local f = CreateFrame("Frame", nil, parent)
-
-	local colorShoot = {
-		Get = function() return unpack(store.ColorShoot) end,
-		Set = function(r, g, b) store.ColorShoot = { r, g, b } end,
-		Reset = function()
-			local r, g, b = unpack(QUIVER.Color.AutoAttackDefaultShoot)
-			store.ColorShoot = { r, g, b }
-		end,
-	}
-	local colorReload = {
-		Get = function() return unpack(store.ColorReload) end,
-		Set = function(r, g, b) store.ColorReload = { r, g, b } end,
-		Reset = function()
-			local r, g, b = unpack(QUIVER.Color.AutoAttackDefaultReload)
-			store.ColorReload = { r, g, b }
-		end,
-	}
-
-	local f1 = createColorPicker(f, "Shooting", colorShoot)
-	local f2 = createColorPicker(f, "Reloading", colorReload)
-	local f3 = createColourSwap(f, f1, f2, colorShoot, colorReload)
-
-	f1:SetPoint("Left", f, "Left", SIZE_GAP, 0)
-	f2:SetPoint("Left", f, "Left", SIZE_GAP, 0)
-	f3:SetPoint("Left", f, "Left", SIZE_GAP, 0)
-
-	local h1, h2, h3 = f1:GetHeight(), f2:GetHeight(), f3:GetHeight()
-	local y2 = -1 * (h1 + SIZE_GAP)
-	local y3 = -1 * (h1 + SIZE_GAP + h2 + SIZE_GAP)
-	f1:SetPoint("Top", f, "Top", 0, 0)
-	f2:SetPoint("Top", f, "Top", 0, y2)
-	f3:SetPoint("Top", f, "Top", 0, y3)
-
-	f:SetWidth(parent:GetWidth())
-	f:SetHeight(h1 + SIZE_GAP + h2 + SIZE_GAP + h3)
-	return f
-end
-
 -- ************ Frame Update Handlers ************
 local updateBarShooting = function()
 	frame:SetAlpha(1)
@@ -379,7 +269,7 @@ Quiver_Module_AutoShotTimer = {
 		if (not isShooting) and (not isReloading) then tryHideBar() end
 	end,
 	OnInterfaceUnlock = function() frame:SetAlpha(1) end,
-	ResetUI = function()
+	OnResetFrames = function()
 		store.FrameMeta = nil
 		if frame then setFramePosition(frame, store) end
 	end,

@@ -65,7 +65,6 @@ local createUI = function()
 	})
 	f:SetBackdropColor(0, 0, 0, 0.8)
 	f:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)
-	f.Castbar:SetBackdropColor(0.42 ,0.41 ,0.53, 1)
 
 	centerVertically(f.Castbar)
 	centerVertically(f.SpellTime)
@@ -93,6 +92,9 @@ local onSpellcast = function(spellName)
 	frame.SpellName:SetText(spellName)
 	frame.Castbar:SetWidth(1)
 	displayTime(0)
+
+	local r, g, b = unpack(store.ColorCastbar)
+	frame.Castbar:SetBackdropColor(r, g, b, 1)
 	frame:Show()
 end
 
@@ -148,13 +150,14 @@ Quiver_Module_Castbar = {
 	OnDisable = onDisable,
 	OnInterfaceLock = function() if not isCasting then frame:Hide() end end,
 	OnInterfaceUnlock = function() frame:Show() end,
-	ResetUI = function()
+	OnResetFrames = function()
 		store.FrameMeta = nil
 		if frame then setFramePosition(frame, store) end
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 		store.FrameMeta = store.FrameMeta or {}
+		store.ColorCastbar = store.ColorCastbar or QUIVER.Color.CastbarDefault
 	end,
 	OnSavedVariablesPersist = function() return store end,
 }

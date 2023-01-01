@@ -124,7 +124,7 @@ Quiver_Module_AspectTracker = {
 	OnDisable = onDisable,
 	OnInterfaceLock = function() updateUI() end,
 	OnInterfaceUnlock = function() updateUI() end,
-	ResetUI = function()
+	OnResetFrames = function()
 		store.FrameMeta = nil
 		if frame then setFramePosition(frame, store) end
 	end,

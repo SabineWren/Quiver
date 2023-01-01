@@ -4,6 +4,7 @@ QUIVER = {
 	Debuff_Cap = 24,-- UI shows 16. Turtle allows 8 more hidden.
 	Aura_Cap = 32 + 24,
 	Color = {
+		CastbarDefault = { 0.42, 0.41, 0.53 },
 		AutoAttackDefaultShoot = { 1, 1, 0 },
 		AutoAttackDefaultReload = { 1, 0, 0 },
 	},

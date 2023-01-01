@@ -22,6 +22,7 @@ Events\FrameLock.lua
 Events\Spellcast.lua
 
 Components\Button.lua
+Components\ColorPicker.lua
 Components\CheckButton.lua
 Components\Dialog.lua
 Components\EditBox.lua
@@ -35,6 +36,9 @@ Modules\pfUIPlugins.lua
 Modules\TranqAnnouncer.lua
 Modules\TrueshotAuraAlarm.lua
 Modules\UpdateNotifier.lua
+
+Config\Color.lua
+Config\InputText.lua
 
 Migrations\M001.lua
 Migrations\M002.lua

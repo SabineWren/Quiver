@@ -74,13 +74,10 @@ Files in `/Events` hook into game functions. Use these events if possible instea
 - Spellcast: CastSpell, CastSpellByName, UseAction
 
 ## Module Fields and Lifecycle Hooks
-The UI code is a mess right now, but soon there will be an event for attaching a frame to the Main Menu.
+Some modules expose a `CreateConfig` function for making a config UI. However, it's called explicitly for individual modules, so it isn't part of the module interface. There's no provider/service for editing config variables, so the `/Config` code mutates a store parameter given to it by the module. There's no event notification for when that mutation happens, so modules need to re-fetch those variables when using them.
 ```
 Id: string
 Name: string (use locale)
-
-(optional) ResetUI: unit -> unit
-Called when triggered by user.
 
 OnEnable: unit -> unit
 Called every time user enables the module.
@@ -96,6 +93,10 @@ Called every time user locks the UI.
 OnInterfaceUnlock: unit -> unit
 Not called while module disabled.
 Called every time user unlocks the UI.
+
+(optional) OnResetFrames: unit -> unit
+Called when user clicks a reset button.
+The reset-all button will call this even if module disabled.
 
 OnSavedVariablesRestore: table -> unit
 GameEvent: "PLAYER_LOGIN"

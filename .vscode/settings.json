@@ -9,6 +9,7 @@
 	"Lua.runtime.version": "Lua 5.1",
 	"Lua.diagnostics.globals": [
 		"CheckInteractDistance",
+		"ColorPickerFrame",
 		"CreateFrame",
 		"DEFAULT_CHAT_FRAME",
 		"GetPlayerMapPosition",

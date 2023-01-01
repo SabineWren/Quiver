@@ -19,12 +19,12 @@ end
 local createIconResetAll = function(parent)
 	local f = Quiver_Component_Button({
 		Parent=parent, Size=QUIVER.Size.Icon,
-		TooltipText=QUIVER_T.UI.ResetFramesTooltip,
+		TooltipText=QUIVER_T.UI.ResetFramesTooltipAll,
 	})
 	f.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
 	f:SetScript("OnClick", function(_self)
 		for _k, v in _G.Quiver_Modules do
-			if v.ResetUI ~= nil then v.ResetUI() end
+			if v.OnResetFrames ~= nil then v.OnResetFrames() end
 		end
 	end)
 	return f
@@ -38,7 +38,7 @@ local createModuleControlButtons = function(f, yOffset, gap)
 		local x = QUIVER.Size.Border + QUIVER.Size.Gap
 		local sizeReset = QUIVER.Size.Icon
 		local btnReset = nil
-		if m.ResetUI then
+		if m.OnResetFrames then
 			btnReset = Quiver_Component_Button({
 				Parent=f, Size=sizeReset,
 				TooltipText=QUIVER_T.UI.ResetFramesTooltip,
@@ -46,7 +46,7 @@ local createModuleControlButtons = function(f, yOffset, gap)
 			btnReset.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
 
 			btnReset:SetScript("OnClick", function(_self)
-				m.ResetUI()
+				m.OnResetFrames()
 			end)
 			btnReset:SetPoint("Left", f, "Left", x, 0)
 			btnReset:SetPoint("Top", f, "Top", 0, yOffset - height)
@@ -107,14 +107,15 @@ Quiver_ConfigMenu_Create = function()
 	yOffset = yOffset - createModuleControlButtons(f, yOffset, QUIVER.Size.Gap)
 	yOffset = yOffset - QUIVER.Size.Gap
 
-	local tranqOptions = Quiver_Module_TranqAnnouncer_CreateMenuOptions(f, QUIVER.Size.Gap)
+	local autoShotTimerOptions = Quiver_Config_Color(f, QUIVER.Size.Gap)
+	autoShotTimerOptions:SetPoint("TopLeft", f, "TopLeft", PADDING, yOffset)
+	yOffset = yOffset - autoShotTimerOptions:GetHeight()
+	yOffset = yOffset - QUIVER.Size.Gap
+
+	local tranqOptions = Quiver_Config_InputText_TranqAnnouncer(f, QUIVER.Size.Gap)
 	tranqOptions:SetPoint("Top", f, "Top", 0, yOffset)
 	yOffset = yOffset - tranqOptions:GetHeight()
 	yOffset = yOffset - QUIVER.Size.Gap
-
-	local autoShotTimerOptions = Quiver_Module_AutoShotTimer_MakeOptionsColor(f)
-	autoShotTimerOptions:SetPoint("TopLeft", f, "TopLeft", PADDING, yOffset)
-	yOffset = yOffset - autoShotTimerOptions:GetHeight()
 
 	f:SetHeight(-1 * yOffset + PADDING + QUIVER.Size.Button)
 	return f

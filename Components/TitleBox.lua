@@ -9,7 +9,7 @@ Quiver_Component_TitleBox = function(parent)
 	f:SetWidth(fs:GetStringWidth() + 30)
 	f:SetHeight(35)
 	f:SetBackdrop({
-		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+		bgFile = "Interface/BUTTONS/WHITE8X8",
 		edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
 		tile = true,
 		tileSize = 24,

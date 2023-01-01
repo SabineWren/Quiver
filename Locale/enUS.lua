@@ -68,7 +68,9 @@ QUIVER_T = {
 	UI = {
 		CloseWindowTooltip = "Close Window",
 		FrameLockToggleTooltip ="Lock/Unlock Frames",
-		ResetFramesTooltip = "Reset Frames",
+		ResetColor = "Reset Color",
+		ResetFramesTooltip = "Reset Frame Size and Position",
+		ResetFramesTooltipAll = "Reset All Frame Sizes and Positions",
 		WarnUnlocked = "Quiver Unlocked. Show config dialog with /qq or /quiver.\nClick the lock icon when done.",
 		WrongClass = "Quiver is for hunters.",
 	},
