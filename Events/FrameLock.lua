@@ -32,8 +32,8 @@ end
 -- We have to guide and strongly encourage them to lock the frames.
 Quiver_Event_FrameLock_Init = function()
 	openWarning = CreateFrame("Frame", nil, UIParent)
-	openWarning:SetFrameStrata("BACKGROUND")
-	openWarning.Text = openWarning:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
+	openWarning:SetFrameStrata("Medium")
+	openWarning.Text = openWarning:CreateFontString(nil, "Medium", "GameFontNormal")
 	openWarning.Text:SetAllPoints(openWarning)
 	openWarning.Text:SetJustifyH("Center")
 	openWarning.Text:SetJustifyV("Center")

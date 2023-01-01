@@ -84,6 +84,7 @@ Quiver_Config_MainMenu_Create = function()
 	-- WoW uses border-box content sizing
 	local PADDING = QUIVER.Size.Border + 4
 	local f = Quiver_Component_Dialog(PADDING)
+	f:SetFrameStrata("Dialog")
 
 	local titleBox = Quiver_Component_TitleBox(f)
 	titleBox:SetPoint("Center", f, "Top", 0, -10)

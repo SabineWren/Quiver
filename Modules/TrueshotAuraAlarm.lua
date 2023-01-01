@@ -60,7 +60,7 @@ end
 
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
-	f:SetFrameStrata("HIGH")
+	f:SetFrameStrata("Low")
 	f:SetBackdrop({ bgFile = "Interface/BUTTONS/WHITE8X8", tile = false })
 	f.Icon = CreateFrame("Frame", nil, f)
 	f.Icon:SetBackdrop({ bgFile = QUIVER.Icon.Trueshot, tile = false })

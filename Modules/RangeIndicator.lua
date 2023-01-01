@@ -22,7 +22,7 @@ local createUI = function()
 	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
 	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, { GripMargin=4 })
 
-	f:SetFrameStrata("LOW")
+	f:SetFrameStrata("Low")
 	f:SetBackdrop({
 		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
 		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
