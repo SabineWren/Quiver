@@ -26,6 +26,16 @@ QUIVER_T = {
 		RangeIndicator = "Shows when abilities are in range. Requires spellbook abilities placed somewhere on your action bars.",
 		TranqAnnouncer = "Announces in /Raid chat when your tranquilizing shot hits or misses a target.",
 	},
+	Range = {
+		Melee = "Melee Range",
+		DeadZone = "Dead Zone",
+		ScareBeast = "Scare Beast",
+		ScatterShot = "Scatter Shot",
+		Short = "Short Range",
+		Long = "Long Range",
+		Mark = "Hunter's Mark",
+		TooFar = "Out of Range",
+	},
 	Spellbook = {
 		-- Aspect
 		Aspect_Beast = "Aspect of the Beast",
@@ -80,4 +90,6 @@ QUIVER_T = {
 		TooltipHit = "Reset Hit Message to Default",
 		TooltipMiss = "Reset Miss Message to Default",
 	},
+	VersionAvailable = "New version %s available at %s",
+	VersionSafeToUpdate = "It's always safe to upgrade Quiver. You won't lose any of your configuration.",
 }

@@ -78,23 +78,23 @@ end
 -- ************ Event Handlers ************
 local handleUpdate = function()
 	if checkDistance.Melee() then
-		render(store.ColorMelee, "Melee Range")
+		render(store.ColorMelee, QUIVER_T.Range.Melee)
 	elseif checkDistance.Ranged() then
 		if UnitCreatureType("target") == "Beast" and checkDistance.Scare() then
-			render(store.ColorScareBeast, "Scare Beast")
+			render(store.ColorScareBeast, QUIVER_T.Range.ScareBeast)
 		elseif checkDistance.Scatter() then
-			render(store.ColorScatterShot, "Scatter Range")
+			render(store.ColorScatterShot, QUIVER_T.Range.ScatterShot)
 		elseif checkDistance.Follow() then
-			render(store.ColorShort, "Short Range")
+			render(store.ColorShort, QUIVER_T.Range.Short)
 		else
-			render(store.ColorLong, "Long Range")
+			render(store.ColorLong, QUIVER_T.Range.Long)
 		end
 	elseif checkDistance.Follow() then
-		render(store.ColorDeadZone, "Dead Zone")
+		render(store.ColorDeadZone, QUIVER_T.Range.DeadZone)
 	elseif checkDistance.Mark() then
-		render(store.ColorMark, "Mark Range")
+		render(store.ColorMark, QUIVER_T.Range.Mark)
 	else
-		render(store.ColorTooFar, "Out of Range")
+		render(store.ColorTooFar, QUIVER_T.Range.TooFar)
 	end
 end
 
