@@ -66,14 +66,14 @@ Open an issue or PM me on Discord:
 - Translations
 - Bug reports
 
-## Localization
+### Localization
 Quiver looks up spells by name, which change with client locale. I use Wowhead to find the spell names for each locale. Theoretically, Quiver should work with a `/Locale` file matching your client, but the translations aren't complete.
 
-## Custom Events
+### Custom Events
 Files in `/Events` hook into game functions. Use these events if possible instead of declaring your own hooks.
 - Spellcast: CastSpell, CastSpellByName, UseAction
 
-## Module Fields and Lifecycle Hooks
+### Module Fields and Lifecycle Hooks
 ```
 Id: string
 Name: string (use locale)
