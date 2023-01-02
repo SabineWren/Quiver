@@ -1,5 +1,7 @@
 WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration menu.
 
+<img src="/Media/Quiver_colours.jpg" height="502px" align="right">
+
 - [Installation](#installation)
 - [Contributing](#contributing)
 
@@ -12,21 +14,47 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 - [Trueshot Aura Alarm](#trueshot-aura-alarm)
 
 ### Aspect Tracker
-Never lose track of your current aspect:
-- Shows nothing while in Aspect of the Hawk
-- Shows Hawk when no aspect enabled
-- Shows current aspect otherwise
+Never lose track of your current aspect
+<table>
+	<tr>
+		<td>None</td>
+		<td>Pack</td>
+		<td>Cheetah</td>
+	</tr>
+	<tr>
+		<td><img src="/Media/Aspect_None.png" height="64px"></td>
+		<td><img src="/Media/Aspect_Pack.png" height="64px"></td>
+		<td><img src="/Media/Aspect_Cheetah.jpg" height="64px"></td>
+	</tr>
+</table>
+
+- No UI while in Aspect of the Hawk
+- Displays Hawk texture when no aspect enabled
+- Shows border while Pack active (potentially other hunters)
 
 ### Auto Shot Timer
+<figure>
+	<figcaption>Shooting</figcaption>
+	<img src="/Media/Bar_1_Shooting.jpg" height="180px">
+</figure>
+<figure>
+	<figcaption>Reloading</figcaption>
+	<img src="/Media/Bar_2_Reloading.jpg" height="180px">
+</figure>
+
 - Resets swing timer while casting a shot; taken from [YaHT](https://github.com/Aviana/YaHT/tree/1.12.1)
 - Ignores instant spells such as Arcane Shot; taken from [HSK](https://github.com/anstellaire/HunterSwissKnife)
 - Works with Trueshot
 
 ### Castbar
+<img src="/Media/Bar_3_Casting.jpg" height="180px">
+
 - Shows Aimed Shot, Multi-Shot, and Trueshot
 - Includes a pfUI module that adds Trueshot support to the pfUI castbar
 
 ### Range Indicator
+[Watch Video Preview](https://raw.githubusercontent.com/SabineWren/Quiver/main/Media/Quiver_Range_Indicator_Preview.mp4)
+
 - Based on [Egnar](https://github.com/Medeah/Egnar)
 - Automatically locates action bar slots
 - Warns you when abilities missing from action bar
@@ -40,7 +68,18 @@ Requires some raw spellbook abilities on your action bars (not macros). Hidden a
 It's deliberately less customizable than Xtranq, so disable this module and run Xtranq if that bothers you. I'm open to adding tranq rotation features, but I'm not a fan of how Xtranq does it. Perhaps letting one hunter configure the rotation for all? Feel free to request features.
 
 ### Trueshot Aura Alarm
-This checks if you have Trueshot Aura talented. If so, Quiver tracks the buff and duration, and warns you with a texture overlay to recast it.
+<table>
+	<tr>
+		<td>None</td>
+		<td>Expiring</td>
+	</tr>
+	<tr>
+		<td><img src="/Media/Trueshot_None.png" height="64px"></td>
+		<td><img src="/Media/Trueshot_Low.png" height="64px"></td>
+	</tr>
+</table>
+
+This checks if you have Trueshot Aura talented. If so, Quiver tracks the buff and duration, and warns you to recast it.
 
 # Installation
 1. [Download](https://github.com/SabineWren/Quiver/releases) latest version
