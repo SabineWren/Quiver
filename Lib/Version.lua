@@ -1,5 +1,5 @@
 local parseVersion = function(text)
-	local _, _, a, b, c = strfind(text, "(%d+)%.(%d+)%.(%d+)")
+	local _, _, a, b, c = string.find(text, "(%d+)%.(%d+)%.(%d+)")
 	return {
 		Breaking = tonumber(a),
 		Feature = tonumber(b),
