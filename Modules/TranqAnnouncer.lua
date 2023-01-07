@@ -1,17 +1,123 @@
 local MODULE_ID = "TranqAnnouncer"
 local store = nil
 local frame = nil
---local TODO_SPELL_NAME = QUIVER_T.Spellbook.Tranquilizing_Shot
-local TODO_SPELL_NAME = QUIVER_T.Spellbook.Arcane_Shot
-
+local TRANQ_CD = 20
 local ADDON_MESSAGE_CAST = "Tranq_Shot_Cast"
+local INSET = 4
+
+--local TODO_SPELL_NAME = QUIVER_T.Spellbook.Tranquilizing_Shot
+local TODO_SPELL_NAME = QUIVER_T.Spellbook.Serpent_Sting
+
+local createProgressBar = function()
+	local BORDER_BAR = 1
+	local MARGIN_TEXT = 4
+	local f = CreateFrame("Frame")
+	f:SetFrameStrata("Low")
+	f:SetBackdrop({
+		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
+		edgeFile = "Interface/BUTTONS/WHITE8X8", edgeSize = BORDER_BAR,
+	})
+	f:SetBackdropColor(0, 0.5, 0, 0.3)
+	f:SetBackdropBorderColor(0.1, 0.3, 0.1, 0.5)
+
+	local centerVertically = function(ele)
+		ele:SetPoint("Top", f, "Top", 0, -BORDER_BAR)
+		ele:SetPoint("Bottom", f, "Bottom", 0, BORDER_BAR)
+	end
+
+	f.ProgressFrame = CreateFrame("Frame", nil, f)
+	centerVertically(f.ProgressFrame)
+	f.ProgressFrame:SetPoint("Left", f, "Left", BORDER_BAR, 0)
+	f.ProgressFrame:SetBackdrop({
+		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
+	})
+	f.ProgressFrame:SetBackdropColor(0, 1.0, 0, 0.9)
+
+	f.FsPlayerName = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	centerVertically(f.FsPlayerName)
+	f.FsPlayerName:SetPoint("Left", f, "Left", MARGIN_TEXT, 0)
+	f.FsPlayerName:SetJustifyH("Left")
+	f.FsPlayerName:SetJustifyV("Center")
+	f.FsPlayerName:SetTextColor(1, 1, 1)
+
+	f.FsCdTimer = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	centerVertically(f.FsCdTimer)
+	f.FsCdTimer:SetPoint("Right", f, "Right", -MARGIN_TEXT, 0)
+	f.FsCdTimer:SetJustifyH("Right")
+	f.FsPlayerName:SetJustifyV("Center")
+	f.FsCdTimer:SetTextColor(1, 1, 1)
+
+	return f
+end
+
+local poolProgressBar = (function()
+	local fs = {}
+	return {
+		Acquire = function(parent)
+			local f = table.remove(fs) or createProgressBar()
+			f:SetParent(parent)
+			return f
+		end,
+		Release = function(f)
+			f:Hide()
+			f:SetParent(nil)
+			f:ClearAllPoints()
+			table.insert(fs, f)
+		end,
+	}
+end)()
+
+local setFramePosition = function(f, s)
+	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
+		w=160, h=70, dx=160 * -0.5, dy=200,
+	})
+	f:SetWidth(s.FrameMeta.W)
+	f:SetHeight(s.FrameMeta.H)
+	f:SetPoint("TopLeft", s.FrameMeta.X, s.FrameMeta.Y)
+end
+
+local createUI = function()
+	local f = CreateFrame("Frame", nil, UIParent)
+	f.Bars = {}
+	setFramePosition(f, store)
+	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
+	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, { GripMargin=4 })
+
+	f:SetFrameStrata("Low")
+	f:SetBackdrop({
+		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+		tile = true,
+		tileSize = 8,
+		edgeSize = 16,
+		insets = { left=INSET, right=INSET, top=INSET, bottom=INSET },
+	})
+	f:SetBackdropColor(0, 0, 0, 0.2)
+	f:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
+
+	return f
+end
 
 local handleEvent = function()
 	-- For compatibility with other tranq addons, ignore the addon name (arg1).
 	if event == "CHAT_MSG_ADDON" then
 		local _, _, nameCaster = string.find(arg2, ADDON_MESSAGE_CAST..":(.*)")
 		if nameCaster ~= nil then
-			DEFAULT_CHAT_FRAME:AddMessage(nameCaster.." Fired Tranq Shot", 0.2, 1, 0.1)
+			local bar = poolProgressBar.Acquire(frame)
+			bar.ProgressFrame:SetWidth(1)
+			bar.FsPlayerName:SetText(nameCaster)
+			bar.FsCdTimer:SetText(string.format("%.1f / %.0f", 0.0, TRANQ_CD))
+
+			local height = 0
+			for _i, b in frame.Bars do
+				height = height + b:GetHeight()
+			end
+
+			bar:SetPoint("Left", frame, "Left", INSET, 0)
+			bar:SetPoint("Right", frame, "Right", -INSET, 0)
+			bar:SetPoint("Top", frame, "Top", 0, -height - INSET)
+			bar:SetHeight(20)
+			table.insert(frame.Bars, bar)
 		end
 	elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE" then
 		local isHit =
@@ -34,12 +140,11 @@ local EVENTS = {
 	"CHAT_MSG_SPELL_SELF_DAMAGE",
 }
 local onEnable = function()
-	if frame == nil then frame = CreateFrame("Frame", nil) end
+	if frame == nil then frame = createUI() end
 	frame:SetScript("OnEvent", handleEvent)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	Quiver_Event_Spellcast_Instant.Subscribe(MODULE_ID, function(spellName)
 		if spellName == TODO_SPELL_NAME then
-			DEFAULT_CHAT_FRAME:AddMessage("Fired Tranq Shot")
 			local playerName = UnitName("player")
 			SendAddonMessage("Quiver", ADDON_MESSAGE_CAST..":"..playerName, "Raid")
 		end
@@ -59,9 +164,16 @@ Quiver_Module_TranqAnnouncer = {
 	OnDisable = onDisable,
 	OnInterfaceLock = function() return nil end,
 	OnInterfaceUnlock = function() return nil end,
+	OnResetFrames = function()
+		store.FrameMeta = nil
+		if frame then setFramePosition(frame, store) end
+	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 		store.MsgTranqMiss = savedVariables.MsgTranqMiss or QUIVER_T.Tranq.DefaultMiss
+
+		-- TODO temp code to force default position
+		store.FrameMeta = nil
 
 		-- TODO move to migration and rename hit -> cast
 		-- We notify on tranq cast instead of hit. To prevent a breaking
@@ -70,7 +182,7 @@ Quiver_Module_TranqAnnouncer = {
 			local startPos, _ = string.find(string.lower(store.MsgTranqHit), "hit")
 			if startPos then
 				store.MsgTranqHit = QUIVER_T.Tranq.DefaultCast
-				DEFAULT_CHAT_FRAME:AddMessage("Changed tranq message to new default")
+				DEFAULT_CHAT_FRAME:AddMessage("Changed tranq message to new default", 1, 0, 0)
 			end
 		else
 			store.MsgTranqHit = QUIVER_T.Tranq.DefaultCast

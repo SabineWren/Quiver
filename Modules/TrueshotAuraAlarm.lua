@@ -128,7 +128,6 @@ Quiver_Module_TrueshotAuraAlarm = {
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
-		store.FrameMeta = store.FrameMeta or {}
 	end,
 	OnSavedVariablesPersist = function() return store end,
 }
