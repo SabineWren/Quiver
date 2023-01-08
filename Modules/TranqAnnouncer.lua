@@ -8,8 +8,7 @@ local HEIGHT_BAR = 17
 local WIDTH_FRAME_DEFAULT = 120
 
 local messaging = (function()
-	--local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot"
-	local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot_DEV_BUILD"
+	local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot"
 	local MATCH = ADDON_MESSAGE_CAST..":(.*):(.*)"
 	return {
 		Broadcast = function()
@@ -63,8 +62,7 @@ local getColorForeground = (function()
 	end
 end)()
 
---local TODO_SPELL_NAME = QUIVER_T.Spellbook.Tranquilizing_Shot
-local TODO_SPELL_NAME = QUIVER_T.Spellbook.Serpent_Sting
+local TODO_SPELL_NAME = QUIVER_T.Spellbook.Tranquilizing_Shot
 
 local createProgressBar = function()
 	local MARGIN_TEXT = 4
@@ -174,7 +172,7 @@ end
 local handleCast = function(spellName)
 	if spellName == TODO_SPELL_NAME then
 		messaging.Broadcast()
-		Quiver_Lib_Print.Say(store.MsgTranqHit)
+		Quiver_Lib_Print.Say(store.MsgTranqCast)
 	end
 end
 
@@ -287,19 +285,7 @@ Quiver_Module_TranqAnnouncer = {
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 		store.MsgTranqMiss = savedVariables.MsgTranqMiss or QUIVER_T.Tranq.DefaultMiss
-
-		-- TODO move to migration and rename hit -> cast
-		-- We notify on tranq cast instead of hit. To prevent a breaking
-		-- release version, attempt changing contradictory text.
-		if store.MsgTranqHit then
-			local startPos, _ = string.find(string.lower(store.MsgTranqHit), "hit")
-			if startPos then
-				store.MsgTranqHit = QUIVER_T.Tranq.DefaultCast
-				DEFAULT_CHAT_FRAME:AddMessage("Changed tranq message to new default", 1, 0, 0)
-			end
-		else
-			store.MsgTranqHit = QUIVER_T.Tranq.DefaultCast
-		end
+		store.MsgTranqCast = store.MsgTranqCast or QUIVER_T.Tranq.DefaultCast
 	end,
 	OnSavedVariablesPersist = function() return store end,
 }
