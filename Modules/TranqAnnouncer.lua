@@ -174,8 +174,7 @@ end
 local handleCast = function(spellName)
 	if spellName == TODO_SPELL_NAME then
 		messaging.Broadcast()
-		--Quiver_Lib_Print.Say(store.MsgTranqHit)
-		DEFAULT_CHAT_FRAME:AddMessage(store.MsgTranqHit)
+		Quiver_Lib_Print.Say(store.MsgTranqHit)
 	end
 end
 
@@ -225,16 +224,22 @@ local handleEvent = function()
 	if event == "CHAT_MSG_ADDON" then
 		local nameCaster, timeCastSec = messaging.Deserialize(arg2)
 		if nameCaster ~= nil then
-			local bar = poolProgressBar.Acquire(frame)
-			bar:SetHeight(HEIGHT_BAR)
+			local barVisible = Quiver_Lib_F.Find(frame.Bars, function(bar)
+				return bar.FsPlayerName:GetText() == nameCaster
+			end)
 
-			bar.TimeCastSec = timeCastSec
-			bar.FsPlayerName:SetText(nameCaster)
+			if barVisible then
+				barVisible.TimeCastSec = timeCastSec
+			else
+				local barNew = poolProgressBar.Acquire(frame)
+				barNew.TimeCastSec = timeCastSec
+				barNew:SetHeight(HEIGHT_BAR)
+				barNew.FsPlayerName:SetText(nameCaster)
+				table.insert(frame.Bars, barNew)
+			end
 
-			table.insert(frame.Bars, bar)
 			table.sort(frame.Bars, function(a,b) return a.TimeCastSec < b.TimeCastSec end)
 			adjustBarYOffsets()
-
 			frame:SetHeight(getIdealFrameHeight())
 			frame:Show()
 		end

@@ -5,6 +5,13 @@ local Every = function(xs, f)
 	return true
 end
 
+local Find = function(xs, f)
+	for _k, v in xs do
+		if f(v) then return v end
+	end
+	return nil
+end
+
 local Some = function(xs, f)
 	for _k, v in xs do
 		if f(v) then return true end
@@ -14,5 +21,6 @@ end
 
 Quiver_Lib_F = {
 	Every=Every,
+	Find=Find,
 	Some=Some,
 }
