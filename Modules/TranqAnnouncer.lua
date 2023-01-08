@@ -4,6 +4,7 @@ local frame = nil
 local TRANQ_CD_SEC = 20
 local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot"
 local INSET = 4
+local HEIGHT_BAR = 20
 
 --local TODO_SPELL_NAME = QUIVER_T.Spellbook.Tranquilizing_Shot
 local TODO_SPELL_NAME = QUIVER_T.Spellbook.Serpent_Sting
@@ -69,7 +70,7 @@ end)()
 
 local setFramePosition = function(f, s)
 	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
-		w=160, h=70, dx=160 * -0.5, dy=200,
+		w=160, h=HEIGHT_BAR + 2 * INSET, dx=160 * -0.5, dy=200,
 	})
 	f:SetWidth(s.FrameMeta.W)
 	f:SetHeight(s.FrameMeta.H)
@@ -125,6 +126,10 @@ local handleEvent = function()
 		local _, _, nameCaster, msLatencyCaster = string.find(arg2, ADDON_MESSAGE_CAST..":(.*):(.*)")
 		if nameCaster ~= nil and msLatencyCaster ~= nil then
 			local bar = poolProgressBar.Acquire(frame)
+			-- This is not deterministically ordered, since reported latency can change
+			-- between two nearly-simultaneous messages, flipping their order for some users.
+			-- TODO order is more important than exact timing, so this either requires
+			-- an accuracy tradeoff, or a smarter algorithm to guarantee ordering.
 			local _,_, msLatency = GetNetStats()
 			bar.ProgressFrame.TimeCastSec = GetTime() - (msLatencyCaster + msLatency) / 1000
 			bar.ProgressFrame:SetWidth(1)
@@ -138,22 +143,20 @@ local handleEvent = function()
 			bar:SetPoint("Left", frame, "Left", INSET, 0)
 			bar:SetPoint("Right", frame, "Right", -INSET, 0)
 			bar:SetPoint("Top", frame, "Top", 0, -height - INSET)
-			bar:SetHeight(20)
+			bar:SetHeight(HEIGHT_BAR)
+
 			table.insert(frame.Bars, bar)
+			frame:SetHeight(height + HEIGHT_BAR + 2 * INSET)
 			frame:Show()
 		end
 	elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE" then
-		local isHit =
-			string.find(arg1, QUIVER_T.CombatLog.Tranq.Cast)
-		local isMiss =
-			string.find(arg1, QUIVER_T.CombatLog.Tranq.Miss)
+		--local _, _, targetHit = string.find(arg1, QUIVER_T.CombatLog.Tranq.Hit)
+		--if targetHit ~= nil then Quiver_Lib_Print.Say(store.MsgTranqHit) end
+		if string.find(arg1, QUIVER_T.CombatLog.Tranq.Miss)
 			or string.find(arg1, QUIVER_T.CombatLog.Tranq.Resist)
 			or string.find(arg1, QUIVER_T.CombatLog.Tranq.Fail)
-		if isHit then
-			DEFAULT_CHAT_FRAME:AddMessage(arg1)
-			Quiver_Lib_Print.Raid(store.MsgTranqHit)
-		elseif isMiss then
-			Quiver_Lib_Print.Raid(store.MsgTranqMiss)
+		then
+			Quiver_Lib_Print.Say(store.MsgTranqMiss)
 		end
 	end
 end

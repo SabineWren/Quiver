@@ -7,7 +7,7 @@ QUIVER_T = {
 			Tea = "Your Tea with Sugar heals you for (.*).",
 		},
 		Tranq = {
-			Cast = "You cast Tranquilizing Shot",
+			Hit = "You cast Tranquilizing Shot on (%s).",
 			Fail = "You fail to dispel",
 			Miss = "Your Tranquilizing Shot miss",
 			Resist = "Your Tranquilizing Shot was resisted",
