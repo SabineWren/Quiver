@@ -2,12 +2,34 @@ local MODULE_ID = "TranqAnnouncer"
 local store = nil
 local frame = nil
 local TRANQ_CD_SEC = 20
---local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot"
-local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot_DEV_BUILD"
 local INSET = 4
 local BORDER_BAR = 1
 local HEIGHT_BAR = 17
 local WIDTH_FRAME_DEFAULT = 120
+
+local messaging = (function()
+	--local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot"
+	local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot_DEV_BUILD"
+	local MATCH = ADDON_MESSAGE_CAST..":(.*):(.*)"
+	return {
+		Broadcast = function()
+			local playerName = UnitName("player")
+			local _,_, msLatency = GetNetStats()
+			local serialized = ADDON_MESSAGE_CAST..":"..playerName..":"..msLatency
+			SendAddonMessage("Quiver", serialized, "Raid")
+		end,
+		Deserialize = function(msg)
+			local _, _, nameCaster, latencyOrZero = string.find(msg, MATCH)
+			local msLatencyCaster = latencyOrZero and latencyOrZero or 0
+			-- Game client updates latency every 30 seconds, so it's unlikely
+			-- to break deterministic ordering, but could happen in rare cases.
+			-- Might consider a logical clock or something in the future.
+			local _,_, msLatency = GetNetStats()
+			local timeCastSec = GetTime() - (msLatency + msLatencyCaster) / 1000
+			return nameCaster, timeCastSec
+		end,
+	}
+end)()
 
 local getColorForeground = (function()
 	-- It would be expensive to compute non-rgb gradients in Lua during the update loop,
@@ -151,10 +173,7 @@ end
 
 local handleCast = function(spellName)
 	if spellName == TODO_SPELL_NAME then
-		local playerName = UnitName("player")
-		local _,_, msLatency = GetNetStats()
-		local msg = ADDON_MESSAGE_CAST..":"..playerName..":"..msLatency
-		SendAddonMessage("Quiver", msg, "Raid")
+		messaging.Broadcast()
 		--Quiver_Lib_Print.Say(store.MsgTranqHit)
 		DEFAULT_CHAT_FRAME:AddMessage(store.MsgTranqHit)
 	end
@@ -206,16 +225,12 @@ end
 local handleEvent = function()
 	-- For compatibility with other tranq addons, ignore the addon name (arg1).
 	if event == "CHAT_MSG_ADDON" then
-		local _, _, nameCaster, msLatencyCaster = string.find(arg2, ADDON_MESSAGE_CAST..":(.*):(.*)")
-		if nameCaster ~= nil and msLatencyCaster ~= nil then
+		local nameCaster, timeCastSec = messaging.Deserialize(arg2)
+		if nameCaster ~= nil then
 			local bar = poolProgressBar.Acquire(frame)
 			bar:SetHeight(HEIGHT_BAR)
-			-- This is not deterministically ordered, since reported latency can change
-			-- between two nearly-simultaneous messages, flipping their order for some users.
-			-- TODO order is more important than exact timing, so this either requires
-			-- an accuracy tradeoff, or a smarter algorithm to guarantee ordering.
-			local _,_, msLatency = GetNetStats()
-			bar.ProgressFrame.TimeCastSec = GetTime() - (msLatencyCaster + msLatency) / 1000
+
+			bar.ProgressFrame.TimeCastSec = timeCastSec
 			bar.FsPlayerName:SetText(nameCaster)
 
 			table.insert(frame.Bars, bar)
