@@ -4,51 +4,52 @@ local frame = nil
 local TRANQ_CD_SEC = 20
 local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot"
 local INSET = 4
-local HEIGHT_BAR = 20
+local BORDER_BAR = 1
+local HEIGHT_BAR = 17
+local WIDTH_FRAME_DEFAULT = 120
 
 --local TODO_SPELL_NAME = QUIVER_T.Spellbook.Tranquilizing_Shot
 local TODO_SPELL_NAME = QUIVER_T.Spellbook.Serpent_Sting
 
 local createProgressBar = function()
-	local BORDER_BAR = 1
 	local MARGIN_TEXT = 4
-	local f = CreateFrame("Frame")
-	f:SetFrameStrata("Low")
-	f:SetBackdrop({
+	local bar = CreateFrame("Frame")
+	bar:SetFrameStrata("Low")
+	bar:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
-		edgeFile = "Interface/BUTTONS/WHITE8X8", edgeSize = BORDER_BAR,
+		edgeFile = "Interface/BUTTONS/WHITE8X8", edgeSize = 1,
 	})
-	f:SetBackdropColor(0, 0.5, 0, 0.3)
-	f:SetBackdropBorderColor(0.1, 0.3, 0.1, 0.5)
+	bar:SetBackdropColor(0, 0.5, 0, 0.3)
+	bar:SetBackdropBorderColor(0, 0, 0, 0.3)
 
 	local centerVertically = function(ele)
-		ele:SetPoint("Top", f, "Top", 0, -BORDER_BAR)
-		ele:SetPoint("Bottom", f, "Bottom", 0, BORDER_BAR)
+		ele:SetPoint("Top", bar, "Top", 0, -BORDER_BAR)
+		ele:SetPoint("Bottom", bar, "Bottom", 0, BORDER_BAR)
 	end
 
-	f.ProgressFrame = CreateFrame("Frame", nil, f)
-	centerVertically(f.ProgressFrame)
-	f.ProgressFrame:SetPoint("Left", f, "Left", BORDER_BAR, 0)
-	f.ProgressFrame:SetBackdrop({
+	bar.ProgressFrame = CreateFrame("Frame", nil, bar)
+	centerVertically(bar.ProgressFrame)
+	bar.ProgressFrame:SetPoint("Left", bar, "Left", BORDER_BAR, 0)
+	bar.ProgressFrame:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 	})
-	f.ProgressFrame:SetBackdropColor(0, 1.0, 0, 0.9)
+	bar.ProgressFrame:SetBackdropColor(0, 1.0, 0, 0.9)
 
-	f.FsPlayerName = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	centerVertically(f.FsPlayerName)
-	f.FsPlayerName:SetPoint("Left", f, "Left", MARGIN_TEXT, 0)
-	f.FsPlayerName:SetJustifyH("Left")
-	f.FsPlayerName:SetJustifyV("Center")
-	f.FsPlayerName:SetTextColor(1, 1, 1)
+	bar.FsPlayerName = bar:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	centerVertically(bar.FsPlayerName)
+	bar.FsPlayerName:SetPoint("Left", bar, "Left", MARGIN_TEXT, 0)
+	bar.FsPlayerName:SetJustifyH("Left")
+	bar.FsPlayerName:SetJustifyV("Center")
+	bar.FsPlayerName:SetTextColor(1, 1, 1)
 
-	f.FsCdTimer = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	centerVertically(f.FsCdTimer)
-	f.FsCdTimer:SetPoint("Right", f, "Right", -MARGIN_TEXT, 0)
-	f.FsCdTimer:SetJustifyH("Right")
-	f.FsPlayerName:SetJustifyV("Center")
-	f.FsCdTimer:SetTextColor(1, 1, 1)
+	bar.FsCdTimer = bar:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	centerVertically(bar.FsCdTimer)
+	bar.FsCdTimer:SetPoint("Right", bar, "Right", -MARGIN_TEXT, 0)
+	bar.FsCdTimer:SetJustifyH("Right")
+	bar.FsPlayerName:SetJustifyV("Center")
+	bar.FsCdTimer:SetTextColor(1, 1, 1)
 
-	return f
+	return bar
 end
 
 local poolProgressBar = (function()
@@ -68,9 +69,30 @@ local poolProgressBar = (function()
 	}
 end)()
 
+local getIdealFrameHeight = function()
+	local height = 0
+	for _i, bar in frame.Bars do
+		height = height + bar:GetHeight()
+	end
+	-- Make space for at least 1 bar when UI unlocked
+	if height == 0 then height = HEIGHT_BAR end
+	return height + 2 * INSET
+end
+
+local adjustBarYOffsets = function()
+	local height = 0
+	for _i, bar in frame.Bars do
+		bar:SetPoint("Left", frame, "Left", INSET, 0)
+		bar:SetPoint("Right", frame, "Right", -INSET, 0)
+		bar:SetPoint("Top", frame, "Top", 0, -height - INSET)
+		height = height + bar:GetHeight()
+	end
+end
+
 local setFramePosition = function(f, s)
+	local height = getIdealFrameHeight()
 	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
-		w=160, h=HEIGHT_BAR + 2 * INSET, dx=160 * -0.5, dy=200,
+		w=WIDTH_FRAME_DEFAULT, h=height, dx=-0.5 * WIDTH_FRAME_DEFAULT, dy=200,
 	})
 	f:SetWidth(s.FrameMeta.W)
 	f:SetHeight(s.FrameMeta.H)
@@ -78,25 +100,20 @@ local setFramePosition = function(f, s)
 end
 
 local createUI = function()
-	local f = CreateFrame("Frame", nil, UIParent)
-	f.Bars = {}
-	setFramePosition(f, store)
-	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
-	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, { GripMargin=4 })
+	frame = CreateFrame("Frame", nil, UIParent)
+	frame.Bars = {}
 
-	f:SetFrameStrata("Low")
-	f:SetBackdrop({
-		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-		tile = true,
-		tileSize = 8,
-		edgeSize = 16,
+	frame:SetFrameStrata("Low")
+	frame:SetBackdrop({
+		edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 16,
 		insets = { left=INSET, right=INSET, top=INSET, bottom=INSET },
 	})
-	f:SetBackdropColor(0, 0, 0, 0.2)
-	f:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
+	frame:SetBackdropBorderColor(0.6, 0.9, 0.7, 1.0)
 
-	return f
+	setFramePosition(frame, store)
+	Quiver_Event_FrameLock_MakeMoveable(frame, store.FrameMeta)
+	Quiver_Event_FrameLock_MakeResizeable(frame, store.FrameMeta, { GripMargin=4 })
+	return frame
 end
 
 local handleCast = function(spellName)
@@ -108,13 +125,24 @@ local handleCast = function(spellName)
 	end
 end
 
+-- TODO should probably check combat, target, etc.
+local hideIfNotNeeded = function()
+	local now = GetTime()
+	local isHideable = true
+	for _k, bar in frame.Bars do
+		local secElapsed = now - bar.ProgressFrame.TimeCastSec
+		if secElapsed < TRANQ_CD_SEC then isHideable = false end
+	end
+	if isHideable then frame:Hide() end
+end
+
 local handleUpdate = function()
 	local now = GetTime()
 	for _k, bar in frame.Bars do
 		local secElapsed = now - bar.ProgressFrame.TimeCastSec
 		local secProgress = secElapsed > TRANQ_CD_SEC and TRANQ_CD_SEC or secElapsed
-		local width = bar:GetWidth() * secProgress / TRANQ_CD_SEC
-		bar.ProgressFrame:SetWidth(width)
+		local width = (bar:GetWidth() - 2 * BORDER_BAR) * secProgress / TRANQ_CD_SEC
+		bar.ProgressFrame:SetWidth(width > 1 and width or 1)
 		local format = secProgress == TRANQ_CD_SEC and "%.0f / %.0f" or "%.1f / %.0f"
 		bar.FsCdTimer:SetText(string.format(format, secProgress, TRANQ_CD_SEC))
 	end
@@ -126,27 +154,19 @@ local handleEvent = function()
 		local _, _, nameCaster, msLatencyCaster = string.find(arg2, ADDON_MESSAGE_CAST..":(.*):(.*)")
 		if nameCaster ~= nil and msLatencyCaster ~= nil then
 			local bar = poolProgressBar.Acquire(frame)
+			bar:SetHeight(HEIGHT_BAR)
 			-- This is not deterministically ordered, since reported latency can change
 			-- between two nearly-simultaneous messages, flipping their order for some users.
 			-- TODO order is more important than exact timing, so this either requires
 			-- an accuracy tradeoff, or a smarter algorithm to guarantee ordering.
 			local _,_, msLatency = GetNetStats()
 			bar.ProgressFrame.TimeCastSec = GetTime() - (msLatencyCaster + msLatency) / 1000
-			bar.ProgressFrame:SetWidth(1)
 			bar.FsPlayerName:SetText(nameCaster)
 
-			local height = 0
-			for _i, b in frame.Bars do
-				height = height + b:GetHeight()
-			end
-
-			bar:SetPoint("Left", frame, "Left", INSET, 0)
-			bar:SetPoint("Right", frame, "Right", -INSET, 0)
-			bar:SetPoint("Top", frame, "Top", 0, -height - INSET)
-			bar:SetHeight(HEIGHT_BAR)
-
 			table.insert(frame.Bars, bar)
-			frame:SetHeight(height + HEIGHT_BAR + 2 * INSET)
+			adjustBarYOffsets()
+
+			frame:SetHeight(getIdealFrameHeight())
 			frame:Show()
 		end
 	elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE" then
@@ -184,8 +204,8 @@ Quiver_Module_TranqAnnouncer = {
 	Name = QUIVER_T.ModuleName[MODULE_ID],
 	OnEnable = onEnable,
 	OnDisable = onDisable,
-	OnInterfaceLock = function() return nil end,
-	OnInterfaceUnlock = function() return nil end,
+	OnInterfaceLock = function() hideIfNotNeeded() end,
+	OnInterfaceUnlock = function() frame:Show() end,
 	OnResetFrames = function()
 		store.FrameMeta = nil
 		if frame then setFramePosition(frame, store) end
@@ -193,9 +213,6 @@ Quiver_Module_TranqAnnouncer = {
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 		store.MsgTranqMiss = savedVariables.MsgTranqMiss or QUIVER_T.Tranq.DefaultMiss
-
-		-- TODO temp code to force default position
-		store.FrameMeta = nil
 
 		-- TODO move to migration and rename hit -> cast
 		-- We notify on tranq cast instead of hit. To prevent a breaking
