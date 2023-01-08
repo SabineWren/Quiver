@@ -45,6 +45,7 @@ Config\MainMenu.lua
 
 Migrations\M001.lua
 Migrations\M002.lua
+Migrations\M003.lua
 Migrations\Runner.lua
 
 Quiver.lua
