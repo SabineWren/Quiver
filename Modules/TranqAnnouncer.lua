@@ -182,7 +182,7 @@ end
 local getCanHide = function()
 	local now = GetTime()
 	local getIsFinished = function(v)
-		local secElapsed = now - v.ProgressFrame.TimeCastSec
+		local secElapsed = now - v.TimeCastSec
 		return secElapsed >= TRANQ_CD_SEC
 	end
 	return not UnitAffectingCombat('player')
@@ -192,13 +192,11 @@ end
 
 local hideFrameDeleteBars = function()
 	frame:Hide()
-	-- Setting table[i]=nil breaks ordering, possibly by making it associative.
-	-- This seems to preserve ordering when pushing frames back onto table.
-	-- I expect to sort anyway when making player names unique, so this might change.
-	while frame.Bars[1] do
-		poolProgressBar.Release(frame.Bars[1])
-		table.remove(frame.Bars)
+	for _k, bar in frame.Bars do
+		poolProgressBar.Release(bar)
 	end
+	-- Couldn't figre out how to clear all values without remaking the table.
+	frame.Bars = {}
 end
 
 local handleUpdate = function()
@@ -206,7 +204,7 @@ local handleUpdate = function()
 	-- Animate Progress Bars
 	local now = GetTime()
 	for _k, bar in frame.Bars do
-		local secElapsed = now - bar.ProgressFrame.TimeCastSec
+		local secElapsed = now - bar.TimeCastSec
 		local secProgress = secElapsed > TRANQ_CD_SEC and TRANQ_CD_SEC or secElapsed
 		local percentProgress = secProgress / TRANQ_CD_SEC
 		local width = (bar:GetWidth() - 2 * BORDER_BAR) * percentProgress
@@ -230,10 +228,11 @@ local handleEvent = function()
 			local bar = poolProgressBar.Acquire(frame)
 			bar:SetHeight(HEIGHT_BAR)
 
-			bar.ProgressFrame.TimeCastSec = timeCastSec
+			bar.TimeCastSec = timeCastSec
 			bar.FsPlayerName:SetText(nameCaster)
 
 			table.insert(frame.Bars, bar)
+			table.sort(frame.Bars, function(a,b) return a.TimeCastSec < b.TimeCastSec end)
 			adjustBarYOffsets()
 
 			frame:SetHeight(getIdealFrameHeight())
