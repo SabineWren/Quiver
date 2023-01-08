@@ -58,10 +58,11 @@ local poolProgressBar = (function()
 		Acquire = function(parent)
 			local f = table.remove(fs) or createProgressBar()
 			f:SetParent(parent)
+			f:Show()-- Necessary for recycling frames.
 			return f
 		end,
 		Release = function(f)
-			f:SetParent(nil)
+			f:SetParent(nil)-- This also hides the frame.
 			f:ClearAllPoints()
 			table.insert(fs, f)
 		end,
