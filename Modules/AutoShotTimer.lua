@@ -211,13 +211,13 @@ local handleEvent = function()
 			isConsumable = false
 		elseif isFiredInstant then
 		-- Case 2
-		-- We fired a cast or instant but haven't yet called "SPELLCAST_STOP"
+		-- We fired an instant but haven't yet called "SPELLCAST_STOP"
 		-- If we fired an Auto Shot at the same time, then "ITEM_LOCK_CHANGED" will
-		-- get called twice before "SPELLCAST_STOP", so we mark the first one as done
+		-- triggers twice before "SPELLCAST_STOP", so we mark the first one as done
 			isFiredInstant = false
 		elseif isCasting then
-			local ellapsed = GetTime() - timeStartCast
-			if isShooting and ellapsed < castTime then
+			local elapsed = GetTime() - timeStartCast
+			if isShooting and elapsed < castTime then
 		-- Case 3 - We started casting immediately after firing an Auto Shot. We're casting and reloading.
 				startReloading()
 			else
@@ -277,7 +277,6 @@ Quiver_Module_AutoShotTimer = {
 		store = savedVariables
 		store.ColorShoot = store.ColorShoot or QUIVER.ColorDefault.AutoShotShoot
 		store.ColorReload = store.ColorReload or QUIVER.ColorDefault.AutoShotReload
-		store.FrameMeta = store.FrameMeta or {}
 	end,
 	OnSavedVariablesPersist = function() return store end,
 }

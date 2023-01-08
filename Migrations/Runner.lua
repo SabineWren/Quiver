@@ -11,6 +11,7 @@ Quiver_Migrations_Run = function()
 
 		if getIsNewer("2.0.0") then Quiver_Migrations_M001() end
 		if getIsNewer("2.3.1") then Quiver_Migrations_M002() end
+		if getIsNewer("2.5.0") then Quiver_Migrations_M003() end
 	end
 	Quiver_Store.Version = GetAddOnMetadata("Quiver", "Version")
 end

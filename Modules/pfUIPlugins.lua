@@ -13,7 +13,7 @@ Quiver_Module_pfUITurtleTrueshot = function()
 	pfUI_locale["enUS"]["customcast"]["TRUESHOT"] = QUIVER_T.Spellbook.Trueshot
 	local trueshotName = L["customcast"]["TRUESHOT"]
 	-- Copy-pasted from pf's Multi-Shot implementation in libs/libcast.lua
-	libcast.customcast[strlower(trueshotName)] = function(begin, duration)
+	libcast.customcast[string.lower(trueshotName)] = function(begin, duration)
 		-- Somehow player isn't defined, but all the other locals from pfUI work
 		local player = UnitName("player")
 		if begin then

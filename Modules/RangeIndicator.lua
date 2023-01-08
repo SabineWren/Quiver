@@ -16,8 +16,6 @@ end
 
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
-	if Quiver_Store.IsLockedFrames then f:Hide() end
-
 	setFramePosition(f, store)
 	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
 	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, { GripMargin=4 })
@@ -61,7 +59,7 @@ local checkDistance = {
 	Mark=function() return checkActionBarDistance(QUIVER_T.Spellbook.Hunters_Mark) end,-- 100 yards
 	Ranged=function() return checkActionBarDistance(QUIVER_T.Spellbook.Auto_Shot) end,-- 30-36 yards (talents)
 	Scare=function() return checkActionBarDistance(QUIVER_T.Spellbook.Scare_Beast) end,-- 10 yards
-	Scatter=function() return checkActionBarDistance(QUIVER_T.Spellbook.Scatter_Shot) end,-- 15 yards
+	Scatter=function() return checkActionBarDistance(QUIVER_T.Spellbook.Scatter_Shot) end,-- 21 yards
 }
 
 local render = function(color, text)
@@ -137,7 +135,6 @@ Quiver_Module_RangeIndicator = {
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
-		store.FrameMeta = store.FrameMeta or {}
 		store.ColorMelee = store.ColorMelee or QUIVER.ColorDefault.Range.Melee
 		store.ColorDeadZone = store.ColorDeadZone or QUIVER.ColorDefault.Range.DeadZone
 		store.ColorScareBeast = store.ColorScareBeast or QUIVER.ColorDefault.Range.ScareBeast

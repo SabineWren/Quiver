@@ -5,8 +5,8 @@ local hasNotified = false
 local CURRENT = GetAddOnMetadata("Quiver", "Version")
 
 local broadcast = (function()
-	local channelsLogin = { "BATTLEGROUND", "RAID", "GUILD" }
-	local channelsPlayerGroup = { "BATTLEGROUND", "RAID" }
+	local channelsLogin = { "Battleground", "Raid", "guild" }
+	local channelsPlayerGroup = { "Battleground", "Raid" }
 	local send = function(channels)
 		for _k, chan in channels do
 			SendAddonMessage("Quiver", "VERSION:"..CURRENT, chan)
@@ -39,7 +39,7 @@ local EVENTS = {
 }
 local handleEvent = function()
 	if event == "CHAT_MSG_ADDON" and arg1 == "Quiver" then
-		local _, _, version = strfind(arg2, "VERSION:(.*)")
+		local _, _, version = string.find(arg2, "VERSION:(.*)")
 		if version ~= nil
 			and Quiver_Lib_Version_GetIsNewer(CURRENT, version)
 			and not hasNotified

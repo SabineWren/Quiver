@@ -7,7 +7,7 @@ QUIVER_T = {
 			Tea = "Your Tea with Sugar heals you for (.*).",
 		},
 		Tranq = {
-			Cast = "You cast Tranquilizing Shot",
+			Hit = "You cast Tranquilizing Shot on (%s).",
 			Fail = "You fail to dispel",
 			Miss = "Your Tranquilizing Shot miss",
 			Resist = "Your Tranquilizing Shot was resisted",
@@ -54,6 +54,7 @@ QUIVER_T = {
 		Scatter_Shot = "Scatter Shot",
 		Scorpid_Sting = "Scorpid Sting",
 		Serpent_Sting = "Serpent Sting",
+		Tranquilizing_Shot = "Tranquilizing Shot",
 		Trueshot = "Trueshot",
 		Viper_Sting = "Viper Sting",
 		Wyvern_Sting = "Wyvern Sting",
@@ -87,9 +88,9 @@ QUIVER_T = {
 		WrongClass = "Quiver is for hunters.",
 	},
 	Tranq = {
-		DefaultHit = "*** Tranq Shot Hit ***",
+		DefaultCast = "Casting Tranq Shot",
 		DefaultMiss = "*** MISSED Tranq Shot ***",
-		TooltipHit = "Reset Hit Message to Default",
+		TooltipCast = "Reset Tranq Message to Default",
 		TooltipMiss = "Reset Miss Message to Default",
 	},
 	VersionAvailable = "New version %s available at %s",

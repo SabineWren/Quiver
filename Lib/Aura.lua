@@ -90,9 +90,9 @@ Quiver_Lib_Aura_GetIsBuffActiveTimeLeftByName = function(buffname)
 			local fs3 = _G["QuiverAuraScanningTooltipTextLeft3"]
 
 			local auraTimeLeft = fs3 and fs3:GetText() or ""
-			local _, _, strHours = strfind(auraTimeLeft, "(.*) hours remaining")
-			local _, _, strMinutes = strfind(auraTimeLeft, "(.*) minutes remaining")
-			local _, _, strSeconds = strfind(auraTimeLeft, "(.*) seconds remaining")
+			local _, _, strHours = string.find(auraTimeLeft, "(.*) hours remaining")
+			local _, _, strMinutes = string.find(auraTimeLeft, "(.*) minutes remaining")
+			local _, _, strSeconds = string.find(auraTimeLeft, "(.*) seconds remaining")
 			local hours = tonumber(strHours) or 0
 			local minutes = tonumber(strMinutes) or 0
 			local seconds = tonumber(strSeconds) or 0
