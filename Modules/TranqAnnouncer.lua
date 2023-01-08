@@ -2,11 +2,44 @@ local MODULE_ID = "TranqAnnouncer"
 local store = nil
 local frame = nil
 local TRANQ_CD_SEC = 20
-local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot"
+--local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot"
+local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot_DEV_BUILD"
 local INSET = 4
 local BORDER_BAR = 1
 local HEIGHT_BAR = 17
 local WIDTH_FRAME_DEFAULT = 120
+
+local getColorForeground = (function()
+	-- It would be expensive to compute non-rgb gradients in Lua during the update loop,
+	-- so we design stop points using an online gradient generator and convert them to RGB.
+	-- LCH color space: hsl(0, 90%, 50%) to hsl(120, 90%, 50%)
+	-- https://non-boring-gradients.netlify.app/
+	local COLOR_FG = {
+		{ 0.95, 0.05, 0.05 },
+		{ 0.95, 0.20, 0.0 },
+		{ 0.85, 0.37, 0.10 },
+		{ 0.85, 0.42, 0.04 },
+		{ 0.84, 0.46, 0.0 },
+		{ 0.83, 0.51, 0.0 },
+		{ 0.81, 0.55, 0.0 },
+		{ 0.79, 0.59, 0.0 },
+		{ 0.77, 0.63, 0.0 },
+		{ 0.74, 0.67, 0.0 },
+		{ 0.71, 0.71, 0.0 },
+		{ 0.68, 0.75, 0.0 },
+		{ 0.64, 0.78, 0.0 },
+		{ 0.60, 0.82, 0.12 },
+		{ 0.55, 0.86, 0.20 },
+		{ 0.31, 0.91, 0.0 },
+		{ 0.05, 0.95, 0.05 },
+	}
+	return function(progress)
+		local i = math.ceil(progress * 17)-- stop points 6.25% apart
+		--Fixes Rare bug. I suspect floating point error yielding 17.00001
+		local index = i <= 17 and i or 17
+		return unpack(COLOR_FG[index])
+	end
+end)()
 
 --local TODO_SPELL_NAME = QUIVER_T.Spellbook.Tranquilizing_Shot
 local TODO_SPELL_NAME = QUIVER_T.Spellbook.Serpent_Sting
@@ -14,13 +47,11 @@ local TODO_SPELL_NAME = QUIVER_T.Spellbook.Serpent_Sting
 local createProgressBar = function()
 	local MARGIN_TEXT = 4
 	local bar = CreateFrame("Frame")
-	bar:SetFrameStrata("Low")
 	bar:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 		edgeFile = "Interface/BUTTONS/WHITE8X8", edgeSize = 1,
 	})
-	bar:SetBackdropColor(0, 0.5, 0, 0.3)
-	bar:SetBackdropBorderColor(0, 0, 0, 0.3)
+	bar:SetBackdropBorderColor(0, 0, 0, 0.6)
 
 	local centerVertically = function(ele)
 		ele:SetPoint("Top", bar, "Top", 0, -BORDER_BAR)
@@ -33,16 +64,15 @@ local createProgressBar = function()
 	bar.ProgressFrame:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 	})
-	bar.ProgressFrame:SetBackdropColor(0, 1.0, 0, 0.9)
 
-	bar.FsPlayerName = bar:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	bar.FsPlayerName = bar.ProgressFrame:CreateFontString(nil, "Overlay", "GameFontNormal")
 	centerVertically(bar.FsPlayerName)
 	bar.FsPlayerName:SetPoint("Left", bar, "Left", MARGIN_TEXT, 0)
 	bar.FsPlayerName:SetJustifyH("Left")
 	bar.FsPlayerName:SetJustifyV("Center")
 	bar.FsPlayerName:SetTextColor(1, 1, 1)
 
-	bar.FsCdTimer = bar:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+	bar.FsCdTimer = bar.ProgressFrame:CreateFontString(nil, "Overlay", "GameFontNormal")
 	centerVertically(bar.FsCdTimer)
 	bar.FsCdTimer:SetPoint("Right", bar, "Right", -MARGIN_TEXT, 0)
 	bar.FsCdTimer:SetJustifyH("Right")
@@ -56,15 +86,18 @@ local poolProgressBar = (function()
 	local fs = {}
 	return {
 		Acquire = function(parent)
-			local f = table.remove(fs) or createProgressBar()
-			f:SetParent(parent)
-			f:Show()-- Necessary for recycling frames.
-			return f
+			local bar = table.remove(fs) or createProgressBar()
+			bar:SetParent(parent)
+			-- Clearing parent on release has side effects: hides frame and change stratas
+			bar:SetFrameStrata("Low")
+			bar.ProgressFrame:SetFrameStrata("Medium")
+			bar:Show()
+			return bar
 		end,
-		Release = function(f)
-			f:SetParent(nil)-- This also hides the frame.
-			f:ClearAllPoints()
-			table.insert(fs, f)
+		Release = function(bar)
+			bar:SetParent(nil)
+			bar:ClearAllPoints()
+			table.insert(fs, bar)
 		end,
 	}
 end)()
@@ -92,7 +125,7 @@ end
 local setFramePosition = function(f, s)
 	local height = getIdealFrameHeight()
 	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
-		w=WIDTH_FRAME_DEFAULT, h=height, dx=-0.5 * WIDTH_FRAME_DEFAULT, dy=200,
+		w=WIDTH_FRAME_DEFAULT, h=height, dx=110, dy=150,
 	})
 	f:SetWidth(s.FrameMeta.W)
 	f:SetHeight(s.FrameMeta.H)
@@ -122,6 +155,8 @@ local handleCast = function(spellName)
 		local _,_, msLatency = GetNetStats()
 		local msg = ADDON_MESSAGE_CAST..":"..playerName..":"..msLatency
 		SendAddonMessage("Quiver", msg, "Raid")
+		--Quiver_Lib_Print.Say(store.MsgTranqHit)
+		DEFAULT_CHAT_FRAME:AddMessage(store.MsgTranqHit)
 	end
 end
 
@@ -138,9 +173,12 @@ end
 
 local hideFrameDeleteBars = function()
 	frame:Hide()
-	for k, bar in frame.Bars do
-		poolProgressBar.Release(bar)
-		frame.Bars[k] = nil
+	-- Setting table[i]=nil breaks ordering, possibly by making it associative.
+	-- This seems to preserve ordering when pushing frames back onto table.
+	-- I expect to sort anyway when making player names unique, so this might change.
+	while frame.Bars[1] do
+		poolProgressBar.Release(frame.Bars[1])
+		table.remove(frame.Bars)
 	end
 end
 
@@ -151,10 +189,17 @@ local handleUpdate = function()
 	for _k, bar in frame.Bars do
 		local secElapsed = now - bar.ProgressFrame.TimeCastSec
 		local secProgress = secElapsed > TRANQ_CD_SEC and TRANQ_CD_SEC or secElapsed
-		local width = (bar:GetWidth() - 2 * BORDER_BAR) * secProgress / TRANQ_CD_SEC
+		local percentProgress = secProgress / TRANQ_CD_SEC
+		local width = (bar:GetWidth() - 2 * BORDER_BAR) * percentProgress
 		bar.ProgressFrame:SetWidth(width > 1 and width or 1)
-		local format = secProgress == TRANQ_CD_SEC and "%.0f / %.0f" or "%.1f / %.0f"
-		bar.FsCdTimer:SetText(string.format(format, secProgress, TRANQ_CD_SEC))
+		bar.FsCdTimer:SetText(string.format("%.1f / %.0f", secProgress, TRANQ_CD_SEC))
+
+		local r, g, b = getColorForeground(percentProgress)
+		-- RGB scaling doesn't change brightness equally for all colors,
+		-- so we may need to make a separate gradient for bg
+		local s = 0.7
+		bar:SetBackdropColor(r*s, g*s, b*s, 0.8)
+		bar.ProgressFrame:SetBackdropColor(r, g, b, 0.9)
 	end
 end
 
@@ -180,8 +225,6 @@ local handleEvent = function()
 			frame:Show()
 		end
 	elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE" then
-		--local _, _, targetHit = string.find(arg1, QUIVER_T.CombatLog.Tranq.Hit)
-		--if targetHit ~= nil then Quiver_Lib_Print.Say(store.MsgTranqHit) end
 		if string.find(arg1, QUIVER_T.CombatLog.Tranq.Miss)
 			or string.find(arg1, QUIVER_T.CombatLog.Tranq.Resist)
 			or string.find(arg1, QUIVER_T.CombatLog.Tranq.Fail)
