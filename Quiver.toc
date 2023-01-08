@@ -5,7 +5,9 @@
 ## Version: 2.4.1
 ## SavedVariables: Quiver_Store
 
+Lib\F.lua
 Constants.lua
+
 Locale\enUS.lua
 Locale\deDE.lua
 Locale\frFR.lua

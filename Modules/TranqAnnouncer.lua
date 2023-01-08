@@ -61,7 +61,6 @@ local poolProgressBar = (function()
 			return f
 		end,
 		Release = function(f)
-			f:Hide()
 			f:SetParent(nil)
 			f:ClearAllPoints()
 			table.insert(fs, f)
@@ -125,18 +124,28 @@ local handleCast = function(spellName)
 	end
 end
 
--- TODO should probably check combat, target, etc.
-local hideIfNotNeeded = function()
+local getCanHide = function()
 	local now = GetTime()
-	local isHideable = true
-	for _k, bar in frame.Bars do
-		local secElapsed = now - bar.ProgressFrame.TimeCastSec
-		if secElapsed < TRANQ_CD_SEC then isHideable = false end
+	local getIsFinished = function(v)
+		local secElapsed = now - v.ProgressFrame.TimeCastSec
+		return secElapsed >= TRANQ_CD_SEC
 	end
-	if isHideable then frame:Hide() end
+	return not UnitAffectingCombat('player')
+		and Quiver_Lib_F.Every(frame.Bars, getIsFinished)
+		and Quiver_Store.IsLockedFrames
+end
+
+local hideFrameDeleteBars = function()
+	frame:Hide()
+	for k, bar in frame.Bars do
+		poolProgressBar.Release(bar)
+		frame.Bars[k] = nil
+	end
 end
 
 local handleUpdate = function()
+	if getCanHide() then hideFrameDeleteBars() end
+	-- Animate Progress Bars
 	local now = GetTime()
 	for _k, bar in frame.Bars do
 		local secElapsed = now - bar.ProgressFrame.TimeCastSec
@@ -191,7 +200,7 @@ local onEnable = function()
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	Quiver_Event_Spellcast_Instant.Subscribe(MODULE_ID, handleCast)
-	if Quiver_Store.IsLockedFrames then frame:Hide() else frame:Show() end
+	if getCanHide() then hideFrameDeleteBars() else frame:Show() end
 end
 local onDisable = function()
 	frame:Hide()
@@ -204,7 +213,9 @@ Quiver_Module_TranqAnnouncer = {
 	Name = QUIVER_T.ModuleName[MODULE_ID],
 	OnEnable = onEnable,
 	OnDisable = onDisable,
-	OnInterfaceLock = function() hideIfNotNeeded() end,
+	OnInterfaceLock = function()
+		if getCanHide() then hideFrameDeleteBars() end
+	end,
 	OnInterfaceUnlock = function() frame:Show() end,
 	OnResetFrames = function()
 		store.FrameMeta = nil
