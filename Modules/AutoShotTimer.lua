@@ -216,8 +216,8 @@ local handleEvent = function()
 		-- triggers twice before "SPELLCAST_STOP", so we mark the first one as done
 			isFiredInstant = false
 		elseif isCasting then
-			local ellapsed = GetTime() - timeStartCast
-			if isShooting and ellapsed < castTime then
+			local elapsed = GetTime() - timeStartCast
+			if isShooting and elapsed < castTime then
 		-- Case 3 - We started casting immediately after firing an Auto Shot. We're casting and reloading.
 				startReloading()
 			else

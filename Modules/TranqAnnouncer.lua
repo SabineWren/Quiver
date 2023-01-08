@@ -1,8 +1,8 @@
 local MODULE_ID = "TranqAnnouncer"
 local store = nil
 local frame = nil
-local TRANQ_CD = 20
-local ADDON_MESSAGE_CAST = "Tranq_Shot_Cast"
+local TRANQ_CD_SEC = 20
+local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot"
 local INSET = 4
 
 --local TODO_SPELL_NAME = QUIVER_T.Spellbook.Tranquilizing_Shot
@@ -98,15 +98,37 @@ local createUI = function()
 	return f
 end
 
+local handleCast = function(spellName)
+	if spellName == TODO_SPELL_NAME then
+		local playerName = UnitName("player")
+		local _,_, msLatency = GetNetStats()
+		local msg = ADDON_MESSAGE_CAST..":"..playerName..":"..msLatency
+		SendAddonMessage("Quiver", msg, "Raid")
+	end
+end
+
+local handleUpdate = function()
+	local now = GetTime()
+	for _k, bar in frame.Bars do
+		local secElapsed = now - bar.ProgressFrame.TimeCastSec
+		local secProgress = secElapsed > TRANQ_CD_SEC and TRANQ_CD_SEC or secElapsed
+		local width = bar:GetWidth() * secProgress / TRANQ_CD_SEC
+		bar.ProgressFrame:SetWidth(width)
+		local format = secProgress == TRANQ_CD_SEC and "%.0f / %.0f" or "%.1f / %.0f"
+		bar.FsCdTimer:SetText(string.format(format, secProgress, TRANQ_CD_SEC))
+	end
+end
+
 local handleEvent = function()
 	-- For compatibility with other tranq addons, ignore the addon name (arg1).
 	if event == "CHAT_MSG_ADDON" then
-		local _, _, nameCaster = string.find(arg2, ADDON_MESSAGE_CAST..":(.*)")
-		if nameCaster ~= nil then
+		local _, _, nameCaster, msLatencyCaster = string.find(arg2, ADDON_MESSAGE_CAST..":(.*):(.*)")
+		if nameCaster ~= nil and msLatencyCaster ~= nil then
 			local bar = poolProgressBar.Acquire(frame)
+			local _,_, msLatency = GetNetStats()
+			bar.ProgressFrame.TimeCastSec = GetTime() - (msLatencyCaster + msLatency) / 1000
 			bar.ProgressFrame:SetWidth(1)
 			bar.FsPlayerName:SetText(nameCaster)
-			bar.FsCdTimer:SetText(string.format("%.1f / %.0f", 0.0, TRANQ_CD))
 
 			local height = 0
 			for _i, b in frame.Bars do
@@ -118,6 +140,7 @@ local handleEvent = function()
 			bar:SetPoint("Top", frame, "Top", 0, -height - INSET)
 			bar:SetHeight(20)
 			table.insert(frame.Bars, bar)
+			frame:Show()
 		end
 	elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE" then
 		local isHit =
@@ -142,13 +165,9 @@ local EVENTS = {
 local onEnable = function()
 	if frame == nil then frame = createUI() end
 	frame:SetScript("OnEvent", handleEvent)
+	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
-	Quiver_Event_Spellcast_Instant.Subscribe(MODULE_ID, function(spellName)
-		if spellName == TODO_SPELL_NAME then
-			local playerName = UnitName("player")
-			SendAddonMessage("Quiver", ADDON_MESSAGE_CAST..":"..playerName, "Raid")
-		end
-	end)
+	Quiver_Event_Spellcast_Instant.Subscribe(MODULE_ID, handleCast)
 	if Quiver_Store.IsLockedFrames then frame:Hide() else frame:Show() end
 end
 local onDisable = function()
