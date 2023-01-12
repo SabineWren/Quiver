@@ -35,6 +35,7 @@ local getColorForeground = (function()
 	-- so we design stop points using an online gradient generator and convert them to RGB.
 	-- LCH color space: hsl(0, 90%, 50%) to hsl(120, 90%, 50%)
 	-- https://non-boring-gradients.netlify.app/
+	local NUM_COLORS = 17
 	local COLOR_FG = {
 		{ 0.95, 0.05, 0.05 },
 		{ 0.95, 0.20, 0.0 },
@@ -55,14 +56,14 @@ local getColorForeground = (function()
 		{ 0.05, 0.95, 0.05 },
 	}
 	return function(progress)
-		local i = math.ceil(progress * 17)-- stop points 6.25% apart
-		--Fixes Rare bug. I suspect floating point error yielding 17.00001
-		local index = i <= 17 and i or 17
-		return unpack(COLOR_FG[index])
+		-- Fixes floating point bugs
+		local p = progress <= 0.0 and 0.001
+			or progress >= 1.0 and 0.999
+			or progress
+		local i = math.ceil(p * NUM_COLORS)
+		return unpack(COLOR_FG[i])
 	end
 end)()
-
-local TODO_SPELL_NAME = QUIVER_T.Spellbook.Tranquilizing_Shot
 
 local createProgressBar = function()
 	local MARGIN_TEXT = 4
@@ -169,13 +170,7 @@ local createUI = function()
 	return frame
 end
 
-local handleCast = function(spellName)
-	if spellName == TODO_SPELL_NAME then
-		messaging.Broadcast()
-		Quiver_Lib_Print.Say(store.MsgTranqCast)
-	end
-end
-
+-- ************ Frame Update Handlers ************
 local getCanHide = function()
 	local now = GetTime()
 	local getIsFinished = function(v)
@@ -217,30 +212,50 @@ local handleUpdate = function()
 	end
 end
 
-local handleEvent = function()
-	-- For compatibility with other tranq addons, ignore the addon name (arg1).
-	if event == "CHAT_MSG_ADDON" then
-		local nameCaster, timeCastSec = messaging.Deserialize(arg2)
-		if nameCaster ~= nil then
-			local barVisible = Quiver_Lib_F.Find(frame.Bars, function(bar)
-				return bar.FsPlayerName:GetText() == nameCaster
-			end)
+-- ************ Event Handlers ************
+local handleMsg = function(_source, msg)
+	-- For compatibility with other tranq addons, ignore the message source.
+	local nameCaster, timeCastSec = messaging.Deserialize(msg)
+	if nameCaster ~= nil then
+		local barVisible = Quiver_Lib_F.Find(frame.Bars, function(bar)
+			return bar.FsPlayerName:GetText() == nameCaster
+		end)
 
-			if barVisible then
-				barVisible.TimeCastSec = timeCastSec
-			else
-				local barNew = poolProgressBar.Acquire(frame)
-				barNew.TimeCastSec = timeCastSec
-				barNew:SetHeight(HEIGHT_BAR)
-				barNew.FsPlayerName:SetText(nameCaster)
-				table.insert(frame.Bars, barNew)
-			end
-
-			table.sort(frame.Bars, function(a,b) return a.TimeCastSec < b.TimeCastSec end)
-			adjustBarYOffsets()
-			frame:SetHeight(getIdealFrameHeight())
-			frame:Show()
+		if barVisible then
+			barVisible.TimeCastSec = timeCastSec
+		else
+			local barNew = poolProgressBar.Acquire(frame)
+			barNew.TimeCastSec = timeCastSec
+			barNew:SetHeight(HEIGHT_BAR)
+			barNew.FsPlayerName:SetText(nameCaster)
+			table.insert(frame.Bars, barNew)
 		end
+
+		table.sort(frame.Bars, function(a,b) return a.TimeCastSec < b.TimeCastSec end)
+		adjustBarYOffsets()
+		frame:SetHeight(getIdealFrameHeight())
+		frame:Show()
+	end
+end
+
+-- Unhandled edge case -- Casting a different spell while mashing tranq shot will announce a tranq
+local isClickedTranq = false
+local handleCast = function(spellName)
+	if spellName == QUIVER_T.Spellbook.Tranquilizing_Shot then
+		isClickedTranq = true
+	end
+end
+
+local EVENTS = {
+	"CHAT_MSG_ADDON",-- Also works with macros
+	"CHAT_MSG_SPELL_SELF_DAMAGE",
+	"ITEM_LOCK_CHANGED",-- Inventory event, such as using ammo
+	"SPELLCAST_STOP",-- Finished cast
+	"SPELLCAST_FAILED",-- Too close, Spell on CD, already in progress, or success after dropping target
+}
+local handleEvent = function()
+	if event == "CHAT_MSG_ADDON" then
+		handleMsg(arg1, arg2)
 	elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE" then
 		if string.find(arg1, QUIVER_T.CombatLog.Tranq.Miss)
 			or string.find(arg1, QUIVER_T.CombatLog.Tranq.Resist)
@@ -248,13 +263,17 @@ local handleEvent = function()
 		then
 			Quiver_Lib_Print.Say(store.MsgTranqMiss)
 		end
+	elseif event == "SPELLCAST_STOP" or event == "SPELLCAST_FAILED" then
+		isClickedTranq = false
+	elseif event == "ITEM_LOCK_CHANGED" then
+		if isClickedTranq then
+			messaging.Broadcast()
+			Quiver_Lib_Print.Say(store.MsgTranqCast)
+			isClickedTranq = false
+		end
 	end
 end
 
-local EVENTS = {
-	"CHAT_MSG_ADDON",
-	"CHAT_MSG_SPELL_SELF_DAMAGE",
-}
 local onEnable = function()
 	if frame == nil then frame = createUI() end
 	frame:SetScript("OnEvent", handleEvent)

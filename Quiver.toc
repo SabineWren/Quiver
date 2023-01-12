@@ -2,7 +2,7 @@
 ## Title: Quiver - |cff00ff00Hunter
 ## Notes: A collection of hunter utilities.
 ## Author: SabineWren, 2022-2023
-## Version: 2.5.0
+## Version: 2.5.1
 ## SavedVariables: Quiver_Store
 
 Lib\F.lua

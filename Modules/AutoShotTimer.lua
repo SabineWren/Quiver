@@ -178,11 +178,10 @@ Casted Shot starts as Auto Shot fires (assuming state is already shooting)
 local EVENTS = {
 	"CHAT_MSG_SPELL_SELF_BUFF",-- To ignore whitelisted inventory events corresponding to consumables
 	"ITEM_LOCK_CHANGED",-- Inventory event, such as using ammo
-	-- Spellcast events can also fire when spell succeedes, but we drop target after starting cast
 	"SPELLCAST_DELAYED",-- Pushback
-	"SPELLCAST_FAILED",-- Spell on CD or already in progress
+	"SPELLCAST_FAILED",-- Too close, Spell on CD, already in progress, or success after dropping target
 	"SPELLCAST_INTERRUPTED",-- Knockback etc.
-	"SPELLCAST_STOP",
+	"SPELLCAST_STOP",-- Finished cast
 	"START_AUTOREPEAT_SPELL",-- Start shooting
 	"STOP_AUTOREPEAT_SPELL",-- Stop shooting
 }
