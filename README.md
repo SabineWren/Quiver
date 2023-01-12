@@ -63,9 +63,9 @@ Never lose track of your current aspect
 Requires some raw spellbook abilities on your action bars (not macros). Hidden action bars work fine.
 
 ### Tranq Shot Announcer
-- Based on [Xtranq](https://github.com/unknauwn/XTranqManager/tree/master)
+Screenshot or video coming soon.
 
-It's deliberately less customizable than Xtranq, so disable this module and run Xtranq if that bothers you. I'm open to adding tranq rotation features, but I'm not a fan of how Xtranq does it. Perhaps letting one hunter configure the rotation for all? Feel free to request features.
+Announces when casting Tranquilizing Shot, and again if the shot misses. Shows the Tranq cooldown of every hunter, sorted by time left.
 
 ### Trueshot Aura Alarm
 <table>
@@ -84,29 +84,28 @@ This checks if you have Trueshot Aura talented. If so, Quiver tracks the buff an
 # Installation
 1. [Download](https://github.com/SabineWren/Quiver/releases) latest version
 2. Extract the Zip file
-3. Remove the `-main` from the directory name
-4. Move directory into `<WoW install>/Interface/AddOns/`
+3. Change the folder name to `Quiver`
+4. Move folder into `<WoW install>/Interface/AddOns/`
 5. Restart WoW.
 
 # Possible Future Features
-### Pet Pamper
-Roid can't do everything for pets. Amarra made a pet utils addon with features like auto-find food when feeding pet. This might be a deep rabbit hole.
+I don't plan to implement any of these at the moment, but they're ideas for where Quiver could go.
+
+### Ammo Counter
+Not sure where to scope this, as other addons can track ammo stored on bank alts. Perhaps an overlay warning when currently equipped ammo runs low in inventory.
+
+### Hunter's Mark Timer
+Maybe something like the Tranq UI for keeping track of which hunters mark each target, and the remaining time.
 
 ### Macro Replacements
 Every hunter needs aspect and trap macros. Mine are copy-pasted Roid macros, but HSK implements its own version of aspect overrides.
 
-### Low Ammo Warning
-
-### Hunter's Mark Timer
+### Pet Pamper
+It's a deep rabbit hole to go down, and other addons exist for pet management.
 
 ## Contributing
-Open an issue or PM me on Discord:
-- Code
-- Translations
-- Bug reports
-
 ### Localization
-Quiver looks up spells by name, which change with client locale. I use Wowhead to find the spell names for each locale. Theoretically, Quiver should work with a `/Locale` file matching your client, but the translations aren't complete.
+Quiver localizes all text, so theoretically it supports translations, but I don't know where to download a non-English client.
 
 ### Custom Events
 Files in `/Events` hook into game functions. Use these events if possible instead of declaring your own hooks.
@@ -138,7 +137,7 @@ The reset-all button will call this even if module disabled.
 
 OnSavedVariablesRestore: table -> unit
 GameEvent: "PLAYER_LOGIN"
-Loads one table from SavedVariables used exclusively by the module.
+Loads state used exclusively used by the module (don't add SavedVariables to the .toc).
 Called exactly once, even for disabled modules.
 
 OnSavedVariablesPersist: unit -> table
