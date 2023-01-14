@@ -53,7 +53,7 @@ Never lose track of your current aspect
 - Includes a pfUI module that adds Trueshot support to the pfUI castbar
 
 ### Range Indicator
-[Watch Video Preview](https://raw.githubusercontent.com/SabineWren/Quiver/main/Media/Quiver_Range_Indicator_Preview.mp4)
+[Watch Video Preview](https://raw.githubusercontent.com/SabineWren/Quiver/main/Media/Range_Indicator_Preview.mp4)
 
 - Based on [Egnar](https://github.com/Medeah/Egnar)
 - Automatically locates action bar slots
