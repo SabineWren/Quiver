@@ -89,7 +89,7 @@ This checks if you have Trueshot Aura talented. If so, Quiver tracks the buff an
 5. Restart WoW.
 
 # Possible Future Features
-I don't plan to implement any of these at the moment, but they're ideas for where Quiver could go.
+Ideas for where Quiver could go, and open to discussion.
 
 ### Ammo Counter
 Not sure where to scope this, as other addons can track ammo stored on bank alts. Perhaps an overlay warning when currently equipped ammo runs low in inventory.
@@ -97,11 +97,19 @@ Not sure where to scope this, as other addons can track ammo stored on bank alts
 ### Hunter's Mark Timer
 Maybe something like the Tranq UI for keeping track of which hunters mark each target, and the remaining time.
 
-### Macro Replacements
-Every hunter needs aspect and trap macros. Mine are copy-pasted Roid macros, but HSK implements its own version of aspect overrides.
+### Macro Replacements / Ability Overrides
+Possibly a bad idea, since Roid-Macros can do everything these can, and users can easily adjust macros:
+- Prevent cancelling aspects, except for Cheetah and Pack.
+- Auto-cancel Cheetah and Pack when attempting to activate a non-Cheetah/Pack aspect.
+- Pamper pet (Call -> Revive -> Mend).
+- While in combat, replace [Trap] with (Petfollow -> FD -> [Trap]).
+- Prevent Auto Shot from cancelling itself.
+- Prioritize Counterattack over Wing Clip.
 
-### Pet Pamper
-It's a deep rabbit hole to go down, and other addons exist for pet management.
+If the behavior isn't both expected and desired, then adding these to Quiver increases the configuration burden for users. Maybe an always-on module, but each override would have its own configuration switch to toggle it. If they all default to off, that would reduce the config burden for users who don't want their abilities altered.
+
+### Pet Management
+It's a rabbit hole to go down, and other addons exist for pet management.
 
 ## Contributing
 ### Localization
