@@ -63,9 +63,9 @@ Never lose track of your current aspect
 Requires some raw spellbook abilities on your action bars (not macros). Hidden action bars work fine.
 
 ### Tranq Shot Announcer
-Screenshot or video coming soon.
+<img src="/Media/Tranq_UI.jpg">
 
-Announces when casting Tranquilizing Shot, and again if the shot misses. Shows the Tranq cooldown of every hunter, sorted by time left.
+Shows the Tranquilizing Shot cooldown of every hunter. Announces when casting Tranq, and again if the shot misses.
 
 ### Trueshot Aura Alarm
 <table>
