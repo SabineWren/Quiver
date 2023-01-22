@@ -1,9 +1,7 @@
 local MODULE_ID = "AutoShotTimer"
 local store = nil
 local frame = nil
-
 local BORDER = 1
-local maxBarWidth = 0
 -- Aimed Shot, Multi-Shot, Trueshot
 local castTime = 0
 local isCasting = false
@@ -13,6 +11,7 @@ local timeStartCast = 0
 local AIMING_TIME = 0.65
 local isReloading = false
 local isShooting = false
+local maxBarWidth = 0
 local reloadTime = 0
 local timeStartShootOrReload = GetTime()
 
@@ -157,19 +156,18 @@ local handleUpdate = function()
 	end
 end
 
--- ************ Event Handlers ************
---[[
+--[[ ************ Event Handlers ************
 Some actions trigger multiple events in sequence:
-Instant Shot while either moving or in middle of reload
+1. Instant Shot while either moving or in middle of reload
 -> (hook) OnInstant
 -> ITEM_LOCK_CHANGED
 -> SPELLCAST_STOP
-Instant Shot as Auto Shot fires (assuming state is already shooting)
+2. Instant Shot as Auto Shot fires (assuming state is already shooting)
 -> (hook) OnInstant
 -> ITEM_LOCK_CHANGED
 -> ITEM_LOCK_CHANGED
 -> SPELLCAST_STOP
-Casted Shot starts as Auto Shot fires (assuming state is already shooting)
+3. Casted Shot starts as Auto Shot fires (assuming state is already shooting)
 -> (hook) OnCast
 -> ITEM_LOCK_CHANGED
 -> ITEM_LOCK_CHANGED
@@ -212,7 +210,7 @@ local handleEvent = function()
 		-- Case 2
 		-- We fired an instant but haven't yet called "SPELLCAST_STOP"
 		-- If we fired an Auto Shot at the same time, then "ITEM_LOCK_CHANGED" will
-		-- triggers twice before "SPELLCAST_STOP", so we mark the first one as done
+		-- trigger twice before "SPELLCAST_STOP", so we mark the first one as done.
 			isFiredInstant = false
 		elseif isCasting then
 			local elapsed = GetTime() - timeStartCast
@@ -228,6 +226,7 @@ local handleEvent = function()
 		-- Case 5 - Fired Auto Shot
 		-- Works even if we cancelled Auto Shot as we fired because "STOP_AUTOREPEAT_SPELL" is lower priority.
 			startReloading()
+		-- else No-op
 		-- Case 6 - This was an inventory event we can safely ignore.
 		end
 	elseif e == "SPELLCAST_STOP" or e == "SPELLCAST_FAILED" or e == "SPELLCAST_INTERRUPTED" then

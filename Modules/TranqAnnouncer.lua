@@ -7,7 +7,7 @@ local BORDER_BAR = 1
 local HEIGHT_BAR = 17
 local WIDTH_FRAME_DEFAULT = 120
 
-local messaging = (function()
+local message = (function()
 	local ADDON_MESSAGE_CAST = "Quiver_Tranq_Shot"
 	local MATCH = ADDON_MESSAGE_CAST..":(.*):(.*)"
 	return {
@@ -215,7 +215,7 @@ end
 -- ************ Event Handlers ************
 local handleMsg = function(_source, msg)
 	-- For compatibility with other tranq addons, ignore the message source.
-	local nameCaster, timeCastSec = messaging.Deserialize(msg)
+	local nameCaster, timeCastSec = message.Deserialize(msg)
 	if nameCaster ~= nil then
 		local barVisible = Quiver_Lib_F.Find(frame.Bars, function(bar)
 			return bar.FsPlayerName:GetText() == nameCaster
@@ -238,6 +238,7 @@ local handleMsg = function(_source, msg)
 	end
 end
 
+-- Using a state variable so we can remove most false positives.
 -- Unhandled edge case -- Casting a different spell while mashing tranq shot will announce a tranq
 local isClickedTranq = false
 local handleCast = function(spellName)
@@ -267,7 +268,7 @@ local handleEvent = function()
 		isClickedTranq = false
 	elseif event == "ITEM_LOCK_CHANGED" then
 		if isClickedTranq then
-			messaging.Broadcast()
+			message.Broadcast()
 			Quiver_Lib_Print.Say(store.MsgTranqCast)
 			isClickedTranq = false
 		end
