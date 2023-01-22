@@ -33,7 +33,10 @@ Quiver_Lib_Aura_GetRangedAttackSpeedMultiplier = function()
 		local texture = UnitBuff("player", i)
 		if texture == QUIVER.Icon.CurseOfTongues then
 			speed = speed * 0.5
-		elseif texture == QUIVER.Icon.NaxxTrinket then
+		-- Unsure if it's safe to remove the wrong one. Maybe that would break other servers.
+		elseif texture == QUIVER.Icon.NaxxTrinket
+			or texture == QUIVER.Icon.NaxxTrinketWrong
+		then
 			speed = speed * 1.2
 		elseif texture == QUIVER.Icon.Quickshots then
 			speed = speed * 1.3
