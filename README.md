@@ -1,6 +1,6 @@
 WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration menu.
 
-<img src="/Media/Quiver_colours.jpg" height="502px" align="right">
+<img src="/Media/Config_UI.jpg" height="462px" align="right">
 
 - [Installation](#installation)
 - [Contributing](#contributing)
