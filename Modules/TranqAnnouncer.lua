@@ -262,13 +262,18 @@ local handleEvent = function()
 			or string.find(arg1, QUIVER_T.CombatLog.Tranq.Fail)
 		then
 			Quiver_Lib_Print.Say(store.MsgTranqMiss)
+			Quiver_Lib_Print.Raid(store.MsgTranqMiss)
 		end
 	elseif event == "SPELLCAST_STOP" or event == "SPELLCAST_FAILED" then
 		isClickedTranq = false
 	elseif event == "ITEM_LOCK_CHANGED" then
 		if isClickedTranq then
 			message.Broadcast()
-			Quiver_Lib_Print.Say(store.MsgTranqCast)
+			if store.TranqChannel == "/Say" then
+				Quiver_Lib_Print.Say(store.MsgTranqCast)
+			elseif store.TranqChannel == "/Raid" then
+				Quiver_Lib_Print.Raid(store.MsgTranqCast)
+			end
 			isClickedTranq = false
 		end
 	end
@@ -305,6 +310,7 @@ Quiver_Module_TranqAnnouncer = {
 		store = savedVariables
 		store.MsgTranqMiss = savedVariables.MsgTranqMiss or QUIVER_T.Tranq.DefaultMiss
 		store.MsgTranqCast = store.MsgTranqCast or QUIVER_T.Tranq.DefaultCast
+		store.TranqChannel = store.TranqChannel or "/Say"
 	end,
 	OnSavedVariablesPersist = function() return store end,
 }

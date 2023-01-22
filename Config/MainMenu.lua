@@ -122,7 +122,8 @@ Quiver_Config_MainMenu_Create = function()
 	f:SetWidth(PADDING_FAR + controls:GetWidth() + PADDING_FAR + colorPickers:GetWidth() + PADDING_FAR)
 
 	local selectChannelHit = Quiver_Component_DropdownSelect(f,
-		"Tranq Speech", { "None", "/Say", "/Raid" }, "/Say")
+		"Tranq Speech", { "None", "/Say", "/Raid" },
+		Quiver_Store.ModuleStore[Quiver_Module_TranqAnnouncer.Id].TranqChannel)
 	local tranqX = 0.5 * (PADDING_FAR + controls:GetWidth() + PADDING_FAR - selectChannelHit:GetWidth())
 	local tranqY = yOffset - colorPickers:GetHeight() + selectChannelHit:GetHeight() + QUIVER.Size.Gap
 	selectChannelHit:SetPoint("Left", f, "Left", tranqX, 0)
@@ -131,7 +132,9 @@ Quiver_Config_MainMenu_Create = function()
 	for _k,oLoop in selectChannelHit.Menu.Options do
 		local option = oLoop
 		option:SetScript("OnClick", function()
-			DEFAULT_CHAT_FRAME:AddMessage(option.Text:GetText())
+			local text = option.Text:GetText()
+			Quiver_Store.ModuleStore[Quiver_Module_TranqAnnouncer.Id].TranqChannel = text
+			selectChannelHit.Selected:SetText(text)
 			selectChannelHit.Menu:Hide()
 		end)
 	end
