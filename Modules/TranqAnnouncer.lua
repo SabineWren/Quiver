@@ -187,7 +187,6 @@ local hideFrameDeleteBars = function()
 	for _k, bar in frame.Bars do
 		poolProgressBar.Release(bar)
 	end
-	-- Couldn't figre out how to clear all values without remaking the table.
 	frame.Bars = {}
 end
 

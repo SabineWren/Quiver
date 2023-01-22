@@ -116,10 +116,25 @@ Quiver_Config_MainMenu_Create = function()
 
 	local yOffset = -PADDING_CLOSE - QUIVER.Size.Icon - QUIVER.Size.Gap
 	controls:SetPoint("Top", f, "Top", 0, yOffset)
-	colorPickers:SetPoint("Top", f, "Top", 0, yOffset)
 	controls:SetPoint("Left", f, "Left", PADDING_FAR, 0)
+	colorPickers:SetPoint("Top", f, "Top", 0, yOffset)
 	colorPickers:SetPoint("Right", f, "Right", -PADDING_FAR, 0)
 	f:SetWidth(PADDING_FAR + controls:GetWidth() + PADDING_FAR + colorPickers:GetWidth() + PADDING_FAR)
+
+	local selectChannelHit = Quiver_Component_DropdownSelect(f,
+		"Tranq Speech", { "None", "/Say", "/Raid" }, "/Say")
+	local tranqX = 0.5 * (PADDING_FAR + controls:GetWidth() + PADDING_FAR - selectChannelHit:GetWidth())
+	local tranqY = yOffset - colorPickers:GetHeight() + selectChannelHit:GetHeight() + QUIVER.Size.Gap
+	selectChannelHit:SetPoint("Left", f, "Left", tranqX, 0)
+	selectChannelHit:SetPoint("Top", f, "Top", 0, tranqY)
+
+	for _k,oLoop in selectChannelHit.Menu.Options do
+		local option = oLoop
+		option:SetScript("OnClick", function()
+			DEFAULT_CHAT_FRAME:AddMessage(option.Text:GetText())
+			selectChannelHit.Menu:Hide()
+		end)
+	end
 
 	local hLeft = controls:GetHeight()
 	local hRight = colorPickers:GetHeight()

@@ -46,7 +46,7 @@ Quiver_Component_Button = function(args)
 
 	f.Texture = Quiver_Component_Button_CreateTexture(f, "OVERLAY")
 	f:SetNormalTexture(f.Texture)
-	-- TODO add custom glow texture
+	-- Custom glow texture would go here
 	--f:SetHighlightTexture(nil)
 	f:SetPushedTexture(nil)
 	f:SetDisabledTexture(nil)

@@ -5,7 +5,7 @@ local resetTooltip = (function()
 		tt = CreateFrame("GameTooltip", "QuiverAuraScanningTooltip", nil, "GameTooltipTemplate")
 		tt:SetScript("OnHide", function() tt:SetOwner(WorldFrame, "ANCHOR_NONE") end)
 		tt:Hide()
-		tt:SetFrameStrata("TOOLTIP")
+		tt:SetFrameStrata("Tooltip")
 		return tt
 	end
 	return function()

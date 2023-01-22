@@ -27,6 +27,7 @@ Components\Button.lua
 Components\ColorPicker.lua
 Components\CheckButton.lua
 Components\Dialog.lua
+Components\DropdownSelect.lua
 Components\EditBox.lua
 Components\TitleBox.lua
 
