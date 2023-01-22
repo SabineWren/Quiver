@@ -20,8 +20,10 @@ end
 
 local Map = function(xs, f)
 	local ys = {}
+	local i = 0
 	for _k, v in xs do
-		table.insert(ys, f(v))
+		table.insert(ys, f(v, i))
+		i = i + 1
 	end
 	return ys
 end
@@ -42,6 +44,14 @@ local Some = function(xs, f)
 	return false
 end
 
+local Sum = function(xs)
+	local total = 0
+	for _k, v in xs do
+		total = total + v
+	end
+	return total
+end
+
 Quiver_Lib_F = {
 	Every=Every,
 	Find=Find,
@@ -49,4 +59,5 @@ Quiver_Lib_F = {
 	Map=Map,
 	Max=Max,
 	Some=Some,
+	Sum=Sum,
 }

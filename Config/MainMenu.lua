@@ -72,19 +72,17 @@ end
 
 local createAllModuleControls = function(parent, gap)
 	local f = CreateFrame("Frame", nil, parent)
-	local h = 0
-	local maxW = 0
-	for _k, mLoop in _G.Quiver_Modules do
-		local m = mLoop
-		local mFrame = createModuleControls(f, m, gap)
-		mFrame:SetPoint("Left", f, "Left", 0, 0)
-		mFrame:SetPoint("Top", f, "Top", 0, -h)
-		h = h + mFrame:GetHeight() + gap
-		local w = mFrame:GetWidth()
-		maxW = maxW > w and maxW or w
-	end
-	f:SetHeight(h)
-	f:SetWidth(maxW)
+	local frames = Quiver_Lib_F.Map(_G.Quiver_Modules, function(m, i)
+		local frame = createModuleControls(f, m, gap)
+		local yOffset = i * (frame:GetHeight() + gap)
+		frame:SetPoint("Left", f, "Left", 0, 0)
+		frame:SetPoint("Top", f, "Top", 0, -yOffset)
+		return frame
+	end)
+	local widths = Quiver_Lib_F.Map(frames, function(x) return x:GetWidth() end)
+	local heights = Quiver_Lib_F.Map(frames, function(x) return x:GetHeight() + gap end)
+	f:SetHeight(Quiver_Lib_F.Sum(heights) - gap)
+	f:SetWidth(Quiver_Lib_F.Max(widths))
 	return f
 end
 
