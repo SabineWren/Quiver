@@ -39,7 +39,7 @@ local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("High")
 	local centerVertically = function(ele)
-		ele:SetPoint("Top", f, "Top", 0, -1 * BORDER)
+		ele:SetPoint("Top", f, "Top", 0, -BORDER)
 		ele:SetPoint("Bottom", f, "Bottom", 0, BORDER)
 	end
 

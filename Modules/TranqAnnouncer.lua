@@ -33,27 +33,27 @@ end)()
 local getColorForeground = (function()
 	-- It would be expensive to compute non-rgb gradients in Lua during the update loop,
 	-- so we design stop points using an online gradient generator and convert them to RGB.
-	-- LCH color space: hsl(0, 90%, 50%) to hsl(120, 90%, 50%)
+	-- lch(52% 100 40) to lch(52% 100 141)
 	-- https://non-boring-gradients.netlify.app/
 	local NUM_COLORS = 17
 	local COLOR_FG = {
 		{ 0.95, 0.05, 0.05 },
-		{ 0.95, 0.20, 0.0 },
-		{ 0.85, 0.37, 0.10 },
-		{ 0.85, 0.42, 0.04 },
-		{ 0.84, 0.46, 0.0 },
-		{ 0.83, 0.51, 0.0 },
-		{ 0.81, 0.55, 0.0 },
-		{ 0.79, 0.59, 0.0 },
-		{ 0.77, 0.63, 0.0 },
-		{ 0.74, 0.67, 0.0 },
-		{ 0.71, 0.71, 0.0 },
-		{ 0.68, 0.75, 0.0 },
-		{ 0.64, 0.78, 0.0 },
-		{ 0.60, 0.82, 0.12 },
-		{ 0.55, 0.86, 0.20 },
-		{ 0.31, 0.91, 0.0 },
-		{ 0.05, 0.95, 0.05 },
+		{ 0.91, 0.19, 0.0 },
+		{ 0.79, 0.35, 0.08 },
+		{ 0.75, 0.38, 0.02 },
+		{ 0.72, 0.40, 0.0 },
+		{ 0.68, 0.43, 0.0 },
+		{ 0.64, 0.45, 0.0 },
+		{ 0.60, 0.46, 0.0 },
+		{ 0.56, 0.48, 0.0 },
+		{ 0.52, 0.49, 0.0 },
+		{ 0.48, 0.51, 0.0 },
+		{ 0.44, 0.52, 0.04 },
+		{ 0.40, 0.53, 0.10 },
+		{ 0.29, 0.55, 0.0 },
+		{ 0.23, 0.55, 0.0 },
+		{ 0.15, 0.56, 0.11 },
+		{ 0.00, 0.56, 0.18 },
 	}
 	return function(progress)
 		-- Fixes floating point bugs
