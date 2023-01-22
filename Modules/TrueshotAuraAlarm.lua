@@ -6,7 +6,7 @@ local UPDATE_DELAY_SLOW = 5
 local UPDATE_DELAY_FAST = 0.1
 local updateDelay = UPDATE_DELAY_SLOW
 
-local BORDER_SIZE = 4
+local INSET = 4
 local DEFAULT_ICON_SIZE = 40
 local MINUTES_LEFT_WARNING = 5
 
@@ -40,12 +40,6 @@ local aura = (function()
 end)()
 
 -- ************ UI ************
-local setIconSize = function(f)
-	f.Icon:SetWidth(f:GetWidth() - BORDER_SIZE * 2)
-	f.Icon:SetHeight(f:GetHeight() - BORDER_SIZE * 2)
-	f.Icon:SetPoint("Center", 0, 0)
-end
-
 local setFramePosition = function(f, s)
 	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
 		w=DEFAULT_ICON_SIZE, h=DEFAULT_ICON_SIZE, dx=150, dy=40,
@@ -53,29 +47,26 @@ local setFramePosition = function(f, s)
 	f:SetWidth(s.FrameMeta.W)
 	f:SetHeight(s.FrameMeta.H)
 	f:SetPoint("TopLeft", s.FrameMeta.X, s.FrameMeta.Y)
-	setIconSize(f)
 end
 
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("Low")
 	f:SetBackdrop({
-		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-		edgeSize = 16,
-		insets = { left=BORDER_SIZE, right=BORDER_SIZE, top=BORDER_SIZE, bottom=BORDER_SIZE },
+		edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 16,
+		insets = { left=INSET, right=INSET, top=INSET, bottom=INSET },
 	})
+	setFramePosition(f, store)
 
 	f.Icon = CreateFrame("Frame", nil, f)
 	f.Icon:SetBackdrop({ bgFile = QUIVER.Icon.Trueshot, tile = false })
+	f.Icon:SetPoint("Left", f, "Left", INSET, 0)
+	f.Icon:SetPoint("Right", f, "Right", -INSET, 0)
+	f.Icon:SetPoint("Top", f, "Top", 0, -INSET)
+	f.Icon:SetPoint("Bottom", f, "Bottom", 0, INSET)
 
-	setFramePosition(f, store)
-	local resizeIcon = function() setIconSize(f) end
 	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
-	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, {
-		GripMargin=0,
-		OnResizeDrag=resizeIcon,
-		OnResizeEnd=resizeIcon,
-	})
+	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, { GripMargin=0 })
 	return f
 end
 
