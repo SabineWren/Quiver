@@ -139,7 +139,7 @@ OnInterfaceUnlock: unit -> unit
 Not called while module disabled.
 Called every time user unlocks the UI.
 
-(optional) OnResetFrames: unit -> unit
+OnResetFrames: unit -> unit
 Called when user clicks a reset button.
 The reset-all button will call this even if module disabled.
 

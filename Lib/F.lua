@@ -25,7 +25,9 @@ local Map = function(xs, f)
 	end
 	return ys
 end
-local MaxPos = function(xs)
+
+-- Assumes positive numbers
+local Max = function(xs)
 	local max = 0
 	for _k, w in xs do
 		if w > max then max = w end
@@ -45,6 +47,6 @@ Quiver_Lib_F = {
 	Find=Find,
 	Length=Length,
 	Map=Map,
-	MaxPos=MaxPos,
+	Max=Max,
 	Some=Some,
 }

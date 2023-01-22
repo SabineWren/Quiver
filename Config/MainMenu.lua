@@ -30,54 +30,62 @@ local createIconResetAll = function(parent)
 	return f
 end
 
-local createModuleControlButtons = function(f, yOffset, gap)
-	local height = 0
+local createModuleControls = function(parent, m, gap)
+	local f = CreateFrame("Frame", nil, parent)
+
+	local sizeReset = QUIVER.Size.Icon
+	f.BtnReset = Quiver_Component_Button({
+		Parent=f, Size=sizeReset,
+		TooltipText=QUIVER_T.UI.ResetFramesTooltip,
+	})
+	f.BtnReset.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
+	f.BtnReset:SetScript("OnClick", function(_self) m.OnResetFrames() end)
+	f.BtnReset:SetPoint("Left", f, "Left", 0, 0)
+	f.BtnReset:SetPoint("Top", f, "Top", 0, 0)
+
+	if not Quiver_Store.ModuleEnabled[m.Id] then
+		f.BtnReset.QuiverDisable()
+	end
+
+	f.BtnSwitch = Quiver_Component_CheckButton(f, {
+		IsChecked = Quiver_Store.ModuleEnabled[m.Id],
+		Label = m.Name,
+		Tooltip = QUIVER_T.ModuleTooltip[m.Id],
+		OnClick = function (isChecked)
+			Quiver_Store.ModuleEnabled[m.Id] = isChecked
+			if isChecked then
+				m.OnEnable()
+				f.BtnReset.QuiverEnable()
+			else
+				m.OnDisable()
+				f.BtnReset.QuiverDisable()
+			end
+		end,
+	})
+	f.BtnSwitch:SetPoint("Top", f, "Top", 0, 0)
+	f.BtnSwitch:SetPoint("Right", f, "Right", 0, 0)
+
+	f:SetHeight(f.BtnSwitch:GetHeight())
+	f:SetWidth(f.BtnReset:GetWidth() + gap + f.BtnSwitch:GetWidth())
+	return f
+end
+
+local createAllModuleControls = function(parent, gap)
+	local f = CreateFrame("Frame", nil, parent)
+	local h = 0
+	local maxW = 0
 	for _k, mLoop in _G.Quiver_Modules do
 		local m = mLoop
-
-		local x = QUIVER.Size.Border + QUIVER.Size.Gap
-		local sizeReset = QUIVER.Size.Icon
-		local btnReset = nil
-		if m.OnResetFrames then
-			btnReset = Quiver_Component_Button({
-				Parent=f, Size=sizeReset,
-				TooltipText=QUIVER_T.UI.ResetFramesTooltip,
-			})
-			btnReset.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
-
-			btnReset:SetScript("OnClick", function(_self)
-				m.OnResetFrames()
-			end)
-			btnReset:SetPoint("Left", f, "Left", x, 0)
-			btnReset:SetPoint("Top", f, "Top", 0, yOffset - height)
-
-			if not Quiver_Store.ModuleEnabled[m.Id] then
-				btnReset.QuiverDisable()
-			end
-		end
-
-		x = x + sizeReset + QUIVER.Size.Gap
-		local btnSwitch = Quiver_Component_CheckButton({
-			Parent = f,
-			X = x,
-			Y = yOffset - height,
-			IsChecked = Quiver_Store.ModuleEnabled[m.Id],
-			Label = m.Name,
-			Tooltip = QUIVER_T.ModuleTooltip[m.Id],
-			OnClick = function (isChecked)
-				Quiver_Store.ModuleEnabled[m.Id] = isChecked
-				if isChecked then
-					m.OnEnable()
-					if btnReset then btnReset.QuiverEnable() end
-				else
-					m.OnDisable()
-					if btnReset then btnReset.QuiverDisable() end
-				end
-			end,
-		})
-		height = height + btnSwitch:GetHeight() + gap
+		local mFrame = createModuleControls(f, m, gap)
+		mFrame:SetPoint("Left", f, "Left", 0, 0)
+		mFrame:SetPoint("Top", f, "Top", 0, -h)
+		h = h + mFrame:GetHeight() + gap
+		local w = mFrame:GetWidth()
+		maxW = maxW > w and maxW or w
 	end
-	return height - gap
+	f:SetHeight(h)
+	f:SetWidth(maxW)
+	return f
 end
 
 Quiver_Config_MainMenu_Create = function()
@@ -105,18 +113,20 @@ Quiver_Config_MainMenu_Create = function()
 	local resetOffsetX = lockOffsetX + QUIVER.Size.Icon + QUIVER.Size.Gap/2
 	btnResetFrames:SetPoint("TopRight", f, "TopRight", -resetOffsetX, -PADDING_CLOSE)
 
-	local yOffset = -(PADDING_CLOSE + QUIVER.Size.Icon)
-	yOffset = yOffset - createModuleControlButtons(f, yOffset, QUIVER.Size.Gap)
-	yOffset = yOffset - QUIVER.Size.Gap
-
+	local controls = createAllModuleControls(f, QUIVER.Size.Gap)
 	local colorPickers = Quiver_Config_Colors(f, QUIVER.Size.Gap)
-	colorPickers:SetPoint("TopLeft", f, "TopLeft", PADDING_FAR, yOffset)
-	yOffset = yOffset - colorPickers:GetHeight() - QUIVER.Size.Gap
 
-	local wColors = PADDING_FAR + colorPickers:GetWidth() + PADDING_FAR
-	local W_DEFAULT = 300
-	local xMax = wColors > W_DEFAULT and wColors or W_DEFAULT
-	f:SetWidth(xMax)
+	local yOffset = -PADDING_CLOSE - QUIVER.Size.Icon - QUIVER.Size.Gap
+	controls:SetPoint("Top", f, "Top", 0, yOffset)
+	colorPickers:SetPoint("Top", f, "Top", 0, yOffset)
+	controls:SetPoint("Left", f, "Left", PADDING_FAR, 0)
+	colorPickers:SetPoint("Right", f, "Right", -PADDING_FAR, 0)
+	f:SetWidth(PADDING_FAR + controls:GetWidth() + PADDING_FAR + colorPickers:GetWidth() + PADDING_FAR)
+
+	local hLeft = controls:GetHeight()
+	local hRight = colorPickers:GetHeight()
+	local hMax = hRight > hLeft and hRight or hLeft
+	yOffset = yOffset - hMax - QUIVER.Size.Gap
 
 	local tranqOptions = Quiver_Config_InputText_TranqAnnouncer(f, QUIVER.Size.Gap)
 	tranqOptions:SetPoint("TopLeft", f, "TopLeft", 0, yOffset)

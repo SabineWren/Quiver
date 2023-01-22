@@ -61,7 +61,7 @@ Quiver_Config_Colors = function(parent, gap)
 	-- Right align buttons using minimum amount of space
 	local getWidth = function(f) return f:GetWidth() end
 	local labelWidths = Quiver_Lib_F.Map(labels, getWidth)
-	local labelMaxWidth = Quiver_Lib_F.MaxPos(labelWidths)
+	local labelMaxWidth = Quiver_Lib_F.Max(labelWidths)
 
 	local y = 0
 	for _,frame in frames do
@@ -74,7 +74,7 @@ Quiver_Config_Colors = function(parent, gap)
 	end
 
 	local frameWidths = Quiver_Lib_F.Map(frames, getWidth)
-	f:SetWidth(Quiver_Lib_F.MaxPos(frameWidths))
+	f:SetWidth(Quiver_Lib_F.Max(frameWidths))
 	f:SetHeight(y)
 	return f
 end
