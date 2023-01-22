@@ -21,104 +21,60 @@ local createBtnColorSwap = function(parent, f1, f2, c1, c2)
 	return f
 end
 
-local findMaxWidth = function(frames)
-	local max = 0
-	for _k, f in frames do
-		local w = f:GetWidth()
-		if w > max then max = w end
-	end
-	return max
-end
-
-Quiver_Config_Color_Bars = function(parent, gap)
+Quiver_Config_Colors = function(parent, gap)
 	local storeAutoShotTimer = Quiver_Store.ModuleStore[Quiver_Module_AutoShotTimer.Id]
 	local storeCastbar = Quiver_Store.ModuleStore[Quiver_Module_Castbar.Id]
-	local f = CreateFrame("Frame", nil, parent)
-
-	local colorCast = Quiver_Component_ColorPicker_WrapColor(
-		storeCastbar, "ColorCastbar", QUIVER.ColorDefault.Castbar)
-	local colorShoot = Quiver_Component_ColorPicker_WrapColor(
-		storeAutoShotTimer, "ColorShoot", QUIVER.ColorDefault.AutoShotShoot)
-	local colorReload = Quiver_Component_ColorPicker_WrapColor(
-		storeAutoShotTimer, "ColorReload", QUIVER.ColorDefault.AutoShotReload)
-
-	local fc = Quiver_Component_ColorPicker_WithResetLabel(
-		f, "Casting", colorCast)
-	local fs1 = Quiver_Component_ColorPicker_WithResetLabel(
-		f, "Shooting", colorShoot)
-	local fs2 = Quiver_Component_ColorPicker_WithResetLabel(
-		f, "Reloading", colorReload)
-
-	local frames = { fc, fs1, fs2 }
-	local labels = {}; for _,frame in frames do table.insert(labels, frame.Label) end
-
-	-- Right align buttons using minimum amount of space
-	local labelMaxWidth = findMaxWidth(labels)
-	local w = fc.WidthMinusLabel + labelMaxWidth
-	local h = fc:GetHeight()
-	local y = 0
-	for _,frame in frames do
-		frame:SetWidth(w)
-		frame:SetPoint("Left", f, "Left", 0, 0)
-		frame:SetPoint("Top", f, "Top", 0, y)
-		y = y - h - gap
-	end
-
-	local button = createBtnColorSwap(f, fs1, fs2, colorShoot, colorReload)
-	button:SetPoint("Left", f, "Left", 0, 0)
-	button:SetPoint("Top", f, "Top", 0, y)
-
-	f:SetWidth(findMaxWidth(frames))
-	f:SetHeight(3*h + 3*gap + button:GetHeight())
-	return f
-end
-
-Quiver_Config_Color_Range = function(parent, gap)
-	local store = Quiver_Store.ModuleStore[Quiver_Module_RangeIndicator.Id]
+	local storeRange = Quiver_Store.ModuleStore[Quiver_Module_RangeIndicator.Id]
 	local f = CreateFrame("Frame", nil, parent)
 
 	local wrap = Quiver_Component_ColorPicker_WrapColor
-	local f1 = Quiver_Component_ColorPicker_WithResetLabel(
-		f, QUIVER_T.Range.Melee,
-		wrap(store, "ColorMelee", QUIVER.ColorDefault.Range.Melee))
-	local f2 = Quiver_Component_ColorPicker_WithResetLabel(
-		f, QUIVER_T.Range.DeadZone,
-		wrap(store, "ColorDeadZone", QUIVER.ColorDefault.Range.DeadZone))
-	local f3 = Quiver_Component_ColorPicker_WithResetLabel(
-		f, QUIVER_T.Range.ScareBeast,
-		wrap(store, "ColorScareBeast", QUIVER.ColorDefault.Range.ScareBeast))
-	local f4 = Quiver_Component_ColorPicker_WithResetLabel(
-		f, QUIVER_T.Range.ScatterShot,
-		wrap(store, "ColorScatterShot", QUIVER.ColorDefault.Range.ScatterShot))
-	local f5 = Quiver_Component_ColorPicker_WithResetLabel(
-		f, QUIVER_T.Range.Short,
-		wrap(store, "ColorShort", QUIVER.ColorDefault.Range.Short))
-	local f6 = Quiver_Component_ColorPicker_WithResetLabel(
-		f, QUIVER_T.Range.Long,
-		wrap(store, "ColorLong", QUIVER.ColorDefault.Range.Long))
-	local f7 = Quiver_Component_ColorPicker_WithResetLabel(
-		f, QUIVER_T.Range.Mark,
-		wrap(store, "ColorMark", QUIVER.ColorDefault.Range.Mark))
-	local f8 = Quiver_Component_ColorPicker_WithResetLabel(
-		f, QUIVER_T.Range.TooFar,
-		wrap(store, "ColorTooFar", QUIVER.ColorDefault.Range.TooFar))
+	local colorShoot = wrap(storeAutoShotTimer, "ColorShoot", QUIVER.ColorDefault.AutoShotShoot)
+	local colorReload = wrap(storeAutoShotTimer, "ColorReload", QUIVER.ColorDefault.AutoShotReload)
+	local optionShoot = Quiver_Component_ColorPicker_WithResetLabel(f, "Shooting", colorShoot)
+	local optionReload = Quiver_Component_ColorPicker_WithResetLabel(f, "Reloading", colorReload)
 
-	local frames = { f1, f2, f3, f4, f5, f6, f7, f8 }
+	local frames = {
+		Quiver_Component_ColorPicker_WithResetLabel(f, "Casting",
+			wrap(storeCastbar, "ColorCastbar", QUIVER.ColorDefault.Castbar)),
+		optionShoot,
+		optionReload,
+		createBtnColorSwap(f, optionShoot, optionReload, colorShoot, colorReload),
+		Quiver_Component_ColorPicker_WithResetLabel(f, QUIVER_T.Range.Melee,
+			wrap(storeRange, "ColorMelee", QUIVER.ColorDefault.Range.Melee)),
+		Quiver_Component_ColorPicker_WithResetLabel(f, QUIVER_T.Range.DeadZone,
+			wrap(storeRange, "ColorDeadZone", QUIVER.ColorDefault.Range.DeadZone)),
+		Quiver_Component_ColorPicker_WithResetLabel(f, QUIVER_T.Range.ScareBeast,
+			wrap(storeRange, "ColorScareBeast", QUIVER.ColorDefault.Range.ScareBeast)),
+		Quiver_Component_ColorPicker_WithResetLabel(f, QUIVER_T.Range.ScatterShot,
+			wrap(storeRange, "ColorScatterShot", QUIVER.ColorDefault.Range.ScatterShot)),
+		Quiver_Component_ColorPicker_WithResetLabel(f, QUIVER_T.Range.Short,
+			wrap(storeRange, "ColorShort", QUIVER.ColorDefault.Range.Short)),
+		Quiver_Component_ColorPicker_WithResetLabel(f, QUIVER_T.Range.Long,
+			wrap(storeRange, "ColorLong", QUIVER.ColorDefault.Range.Long)),
+		Quiver_Component_ColorPicker_WithResetLabel(f, QUIVER_T.Range.Mark,
+			wrap(storeRange, "ColorMark", QUIVER.ColorDefault.Range.Mark)),
+		Quiver_Component_ColorPicker_WithResetLabel(f, QUIVER_T.Range.TooFar,
+			wrap(storeRange, "ColorTooFar", QUIVER.ColorDefault.Range.TooFar)),
+	}
 	local labels = {}; for _,frame in frames do table.insert(labels, frame.Label) end
 
 	-- Right align buttons using minimum amount of space
-	local labelMaxWidth = findMaxWidth(labels)
-	local w = f1.WidthMinusLabel + labelMaxWidth
-	local h = f1:GetHeight()
+	local getWidth = function(f) return f:GetWidth() end
+	local labelWidths = Quiver_Lib_F.Map(labels, getWidth)
+	local labelMaxWidth = Quiver_Lib_F.MaxPos(labelWidths)
+
 	local y = 0
 	for _,frame in frames do
-		frame:SetWidth(w)
+		if frame.WidthMinusLabel ~= nil then
+			frame:SetWidth(frame.WidthMinusLabel + labelMaxWidth)
+		end
 		frame:SetPoint("Left", f, "Left", 0, 0)
-		frame:SetPoint("Top", f, "Top", 0, y)
-		y = y - h - gap
+		frame:SetPoint("Top", f, "Top", 0, -y)
+		y = y + frame:GetHeight() + gap
 	end
 
-	f:SetWidth(findMaxWidth(frames))
-	f:SetHeight(8*h + 7*gap)
+	local frameWidths = Quiver_Lib_F.Map(frames, getWidth)
+	f:SetWidth(Quiver_Lib_F.MaxPos(frameWidths))
+	f:SetHeight(y)
 	return f
 end

@@ -109,20 +109,14 @@ Quiver_Config_MainMenu_Create = function()
 	yOffset = yOffset - createModuleControlButtons(f, yOffset, QUIVER.Size.Gap)
 	yOffset = yOffset - QUIVER.Size.Gap
 
-	-- *** Split Start ***
-	local x = PADDING_FAR
-	local colorPickersLeft = Quiver_Config_Color_Bars(f, QUIVER.Size.Gap)
-	colorPickersLeft:SetPoint("TopLeft", f, "TopLeft", x, yOffset)
-	x = x + colorPickersLeft:GetWidth() + 12
-	local colorPickersRight = Quiver_Config_Color_Range(f, QUIVER.Size.Gap)
-	colorPickersRight:SetPoint("TopLeft", f, "TopLeft", x, yOffset)
-	local y1 = colorPickersLeft:GetHeight()
-	local y2 = colorPickersRight:GetHeight()
-	local yMax = y1 > y2 and y1 or y2
-	yOffset = yOffset - yMax - QUIVER.Size.Gap
-	-- *** Split End ***
+	local colorPickers = Quiver_Config_Colors(f, QUIVER.Size.Gap)
+	colorPickers:SetPoint("TopLeft", f, "TopLeft", PADDING_FAR, yOffset)
+	yOffset = yOffset - colorPickers:GetHeight() - QUIVER.Size.Gap
 
-	f:SetWidth(x + colorPickersRight:GetWidth() + PADDING_FAR)
+	local wColors = PADDING_FAR + colorPickers:GetWidth() + PADDING_FAR
+	local W_DEFAULT = 300
+	local xMax = wColors > W_DEFAULT and wColors or W_DEFAULT
+	f:SetWidth(xMax)
 
 	local tranqOptions = Quiver_Config_InputText_TranqAnnouncer(f, QUIVER.Size.Gap)
 	tranqOptions:SetPoint("TopLeft", f, "TopLeft", 0, yOffset)
