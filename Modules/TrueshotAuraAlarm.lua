@@ -41,7 +41,7 @@ end)()
 
 -- ************ UI ************
 local setFramePosition = function(f, s)
-	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
+	Quiver_Event_FrameLock_SideEffectRestoreSize(s, {
 		w=DEFAULT_ICON_SIZE, h=DEFAULT_ICON_SIZE, dx=150, dy=40,
 	})
 	f:SetWidth(s.FrameMeta.W)
@@ -65,8 +65,8 @@ local createUI = function()
 	f.Icon:SetPoint("Top", f, "Top", 0, -INSET)
 	f.Icon:SetPoint("Bottom", f, "Bottom", 0, INSET)
 
-	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
-	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, { GripMargin=0 })
+	Quiver_Event_FrameLock_SideEffectMakeMoveable(f, store)
+	Quiver_Event_FrameLock_SideEffectMakeResizeable(f, store, { GripMargin=0 })
 	return f
 end
 
@@ -113,8 +113,8 @@ Quiver_Module_TrueshotAuraAlarm = {
 	OnDisable = onDisable,
 	OnInterfaceLock = function() aura.UpdateUI() end,
 	OnInterfaceUnlock = function() aura.UpdateUI() end,
-	OnResetFrames = function()
-		store.FrameMeta = nil
+	OnResetFrames = function(trigger)
+		if trigger == "default" then store.FrameMeta = nil end
 		if frame then setFramePosition(frame, store) end
 	end,
 	OnSavedVariablesRestore = function(savedVariables)

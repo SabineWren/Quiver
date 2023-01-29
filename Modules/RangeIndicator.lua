@@ -6,7 +6,7 @@ local println = Quiver_Lib_Print_Factory(MODULE_ID)
 local fontString = nil
 
 local setFramePosition = function(f, s)
-	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
+	Quiver_Event_FrameLock_SideEffectRestoreSize(s, {
 		w=190, h=35, dx=190 * -0.5, dy=-183,
 	})
 	f:SetWidth(s.FrameMeta.W)
@@ -17,8 +17,8 @@ end
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	setFramePosition(f, store)
-	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
-	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, { GripMargin=4 })
+	Quiver_Event_FrameLock_SideEffectMakeMoveable(f, store)
+	Quiver_Event_FrameLock_SideEffectMakeResizeable(f, store, { GripMargin=4 })
 
 	f:SetFrameStrata("Low")
 	f:SetBackdrop({
@@ -129,8 +129,8 @@ Quiver_Module_RangeIndicator = {
 	OnDisable = onDisable,
 	OnInterfaceLock = function() handleEvent() end,
 	OnInterfaceUnlock = function() frame:Show() end,
-	OnResetFrames = function()
-		store.FrameMeta = nil
+	OnResetFrames = function(trigger)
+		if trigger == "default" then store.FrameMeta = nil end
 		if frame then setFramePosition(frame, store) end
 	end,
 	OnSavedVariablesRestore = function(savedVariables)

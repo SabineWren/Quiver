@@ -24,7 +24,7 @@ local createIconResetAll = function(parent)
 	f.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
 	f:SetScript("OnClick", function(_self)
 		for _k, v in _G.Quiver_Modules do
-			if v.OnResetFrames ~= nil then v.OnResetFrames() end
+			if v.OnResetFrames ~= nil then v.OnResetFrames("default") end
 		end
 	end)
 	return f
@@ -39,7 +39,7 @@ local createModuleControls = function(parent, m, gap)
 		TooltipText=QUIVER_T.UI.ResetFramesTooltip,
 	})
 	f.BtnReset.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
-	f.BtnReset:SetScript("OnClick", function(_self) m.OnResetFrames() end)
+	f.BtnReset:SetScript("OnClick", function(_self) m.OnResetFrames("default") end)
 	f.BtnReset:SetPoint("Left", f, "Left", 0, 0)
 	f.BtnReset:SetPoint("Top", f, "Top", 0, 0)
 

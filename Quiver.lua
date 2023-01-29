@@ -64,8 +64,11 @@ frame:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
 frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("PLAYER_LOGOUT")
 frame:RegisterEvent("ADDON_LOADED")
+frame:RegisterEvent("CVAR_UPDATE")
+local isUseUiScale
 frame:SetScript("OnEvent", function()
 	if event == "ADDON_LOADED" and arg1 == "Quiver" then
+		isUseUiScale = GetCVar("useUiScale")
 		Quiver_Migrations_Run()
 		savedVariablesRestore()
 		initSlashCommandsAndModules()
@@ -76,5 +79,13 @@ frame:SetScript("OnEvent", function()
 		savedVariablesPersist()
 	elseif event == "ACTIONBAR_SLOT_CHANGED" then
 		Quiver_Lib_ActionBar_ValidateCache(arg1)
+	elseif event == "CVAR_UPDATE" and arg1 == "USE_UISCALE" then
+		local newIsScale = GetCVar("useUiScale")
+		if newIsScale ~= isUseUiScale then
+			isUseUiScale = newIsScale
+			for _k, v in _G.Quiver_Modules do
+				v.OnResetFrames("rescale")
+			end
+		end
 	end
 end)

@@ -3,6 +3,10 @@ WoW persists positions for frames that have global names.
 However, we use custom meta (size+position) logic because
 otherwise each login clears all frame data for disabled addons.
 TopLeft origin because GetPoint() uses TopLeft
+
+
+Must use entire store as parameter for functions, because we reset by setting FrameMeta to null.
+If we only pass FrameMeta, then several event listeners will mutate the wrong object.
 ]]
 
 local GRIP_HEIGHT = 12
@@ -10,22 +14,32 @@ local framesMoveable = {}
 local framesResizeable = {}
 local openWarning
 
+-- Screensize scales after initializing, but when it does, the UI scale value also changes.
+-- Therefore, the result of size * scale never changes, but the result of either size or scale does.
+-- Disabling useUIScale doesn't affect the scale value, so we have to conditionally scale saved frame positions.
+local getRealScreenWidth = function()
+	local scale = GetCVar("useUiScale") == 1 and UIParent:GetEffectiveScale() or 1
+	return GetScreenWidth() * scale
+end
+local getRealScreenheight = function()
+	local scale = GetCVar("useUiScale") == 1 and UIParent:GetEffectiveScale() or 1
+	return GetScreenHeight() * scale
+end
+
 local defaultOf = function(val, fallback)
 	if val == nil then return fallback else return val end
 end
-Quiver_Event_FrameLock_RestoreSize = function(savedFrameMeta, args)
-	-- Screensize scales after initializing, but we can read the scaling beforehand
-	local s = UIParent:GetEffectiveScale()
-	local sw = s * GetScreenWidth()
-	local sh = s * GetScreenHeight()
+Quiver_Event_FrameLock_SideEffectRestoreSize = function(store, args)
+	local sw = getRealScreenWidth()
+	local sh = getRealScreenheight()
 
-	local m = savedFrameMeta or {}
+	local m = store.FrameMeta or {}
 	local w, h, dx, dy = args.w, args.h, args.dx, args.dy
 	m.W = defaultOf(m.W, w)
 	m.H = defaultOf(m.H, h)
 	m.X = defaultOf(m.X, sw / 2 + dx)
 	m.Y = defaultOf(m.Y, -1 * sh / 2 + dy)
-	return m
+	store.FrameMeta = m
 end
 
 -- Tons of users don't read the readme file AT ALL. Not even the first line!
@@ -107,16 +121,18 @@ local absClamp = function(vOpt, vMax)
 	end
 end
 
-Quiver_Event_FrameLock_MakeMoveable = function(f, meta)
-	f:SetWidth(meta.W)
-	f:SetHeight(meta.H)
+Quiver_Event_FrameLock_SideEffectMakeMoveable = function(f, store)
+	f:SetWidth(store.FrameMeta.W)
+	f:SetHeight(store.FrameMeta.H)
 	f:SetMinResize(30, GRIP_HEIGHT)
-	f:SetMaxResize(GetScreenWidth()/2, GetScreenHeight()/2)
+	local sw = getRealScreenWidth()
+	local sh = getRealScreenheight()
+	f:SetMaxResize(sw/2, sh/2)
 
-	local xMax = GetScreenWidth() - meta.W
-	local yMax = GetScreenHeight() - meta.H
-	local x = absClamp(meta.X, xMax)
-	local y = -1 * absClamp(meta.Y, yMax)
+	local xMax = sw - store.FrameMeta.W
+	local yMax = sh - store.FrameMeta.H
+	local x = absClamp(store.FrameMeta.X, xMax)
+	local y = -1 * absClamp(store.FrameMeta.Y, yMax)
 	f:SetPoint("TopLeft", nil, "TopLeft", x, y)
 	f:SetScript("OnMouseDown", function()
 		if not Quiver_Store.IsLockedFrames then f:StartMoving() end
@@ -124,26 +140,27 @@ Quiver_Event_FrameLock_MakeMoveable = function(f, meta)
 	f:SetScript("OnMouseUp", function()
 		f:StopMovingOrSizing()
 		local _, _, _, x, y = f:GetPoint()
-		meta.X = math.floor(x)
-		meta.Y = math.floor(y)
-		f:SetPoint("TopLeft", nil, "TopLeft", meta.X, meta.Y)
+		store.FrameMeta.X = math.floor(x)
+		store.FrameMeta.Y = math.floor(y)
+		f:SetPoint("TopLeft", nil, "TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
+		DEFAULT_CHAT_FRAME:AddMessage("resize " .. store.FrameMeta.X)
 	end)
 
 	addFrameMoveable(f)
 end
 
-Quiver_Event_FrameLock_MakeResizeable = function(frame, meta, args)
+Quiver_Event_FrameLock_SideEffectMakeResizeable = function(frame, store, args)
 	local margin, isCenterX, onResizeEnd, onResizeDrag =
 		args.GripMargin, args.IsCenterX, args.OnResizeEnd, args.OnResizeDrag
 
 	if isCenterX then
 		frame:SetScript("OnSizeChanged", function()
-			local wOld = meta.W
+			local wOld = store.FrameMeta.W
 			local delta = frame:GetWidth() - wOld
-			meta.W = wOld + 2 * delta
-			meta.X = meta.X - delta
-			frame:SetWidth(meta.W)
-			frame:SetPoint("TopLeft", meta.X, meta.Y)
+			store.FrameMeta.W = wOld + 2 * delta
+			store.FrameMeta.X = store.FrameMeta.X - delta
+			frame:SetWidth(store.FrameMeta.W)
+			frame:SetPoint("TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
 			if onResizeDrag ~= nil then onResizeDrag() end
 		end)
 	elseif onResizeDrag ~= nil then
@@ -166,10 +183,10 @@ Quiver_Event_FrameLock_MakeResizeable = function(frame, meta, args)
 	end)
 	handle:SetScript("OnMouseUp", function()
 		frame:StopMovingOrSizing()
-		meta.W = math.floor(frame:GetWidth() + 0.5)
-		meta.H = math.floor(frame:GetHeight() + 0.5)
-		frame:SetWidth(meta.W)
-		frame:SetHeight(meta.H)
+		store.FrameMeta.W = math.floor(frame:GetWidth() + 0.5)
+		store.FrameMeta.H = math.floor(frame:GetHeight() + 0.5)
+		frame:SetWidth(store.FrameMeta.W)
+		frame:SetHeight(store.FrameMeta.H)
 		if onResizeEnd ~= nil then onResizeEnd() end
 	end)
 end

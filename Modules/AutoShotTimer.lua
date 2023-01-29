@@ -51,7 +51,7 @@ local setBarSizes = function(f, s)
 end
 
 local setFramePosition = function(f, s)
-	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
+	Quiver_Event_FrameLock_SideEffectRestoreSize(s, {
 		w=240, h=14, dx=240 * -0.5, dy=-136,
 	})
 	f:SetWidth(s.FrameMeta.W)
@@ -79,8 +79,8 @@ local createUI = function()
 
 	setFramePosition(f, store)
 	local resizeBarAutoShot = function() setBarAutoShot(f) end
-	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
-	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, {
+	Quiver_Event_FrameLock_SideEffectMakeMoveable(f, store)
+	Quiver_Event_FrameLock_SideEffectMakeResizeable(f, store, {
 		GripMargin=0,
 		OnResizeDrag=resizeBarAutoShot,
 		OnResizeEnd=resizeBarAutoShot,
@@ -267,8 +267,8 @@ Quiver_Module_AutoShotTimer = {
 		if (not isShooting) and (not isReloading) then tryHideBar() end
 	end,
 	OnInterfaceUnlock = function() frame:SetAlpha(1) end,
-	OnResetFrames = function()
-		store.FrameMeta = nil
+	OnResetFrames = function(trigger)
+		if trigger == "default" then store.FrameMeta = nil end
 		if frame then setFramePosition(frame, store) end
 	end,
 	OnSavedVariablesRestore = function(savedVariables)

@@ -26,7 +26,7 @@ local setCastbarSize = function(f, s)
 end
 
 local setFramePosition = function(f, s)
-	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
+	Quiver_Event_FrameLock_SideEffectRestoreSize(s, {
 		w=240, h=20, dx=240 * -0.5, dy=-116,
 	})
 	f:SetWidth(s.FrameMeta.W)
@@ -71,8 +71,8 @@ local createUI = function()
 	centerVertically(f.SpellName)
 
 	setFramePosition(f, store)
-	Quiver_Event_FrameLock_MakeMoveable(f, store.FrameMeta)
-	Quiver_Event_FrameLock_MakeResizeable(f, store.FrameMeta, {
+	Quiver_Event_FrameLock_SideEffectMakeMoveable(f, store)
+	Quiver_Event_FrameLock_SideEffectMakeResizeable(f, store, {
 		GripMargin=0,
 		OnResizeEnd=function() setCastbarSize(f, store) end,
 		IsCenterX=true,
@@ -150,8 +150,8 @@ Quiver_Module_Castbar = {
 	OnDisable = onDisable,
 	OnInterfaceLock = function() if not isCasting then frame:Hide() end end,
 	OnInterfaceUnlock = function() frame:Show() end,
-	OnResetFrames = function()
-		store.FrameMeta = nil
+	OnResetFrames = function(trigger)
+		if trigger == "default" then store.FrameMeta = nil end
 		if frame then setFramePosition(frame, store) end
 	end,
 	OnSavedVariablesRestore = function(savedVariables)

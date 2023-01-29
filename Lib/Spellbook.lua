@@ -104,8 +104,8 @@ Quiver_Lib_Spellbook_CheckNewGCD = function(lastCdStart)
 	local spellId = getSpellIndexByName(QUIVER_T.Spellbook.Serpent_Sting)
 	if spellId ~= nil then
 		local timeStartCD, durationCD = GetSpellCooldown(spellId, "BOOKTYPE_SPELL")
-		-- Sometimes spells return a CD of 0 when cast fails
-		-- If it's non-zero, we should have a valid timeStart to check
+		-- Sometimes spells return a CD of 0 when cast fails.
+		-- If it's non-zero, we have a valid timeStart to check.
 		if durationCD == 1.5 and timeStartCD ~= lastCdStart then
 			return true, timeStartCD
 		end

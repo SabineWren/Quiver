@@ -145,7 +145,7 @@ end
 
 local setFramePosition = function(f, s)
 	local height = getIdealFrameHeight()
-	s.FrameMeta = Quiver_Event_FrameLock_RestoreSize(s.FrameMeta, {
+	Quiver_Event_FrameLock_SideEffectRestoreSize(s, {
 		w=WIDTH_FRAME_DEFAULT, h=height, dx=110, dy=150,
 	})
 	f:SetWidth(s.FrameMeta.W)
@@ -165,8 +165,8 @@ local createUI = function()
 	frame:SetBackdropBorderColor(0.6, 0.9, 0.7, 1.0)
 
 	setFramePosition(frame, store)
-	Quiver_Event_FrameLock_MakeMoveable(frame, store.FrameMeta)
-	Quiver_Event_FrameLock_MakeResizeable(frame, store.FrameMeta, { GripMargin=4 })
+	Quiver_Event_FrameLock_SideEffectMakeMoveable(frame, store)
+	Quiver_Event_FrameLock_SideEffectMakeResizeable(frame, store, { GripMargin=4 })
 	return frame
 end
 
@@ -302,8 +302,8 @@ Quiver_Module_TranqAnnouncer = {
 		if getCanHide() then hideFrameDeleteBars() end
 	end,
 	OnInterfaceUnlock = function() frame:Show() end,
-	OnResetFrames = function()
-		store.FrameMeta = nil
+	OnResetFrames = function(trigger)
+		if trigger == "default" then store.FrameMeta = nil end
 		if frame then setFramePosition(frame, store) end
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
