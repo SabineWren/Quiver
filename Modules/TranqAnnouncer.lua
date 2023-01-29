@@ -237,22 +237,18 @@ local handleMsg = function(_source, msg)
 	end
 end
 
--- Using a state variable so we can remove most false positives.
--- Unhandled edge case -- Casting a different spell while mashing tranq shot will announce a tranq
-local isClickedTranq = false
-local handleCast = function(spellName)
-	if spellName == QUIVER_T.Spellbook.Tranquilizing_Shot then
-		isClickedTranq = true
-	end
-end
-
 local EVENTS = {
 	"CHAT_MSG_ADDON",-- Also works with macros
-	"CHAT_MSG_SPELL_SELF_DAMAGE",
-	"ITEM_LOCK_CHANGED",-- Inventory event, such as using ammo
-	"SPELLCAST_STOP",-- Finished cast
-	"SPELLCAST_FAILED",-- Too close, Spell on CD, already in progress, or success after dropping target
+	"CHAT_MSG_SPELL_SELF_DAMAGE",-- Detect misses
+	"SPELL_UPDATE_COOLDOWN",
 }
+local lastCastStart = 0
+local getHasFiredTranq = function()
+	local isCast, cdStart = Quiver_Lib_Spellbook_CheckNewCd(
+		TRANQ_CD_SEC, lastCastStart, QUIVER_T.Spellbook.Tranquilizing_Shot)
+	lastCastStart = cdStart
+	return isCast
+end
 local handleEvent = function()
 	if event == "CHAT_MSG_ADDON" then
 		handleMsg(arg1, arg2)
@@ -264,17 +260,15 @@ local handleEvent = function()
 			Quiver_Lib_Print.Say(store.MsgTranqMiss)
 			Quiver_Lib_Print.Raid(store.MsgTranqMiss)
 		end
-	elseif event == "SPELLCAST_STOP" or event == "SPELLCAST_FAILED" then
-		isClickedTranq = false
-	elseif event == "ITEM_LOCK_CHANGED" then
-		if isClickedTranq then
+	elseif event == "SPELL_UPDATE_COOLDOWN" then
+		if getHasFiredTranq() then
 			message.Broadcast()
 			if store.TranqChannel == "/Say" then
 				Quiver_Lib_Print.Say(store.MsgTranqCast)
 			elseif store.TranqChannel == "/Raid" then
 				Quiver_Lib_Print.Raid(store.MsgTranqCast)
+			-- else don't announce
 			end
-			isClickedTranq = false
 		end
 	end
 end
@@ -284,12 +278,10 @@ local onEnable = function()
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
-	Quiver_Event_Spellcast_Instant.Subscribe(MODULE_ID, handleCast)
 	if getCanHide() then hideFrameDeleteBars() else frame:Show() end
 end
 local onDisable = function()
 	frame:Hide()
-	Quiver_Event_Spellcast_Instant.Dispose(MODULE_ID)
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 

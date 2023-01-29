@@ -93,22 +93,26 @@ local getSpellIndexByName = function(spellName)
 	local numSpells = indexOffset + numEntries
 	local offset = 0
 	for spellIndex=numSpells, offset+1, -1 do
-		if GetSpellName(spellIndex, "BOOKTYPE_SPELL") == spellName then
+		if GetSpellName(spellIndex, BOOKTYPE_SPELL) == spellName then
 			return spellIndex;
 		end
 	end
 	return nil
 end
 
-Quiver_Lib_Spellbook_CheckNewGCD = function(lastCdStart)
-	local spellId = getSpellIndexByName(QUIVER_T.Spellbook.Serpent_Sting)
+Quiver_Lib_Spellbook_CheckNewCd = function(cooldown, lastCdStart, spellName)
+	local spellId = getSpellIndexByName(spellName)
 	if spellId ~= nil then
-		local timeStartCD, durationCD = GetSpellCooldown(spellId, "BOOKTYPE_SPELL")
+		local timeStartCD, durationCD = GetSpellCooldown(spellId, BOOKTYPE_SPELL)
 		-- Sometimes spells return a CD of 0 when cast fails.
 		-- If it's non-zero, we have a valid timeStart to check.
-		if durationCD == 1.5 and timeStartCD ~= lastCdStart then
+		if durationCD == cooldown and timeStartCD ~= lastCdStart then
 			return true, timeStartCD
 		end
 	end
 	return false, lastCdStart
+end
+
+Quiver_Lib_Spellbook_CheckNewGCD = function(lastCdStart)
+	return Quiver_Lib_Spellbook_CheckNewCd(1.5, lastCdStart, QUIVER_T.Spellbook.Serpent_Sting)
 end
