@@ -139,10 +139,9 @@ OnInterfaceUnlock: unit -> unit
 Not called while module disabled.
 Called every time user unlocks the UI.
 
-OnResetFrames: "default" | "rescale" -> unit
-Called with "default" when user clicks a reset button.
-Called with "rescale" when "Use UI Scale" option toggled.
-Can be called while module disabled.
+OnResetFrames: unit -> unit
+Called when user clicks a reset button.
+Reset All calls this even while module disabled.
 
 OnSavedVariablesRestore: table -> unit
 GameEvent: "PLAYER_LOGIN"

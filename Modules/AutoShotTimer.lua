@@ -268,7 +268,7 @@ Quiver_Module_AutoShotTimer = {
 	end,
 	OnInterfaceUnlock = function() frame:SetAlpha(1) end,
 	OnResetFrames = function(trigger)
-		if trigger == "default" then store.FrameMeta = nil end
+		store.FrameMeta = nil
 		if frame then setFramePosition(frame, store) end
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
