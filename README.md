@@ -58,12 +58,11 @@ Never lose track of your current aspect
 - Based on [Egnar](https://github.com/Medeah/Egnar)
 - Automatically locates action bar slots
 - Warns you when abilities missing from action bar
-- Persists size and position
 
 Requires some raw spellbook abilities on your action bars (not macros). Hidden action bars work fine.
 
 ### Tranq Shot Announcer
-<img src="/Media/Tranq_UI.jpg">
+<img src="/Media/Tranq_UI.png">
 
 Shows the Tranquilizing Shot cooldown of every hunter. Announces when casting Tranq, and again if the shot misses.
 
