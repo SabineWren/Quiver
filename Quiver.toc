@@ -7,12 +7,7 @@
 
 Lib\F.lua
 Constants.lua
-
 Locale\enUS.lua
-Locale\deDE.lua
-Locale\frFR.lua
-Locale\ruRU.lua
-Locale\zhCN.lua
 
 Lib\Aura.lua
 Lib\Print.lua

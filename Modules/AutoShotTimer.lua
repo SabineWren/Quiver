@@ -238,9 +238,27 @@ local handleEvent = function()
 	end
 end
 
+-- ************ Enable macros that avoid clipping shots ************
+local castNoClip = function(spellName)
+	return function(_args, _box)
+		local isMidShot = isShooting and not isReloading
+		if not isMidShot and not isCasting then
+			CastSpellByName(spellName)
+		end
+	end
+end
+
 -- ************ Initialization ************
 local onEnable = function()
-	if frame == nil then frame = createUI() end
+	if frame == nil then
+		frame = createUI()
+		SLASH_QQAIMEDSHOT1 = "/qqaimedshot"
+		SLASH_QQMULTISHOT1 = "/qqmultishot"
+		SLASH_QQTRUESHOT1 = "/qqtrueshot"
+		SlashCmdList["QQAIMEDSHOT"] = castNoClip("Aimed Shot")
+		SlashCmdList["QQMULTISHOT"] = castNoClip("Multi-shot")
+		SlashCmdList["QQTRUESHOT"] = castNoClip("Trueshot")
+	end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end

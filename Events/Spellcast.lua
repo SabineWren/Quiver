@@ -62,10 +62,12 @@ CastSpell = function(spellIndex, spellbookTabNum)
 	local spellName, _rank = GetSpellName(spellIndex, spellbookTabNum)
 	handleCastByName(spellName)
 end
+-- Some spells trigger this one time when spamming, others multiple
 CastSpellByName = function(spellName, onSelf)
 	super.CastSpellByName(spellName, onSelf)
 	handleCastByName(spellName)
 end
+-- Trigger multiple times when spamming the cast
 UseAction = function(slot, checkCursor, onSelf)
 	super.UseAction(slot, checkCursor, onSelf)
 	if not IsCurrentAction(slot) then return end
