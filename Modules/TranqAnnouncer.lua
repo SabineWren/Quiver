@@ -244,7 +244,7 @@ local EVENTS = {
 }
 local lastCastStart = 0
 local getHasFiredTranq = function()
-	local isCast, cdStart = Quiver_Lib_Spellbook_CheckNewCd(
+	local isCast, cdStart = Quiver_Lib_Spellbook.CheckNewCd(
 		TRANQ_CD_SEC, lastCastStart, QUIVER_T.Spellbook.Tranquilizing_Shot)
 	lastCastStart = cdStart
 	return isCast

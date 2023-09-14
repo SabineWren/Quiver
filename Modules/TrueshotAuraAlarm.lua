@@ -19,7 +19,7 @@ local aura = (function()
 			return knowsAura and lastUpdate > updateDelay
 		end,
 		UpdateUI = function()
-			knowsAura = Quiver_Lib_Spellbook_GetIsSpellLearned(QUIVER_T.Spellbook.TrueshotAura)
+			knowsAura = Quiver_Lib_Spellbook.GetIsSpellLearned(QUIVER_T.Spellbook.TrueshotAura)
 				or not Quiver_Store.IsLockedFrames
 			isActive, timeLeft = Quiver_Lib_Aura_GetIsActiveTimeLeftByTexture(QUIVER.Icon.Trueshot)
 			lastUpdate = 0

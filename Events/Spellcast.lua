@@ -8,7 +8,7 @@ end
 -- Hooks get called even if spell didn't fire, but successful cast triggers GCD.
 local lastGcdStart = 0
 local checkGCD = function()
-	local isTriggeredGcd, newStart = Quiver_Lib_Spellbook_CheckNewGCD(lastGcdStart)
+	local isTriggeredGcd, newStart = Quiver_Lib_Spellbook.CheckNewGCD(lastGcdStart)
 	lastGcdStart = newStart
 	return isTriggeredGcd
 end
@@ -48,7 +48,17 @@ local super = {
 	CastSpellByName = CastSpellByName,
 	UseAction = UseAction,
 }
+local findSlot = Quiver_Lib_ActionBar_FindSlot("spellcast")
+local println = Quiver_Lib_Print_Factory("spellcast")
 local handleCastByName = function(spellName)
+	for shotName, _ in Quiver_Lib_Spellbook.HUNTER_CASTABLE_SHOTS do
+		local knowsShot = Quiver_Lib_Spellbook.GetIsSpellLearned(shotName)
+		-- Bad code... findSlot has side effect of printing when a spell isn't on bars
+		if knowsShot and findSlot(shotName) == 0 and spellName == shotName then
+			println.Warning(spellName .. " not on action bars, so can't track cast.")
+		end
+	end
+
 	-- We pre-hook the cast, so confirm we actually cast it before triggering callbacks.
 	-- If it's castable, then check we're casting it, else check that we triggered GCD.
 	if Quiver_Lib_Spellbook_GetIsSpellCastableShot(spellName) then
@@ -74,6 +84,6 @@ UseAction = function(slot, checkCursor, onSelf)
 	-- Raw abilities return a nil action name. Macros, items, etc. don't.
 	if GetActionText(slot) or not IsCurrentAction(slot) or GetActionText(slot) ~= nil then return end
 	local actionTexture = GetActionTexture(slot)
-	local spellName = Quiver_Lib_Spellbook_GetSpellNameFromTexture(actionTexture)
+	local spellName = Quiver_Lib_Spellbook.GetSpellNameFromTexture(actionTexture)
 	handleCastByName(spellName)
 end

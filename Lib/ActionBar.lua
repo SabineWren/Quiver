@@ -17,27 +17,30 @@ local tryFindSlot = function(texture)
 	return nil
 end
 
-Quiver_Lib_ActionBar_FindSlot = function(println, nameSeek)
-	if actionBarSlotCache[nameSeek] ~= nil then return actionBarSlotCache[nameSeek] end
+Quiver_Lib_ActionBar_FindSlot = function(callerName)
+	local println = Quiver_Lib_Print_Factory(callerName)
+	return function(nameSeek)
+		if actionBarSlotCache[nameSeek] ~= nil then return actionBarSlotCache[nameSeek] end
 
-	local texture = Quiver_Lib_Spellbook_TryFindTexture(nameSeek)
-	table.insert(requiredSpells, nameSeek)
-	if texture == nil then
-		println.Warning("Can't find in spellbook: "..nameSeek)
-		actionBarSlotCache[nameSeek] = 0
-		return 0
+		local texture = Quiver_Lib_Spellbook_TryFindTexture(nameSeek)
+		table.insert(requiredSpells, nameSeek)
+		if texture == nil then
+			println.Warning("Can't find in spellbook: "..nameSeek)
+			actionBarSlotCache[nameSeek] = 0
+			return 0
+		end
+
+		local slot = tryFindSlot(texture)
+		if slot == nil then
+			println.Warning("Can't find on action bars: "..nameSeek)
+			println.Warning("Searched for texture: "..texture)
+			actionBarSlotCache[nameSeek] = 0
+			return 0
+		end
+
+		actionBarSlotCache[nameSeek] = slot
+		return slot
 	end
-
-	local slot = tryFindSlot(texture)
-	if slot == nil then
-		println.Warning("Can't find on action bars: "..nameSeek)
-		println.Warning("Searched for texture: "..texture)
-		actionBarSlotCache[nameSeek] = 0
-		return 0
-	end
-
-	actionBarSlotCache[nameSeek] = slot
-	return slot
 end
 
 local getIsRequiredSpell = function(spellName)

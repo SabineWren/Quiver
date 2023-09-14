@@ -17,7 +17,7 @@ local chooseIconTexture = function()
 		return QUIVER.Icon.Aspect_Wild
 	elseif Quiver_Lib_Aura_GetIsBuffActive(QUIVER_T.Spellbook.Aspect_Wolf) then
 		return QUIVER.Icon.Aspect_Wolf
-	elseif Quiver_Lib_Spellbook_GetIsSpellLearned(QUIVER_T.Spellbook.Aspect_Hawk)
+	elseif Quiver_Lib_Spellbook.GetIsSpellLearned(QUIVER_T.Spellbook.Aspect_Hawk)
 		and not Quiver_Lib_Aura_GetIsBuffActive(QUIVER_T.Spellbook.Aspect_Hawk)
 		or not Quiver_Store.IsLockedFrames
 	then

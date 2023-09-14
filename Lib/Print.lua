@@ -15,9 +15,9 @@ Quiver_Lib_Print = {
 	Say = function(text) SendChatMessage(text, "Say") end,
 }
 
-Quiver_Lib_Print_Factory = function(mid)
+Quiver_Lib_Print_Factory = function(callerName)
 	local noNil = function(text) return text or "nil" end
-	local prefix = "Quiver ["..QUIVER_T.ModuleName[mid].."] -- "
+	local prefix = "Quiver ["..callerName.."] -- "
 	return {
 		Danger = function(text) danger(prefix..noNil(text)) end,
 		Neutral = function(text) neutral(prefix..noNil(text)) end,

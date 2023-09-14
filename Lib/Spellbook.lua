@@ -3,7 +3,8 @@ local HUNTER_CASTABLE_SHOTS = {
 	[QUIVER_T.Spellbook.Multi_Shot] = 0.5,
 	[QUIVER_T.Spellbook.Trueshot] = 1.3,
 }
-local HUNTER_INSTANT_SHOTS = {
+
+local _HUNTER_INSTANT_SHOTS = {
 	QUIVER_T.Spellbook.Arcane_Shot,
 	QUIVER_T.Spellbook.Concussive_Shot,
 	QUIVER_T.Spellbook.Scatter_Shot,
@@ -13,7 +14,7 @@ local HUNTER_INSTANT_SHOTS = {
 	QUIVER_T.Spellbook.Wyvern_Sting,
 }
 
-Quiver_Lib_Spellbook_GetIsSpellLearned = function(spellName)
+local GetIsSpellLearned = function(spellName)
 	local i = 0
 	while true do
 		i = i + 1
@@ -28,7 +29,7 @@ end
 -- know if that's true for all spells, but at time of writing
 -- we only care about spells that consume ammo.
 local cacheTextureName = {}
-Quiver_Lib_Spellbook_GetSpellNameFromTexture = function(textureSeek)
+local GetSpellNameFromTexture = function(textureSeek)
 	if cacheTextureName[textureSeek] ~= nil then
 		return cacheTextureName[textureSeek]
 	end
@@ -80,7 +81,7 @@ Quiver_Lib_Spellbook_GetIsSpellCastableShot = function(spellName)
 	return false
 end
 Quiver_Lib_Spellbook_GetIsSpellInstantShot = function(spellName)
-	for _index, name in HUNTER_INSTANT_SHOTS do
+	for _index, name in _HUNTER_INSTANT_SHOTS do
 		if spellName == name then return true end
 	end
 	return false
@@ -100,7 +101,7 @@ local getSpellIndexByName = function(spellName)
 	return nil
 end
 
-Quiver_Lib_Spellbook_CheckNewCd = function(cooldown, lastCdStart, spellName)
+local CheckNewCd = function(cooldown, lastCdStart, spellName)
 	local spellId = getSpellIndexByName(spellName)
 	if spellId ~= nil then
 		local timeStartCD, durationCD = GetSpellCooldown(spellId, BOOKTYPE_SPELL)
@@ -113,6 +114,14 @@ Quiver_Lib_Spellbook_CheckNewCd = function(cooldown, lastCdStart, spellName)
 	return false, lastCdStart
 end
 
-Quiver_Lib_Spellbook_CheckNewGCD = function(lastCdStart)
-	return Quiver_Lib_Spellbook_CheckNewCd(1.5, lastCdStart, QUIVER_T.Spellbook.Serpent_Sting)
+local CheckNewGCD = function(lastCdStart)
+	return CheckNewCd(1.5, lastCdStart, QUIVER_T.Spellbook.Serpent_Sting)
 end
+
+Quiver_Lib_Spellbook = {
+	CheckNewCd=CheckNewCd,
+	CheckNewGCD=CheckNewGCD,
+	GetIsSpellLearned = GetIsSpellLearned,
+	GetSpellNameFromTexture=GetSpellNameFromTexture,
+	HUNTER_CASTABLE_SHOTS=HUNTER_CASTABLE_SHOTS,
+}

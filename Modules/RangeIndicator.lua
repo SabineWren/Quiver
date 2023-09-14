@@ -1,8 +1,6 @@
 local MODULE_ID = "RangeIndicator"
 local store = nil
 local frame = nil
-
-local println = Quiver_Lib_Print_Factory(MODULE_ID)
 local fontString = nil
 
 local setFramePosition = function(f, s)
@@ -42,13 +40,12 @@ local createUI = function()
 	return f, fs
 end
 
--- IsSpellInRange isn't in 1.12 API, so we need to check action bar
+local findSlot = Quiver_Lib_ActionBar_FindSlot(QUIVER_T.ModuleName[MODULE_ID])
 local checkActionBarDistance = function(spellName)
-	local slot = Quiver_Lib_ActionBar_FindSlot(println, spellName)
+	local slot = findSlot(spellName)
 	return IsActionInRange(slot) == 1
 end
 local checkDistance = {
-	-- High Performance Builtin
 	-- https://wowwiki-archive.fandom.com/wiki/API_CheckInteractDistance
 	Inspect=function() return CheckInteractDistance("target", 1) end,-- 28 yards
 	Trade=function() return CheckInteractDistance("target", 2) end,-- 11.11 yards
