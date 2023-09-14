@@ -46,6 +46,12 @@ Never lose track of your current aspect
 - Ignores instant spells such as Arcane Shot; taken from [HSK](https://github.com/anstellaire/HunterSwissKnife)
 - Works with Trueshot
 
+Auto Shot Timer module also enables macros that avoid clipping auto shot:
+- Aimed Shot `/qqaimedshot`
+- Multi-Shot `/qqmultishot`
+- Trueshot `/qqtrueshot`
+Casting this way won't interrupt current cast, so move first if casting volley.
+
 ### Castbar
 <img src="/Media/Bar_3_Casting.jpg" height="180px">
 
