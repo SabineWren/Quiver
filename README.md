@@ -50,6 +50,7 @@ Auto Shot Timer module also enables macros that avoid clipping auto shot:
 - Aimed Shot `/qqaimedshot`
 - Multi-Shot `/qqmultishot`
 - Trueshot `/qqtrueshot`
+
 Casting this way won't interrupt current cast, so move first if casting volley.
 
 ### Castbar
