@@ -27,7 +27,7 @@ local aura = (function()
 			if not Quiver_Store.IsLockedFrames or knowsAura and not isActive then
 				frame.Icon:SetAlpha(0.75)
 				frame:SetBackdropBorderColor(1, 0, 0, 0.8)
-			elseif knowsAura and isActive and timeLeft < MINUTES_LEFT_WARNING * 60 then
+			elseif knowsAura and isActive and timeLeft > 0 and timeLeft < MINUTES_LEFT_WARNING * 60 then
 				frame.Icon:SetAlpha(0.4)
 				frame:SetBackdropBorderColor(0, 0, 0, 0.1)
 			else
