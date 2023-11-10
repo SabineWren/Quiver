@@ -17,7 +17,7 @@ Quiver_Module_pfUITurtleTrueshot = function()
 		-- Somehow player isn't defined, but all the other locals from pfUI work
 		local player = UnitName("player")
 		if begin then
-			local castTime, start = Quiver_Lib_Spellbook_GetCastTime(QUIVER_T.Spellbook.Trueshot)
+			local castTime, start = Quiver_Lib_Spellbook_CalcCastTime(QUIVER_T.Spellbook.Trueshot)
 			local duration = duration or (castTime * 1000)
 			-- add cast action to the database
 			libcast.db[player].cast = trueshotName

@@ -83,12 +83,12 @@ end
 -- ************ Custom Event Handlers ************
 local displayTime = function(current)
 	if current < 0 then current = 0 end
-	frame.SpellTime:SetText(string.format("%.1f / %.1f", current, castTime))
+	frame.SpellTime:SetText(string.format("%.1f / %.2f", current, castTime))
 end
 local onSpellcast = function(spellName)
 	if isCasting then return end
 	isCasting = true
-	castTime, timeStartCasting = Quiver_Lib_Spellbook_GetCastTime(spellName)
+	castTime, timeStartCasting = Quiver_Lib_Spellbook_CalcCastTime(spellName)
 	frame.SpellName:SetText(spellName)
 	frame.Castbar:SetWidth(1)
 	displayTime(0)

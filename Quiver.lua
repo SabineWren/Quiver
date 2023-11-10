@@ -9,12 +9,14 @@ _G.Quiver_Modules = {
 }
 
 local savedVariablesRestore = function()
+	-- If first time running Quiver, then savedVars are nil, so make defaults
 	Quiver_Store.IsLockedFrames = Quiver_Store.IsLockedFrames == true
 	Quiver_Store.ModuleEnabled = Quiver_Store.ModuleEnabled or {}
 	Quiver_Store.ModuleStore = Quiver_Store.ModuleStore or {}
 	for _k, v in _G.Quiver_Modules do
 		Quiver_Store.ModuleEnabled[v.Id] = Quiver_Store.ModuleEnabled[v.Id] ~= false
 		Quiver_Store.ModuleStore[v.Id] = Quiver_Store.ModuleStore[v.Id] or {}
+		-- Loading saved variables into each module gives them a chance to set their own defaults.
 		v.OnSavedVariablesRestore(Quiver_Store.ModuleStore[v.Id])
 	end
 end

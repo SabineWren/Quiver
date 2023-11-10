@@ -1,7 +1,8 @@
+-- TODO parse spellbook in case a patch changes them, instead of hard-coding here
 local HUNTER_CASTABLE_SHOTS = {
 	[QUIVER_T.Spellbook.Aimed_Shot] = 3.0,
-	[QUIVER_T.Spellbook.Multi_Shot] = 0.5,
-	[QUIVER_T.Spellbook.Trueshot] = 1.3,
+	[QUIVER_T.Spellbook.Multi_Shot] = 0.0,
+	[QUIVER_T.Spellbook.Trueshot] = 1.0,
 }
 
 local _HUNTER_INSTANT_SHOTS = {
@@ -13,6 +14,46 @@ local _HUNTER_INSTANT_SHOTS = {
 	QUIVER_T.Spellbook.Viper_Sting,
 	QUIVER_T.Spellbook.Wyvern_Sting,
 }
+
+local calcRangedWeaponSpeedBase = (function()
+	local resetTooltip = Quiver_Lib_Tooltip_Factory("QuiverRangedWeaponScanningTooltip")
+
+	-- Might be cachable. GetInventoryItemLink("Player", slot#) returns a link, ex. [name]
+	-- Weapon name always appears at line TextLeft1
+	return function()
+		local tooltip = resetTooltip()
+		tooltip:ClearLines()
+		tooltip:SetInventoryItem("player", 18)-- ranged weapon slot
+
+		for i=1, tooltip:NumLines() do
+			local fs = _G["QuiverRangedWeaponScanningTooltipTextRight"..i]
+			local text = fs and fs:GetText()
+			if text ~= nil then
+				local _, _, speed = string.find(text, "Speed (%d+%.%d+)")
+				if speed ~= nil then
+					local parsed = tonumber(speed)
+					if parsed ~= nil then
+						return parsed
+					end
+				end
+			end
+		end
+	end
+end)()
+
+Quiver_Lib_Spellbook_CalcCastTime = function(spellName)
+	local baseTime = HUNTER_CASTABLE_SHOTS[spellName]
+	local _,_, msLatency = GetNetStats()
+	local start = GetTime() + msLatency / 1000
+
+	local speedCurrent = UnitRangedDamage("player")
+	local speedBase = calcRangedWeaponSpeedBase()
+	local speedMultiplier = speedCurrent / speedBase
+
+	-- https://www.mmo-champion.com/content/2188-Patch-4-0-6-Feb-22-Hotfixes-Blue-Posts-Artworks-Comic
+	local casttime = 0.5 + baseTime * speedMultiplier
+	return casttime, start
+end
 
 local GetIsSpellLearned = function(spellName)
 	local i = 0
@@ -64,14 +105,6 @@ Quiver_Lib_Spellbook_TryFindTexture = function(nameSeek)
 			return texture
 		end
 	end
-end
-
-Quiver_Lib_Spellbook_GetCastTime = function(spellName)
-	local baseTime = HUNTER_CASTABLE_SHOTS[spellName]
-	local _,_, msLatency = GetNetStats()
-	local start = GetTime() + msLatency / 1000
-	local casttime = baseTime / Quiver_Lib_Aura_GetRangedAttackSpeedMultiplier()
-	return casttime, start
 end
 
 Quiver_Lib_Spellbook_GetIsSpellCastableShot = function(spellName)
