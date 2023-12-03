@@ -6,7 +6,8 @@ local BORDER = 1
 local castTime = 0
 local isCasting = false
 local isFiredInstant = false
-local timeStartCast = 0
+local timeStartCastLatAdjusted = 0
+local timeStartLocal = 0
 -- Auto Shot
 local AIMING_TIME = 0.65
 local isReloading = false
@@ -14,6 +15,12 @@ local isShooting = false
 local maxBarWidth = 0
 local reloadTime = 0
 local timeStartShootOrReload = GetTime()
+
+local log = function(text)
+	if Quiver_Store.DebugLevel == "Verbose" then
+		DEFAULT_CHAT_FRAME:AddMessage(text)
+	end
+end
 
 local position = (function()
 	local x, y = 0, 0
@@ -106,7 +113,10 @@ local updateBarShooting = function()
 end
 
 local startReloading = function()
-	if not isReloading then timeStartShootOrReload = GetTime() end
+	if not isReloading then
+		timeStartShootOrReload = GetTime()
+		log("starting reload")
+	end
 	isReloading = true
 	reloadTime = UnitRangedDamage("player") - AIMING_TIME
 end
@@ -134,6 +144,7 @@ local updateBarReload = function()
 	if timePassed <= reloadTime then
 		frame.BarAutoShot:SetWidth(maxBarWidth - maxBarWidth * timePassed / reloadTime)
 	else
+		log("End reload")
 		isReloading = false
 		if isShooting then
 			startShooting()
@@ -191,7 +202,8 @@ local onSpellcast = function(spellName)
 	if isShooting and (not isReloading) then
 		timeStartShootOrReload = GetTime()
 	end
-	castTime, timeStartCast = Quiver_Lib_Spellbook_CalcCastTime(spellName)
+	castTime, timeStartCastLatAdjusted, timeStartLocal = Quiver_Lib_Spellbook_CalcCastTime(spellName)
+	log("Start Cast :" .. string.format(" %.3f to %.3f / %.3f", GetTime() - timeStartCastLatAdjusted, GetTime() - timeStartLocal, castTime))
 end
 
 local handleEvent = function()
@@ -212,17 +224,26 @@ local handleEvent = function()
 		-- If we fired an Auto Shot at the same time, then "ITEM_LOCK_CHANGED" will
 		-- trigger twice before "SPELLCAST_STOP", so we mark the first one as done.
 			isFiredInstant = false
+			log("Instant Shot")
 		elseif isCasting then
-			local elapsed = GetTime() - timeStartCast
-			if isShooting and elapsed < castTime then
+			-- This check is hard to make reliable.
+			-- The fastest possible cast (multi-shot) takes 0.5 seconds, so we can use any number between that and zero.
+			local elapsedMax = GetTime() - timeStartLocal
+			local elapsedMin = GetTime() - timeStartCastLatAdjusted
+			if isShooting and elapsedMax <= 0.25 then
 		-- Case 3 - We started casting immediately after firing an Auto Shot. We're casting and reloading.
+				log("Auto Fired - Starting Cast: " .. string.format(" %.3f to %.3f / %.3f", elapsedMin, elapsedMax, castTime))
 				startReloading()
 			else
 		-- Case 4 - We finished a cast. If we're done reloading, we can shoot again
+				log("Cast Fired")
 				if not isReloading then timeStartShootOrReload = GetTime() end
 				isCasting = false
 			end
+		-- TODO on rare occasions this doesn't trigger (less than once per 5 minutes shooting).
+		-- Need more debug logging and QA time.
 		elseif isShooting then
+			log("Auto Fired")
 		-- Case 5 - Fired Auto Shot
 		-- Works even if we cancelled Auto Shot as we fired because "STOP_AUTOREPEAT_SPELL" is lower priority.
 			startReloading()
@@ -232,8 +253,10 @@ local handleEvent = function()
 	elseif e == "SPELLCAST_STOP" or e == "SPELLCAST_FAILED" or e == "SPELLCAST_INTERRUPTED" then
 		isCasting = false
 	elseif e == "START_AUTOREPEAT_SPELL" then
+		log("Start shooting")
 		startShooting()
 	elseif e == "STOP_AUTOREPEAT_SPELL" then
+		log("Stop shooting")
 		isShooting = false
 	end
 end

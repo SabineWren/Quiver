@@ -119,14 +119,34 @@ Quiver_Config_MainMenu_Create = function()
 	colorPickers:SetPoint("Right", f, "Right", -PADDING_FAR, 0)
 	f:SetWidth(PADDING_FAR + controls:GetWidth() + PADDING_FAR + colorPickers:GetWidth() + PADDING_FAR)
 
+	local selectDebugLevel = Quiver_Component_DropdownSelect(f,
+		"Debug Level", { "None", "Verbose" },
+		Quiver_Store.DebugLevel
+	)
+	local debugX = 0.5 * (PADDING_FAR + controls:GetWidth() + PADDING_FAR - selectDebugLevel:GetWidth())
+	local debugY = yOffset - colorPickers:GetHeight() + selectDebugLevel:GetHeight() + QUIVER.Size.Gap
+	selectDebugLevel:SetPoint("Left", f, "Left", debugX, 0)
+	selectDebugLevel:SetPoint("Top", f, "Top", 0, debugY)
+	-- Dropdown options
+	for _k,oLoop in selectDebugLevel.Menu.Options do
+		local option = oLoop
+		option:SetScript("OnClick", function()
+			local text = option.Text:GetText()
+			Quiver_Store.DebugLevel = text
+			selectDebugLevel.Selected:SetText(text)
+			selectDebugLevel.Menu:Hide()
+		end)
+	end
+
+	-- Dropdown tranq shot announce channel
 	local selectChannelHit = Quiver_Component_DropdownSelect(f,
 		"Tranq Speech", { "None", "/Say", "/Raid" },
 		Quiver_Store.ModuleStore[Quiver_Module_TranqAnnouncer.Id].TranqChannel)
 	local tranqX = 0.5 * (PADDING_FAR + controls:GetWidth() + PADDING_FAR - selectChannelHit:GetWidth())
-	local tranqY = yOffset - colorPickers:GetHeight() + selectChannelHit:GetHeight() + QUIVER.Size.Gap
+	local tranqY = debugY + QUIVER.Size.Gap + selectChannelHit:GetHeight()
 	selectChannelHit:SetPoint("Left", f, "Left", tranqX, 0)
 	selectChannelHit:SetPoint("Top", f, "Top", 0, tranqY)
-
+	-- Dropdown options
 	for _k,oLoop in selectChannelHit.Menu.Options do
 		local option = oLoop
 		option:SetScript("OnClick", function()

@@ -44,7 +44,8 @@ end)()
 Quiver_Lib_Spellbook_CalcCastTime = function(spellName)
 	local baseTime = HUNTER_CASTABLE_SHOTS[spellName]
 	local _,_, msLatency = GetNetStats()
-	local start = GetTime() + msLatency / 1000
+	local startLocal = GetTime()
+	local startLatAdjusted = startLocal + msLatency / 1000
 
 	local speedCurrent = UnitRangedDamage("player")
 	local speedBase = calcRangedWeaponSpeedBase()
@@ -52,7 +53,7 @@ Quiver_Lib_Spellbook_CalcCastTime = function(spellName)
 
 	-- https://www.mmo-champion.com/content/2188-Patch-4-0-6-Feb-22-Hotfixes-Blue-Posts-Artworks-Comic
 	local casttime = 0.5 + baseTime * speedMultiplier
-	return casttime, start
+	return casttime, startLatAdjusted, startLocal
 end
 
 local GetIsSpellLearned = function(spellName)
