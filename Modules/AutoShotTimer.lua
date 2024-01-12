@@ -2,7 +2,7 @@ local MODULE_ID = "AutoShotTimer"
 local store = nil
 local frame = nil
 local BORDER = 1
--- Aimed Shot, Multi-Shot, Trueshot
+-- Aimed Shot, Multi-Shot, Throw, Trueshot
 local castTime = 0
 local isCasting = false
 local isFiredInstant = false
@@ -277,9 +277,13 @@ local onEnable = function()
 		frame = createUI()
 		SLASH_QQAIMEDSHOT1 = "/qqaimedshot"
 		SLASH_QQMULTISHOT1 = "/qqmultishot"
+		SLASH_QQMULTITHROW1 = "/qqmultithrow"
+		SLASH_QQTHROW1 = "/qqthrow"
 		SLASH_QQTRUESHOT1 = "/qqtrueshot"
 		SlashCmdList["QQAIMEDSHOT"] = castNoClip("Aimed Shot")
 		SlashCmdList["QQMULTISHOT"] = castNoClip("Multi-Shot")
+		SlashCmdList["QQMULTITHROW"] = castNoClip("Multi-Shot(Rank 1)")
+		SlashCmdList["QQTHROW"] = castNoClip("Throw")
 		SlashCmdList["QQTRUESHOT"] = castNoClip("Trueshot")
 	end
 	frame:SetScript("OnEvent", handleEvent)
