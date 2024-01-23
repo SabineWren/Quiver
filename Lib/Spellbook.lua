@@ -2,7 +2,6 @@
 local HUNTER_CASTABLE_SHOTS = {
 	[QUIVER_T.Spellbook.Aimed_Shot] = 3.0,
 	[QUIVER_T.Spellbook.Multi_Shot] = 0.0,
-	[QUIVER_T.Spellbook.Throw] = 0.0,
 	[QUIVER_T.Spellbook.Trueshot] = 1.0,
 }
 
