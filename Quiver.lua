@@ -42,14 +42,8 @@ local initSlashCommandsAndModules = function()
 	end
 end
 
-local loadPlugins = function()
-	if pfUI ~= nil and pfUI.RegisterModule ~= nil then
-		pfUI:RegisterModule("quiver_turtle_trueshot", Quiver_Module_pfUITurtleTrueshot)
-		pfUI:RegisterModule("quiver_turtle_mounts_auto_dismount", Quiver_Module_pfUITurtleMountsAutoDismount)
-	end
-end
-
 --[[
+// TODO revisit this now that we don't load any pfUI plugins
 https://wowpedia.fandom.com/wiki/AddOn_loading_process
 All of these events fire on login and UI reload. We don't need to clutter chat
 until the user interacts with Quiver, and we don't pre-cache action bars. That
@@ -74,7 +68,6 @@ frame:SetScript("OnEvent", function()
 		initSlashCommandsAndModules()
 	elseif event == "PLAYER_LOGIN" then
 		Quiver_Module_UpdateNotifier_Init()
-		loadPlugins()
 	elseif event == "PLAYER_LOGOUT" then
 		savedVariablesPersist()
 	elseif event == "ACTIONBAR_SLOT_CHANGED" then

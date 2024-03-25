@@ -57,7 +57,6 @@ Casting this way won't interrupt current cast, so move first if casting volley.
 <img src="/Media/Bar_3_Casting.jpg" height="180px">
 
 - Shows Aimed Shot, Multi-Shot, and Trueshot
-- Includes a pfUI module that adds Trueshot support to the pfUI castbar
 
 ### Range Indicator
 [<img src="/Media/Range_Indicator_Thumbnail.jpg" height="180px">](https://raw.githubusercontent.com/SabineWren/Quiver/main/Media/Range_Indicator_Preview.mp4)

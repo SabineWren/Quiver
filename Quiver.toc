@@ -31,7 +31,6 @@ Modules\AspectTracker.lua
 Modules\AutoShotTimer.lua
 Modules\Castbar.lua
 Modules\RangeIndicator.lua
-Modules\pfUIPlugins.lua
 Modules\TranqAnnouncer.lua
 Modules\TrueshotAuraAlarm.lua
 Modules\UpdateNotifier.lua
