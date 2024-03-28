@@ -183,6 +183,17 @@ Some actions trigger multiple events in sequence:
 -> ITEM_LOCK_CHANGED
 -> ITEM_LOCK_CHANGED
 -> SPELLCAST_STOP
+4. Auto Shot -> Casted Shot -> Instant Shot -> Auto Shot
+   Tricky case to handle. TODO: CURRENTLY BUGGED.
+-> ITEM_LOCK_CHANGED (auto)
+-> (hook) casting
+-> (hook) instant (spamming before cast finishes)
+-> ITEM_LOCK_CHANGED (casted)
+-> SPELLCAST_STOP (casted)
+-> (hook) instant (still spamming the instant)
+-> ITEM_LOCK_CHANGED (instant)
+-> SPELLCAST_STOP (instant)
+-> ITEM_LOCK_CHANGED (auto)
 ]]
 local EVENTS = {
 	"CHAT_MSG_SPELL_SELF_BUFF",-- To ignore whitelisted inventory events corresponding to consumables

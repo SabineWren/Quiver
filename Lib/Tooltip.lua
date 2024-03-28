@@ -12,9 +12,8 @@ end
 	@param frameName string name for tooltip element
 ]]
 Quiver_Lib_Tooltip_Factory = function(frameName)
-	local tooltip = nil
+	local tooltip = createTooltip(frameName)
 	return function()
-		if not tooltip then tooltip = createTooltip(frameName) end
 		tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
 		return tooltip
 	end
