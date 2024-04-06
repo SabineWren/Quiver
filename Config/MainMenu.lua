@@ -119,14 +119,18 @@ Quiver_Config_MainMenu_Create = function()
 	colorPickers:SetPoint("Right", f, "Right", -PADDING_FAR, 0)
 	f:SetWidth(PADDING_FAR + controls:GetWidth() + PADDING_FAR + colorPickers:GetWidth() + PADDING_FAR)
 
+	local dropdownX = PADDING_FAR + colorPickers:GetWidth() + PADDING_FAR
+	local dropdownY = 0
+
+	-- Dropdown debug level. Maybe hide this from users? Could use slash commands instead.
 	local selectDebugLevel = Quiver_Component_DropdownSelect(f,
-		"Debug Level", { "None", "Verbose" },
+		"Debug Level",
+		{ "None", "Verbose" },
 		Quiver_Store.DebugLevel
 	)
-	local debugX = 0.5 * (PADDING_FAR + controls:GetWidth() + PADDING_FAR - selectDebugLevel:GetWidth())
-	local debugY = yOffset - colorPickers:GetHeight() + selectDebugLevel:GetHeight() + QUIVER.Size.Gap
-	selectDebugLevel:SetPoint("Left", f, "Left", debugX, 0)
-	selectDebugLevel:SetPoint("Top", f, "Top", 0, debugY)
+	dropdownY = yOffset - colorPickers:GetHeight() + selectDebugLevel:GetHeight() + QUIVER.Size.Gap
+	selectDebugLevel:SetPoint("Right", f, "Right", -dropdownX, 0)
+	selectDebugLevel:SetPoint("Top", f, "Top", 0, dropdownY)
 	-- Dropdown options
 	for _k,oLoop in selectDebugLevel.Menu.Options do
 		local option = oLoop
@@ -138,14 +142,41 @@ Quiver_Config_MainMenu_Create = function()
 		end)
 	end
 
+	-- Dropdown auto shot bar direction
+	local directionToText = function()
+
+	end
+	local selectAutoShotTimerDirection = Quiver_Component_DropdownSelect(f,
+		QUIVER_T.ModuleName.AutoShotTimer,
+		{ QUIVER_T.AutoShot.LeftToRight, QUIVER_T.AutoShot.BothDirections },
+		QUIVER_T.AutoShot[Quiver_Store.ModuleStore[Quiver_Module_AutoShotTimer.Id].BarDirection]
+	)
+	dropdownY = dropdownY + QUIVER.Size.Gap + selectAutoShotTimerDirection:GetHeight()
+	selectAutoShotTimerDirection:SetPoint("Right", f, "Right", -dropdownX, 0)
+	selectAutoShotTimerDirection:SetPoint("Top", f, "Top", 0, dropdownY)
+	-- Dropdown options
+	for _k,oLoop in selectAutoShotTimerDirection.Menu.Options do
+		local option = oLoop
+		option:SetScript("OnClick", function()
+			local text = option.Text:GetText()
+			selectAutoShotTimerDirection.Selected:SetText(text)
+			selectAutoShotTimerDirection.Menu:Hide()
+			local direction = text == QUIVER_T.AutoShot.LeftToRight and "LeftToRight" or "BothDirections"
+			Quiver_Store.ModuleStore[Quiver_Module_AutoShotTimer.Id].BarDirection = direction
+			DEFAULT_CHAT_FRAME:AddMessage("Set to "..direction)
+			Quiver_Module_AutoShotTimer.UpdateDirection()
+		end)
+	end
+
 	-- Dropdown tranq shot announce channel
 	local selectChannelHit = Quiver_Component_DropdownSelect(f,
-		"Tranq Speech", { "None", "/Say", "/Raid" },
-		Quiver_Store.ModuleStore[Quiver_Module_TranqAnnouncer.Id].TranqChannel)
-	local tranqX = 0.5 * (PADDING_FAR + controls:GetWidth() + PADDING_FAR - selectChannelHit:GetWidth())
-	local tranqY = debugY + QUIVER.Size.Gap + selectChannelHit:GetHeight()
-	selectChannelHit:SetPoint("Left", f, "Left", tranqX, 0)
-	selectChannelHit:SetPoint("Top", f, "Top", 0, tranqY)
+		"Tranq Speech",
+		{ "None", "/Say", "/Raid" },
+		Quiver_Store.ModuleStore[Quiver_Module_TranqAnnouncer.Id].TranqChannel
+	)
+	dropdownY = dropdownY + QUIVER.Size.Gap + selectChannelHit:GetHeight()
+	selectChannelHit:SetPoint("Right", f, "Right", -dropdownX, 0)
+	selectChannelHit:SetPoint("Top", f, "Top", 0, dropdownY)
 	-- Dropdown options
 	for _k,oLoop in selectChannelHit.Menu.Options do
 		local option = oLoop

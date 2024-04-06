@@ -46,24 +46,30 @@ local isConsumable = false
 
 -- ************ UI ************
 local setBarAutoShot = function(f)
+	-- Coerce to boolean because there's nothing sensible to do if we have an invalid value.
+	if store.BarDirection == "LeftToRight" then
+		f.BarAutoShot:ClearAllPoints()
+		f.BarAutoShot:SetPoint("Left", f, "Left", BORDER, 0)
+	else
+		f.BarAutoShot:ClearAllPoints()
+		f.BarAutoShot:SetPoint("Center", f, "Center", 0, 0)
+	end
+
 	maxBarWidth = f:GetWidth() - 2 * BORDER
 	f.BarAutoShot:SetWidth(1)
 	f.BarAutoShot:SetHeight(f:GetHeight() - 2 * BORDER)
-end
-local setBarSizes = function(f, s)
-	f:SetWidth(s.FrameMeta.W)
-	f:SetHeight(s.FrameMeta.H)
-	setBarAutoShot(f)
 end
 
 local setFramePosition = function(f, s)
 	Quiver_Event_FrameLock_SideEffectRestoreSize(s, {
 		w=240, h=14, dx=240 * -0.5, dy=-136,
 	})
+
 	f:SetWidth(s.FrameMeta.W)
 	f:SetHeight(s.FrameMeta.H)
 	f:SetPoint("TopLeft", s.FrameMeta.X, s.FrameMeta.Y)
-	setBarSizes(f, s)
+
+	setBarAutoShot(f)
 end
 
 local createUI = function()
@@ -81,10 +87,9 @@ local createUI = function()
 	f:SetBackdropColor(0, 0, 0, 0.8)
 	f:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)
 
-	f.BarAutoShot:SetPoint("Center", f, "Center", 0, 0)
-
 	setFramePosition(f, store)
 	local resizeBarAutoShot = function() setBarAutoShot(f) end
+
 	Quiver_Event_FrameLock_SideEffectMakeMoveable(f, store)
 	Quiver_Event_FrameLock_SideEffectMakeResizeable(f, store, {
 		GripMargin=0,
@@ -364,8 +369,12 @@ Quiver_Module_AutoShotTimer = {
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
+		store.BarDirection = store.BarDirection or "LeftToRight"
 		store.ColorShoot = store.ColorShoot or QUIVER.ColorDefault.AutoShotShoot
 		store.ColorReload = store.ColorReload or QUIVER.ColorDefault.AutoShotReload
 	end,
 	OnSavedVariablesPersist = function() return store end,
+	UpdateDirection = function()
+		if frame then setBarAutoShot(frame) end
+	end
 }
