@@ -6,7 +6,7 @@ local BORDER = 1
 local castTime = 0
 local isCasting = false
 local isFiredInstant = false
-local timeStartLocal = 0
+local timeStartCastLocal = 0
 -- Auto Shot
 local AIMING_TIME = 0.65
 local isReloading = false
@@ -124,6 +124,7 @@ local startReloading = function()
 	isReloading = true
 	reloadTime = UnitRangedDamage("player") - AIMING_TIME
 end
+
 local startShooting = function()
 	if not isReloading then timeStartShootOrReload = GetTime() end
 	isShooting = true
@@ -230,24 +231,22 @@ local handleEventWhileCasting = function(event, arg1)
 		log("Stopped Casting")
 	elseif event == "ITEM_LOCK_CHANGED" then
 		-- Two possibilities:
-		-- 1 - Auto Shot fired.
+		-- 1 - Auto Shot fired as cast started. (Cast -> lock -> lock -> Cast Stop)
 		-- 2 - Cast Fired. A stop or failed event will follow, or failed event when target dropped.
-		-- Cast event occurs before inventory lock from auto shot firing, but need to confirm plausible timing.
-		-- The fastest possible cast (multi-shot) takes 0.5 seconds, so we can use any number between that and zero.
-		local elapsed = GetTime() - timeStartLocal
-		-- Use of local start time might cause this check to fail during high latency.
-		-- However, I suspect it's more reliable than using latency-adjusted times. Maybe I'm wrong!
+		-- For case 1, confirm plausible timing.
+		-- The fastest possible cast (multi-shot) takes 0.5 seconds,
+		-- so we can use any number between that and zero.
+		-- For case 2, wait for the stop / fail event
+		local elapsed = GetTime() - timeStartCastLocal
+		log(elapsed)
 		if (elapsed < 0.4) then
 			-- We must have started the cast exactly as an auto shot fired.
-			-- Logging this because theoretically it should happen, but I haven't managed to trigger it.
+			-- TODO Printing this because theoretically it should happen,
+			-- but I haven't managed to trigger it O.O.
 			local text = "Quiver -- Auto Fired (edge case): " .. string.format(" %.3f before %.3f", elapsed, castTime)
 			DEFAULT_CHAT_FRAME:AddMessage(text)
 			startReloading()
-		else
-			-- We finished a cast. Nothing to do here, since a stop or fail event will follow
 		end
-	else
-		-- No-op
 	end
 end
 
@@ -257,18 +256,19 @@ end
 local handleEventNoCast = function(event, arg1)
 	if
 		event == "SPELLCAST_STOP"
-		or event == "SPELLCAST_FAILED"-- TODO can this happen?
-		or event == "SPELLCAST_INTERRUPTED"-- TODO can this happen?
+		or event == "SPELLCAST_FAILED"
+		or event == "SPELLCAST_INTERRUPTED"
 	then
+		if isFiredInstant then log("Instant Shot") end
 		isFiredInstant = false
-	elseif event == "ITEM_LOCK_CHANGED" then
-		if isShooting then
-			log("Auto Fired")
-		-- Works even if we cancelled Auto Shot as we fired because "STOP_AUTOREPEAT_SPELL" is lower priority.
-			startReloading()
-		else
-			-- No-op. This was an inventory event we can safely ignore.
-		end
+	elseif
+		event == "ITEM_LOCK_CHANGED"
+		and isShooting
+		and (not isFiredInstant)
+	then
+		log("Auto Fired")
+	-- Works even if we cancelled Auto Shot as we fired because "STOP_AUTOREPEAT_SPELL" is lower priority.
+		startReloading()
 	end
 end
 
@@ -282,6 +282,8 @@ local onSpellcast = function(spellName)
 	if isShooting and (not isReloading) then
 		timeStartShootOrReload = GetTime()
 	end
+	local _latAdjusted
+	castTime, _latAdjusted, timeStartCastLocal = Quiver_Lib_Spellbook_CalcCastTime(spellName)
 	log("Start Cast")
 end
 
@@ -301,13 +303,8 @@ local handleEvent = function()
 		isConsumable = false
 	elseif isCasting then
 		handleEventWhileCasting(e, arg1)
-	elseif isFiredInstant and e == "ITEM_LOCK_CHANGED" then
-		isFiredInstant = false
-		log("Instant Shot")
-	elseif isShooting then
-		handleEventNoCast(e, arg1)
 	else
-		-- No-op. We ignore unrelated spell/inventory events
+		handleEventNoCast(e, arg1)
 	end
 end
 
