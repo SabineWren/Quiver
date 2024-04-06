@@ -88,7 +88,8 @@ end
 local onSpellcast = function(spellName)
 	if isCasting then return end
 	isCasting = true
-	castTime, timeStartCasting = Quiver_Lib_Spellbook_CalcCastTime(spellName)
+	local _timeStartLocal
+	castTime, timeStartCasting, _timeStartLocal = Quiver_Lib_Spellbook_CalcCastTime(spellName)
 	frame.SpellName:SetText(spellName)
 	frame.Castbar:SetWidth(1)
 	displayTime(0)
