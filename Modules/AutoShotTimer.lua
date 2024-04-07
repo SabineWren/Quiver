@@ -116,9 +116,10 @@ local updateBarShooting = function()
 	end
 end
 
-local startReloading = function()
+---@param time number
+local startReloading = function(time)
 	if not isReloading then
-		timeStartShootOrReload = GetTime()
+		timeStartShootOrReload = time
 		log("starting reload")
 	end
 	isReloading = true
@@ -201,8 +202,12 @@ Some actions trigger multiple events in sequence:
 -> ITEM_LOCK_CHANGED (auto)
 ]]
 local EVENTS = {
-	"CHAT_MSG_SPELL_SELF_BUFF",-- To ignore whitelisted inventory events corresponding to consumables
-	"ITEM_LOCK_CHANGED",-- Inventory event, such as using ammo or drinking a potion. This is how we detect auto shots.
+	-- Fires after SPELLCAST_STOP, but before ITEM_LOCK_CHANGED.
+	-- Use to ignore whitelisted inventory events corresponding to consumables.
+	"CHAT_MSG_SPELL_SELF_BUFF",
+	-- Inventory event, such as using ammo or drinking a potion.
+	-- This is how we detect auto shots.
+	"ITEM_LOCK_CHANGED",
 	"SPELLCAST_DELAYED",-- Pushback
 	-- Failed / INTERRUPTED / STOP all happen after ITEM_LOCK_CHANGED
 	"SPELLCAST_FAILED",-- Too close, Spell on CD, already in progress, or success after dropping target
@@ -214,7 +219,7 @@ local EVENTS = {
 
 ---@param event string
 ---@param arg1 any
-local handleEventWhileCasting = function(event, arg1)
+local handleEventStateCasting = function(event, arg1)
 	if event == "SPELLCAST_DELAYED" then
 		castTime = castTime + arg1 / 1000
 	elseif
@@ -236,24 +241,64 @@ local handleEventWhileCasting = function(event, arg1)
 		-- For case 1, confirm plausible timing.
 		-- The fastest possible cast (multi-shot) takes 0.5 seconds,
 		-- so we can use any number between that and zero.
-		-- For case 2, wait for the stop / fail event
+		-- For case 2, wait for the stop / fail event.
 		local elapsed = GetTime() - timeStartCastLocal
 		log(elapsed)
 		if (elapsed < 0.4) then
 			-- We must have started the cast exactly as an auto shot fired.
-			-- TODO Printing this because theoretically it should happen,
-			-- but I haven't managed to trigger it O.O.
-			local text = "Quiver -- Auto Fired (edge case): " .. string.format(" %.3f before %.3f", elapsed, castTime)
-			DEFAULT_CHAT_FRAME:AddMessage(text)
-			startReloading()
+			-- This happens when server lag causes the bar the skip.
+			startReloading(GetTime())
 		end
 	end
 end
 
----comment
+-- Two cases to handle.
+-- Case 1: Auto -> Instant
+-- Instant -> Lock -> Lock -> Stop
+-- Csae 2: Instant -> Auto
+-- Instant -> Lock -> Stop -> Lock
+-- There's no way to know whether or not to start the reload at first lock, so we save
+-- the reload time and apply it retroactively. This requires its own Mealy machine.
+local stateAuto = { IsInitial=true, TimeLock=0 }
 ---@param event string
----@param arg1 any
-local handleEventNoCast = function(event, arg1)
+local handleEventStateShooting = function(event)
+	if stateAuto.IsInitial then
+		if event == "ITEM_LOCK_CHANGED" then
+			if isFiredInstant then
+				stateAuto.IsInitial = false
+				stateAuto.TimeLock = GetTime()
+				isFiredInstant = false
+				log("State Advance")
+			else
+				log("Auto Fired")
+				startReloading(GetTime())
+			end
+		end
+		-- else ignore
+	else
+		if event == "ITEM_LOCK_CHANGED" then
+			-- Fired another shot, meaning the first one must have been an auto.
+			-- Retroactively start reload and reset state.
+			stateAuto.IsInitial = true
+			isFiredInstant = false
+			startReloading(stateAuto.TimeLock)
+			log("State Reset: Auto -> Instant")
+		elseif
+			event == "SPELLCAST_STOP"
+			or event == "SPELLCAST_FAILED"
+			or event == "SPELLCAST_INTERRUPTED"
+		then
+			-- Previous shot must have been an instant, so reset state.
+			stateAuto.IsInitial = true
+			isFiredInstant = false
+			log("State Reset: Instant")
+		end
+		-- else ignore
+	end
+end
+
+---@param event string
+local handleEventStateIdle = function(event)
 	if
 		event == "SPELLCAST_STOP"
 		or event == "SPELLCAST_FAILED"
@@ -261,14 +306,6 @@ local handleEventNoCast = function(event, arg1)
 	then
 		if isFiredInstant then log("Instant Shot") end
 		isFiredInstant = false
-	elseif
-		event == "ITEM_LOCK_CHANGED"
-		and isShooting
-		and (not isFiredInstant)
-	then
-		log("Auto Fired")
-	-- Works even if we cancelled Auto Shot as we fired because "STOP_AUTOREPEAT_SPELL" is lower priority.
-		startReloading()
 	end
 end
 
@@ -289,7 +326,7 @@ end
 
 local handleEvent = function()
 	local e = event
-	-- Fires after SPELLCAST_STOP, but before ITEM_LOCK_CHANGED
+	-- ****** Event logic independant of state ******
 	if e == "CHAT_MSG_SPELL_SELF_BUFF" then
 		isConsumable = getIsConsumable(arg1)
 	elseif e == "START_AUTOREPEAT_SPELL" then
@@ -301,10 +338,14 @@ local handleEvent = function()
 	elseif isConsumable and e == "ITEM_LOCK_CHANGED" then
 		-- We drank a potion or something, so don't run any handlers
 		isConsumable = false
+	-- **********************************
+	-- ****** Mealy machine states ******
 	elseif isCasting then
-		handleEventWhileCasting(e, arg1)
+		handleEventStateCasting(e, arg1)
+	elseif isShooting then
+		handleEventStateShooting(e)
 	else
-		handleEventNoCast(e, arg1)
+		handleEventStateIdle(e)
 	end
 end
 
