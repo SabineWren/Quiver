@@ -13,7 +13,8 @@ local isReloading = false
 local isShooting = false
 local maxBarWidth = 0
 local reloadTime = 0
-local timeStartShootOrReload = GetTime()
+local timeStartShooting = GetTime()
+local timeStartReloading = GetTime()
 
 local log = function(text)
 	if Quiver_Store.DebugLevel == "Verbose" then
@@ -105,8 +106,7 @@ local updateBarShooting = function()
 	frame:SetAlpha(1)
 	local r, g, b = unpack(store.ColorShoot)
 	frame.BarAutoShot:SetBackdropColor(r, g, b, 0.8)
-	local timePassed = GetTime() - timeStartShootOrReload
-
+	local timePassed = GetTime() - timeStartShooting
 	if isCasting then
 		frame.BarAutoShot:SetWidth(1)-- Can't set to zero
 	elseif timePassed <= AIMING_TIME then
@@ -119,7 +119,7 @@ end
 ---@param time number
 local startReloading = function(time)
 	if not isReloading then
-		timeStartShootOrReload = time
+		timeStartReloading = time
 		log("starting reload")
 	end
 	isReloading = true
@@ -127,7 +127,7 @@ local startReloading = function(time)
 end
 
 local startShooting = function()
-	if not isReloading then timeStartShootOrReload = GetTime() end
+	if not isReloading then timeStartShooting = GetTime() end
 	isShooting = true
 	position.UpdateXY()
 end
@@ -138,7 +138,8 @@ local tryHideBar = function()
 	else
 		-- Reset bar if it's locked open
 		frame.BarAutoShot:SetWidth(1)
-		timeStartShootOrReload = GetTime()
+		timeStartShooting = GetTime()
+		timeStartReloading = GetTime()
 	end
 end
 
@@ -146,7 +147,7 @@ local updateBarReload = function()
 	frame:SetAlpha(1)
 	local r, g, b = unpack(store.ColorReload)
 	frame.BarAutoShot:SetBackdropColor(r, g, b, 0.8)
-	local timePassed = GetTime() - timeStartShootOrReload
+	local timePassed = GetTime() - timeStartReloading
 	if timePassed <= reloadTime then
 		frame.BarAutoShot:SetWidth(maxBarWidth - maxBarWidth * timePassed / reloadTime)
 	else
@@ -168,7 +169,7 @@ local handleUpdate = function()
 		updateBarShooting()
 	else
 		-- We may have moved while shooting, so reset time
-		timeStartShootOrReload = GetTime()
+		timeStartShooting = GetTime()
 		tryHideBar()
 	end
 end
@@ -232,7 +233,7 @@ local handleEventStateCasting = function(event, arg1)
 		-- so it's a false positive and we need to override it to avoid breaking our state machine.
 		isCasting = false -- Exit this handler
 		isFiredInstant = false
-		if not isReloading then timeStartShootOrReload = GetTime() end
+		if not isReloading then timeStartShooting = GetTime() end
 		log("Stopped Casting")
 	elseif event == "ITEM_LOCK_CHANGED" then
 		-- Two possibilities:
@@ -313,12 +314,6 @@ local onSpellcast = function(spellName)
 	-- User can spam the ability while it's already casting
 	if isCasting then return end
 	isCasting = true
-	-- We can reload while casting, but Auto Shot needs resetting
-	-- TODO this doesn't make sense. Why would starting a cast reset shooting time?
-	-- The shot can't restart until the cast ends.
-	if isShooting and (not isReloading) then
-		timeStartShootOrReload = GetTime()
-	end
 	local _latAdjusted
 	castTime, _latAdjusted, timeStartCastLocal = Quiver_Lib_Spellbook_CalcCastTime(spellName)
 	log("Start Cast")
@@ -326,6 +321,11 @@ end
 
 local handleEvent = function()
 	local e = event
+	if (e ~= "CHAT_MSG_SPELL_SELF_BUFF") then
+		local t1 = isCasting and "casting" or "false"
+		local t2 = stateAuto.IsInitial and "initial" or "advanced"
+		log(t1.." "..t2.." "..e)
+	end
 	-- ****** Event logic independant of state ******
 	if e == "CHAT_MSG_SPELL_SELF_BUFF" then
 		isConsumable = getIsConsumable(arg1)
