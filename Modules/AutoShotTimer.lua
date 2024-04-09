@@ -175,23 +175,21 @@ local handleUpdate = function()
 end
 
 --[[ ************ Event Handlers ************
-Some actions trigger multiple events in sequence:
 1. Instant Shot while either moving or in middle of reload
 -> (hook) OnInstant
 -> ITEM_LOCK_CHANGED
 -> SPELLCAST_STOP
-2. Instant Shot as Auto Shot fires (assuming state is already shooting)
+2. Instant Shot as Auto Shot fires
 -> (hook) OnInstant
 -> ITEM_LOCK_CHANGED
 -> ITEM_LOCK_CHANGED
 -> SPELLCAST_STOP
-3. Casted Shot starts as Auto Shot fires (assuming state is already shooting)
+3. Casted Shot starts as Auto Shot fires
 -> (hook) OnCast
 -> ITEM_LOCK_CHANGED
 -> ITEM_LOCK_CHANGED
 -> SPELLCAST_STOP
 4. Auto Shot -> Casted Shot -> Instant Shot -> Auto Shot
-   Tricky case to handle. TODO: CURRENTLY BUGGED.
 -> ITEM_LOCK_CHANGED (auto)
 -> (hook) casting
 -> (hook) instant (spamming before cast finishes)
@@ -231,8 +229,8 @@ local handleEventStateCasting = function(event, arg1)
 		-- The instant hook may have set its state variable. That means the user pressed an instant shot
 		-- before the castbar completed. We can't actually fire an instant shot while casting,
 		-- so it's a false positive and we need to override it to avoid breaking our state machine.
-		isCasting = false -- Exit this handler
 		isFiredInstant = false
+		isCasting = false -- Exit this handler
 		if not isReloading then timeStartShooting = GetTime() end
 		log("Stopped Casting")
 	elseif event == "ITEM_LOCK_CHANGED" then
@@ -326,7 +324,7 @@ local handleEvent = function()
 		local t2 = stateAuto.IsInitial and "initial" or "advanced"
 		log(t1.." "..t2.." "..e)
 	end
-	-- ****** Event logic independant of state ******
+	-- ************ Event logic independant of state ************
 	if e == "CHAT_MSG_SPELL_SELF_BUFF" then
 		isConsumable = getIsConsumable(arg1)
 	elseif e == "START_AUTOREPEAT_SPELL" then
@@ -336,10 +334,8 @@ local handleEvent = function()
 		log("Stop shooting")
 		isShooting = false
 	elseif isConsumable and e == "ITEM_LOCK_CHANGED" then
-		-- We drank a potion or something, so don't run any handlers
-		isConsumable = false
-	-- **********************************
-	-- ****** Mealy machine states ******
+		isConsumable = false-- We drank a potion or something, so don't run any handlers
+	-- ************ Mealy machine states ************
 	elseif isCasting then
 		handleEventStateCasting(e, arg1)
 	elseif isShooting then
@@ -401,7 +397,7 @@ Quiver_Module_AutoShotTimer = {
 	OnInterfaceUnlock = function()
 		if frame ~= nil then frame:SetAlpha(1) end
 	end,
-	OnResetFrames = function(trigger)
+	OnResetFrames = function()
 		store.FrameMeta = nil
 		if frame then setFramePosition(frame, store) end
 	end,

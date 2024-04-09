@@ -42,16 +42,18 @@ Never lose track of your current aspect
 	<img src="/Media/Bar_2_Reloading.jpg" height="180px">
 </figure>
 
-- Resets swing timer while casting a shot; taken from [YaHT](https://github.com/Aviana/YaHT/tree/1.12.1)
-- Ignores instant spells such as Arcane Shot; taken from [HSK](https://github.com/anstellaire/HunterSwissKnife)
-- Works with Trueshot
-
-Auto Shot Timer module also enables macros that avoid clipping auto shot:
+The Auto Shot Timer module enables macros that avoid clipping auto shot:
 - Aimed Shot `/qqaimedshot`
 - Multi-Shot `/qqmultishot`
 - Trueshot `/qqtrueshot`
 
 Casting this way won't interrupt current cast, so move first if casting volley.
+
+Quiver uses a more reliable state machine than any other auto shot timer addon. If you think you've found a bug, record your game with "verbose logging" enabled in the Quiver configuration menu. Sometimes the bar gets stuck from the game not triggering addon events, which is common for movement inside instances, but rare when firing shots. A shot without a corresponding ITEM_LOCK_CHANGED event will break every auto shot timer addon.
+
+Inspired by:
+- [HSK](https://github.com/anstellaire/HunterSwissKnife) -- Ignores instant spells such as Arcane Shot
+- [YaHT](https://github.com/Aviana/YaHT/tree/1.12.1) -- Resets swing timer while casting a shot
 
 ### Castbar
 <img src="/Media/Bar_3_Casting.jpg" height="180px">
@@ -94,31 +96,17 @@ This checks if you have Trueshot Aura talented. If so, Quiver tracks the buff an
 5. Restart WoW.
 
 # Possible Future Features
-Ideas for where Quiver could go, and open to discussion.
-
-### Ammo Counter
-Not sure where to scope this, as other addons can track ammo stored on bank alts. Perhaps an overlay warning when currently equipped ammo runs low in inventory.
+I currently have no plans to work on more features.
 
 ### Hunter's Mark Timer
-Maybe something like the Tranq UI for keeping track of which hunters mark each target, and the remaining time.
-
-### Macro Replacements / Ability Overrides
-Possibly a bad idea, since Roid-Macros can do everything these can, and users can easily adjust macros:
-- Prevent cancelling aspects, except for Cheetah and Pack.
-- Auto-cancel Cheetah and Pack when attempting to activate a non-Cheetah/Pack aspect.
-- Pamper pet (Call -> Revive -> Mend).
-- While in combat, replace [Trap] with (Petfollow -> FD -> [Trap]).
-- Prevent Auto Shot from cancelling itself.
-- Prioritize Counterattack over Wing Clip.
-
-If the behavior isn't both expected and desired, then adding these to Quiver increases the configuration burden for users. Maybe an always-on module, but each override would have its own configuration switch to toggle it. If they all default to off, that would reduce the config burden for users who don't want their abilities altered.
+Maybe something like the Tranq UI for keeping track of hunters mark for each hunter and target.
 
 ### Pet Management
 It's a rabbit hole to go down, and other addons exist for pet management.
 
 ## Contributing
 ### Localization
-Quiver localizes all text, so theoretically it supports translations, but I don't know where to download a non-English client.
+Quiver localizes text, so theoretically it supports translations, but I don't know where to download a non-English client.
 
 ### Custom Events
 Files in `/Events` hook into game functions. Use these events if possible instead of declaring your own hooks.

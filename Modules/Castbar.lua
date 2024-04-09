@@ -151,7 +151,7 @@ Quiver_Module_Castbar = {
 	OnDisable = onDisable,
 	OnInterfaceLock = function() if not isCasting then frame:Hide() end end,
 	OnInterfaceUnlock = function() frame:Show() end,
-	OnResetFrames = function(trigger)
+	OnResetFrames = function()
 		store.FrameMeta = nil
 		if frame then setFramePosition(frame, store) end
 	end,

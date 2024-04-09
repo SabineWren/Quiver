@@ -294,7 +294,7 @@ Quiver_Module_TranqAnnouncer = {
 		if getCanHide() then hideFrameDeleteBars() end
 	end,
 	OnInterfaceUnlock = function() frame:Show() end,
-	OnResetFrames = function(trigger)
+	OnResetFrames = function()
 		store.FrameMeta = nil
 		if frame then setFramePosition(frame, store) end
 	end,
