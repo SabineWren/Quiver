@@ -34,7 +34,7 @@ QUIVER = {
 		Reset = "Interface\\AddOns\\Quiver\\Textures\\arrow-rotate-right",
 		XMark = "Interface\\AddOns\\Quiver\\Textures\\xmark",
 		-- Client
-		Aspect_Beast = "Interface\\Icons\\Ability_Mount_WhiteTiger",
+		Aspect_Beast = "Interface\\Icons\\Ability_Mount_PinkTiger",
 		Aspect_Cheetah = "Interface\\Icons\\Ability_Mount_JungleTiger",
 		Aspect_Hawk = "Interface\\Icons\\Spell_Nature_RavenForm",
 		Aspect_Monkey = "Interface\\Icons\\Ability_Hunter_AspectOfTheMonkey",
