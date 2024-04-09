@@ -261,7 +261,19 @@ end
 local stateAuto = { IsInitial=true, TimeLock=0 }
 ---@param event string
 local handleEventStateShooting = function(event)
+	-- Don't have to handle other spellcast events because they only trigger on successful
+	-- casts without a selected target. However, dropping target cancels Auto Shot.
+	if event == "SPELLCAST_STOP" then
+		-- There's a measurable 0.5 second reset to Auto Shot when casting any instant spell (ex. Hunter's Mark)
+		-- Can ignore this if our remaining time is longer than that reset.
+		local aimTimeOffset = AIMING_TIME - 0.5
+		if (GetTime() - timeStartShooting > aimTimeOffset) then
+			timeStartShooting = GetTime() - aimTimeOffset
+		end
+	end
+
 	if stateAuto.IsInitial then
+	-- Handle first shot in sequence
 		if event == "ITEM_LOCK_CHANGED" then
 			if isFiredInstant then
 				stateAuto.IsInitial = false
@@ -275,6 +287,7 @@ local handleEventStateShooting = function(event)
 		end
 		-- else ignore
 	else
+	-- Handle second shot in sequence
 		if event == "ITEM_LOCK_CHANGED" then
 			-- Fired another shot, meaning the first one must have been an auto.
 			-- Retroactively start reload and reset state.
@@ -282,11 +295,7 @@ local handleEventStateShooting = function(event)
 			isFiredInstant = false
 			startReloading(stateAuto.TimeLock)
 			log("State Reset: Auto -> Instant")
-		elseif
-			event == "SPELLCAST_STOP"
-			or event == "SPELLCAST_FAILED"
-			or event == "SPELLCAST_INTERRUPTED"
-		then
+		elseif event == "SPELLCAST_STOP" then
 			-- Previous shot must have been an instant, so reset state.
 			stateAuto.IsInitial = true
 			isFiredInstant = false
