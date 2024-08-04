@@ -48,5 +48,5 @@
 	],
 	"runtime.version": "Lua 5.1",
 	"type.inferParamType": true,
-	"workspace.library": ["WoW_API"]
+	"workspace.library": ["wow-api-type-definitions"]
 }

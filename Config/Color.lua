@@ -1,3 +1,10 @@
+--- Manually converting methods to functions
+--- _Method == fun r -> r.Method()
+local Region = {
+	--- @type fun(x: Region): number
+	GetWidth = function(f) return f:GetWidth() end
+}
+
 local createBtnColorSwap = function(parent, f1, f2, c1, c2)
 	local f = Quiver_Component_Button({
 		Parent=parent, Size=QUIVER.Size.Icon,
@@ -59,9 +66,8 @@ Quiver_Config_Colors = function(parent, gap)
 	local labels = {}; for _,frame in frames do table.insert(labels, frame.Label) end
 
 	-- Right align buttons using minimum amount of space
-	local getWidth = function(f) return f:GetWidth() end
-	local labelWidths = Quiver_Lib_F.Map(labels, getWidth)
-	local labelMaxWidth = Quiver_Lib_F.Max(labelWidths)
+	local labelWidths = Quiver_Lib_F.Map(labels, Region.GetWidth)
+	local labelMaxWidth = Quiver_Lib_F.Max0(labelWidths)
 
 	local y = 0
 	for _,frame in frames do
@@ -73,8 +79,8 @@ Quiver_Config_Colors = function(parent, gap)
 		y = y + frame:GetHeight() + gap
 	end
 
-	local frameWidths = Quiver_Lib_F.Map(frames, getWidth)
-	f:SetWidth(Quiver_Lib_F.Max(frameWidths))
+	local frameWidths = Quiver_Lib_F.Map(frames, Region.GetWidth)
+	f:SetWidth(Quiver_Lib_F.Max0(frameWidths))
 	f:SetHeight(y)
 	return f
 end

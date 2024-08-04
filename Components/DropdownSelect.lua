@@ -43,7 +43,7 @@ Quiver_Component_DropdownSelect = function(parent, label, optionsText, selected)
 	f.Selected:SetPoint("Right", f, "Right", -INSET - f.Button:GetWidth(), 0)
 	f.Selected:SetText(selected)
 
-	f.Menu.Options = Quiver_Lib_F.Map(optionsText, function(t, i)
+	f.Menu.Options = Quiver_Lib_F.Mapi(optionsText, function(t, i)
 		local option = CreateFrame("Button", nil, f.Menu)
 		option.Text = option:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
 		option.Text:SetText(t)
@@ -65,7 +65,7 @@ Quiver_Component_DropdownSelect = function(parent, label, optionsText, selected)
 	end
 	local widths = Quiver_Lib_F.Map(f.Menu.Options, function(o) return o.Text:GetWidth() end)
 	local heights = Quiver_Lib_F.Map(f.Menu.Options, function(o) return o:GetHeight() end)
-	local maxOptionWidth = Quiver_Lib_F.Max(widths) + 2 * OPTION_PAD_H
+	local maxOptionWidth = Quiver_Lib_F.Max0(widths) + 2 * OPTION_PAD_H
 	local maxWidth = f.Label:GetWidth() > maxOptionWidth and f.Label:GetWidth() or maxOptionWidth
 
 	local handleClick = function()
