@@ -124,6 +124,7 @@ local handleEvent = function()
 end
 
 -- ************ Initialization ************
+--- @type Event[]
 local EVENTS = {
 	"SPELLCAST_DELAYED",
 	"SPELLCAST_FAILED",

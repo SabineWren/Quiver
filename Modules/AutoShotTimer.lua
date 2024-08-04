@@ -198,6 +198,7 @@ end
 -> SPELLCAST_STOP (instant)
 -> ITEM_LOCK_CHANGED (auto)
 ]]
+--- @type Event[]
 local EVENTS = {
 	-- Fires after SPELLCAST_STOP, but before ITEM_LOCK_CHANGED.
 	-- Use to ignore whitelisted inventory events corresponding to consumables.

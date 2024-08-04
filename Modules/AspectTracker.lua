@@ -79,6 +79,7 @@ local createUI = function()
 end
 
 -- ************ Event Handlers ************
+--- @type Event[]
 local EVENTS = {
 	"PLAYER_AURAS_CHANGED",
 	"SPELLS_CHANGED",-- Open or click thru spellbook, learn/unlearn spell

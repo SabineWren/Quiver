@@ -105,7 +105,11 @@ local handleEvent = function()
 end
 
 -- ************ Initialization ************
-local EVENTS = { "PLAYER_TARGET_CHANGED", "UNIT_FACTION" }
+--- @type Event[]
+local EVENTS = {
+	"PLAYER_TARGET_CHANGED",
+	"UNIT_FACTION",
+}
 local onEnable = function()
 	if frame == nil then frame, fontString = createUI() end
 	frame:SetScript("OnEvent", handleEvent)

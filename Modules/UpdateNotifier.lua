@@ -32,6 +32,7 @@ local checkGroupGrew = (function()
 	end
 end)()
 
+--- @type Event[]
 local EVENTS = {
 	"CHAT_MSG_ADDON",
 	"PARTY_MEMBERS_CHANGED",

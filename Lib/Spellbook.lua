@@ -129,7 +129,7 @@ local findSpellIndex = function(spellName)
 	for spellIndex=1, numSpells do
 		local name, _rank = GetSpellName(spellIndex, BOOKTYPE_SPELL)
 		if name == spellName then
-			return spellIndex;
+			return spellIndex
 		end
 	end
 	return nil

@@ -237,6 +237,7 @@ local handleMsg = function(_source, msg)
 	end
 end
 
+--- @type Event[]
 local EVENTS = {
 	"CHAT_MSG_ADDON",-- Also works with macros
 	"CHAT_MSG_SPELL_SELF_DAMAGE",-- Detect misses
