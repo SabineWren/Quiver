@@ -118,12 +118,10 @@ end
 
 ---@param time number
 local startReloading = function(time)
-	if not isReloading then
-		timeStartReloading = time
-		log("starting reload")
-	end
+	timeStartReloading = time
 	isReloading = true
 	reloadTime = UnitRangedDamage("player") - AIMING_TIME
+	log("starting reload")
 end
 
 local startShooting = function()

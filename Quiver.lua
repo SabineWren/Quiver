@@ -30,7 +30,7 @@ end
 local initSlashCommandsAndModules = function()
 	SLASH_QUIVER1 = "/qq"
 	SLASH_QUIVER2 = "/quiver"
-	_, cl = UnitClass("player")
+	local _, cl = UnitClass("player")
 	if cl == "HUNTER" then
 		local frameConfigMenu = Quiver_Config_MainMenu_Create()
 		SlashCmdList["QUIVER"] = function(_args, _box) frameConfigMenu:Show() end

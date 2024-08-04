@@ -121,14 +121,14 @@ Quiver_Lib_Spellbook_GetIsSpellInstantShot = function(spellName)
 	return false
 end
 
--- This function copied from HSK and MIT licensed,
--- Copyright (c) 2018 Anielle@Lightshope-Lightbringer
-local getSpellIndexByName = function(spellName)
-	local _schoolName, _schoolIcon, indexOffset, numEntries = GetSpellTabInfo(GetNumSpellTabs())
-	local numSpells = indexOffset + numEntries
-	local offset = 0
-	for spellIndex=numSpells, offset+1, -1 do
-		if GetSpellName(spellIndex, BOOKTYPE_SPELL) == spellName then
+---@param spellName string
+local findSpellIndex = function(spellName)
+	local numTabs = GetNumSpellTabs()
+	local _, _, tabOffset, numEntries = GetSpellTabInfo(numTabs)
+	local numSpells = tabOffset + numEntries
+	for spellIndex=1, numSpells do
+		local name, _rank = GetSpellName(spellIndex, BOOKTYPE_SPELL)
+		if name == spellName then
 			return spellIndex;
 		end
 	end
@@ -136,7 +136,7 @@ local getSpellIndexByName = function(spellName)
 end
 
 local CheckNewCd = function(cooldown, lastCdStart, spellName)
-	local spellId = getSpellIndexByName(spellName)
+	local spellId = findSpellIndex(spellName)
 	if spellId ~= nil then
 		local timeStartCD, durationCD = GetSpellCooldown(spellId, BOOKTYPE_SPELL)
 		-- Sometimes spells return a CD of 0 when cast fails.

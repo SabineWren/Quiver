@@ -1,5 +1,6 @@
 {
 	"recommendations": [
-		"sumneko.lua"
+		"sumneko.lua",
+		"streetsidesoftware.code-spell-checker"
 	]
 }

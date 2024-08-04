@@ -31,7 +31,7 @@ local setFramePosition = function(f, s)
 	})
 	f:SetWidth(s.FrameMeta.W)
 	f:SetHeight(s.FrameMeta.H)
-	f:SetPoint("TopLeft", s.FrameMeta.X, s.FrameMeta.Y)
+	f:SetPoint("TopLeft", s.FrameMeta.X, s.FrameMeta.Y, 0, 0)
 	setCastbarSize(f, s)
 end
 
