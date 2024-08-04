@@ -16,16 +16,16 @@ WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration m
 ### Aspect Tracker
 Never lose track of your current aspect
 <table>
-	<tr>
-		<td>None</td>
-		<td>Pack</td>
-		<td>Cheetah</td>
-	</tr>
-	<tr>
-		<td><img src="/Media/Aspect_None.png" height="64px"></td>
-		<td><img src="/Media/Aspect_Pack.png" height="64px"></td>
-		<td><img src="/Media/Aspect_Cheetah.jpg" height="64px"></td>
-	</tr>
+   <tr>
+      <td>None</td>
+      <td>Pack</td>
+      <td>Cheetah</td>
+   </tr>
+   <tr>
+      <td><img src="/Media/Aspect_None.png" height="64px"></td>
+      <td><img src="/Media/Aspect_Pack.png" height="64px"></td>
+      <td><img src="/Media/Aspect_Cheetah.jpg" height="64px"></td>
+   </tr>
 </table>
 
 - No UI while in Aspect of the Hawk
@@ -34,12 +34,12 @@ Never lose track of your current aspect
 
 ### Auto Shot Timer
 <figure>
-	<figcaption>Shooting</figcaption>
-	<img src="/Media/Bar_1_Shooting.jpg" height="180px">
+   <figcaption>Shooting</figcaption>
+   <img src="/Media/Bar_1_Shooting.jpg" height="180px">
 </figure>
 <figure>
-	<figcaption>Reloading</figcaption>
-	<img src="/Media/Bar_2_Reloading.jpg" height="180px">
+   <figcaption>Reloading</figcaption>
+   <img src="/Media/Bar_2_Reloading.jpg" height="180px">
 </figure>
 
 The Auto Shot Timer module enables macros that avoid clipping auto shot:
@@ -76,14 +76,14 @@ Shows the Tranquilizing Shot cooldown of every hunter. Announces when casting Tr
 
 ### Trueshot Aura Alarm
 <table>
-	<tr>
-		<td>None</td>
-		<td>Expiring</td>
-	</tr>
-	<tr>
-		<td><img src="/Media/Trueshot_None.png" height="64px"></td>
-		<td><img src="/Media/Trueshot_Low.png" height="64px"></td>
-	</tr>
+   <tr>
+      <td>None</td>
+      <td>Expiring</td>
+   </tr>
+   <tr>
+      <td><img src="/Media/Trueshot_None.png" height="64px"></td>
+      <td><img src="/Media/Trueshot_Low.png" height="64px"></td>
+   </tr>
 </table>
 
 This checks if you have Trueshot Aura talented. If so, Quiver tracks the buff and duration, and warns you to recast it.
