@@ -394,7 +394,7 @@ local onDisable = function()
 	end
 end
 
-Quiver_Module_AutoShotTimer = {
+return {
 	Id = MODULE_ID,
 	Name = QUIVER_T.ModuleName[MODULE_ID],
 	OnEnable = onEnable,

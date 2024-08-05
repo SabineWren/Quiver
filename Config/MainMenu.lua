@@ -1,3 +1,5 @@
+local AutoShotTimer = require "Modules/AutoShotTimer.lua"
+
 local createIconBtnLock = function(parent)
 	local f = Quiver_Component_Button({
 		Parent=parent, Size=QUIVER.Size.Icon, TooltipText=QUIVER_T.UI.FrameLockToggleTooltip })
@@ -149,7 +151,7 @@ Quiver_Config_MainMenu_Create = function()
 	local selectAutoShotTimerDirection = Quiver_Component_DropdownSelect(f,
 		QUIVER_T.ModuleName.AutoShotTimer,
 		{ QUIVER_T.AutoShot.LeftToRight, QUIVER_T.AutoShot.BothDirections },
-		QUIVER_T.AutoShot[Quiver_Store.ModuleStore[Quiver_Module_AutoShotTimer.Id].BarDirection]
+		QUIVER_T.AutoShot[Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection]
 	)
 	dropdownY = dropdownY + QUIVER.Size.Gap + selectAutoShotTimerDirection:GetHeight()
 	selectAutoShotTimerDirection:SetPoint("Right", f, "Right", -dropdownX, 0)
@@ -162,9 +164,9 @@ Quiver_Config_MainMenu_Create = function()
 			selectAutoShotTimerDirection.Selected:SetText(text)
 			selectAutoShotTimerDirection.Menu:Hide()
 			local direction = text == QUIVER_T.AutoShot.LeftToRight and "LeftToRight" or "BothDirections"
-			Quiver_Store.ModuleStore[Quiver_Module_AutoShotTimer.Id].BarDirection = direction
+			Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection = direction
 			DEFAULT_CHAT_FRAME:AddMessage("Set to "..direction)
-			Quiver_Module_AutoShotTimer.UpdateDirection()
+			AutoShotTimer.UpdateDirection()
 		end)
 	end
 

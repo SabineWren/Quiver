@@ -2,7 +2,7 @@ local M001 = require "Migrations/M001.lua"
 local M002 = require "Migrations/M002.lua"
 local M003 = require "Migrations/M003.lua"
 
-local Run = function()
+return function()
 	-- toc version (after 1.0.0) persists to saved variables. A clean
 	-- install has no saved variables, which distinguishes a 1.0.0 install.
 	if Quiver_Store == nil then
@@ -19,7 +19,3 @@ local Run = function()
 	end
 	Quiver_Store.Version = GetAddOnMetadata("Quiver", "Version")
 end
-
-return {
-	Run=Run
-}

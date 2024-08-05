@@ -1,6 +1,8 @@
+local AutoShotTimer = require "Modules/AutoShotTimer.lua"
+
 return function()
 	local mstore = Quiver_Store.ModuleStore or {}
-	local s = mstore[Quiver_Module_AutoShotTimer.Id] or {}
+	local s = mstore[AutoShotTimer.Id] or {}
 
 	-- Change colour to color
 	if s.ColourShoot then s.ColorShoot = s.ColourShoot end

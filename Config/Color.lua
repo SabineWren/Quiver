@@ -1,3 +1,5 @@
+local AutoShotTimer = require "Modules/AutoShotTimer.lua"
+
 --- Manually converting methods to functions
 --- _Method == fun r -> r.Method()
 local Region = {
@@ -29,7 +31,7 @@ local createBtnColorSwap = function(parent, f1, f2, c1, c2)
 end
 
 Quiver_Config_Colors = function(parent, gap)
-	local storeAutoShotTimer = Quiver_Store.ModuleStore[Quiver_Module_AutoShotTimer.Id]
+	local storeAutoShotTimer = Quiver_Store.ModuleStore[AutoShotTimer.Id]
 	local storeCastbar = Quiver_Store.ModuleStore[Quiver_Module_Castbar.Id]
 	local storeRange = Quiver_Store.ModuleStore[Quiver_Module_RangeIndicator.Id]
 	local f = CreateFrame("Frame", nil, parent)
