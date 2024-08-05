@@ -32,6 +32,7 @@ const runBundler = async (trigger) => {
 		isolate: true,
 		luaVersion: 5.1,
 		metadata: false,// un-bundling requires true
+		// paths: ["./?"] Doesn't work? Use resolveModule instead.
 		// (name: string, packagePaths: readonly string[]) => string | null
 		resolveModule: (name, _packagePaths) => "./" + name,
 	})

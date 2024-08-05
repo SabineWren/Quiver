@@ -50,7 +50,7 @@ local getIsRequiredSpell = function(spellName)
 	return false
 end
 
-local validateCache = function(_slotChanged)
+local ValidateCache = function(_slotChanged)
 	for spellName, slotOld in actionBarSlotCache do
 		local texture = Quiver_Lib_Spellbook_TryFindTexture(spellName)
 		local slotNew = tryFindSlot(texture) or 0
@@ -73,5 +73,5 @@ local validateCache = function(_slotChanged)
 end
 
 return {
-	ValidateCache=validateCache,
+	ValidateCache=ValidateCache,
 }

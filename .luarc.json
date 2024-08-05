@@ -46,7 +46,11 @@
 		"UnitRangedDamage",
 		"WorldFrame"
 	],
+	"runtime.path": [],
+	"runtime.pathStrict": true,
+	"runtime.plugin": "./Build/pathResolver.lua",
 	"runtime.version": "Lua 5.1",
 	"type.inferParamType": true,
+	"workspace.ignoreDir": ["*.bundle.lua"],
 	"workspace.library": ["wow-api-type-definitions"]
 }

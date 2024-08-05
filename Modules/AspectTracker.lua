@@ -105,7 +105,7 @@ local onDisable = function()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 
-Quiver_Module_AspectTracker = {
+return {
 	Id = MODULE_ID,
 	Name = QUIVER_T.ModuleName[MODULE_ID],
 	OnEnable = onEnable,

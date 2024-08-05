@@ -1,4 +1,4 @@
-Quiver_Migrations_M001 = function()
+return function()
 	local mstore = Quiver_Store.ModuleStore
 	if mstore == nil or Quiver_Store.FrameMeta == nil then return end
 

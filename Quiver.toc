@@ -27,7 +27,6 @@ Components\DropdownSelect.lua
 Components\EditBox.lua
 Components\TitleBox.lua
 
-Modules\AspectTracker.lua
 Modules\AutoShotTimer.lua
 Modules\Castbar.lua
 Modules\RangeIndicator.lua
@@ -38,10 +37,5 @@ Modules\UpdateNotifier.lua
 Config\Color.lua
 Config\InputText.lua
 Config\MainMenu.lua
-
-Migrations\M001.lua
-Migrations\M002.lua
-Migrations\M003.lua
-Migrations\Runner.lua
 
 Quiver.bundle.lua

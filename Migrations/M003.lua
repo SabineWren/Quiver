@@ -1,4 +1,4 @@
-Quiver_Migrations_M003 = function()
+return function()
 	local mstore = Quiver_Store.ModuleStore or {}
 	local s = mstore[Quiver_Module_TranqAnnouncer.Id] or {}
 

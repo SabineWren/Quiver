@@ -1,8 +1,10 @@
-local ActionBar = require("Lib/ActionBar.lua")
+local ActionBar = require "Lib/ActionBar.lua"
+local Migrations = require "Migrations/Runner.lua"
+local AspectTracker = require "Modules/AspectTracker.lua"
 
 _G = _G or getfenv()
 _G.Quiver_Modules = {
-	Quiver_Module_AspectTracker,
+	AspectTracker,
 	Quiver_Module_AutoShotTimer,
 	Quiver_Module_Castbar,
 	Quiver_Module_RangeIndicator,
@@ -65,7 +67,7 @@ frame:RegisterEvent("PLAYER_LOGOUT")
 frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function()
 	if event == "ADDON_LOADED" and arg1 == "Quiver" then
-		Quiver_Migrations_Run()
+		Migrations.Run()
 		savedVariablesRestore()
 		initSlashCommandsAndModules()
 	elseif event == "PLAYER_LOGIN" then
