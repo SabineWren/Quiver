@@ -1,3 +1,8 @@
+local FrameLock = require "Events/FrameLock.lua"
+local Spellcast = require "Events/Spellcast.lua"
+local Aura = require "Lib/Aura.lua"
+local Spellbook = require "Lib/Spellbook.lua"
+
 local MODULE_ID = "TrueshotAuraAlarm"
 local store = nil
 local frame = nil
@@ -19,9 +24,9 @@ local aura = (function()
 			return knowsAura and lastUpdate > updateDelay
 		end,
 		UpdateUI = function()
-			knowsAura = Quiver_Lib_Spellbook.GetIsSpellLearned(QUIVER_T.Spellbook.TrueshotAura)
+			knowsAura = Spellbook.GetIsSpellLearned(QUIVER_T.Spellbook.TrueshotAura)
 				or not Quiver_Store.IsLockedFrames
-			isActive, timeLeft = Quiver_Lib_Aura_GetIsActiveTimeLeftByTexture(QUIVER.Icon.Trueshot)
+			isActive, timeLeft = Aura.PredIsActiveTimeLeftByTexture(QUIVER.Icon.Trueshot)
 			lastUpdate = 0
 
 			if not Quiver_Store.IsLockedFrames or knowsAura and not isActive then
@@ -41,7 +46,7 @@ end)()
 
 -- ************ UI ************
 local setFramePosition = function(f, s)
-	Quiver_Event_FrameLock_SideEffectRestoreSize(s, {
+	FrameLock.SideEffectRestoreSize(s, {
 		w=DEFAULT_ICON_SIZE, h=DEFAULT_ICON_SIZE, dx=150, dy=40,
 	})
 	f:SetWidth(s.FrameMeta.W)
@@ -65,8 +70,8 @@ local createUI = function()
 	f.Icon:SetPoint("Top", f, "Top", 0, -INSET)
 	f.Icon:SetPoint("Bottom", f, "Bottom", 0, INSET)
 
-	Quiver_Event_FrameLock_SideEffectMakeMoveable(f, store)
-	Quiver_Event_FrameLock_SideEffectMakeResizeable(f, store, { GripMargin=0 })
+	FrameLock.SideEffectMakeMoveable(f, store)
+	FrameLock.SideEffectMakeResizeable(f, store, { GripMargin=0 })
 	return f
 end
 
@@ -94,7 +99,7 @@ local onEnable = function()
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	frame:Show()
 	aura.UpdateUI()
-	Quiver_Event_Spellcast_Instant.Subscribe(MODULE_ID, function(spellName)
+	Spellcast.Instant.Subscribe(MODULE_ID, function(spellName)
 		if spellName == QUIVER_T.Spellbook.TrueshotAura then
 			-- Buffs don't update right away, but we want fast user feedback
 			updateDelay = UPDATE_DELAY_FAST
@@ -102,12 +107,12 @@ local onEnable = function()
 	end)
 end
 local onDisable = function()
-	Quiver_Event_Spellcast_Instant.Dispose(MODULE_ID)
+	Spellcast.Instant.Dispose(MODULE_ID)
 	frame:Hide()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 
-Quiver_Module_TrueshotAuraAlarm = {
+return {
 	Id = MODULE_ID,
 	Name = QUIVER_T.ModuleName[MODULE_ID],
 	OnEnable = onEnable,

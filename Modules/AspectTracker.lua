@@ -1,3 +1,7 @@
+local FrameLock = require "Events/FrameLock.lua"
+local Aura = require "Lib/Aura.lua"
+local Spellbook = require "Lib/Spellbook.lua"
+
 local MODULE_ID = "AspectTracker"
 local store = nil
 local frame = nil
@@ -7,18 +11,18 @@ local INSET = 5
 local TRANSPARENCY = 0.5
 
 local chooseIconTexture = function()
-	if Quiver_Lib_Aura_GetIsBuffActive(QUIVER_T.Spellbook.Aspect_Beast) then
+	if Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Beast) then
 		return QUIVER.Icon.Aspect_Beast
-	elseif Quiver_Lib_Aura_GetIsBuffActive(QUIVER_T.Spellbook.Aspect_Cheetah) then
+	elseif Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Cheetah) then
 		return QUIVER.Icon.Aspect_Cheetah
-	elseif Quiver_Lib_Aura_GetIsBuffActive(QUIVER_T.Spellbook.Aspect_Monkey) then
+	elseif Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Monkey) then
 		return QUIVER.Icon.Aspect_Monkey
-	elseif Quiver_Lib_Aura_GetIsBuffActive(QUIVER_T.Spellbook.Aspect_Wild) then
+	elseif Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Wild) then
 		return QUIVER.Icon.Aspect_Wild
-	elseif Quiver_Lib_Aura_GetIsBuffActive(QUIVER_T.Spellbook.Aspect_Wolf) then
+	elseif Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Wolf) then
 		return QUIVER.Icon.Aspect_Wolf
-	elseif Quiver_Lib_Spellbook.GetIsSpellLearned(QUIVER_T.Spellbook.Aspect_Hawk)
-		and not Quiver_Lib_Aura_GetIsBuffActive(QUIVER_T.Spellbook.Aspect_Hawk)
+	elseif Spellbook.GetIsSpellLearned(QUIVER_T.Spellbook.Aspect_Hawk)
+		and not Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Hawk)
 		or not Quiver_Store.IsLockedFrames
 	then
 		return QUIVER.Icon.Aspect_Hawk
@@ -40,7 +44,7 @@ local updateUI = function()
 	-- Exclude Pack from main texture, since party members can apply it.
 	-- I don't have a simple way of detecting who cast it, because
 	-- the cancellable bit is 1 even if a party member cast it.
-	if Quiver_Lib_Aura_GetIsBuffActive(QUIVER_T.Spellbook.Aspect_Pack) then
+	if Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Pack) then
 		frame:SetBackdrop({
 			bgFile = "Interface/Tooltips/UI-Tooltip-Background", tile = false,
 			edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 20,
@@ -54,7 +58,7 @@ local updateUI = function()
 end
 
 local setFramePosition = function(f, s)
-	Quiver_Event_FrameLock_SideEffectRestoreSize(s, {
+	FrameLock.SideEffectRestoreSize(s, {
 		w=DEFAULT_ICON_SIZE, h=DEFAULT_ICON_SIZE, dx=110, dy=40,
 	})
 	f:SetWidth(s.FrameMeta.W)
@@ -73,8 +77,8 @@ local createUI = function()
 	f.Icon:SetPoint("Top", f, "Top", 0, -INSET)
 	f.Icon:SetPoint("Bottom", f, "Bottom", 0, INSET)
 
-	Quiver_Event_FrameLock_SideEffectMakeMoveable(f, store)
-	Quiver_Event_FrameLock_SideEffectMakeResizeable(f, store, { GripMargin=0 })
+	FrameLock.SideEffectMakeMoveable(f, store)
+	FrameLock.SideEffectMakeResizeable(f, store, { GripMargin=0 })
 	return f
 end
 

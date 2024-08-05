@@ -52,7 +52,7 @@ const runBundler = async (event, source) => {
 await runBundler("Startup")
 
 if (isWatch) {
-	const throttle = ThrottleF(10)
+	const throttle = ThrottleF(50)
 	// https://bun.sh/guides/read-file/watch
 	const watcher = Fs.watch(dirSource, { recursive: true })
 	for await (const w of watcher) {

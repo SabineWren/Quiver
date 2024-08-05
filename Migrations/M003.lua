@@ -1,6 +1,8 @@
+local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
+
 return function()
 	local mstore = Quiver_Store.ModuleStore or {}
-	local s = mstore[Quiver_Module_TranqAnnouncer.Id] or {}
+	local s = mstore[TranqAnnouncer.Id] or {}
 
 	if s.MsgTranqHit then
 		-- We notify on tranq cast instead of hit. To prevent a breaking

@@ -1,4 +1,4 @@
-Quiver_Component_Button_CreateTexture = function(parent, layer)
+local CreateTexture = function(parent, layer)
 	local t = parent:CreateTexture(nil, layer)
 	t.QuiverSetTexture = function(self, scale, texturePath)
 		-- We could edit the texture file, but it's a raster image
@@ -23,7 +23,7 @@ Quiver_Component_Button_CreateTexture = function(parent, layer)
 	return t
 end
 
-Quiver_Component_Button = function(args)
+local Create = function(args)
 	local parent, size, tooltipText =
 		args.Parent, args.Size, args.TooltipText
 	local f = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
@@ -44,7 +44,7 @@ Quiver_Component_Button = function(args)
 		GameTooltip:ClearLines()
 	end)
 
-	f.Texture = Quiver_Component_Button_CreateTexture(f, "OVERLAY")
+	f.Texture = CreateTexture(f, "OVERLAY")
 	f:SetNormalTexture(f.Texture)
 	-- Custom glow texture would go here
 	--f:SetHighlightTexture(nil)
@@ -61,3 +61,8 @@ Quiver_Component_Button = function(args)
 	end
 	return f
 end
+
+return {
+	Create = Create,
+	CreateTexture = CreateTexture,
+}

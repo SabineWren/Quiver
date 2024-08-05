@@ -1,10 +1,13 @@
+local FrameLock = require "Events/FrameLock.lua"
+local ActionBar = require "Lib/ActionBar.lua"
+
 local MODULE_ID = "RangeIndicator"
 local store = nil
 local frame = nil
 local fontString = nil
 
 local setFramePosition = function(f, s)
-	Quiver_Event_FrameLock_SideEffectRestoreSize(s, {
+	FrameLock.SideEffectRestoreSize(s, {
 		w=190, h=35, dx=190 * -0.5, dy=-183,
 	})
 	f:SetWidth(s.FrameMeta.W)
@@ -15,8 +18,8 @@ end
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	setFramePosition(f, store)
-	Quiver_Event_FrameLock_SideEffectMakeMoveable(f, store)
-	Quiver_Event_FrameLock_SideEffectMakeResizeable(f, store, { GripMargin=4 })
+	FrameLock.SideEffectMakeMoveable(f, store)
+	FrameLock.SideEffectMakeResizeable(f, store, { GripMargin=4 })
 
 	f:SetFrameStrata("Low")
 	f:SetBackdrop({
@@ -40,7 +43,7 @@ local createUI = function()
 	return f, fs
 end
 
-local findSlot = Quiver_Lib_ActionBar_FindSlot(QUIVER_T.ModuleName[MODULE_ID])
+local findSlot = ActionBar.FindSlot(QUIVER_T.ModuleName[MODULE_ID])
 local checkActionBarDistance = function(spellName)
 	local slot = findSlot(spellName)
 	return IsActionInRange(slot) == 1
@@ -123,7 +126,7 @@ local onDisable = function()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 
-Quiver_Module_RangeIndicator = {
+return {
 	Id = MODULE_ID,
 	Name = QUIVER_T.ModuleName[MODULE_ID],
 	OnEnable = onEnable,

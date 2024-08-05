@@ -1,3 +1,6 @@
+local Spellbook = require "Lib/Spellbook.lua"
+local Print = require "Lib/Print.lua"
+
 --[[
 DO NOT PRELOAD CACHE
 Occasionally the cache populates incorrectly at login.
@@ -17,12 +20,12 @@ local tryFindSlot = function(texture)
 	return nil
 end
 
-Quiver_Lib_ActionBar_FindSlot = function(callerName)
-	local println = Quiver_Lib_Print_Factory(callerName)
+local FindSlot = function(callerName)
+	local println = Print.PrefixedF(callerName)
 	return function(nameSeek)
 		if actionBarSlotCache[nameSeek] ~= nil then return actionBarSlotCache[nameSeek] end
 
-		local texture = Quiver_Lib_Spellbook_TryFindTexture(nameSeek)
+		local texture = Spellbook.TryFindTexture(nameSeek)
 		table.insert(requiredSpells, nameSeek)
 		if texture == nil then
 			println.Warning("Can't find in spellbook: "..nameSeek)
@@ -52,7 +55,7 @@ end
 
 local ValidateCache = function(_slotChanged)
 	for spellName, slotOld in actionBarSlotCache do
-		local texture = Quiver_Lib_Spellbook_TryFindTexture(spellName)
+		local texture = Spellbook.TryFindTexture(spellName)
 		local slotNew = tryFindSlot(texture) or 0
 		actionBarSlotCache[spellName] = slotNew
 		--[[
@@ -64,14 +67,15 @@ local ValidateCache = function(_slotChanged)
 			and getIsRequiredSpell(spellName)
 		if isPrintDebug then
 			if slotNew > 0 then
-				Quiver_Lib_Print.Success("Discovered " .. spellName .. " in slot " .. tostring(slotNew))
+				Print.Line.Success("Discovered " .. spellName .. " in slot " .. tostring(slotNew))
 			else
-				Quiver_Lib_Print.Warning("Lost " .. spellName .. " from slot " .. tostring(slotOld))
+				Print.Line.Warning("Lost " .. spellName .. " from slot " .. tostring(slotOld))
 			end
 		end
 	end
 end
 
 return {
+	FindSlot = FindSlot,
 	ValidateCache=ValidateCache,
 }

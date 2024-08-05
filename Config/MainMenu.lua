@@ -1,7 +1,16 @@
+local Button = require "Components/Button.lua"
+local CheckButton = require "Components/CheckButton.lua"
+local Dialog = require "Components/Dialog.lua"
+local Select = require "Components/Select.lua"
+local TitleBox = require "Components/TitleBox.lua"
+local Color = require "Config/Color.lua"
+local InputText = require "Config/InputText.lua"
+local FrameLock = require "Events/FrameLock.lua"
 local AutoShotTimer = require "Modules/AutoShotTimer.lua"
+local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
 
 local createIconBtnLock = function(parent)
-	local f = Quiver_Component_Button({
+	local f = Button.Create({
 		Parent=parent, Size=QUIVER.Size.Icon, TooltipText=QUIVER_T.UI.FrameLockToggleTooltip })
 	local updateTexture = function()
 		local path = Quiver_Store.IsLockedFrames
@@ -11,15 +20,15 @@ local createIconBtnLock = function(parent)
 	end
 	updateTexture()
 	f:SetScript("OnClick", function(_self)
-		Quiver_Event_FrameLock_Set(not Quiver_Store.IsLockedFrames)
+		FrameLock.SetIsLocked(not Quiver_Store.IsLockedFrames)
 		updateTexture()
 	end)
-	Quiver_Event_FrameLock_Init()
+	FrameLock.Init()
 	return f
 end
 
 local createIconResetAll = function(parent)
-	local f = Quiver_Component_Button({
+	local f = Button.Create({
 		Parent=parent, Size=QUIVER.Size.Icon,
 		TooltipText=QUIVER_T.UI.ResetFramesTooltipAll,
 	})
@@ -34,7 +43,7 @@ local createModuleControls = function(parent, m, gap)
 	local f = CreateFrame("Frame", nil, parent)
 
 	local sizeReset = QUIVER.Size.Icon
-	f.BtnReset = Quiver_Component_Button({
+	f.BtnReset = Button.Create({
 		Parent=f, Size=sizeReset,
 		TooltipText=QUIVER_T.UI.ResetFramesTooltip,
 	})
@@ -47,7 +56,7 @@ local createModuleControls = function(parent, m, gap)
 		f.BtnReset.QuiverDisable()
 	end
 
-	f.BtnSwitch = Quiver_Component_CheckButton(f, {
+	f.BtnSwitch = CheckButton.Create(f, {
 		IsChecked = Quiver_Store.ModuleEnabled[m.Id],
 		Label = m.Name,
 		Tooltip = QUIVER_T.ModuleTooltip[m.Id],
@@ -86,17 +95,17 @@ local createAllModuleControls = function(parent, gap)
 	return f
 end
 
-Quiver_Config_MainMenu_Create = function()
+local Create = function()
 	-- WoW uses border-box content sizing
 	local PADDING_CLOSE = QUIVER.Size.Border + 4
 	local PADDING_FAR = QUIVER.Size.Border + QUIVER.Size.Gap
-	local f = Quiver_Component_Dialog(PADDING_CLOSE)
+	local f = Dialog.Create(PADDING_CLOSE)
 	f:SetFrameStrata("Dialog")
 
-	local titleBox = Quiver_Component_TitleBox(f)
+	local titleBox = TitleBox.Create(f)
 	titleBox:SetPoint("Center", f, "Top", 0, -10)
 
-	local btnCloseTop = Quiver_Component_Button({
+	local btnCloseTop = Button.Create({
 		Parent=f, Size=QUIVER.Size.Icon,
 		TooltipText=QUIVER_T.UI.CloseWindowTooltip })
 	btnCloseTop.Texture:QuiverSetTexture(0.7, QUIVER.Icon.XMark)
@@ -112,7 +121,7 @@ Quiver_Config_MainMenu_Create = function()
 	btnResetFrames:SetPoint("TopRight", f, "TopRight", -resetOffsetX, -PADDING_CLOSE)
 
 	local controls = createAllModuleControls(f, QUIVER.Size.Gap)
-	local colorPickers = Quiver_Config_Colors(f, QUIVER.Size.Gap)
+	local colorPickers = Color.Create(f, QUIVER.Size.Gap)
 
 	local yOffset = -PADDING_CLOSE - QUIVER.Size.Icon - QUIVER.Size.Gap
 	controls:SetPoint("Top", f, "Top", 0, yOffset)
@@ -125,7 +134,7 @@ Quiver_Config_MainMenu_Create = function()
 	local dropdownY = 0
 
 	-- Dropdown debug level. Maybe hide this from users? Could use slash commands instead.
-	local selectDebugLevel = Quiver_Component_DropdownSelect(f,
+	local selectDebugLevel = Select.Create(f,
 		"Debug Level",
 		{ "None", "Verbose" },
 		Quiver_Store.DebugLevel
@@ -148,7 +157,7 @@ Quiver_Config_MainMenu_Create = function()
 	local directionToText = function()
 
 	end
-	local selectAutoShotTimerDirection = Quiver_Component_DropdownSelect(f,
+	local selectAutoShotTimerDirection = Select.Create(f,
 		QUIVER_T.ModuleName.AutoShotTimer,
 		{ QUIVER_T.AutoShot.LeftToRight, QUIVER_T.AutoShot.BothDirections },
 		QUIVER_T.AutoShot[Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection]
@@ -171,10 +180,10 @@ Quiver_Config_MainMenu_Create = function()
 	end
 
 	-- Dropdown tranq shot announce channel
-	local selectChannelHit = Quiver_Component_DropdownSelect(f,
+	local selectChannelHit = Select.Create(f,
 		"Tranq Speech",
 		{ "None", "/Say", "/Raid" },
-		Quiver_Store.ModuleStore[Quiver_Module_TranqAnnouncer.Id].TranqChannel
+		Quiver_Store.ModuleStore[TranqAnnouncer.Id].TranqChannel
 	)
 	dropdownY = dropdownY + QUIVER.Size.Gap + selectChannelHit:GetHeight()
 	selectChannelHit:SetPoint("Right", f, "Right", -dropdownX, 0)
@@ -184,7 +193,7 @@ Quiver_Config_MainMenu_Create = function()
 		local option = oLoop
 		option:SetScript("OnClick", function()
 			local text = option.Text:GetText()
-			Quiver_Store.ModuleStore[Quiver_Module_TranqAnnouncer.Id].TranqChannel = text
+			Quiver_Store.ModuleStore[TranqAnnouncer.Id].TranqChannel = text
 			selectChannelHit.Selected:SetText(text)
 			selectChannelHit.Menu:Hide()
 		end)
@@ -195,7 +204,7 @@ Quiver_Config_MainMenu_Create = function()
 	local hMax = hRight > hLeft and hRight or hLeft
 	yOffset = yOffset - hMax - QUIVER.Size.Gap
 
-	local tranqOptions = Quiver_Config_InputText_TranqAnnouncer(f, QUIVER.Size.Gap)
+	local tranqOptions = InputText.Create(f, QUIVER.Size.Gap)
 	tranqOptions:SetPoint("TopLeft", f, "TopLeft", 0, yOffset)
 	yOffset = yOffset - tranqOptions:GetHeight()
 	yOffset = yOffset - QUIVER.Size.Gap
@@ -203,3 +212,7 @@ Quiver_Config_MainMenu_Create = function()
 	f:SetHeight(-1 * yOffset + PADDING_CLOSE + QUIVER.Size.Button)
 	return f
 end
+
+return {
+	Create = Create,
+}

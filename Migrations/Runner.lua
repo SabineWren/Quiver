@@ -1,3 +1,4 @@
+local Version = require "Lib/Version.lua"
 local M001 = require "Migrations/M001.lua"
 local M002 = require "Migrations/M002.lua"
 local M003 = require "Migrations/M003.lua"
@@ -10,7 +11,7 @@ return function()
 	else
 		local vOld = Quiver_Store.Version or "1.0.0"
 		local getIsNewer = function(b)
-			return Quiver_Lib_Version_GetIsNewer(vOld, b)
+			return Version.PredIsNewer(vOld, b)
 		end
 
 		if getIsNewer("2.0.0") then M001() end

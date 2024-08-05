@@ -1,41 +1,12 @@
 ## Interface: 11200
 ## Title: Quiver - |cff00ff00Hunter
 ## Notes: A collection of hunter utilities.
-## Author: SabineWren, 2022-2023
+## Author: SabineWren, 2022-2024
 ## Version: 2.7.1
 ## SavedVariables: Quiver_Store
 
 Lib\F.lua
 Constants.lua
 Locale\enUS.lua
-
-Lib\Tooltip.lua
-Lib\Aura.lua
-Lib\Print.lua
-Lib\Spellbook.lua
-Lib\ActionBar.lua
-Lib\Version.lua
-
-Events\FrameLock.lua
-Events\Spellcast.lua
-
-Components\Button.lua
-Components\ColorPicker.lua
-Components\CheckButton.lua
-Components\Dialog.lua
-Components\DropdownSelect.lua
-Components\EditBox.lua
-Components\TitleBox.lua
-
-Modules\AutoShotTimer.lua
-Modules\Castbar.lua
-Modules\RangeIndicator.lua
-Modules\TranqAnnouncer.lua
-Modules\TrueshotAuraAlarm.lua
-Modules\UpdateNotifier.lua
-
-Config\Color.lua
-Config\InputText.lua
-Config\MainMenu.lua
 
 Quiver.bundle.lua

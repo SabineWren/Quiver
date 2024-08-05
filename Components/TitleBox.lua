@@ -1,4 +1,4 @@
-Quiver_Component_TitleBox = function(parent)
+local Create = function(parent)
 	local f = CreateFrame("Frame", nil, parent)
 	local fs = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	fs:SetAllPoints(f)
@@ -21,3 +21,7 @@ Quiver_Component_TitleBox = function(parent)
 	f:SetBackdropBorderColor(0.25, 0.25, 0.25, 1)
 	return f
 end
+
+return {
+	Create = Create,
+}

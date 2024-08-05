@@ -1,3 +1,5 @@
+local Tooltip = require "Lib/Tooltip.lua"
+
 -- TODO parse spellbook in case a patch changes them, instead of hard-coding here
 local HUNTER_CASTABLE_SHOTS = {
 	[QUIVER_T.Spellbook.Aimed_Shot] = 3.0,
@@ -16,7 +18,7 @@ local _HUNTER_INSTANT_SHOTS = {
 }
 
 local calcRangedWeaponSpeedBase = (function()
-	local resetTooltip = Quiver_Lib_Tooltip_Factory("QuiverRangedWeaponScanningTooltip")
+	local resetTooltip = Tooltip.ResetF("QuiverRangedWeaponScanningTooltip")
 
 	-- Might be cachable. GetInventoryItemLink("Player", slot#) returns a link, ex. [name]
 	-- Weapon name always appears at line TextLeft1
@@ -41,7 +43,7 @@ local calcRangedWeaponSpeedBase = (function()
 	end
 end)()
 
-Quiver_Lib_Spellbook_CalcCastTime = function(spellName)
+local CalcCastTime = function(spellName)
 	local baseTime = HUNTER_CASTABLE_SHOTS[spellName]
 	local _,_, msLatency = GetNetStats()
 	local startLocal = GetTime()
@@ -91,7 +93,7 @@ end
 -- Spells can change texture, such as Auto Shot when equipping a ranged weapon.
 -- Therefore, don't rely on this always returning the correct texture
 local cacheNameTexture = {}
-Quiver_Lib_Spellbook_TryFindTexture = function(nameSeek)
+local TryFindTexture = function(nameSeek)
 	if cacheNameTexture[nameSeek] ~= nil then
 		return cacheNameTexture[nameSeek]
 	end
@@ -108,13 +110,13 @@ Quiver_Lib_Spellbook_TryFindTexture = function(nameSeek)
 	end
 end
 
-Quiver_Lib_Spellbook_GetIsSpellCastableShot = function(spellName)
+local GetIsSpellCastableShot = function(spellName)
 	for name, _castTime in HUNTER_CASTABLE_SHOTS do
 		if spellName == name then return true end
 	end
 	return false
 end
-Quiver_Lib_Spellbook_GetIsSpellInstantShot = function(spellName)
+local GetIsSpellInstantShot = function(spellName)
 	for _index, name in _HUNTER_INSTANT_SHOTS do
 		if spellName == name then return true end
 	end
@@ -152,10 +154,14 @@ local CheckNewGCD = function(lastCdStart)
 	return CheckNewCd(1.5, lastCdStart, QUIVER_T.Spellbook.Serpent_Sting)
 end
 
-Quiver_Lib_Spellbook = {
+return {
+	CalcCastTime = CalcCastTime,
 	CheckNewCd=CheckNewCd,
 	CheckNewGCD=CheckNewGCD,
+	GetIsSpellCastableShot = GetIsSpellCastableShot,
+	GetIsSpellInstantShot = GetIsSpellInstantShot,
 	GetIsSpellLearned = GetIsSpellLearned,
 	GetSpellNameFromTexture=GetSpellNameFromTexture,
 	HUNTER_CASTABLE_SHOTS=HUNTER_CASTABLE_SHOTS,
+	TryFindTexture = TryFindTexture,
 }

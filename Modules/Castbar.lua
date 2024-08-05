@@ -1,3 +1,7 @@
+local FrameLock = require "Events/FrameLock.lua"
+local Spellcast = require "Events/Spellcast.lua"
+local Spellbook = require "Lib/Spellbook.lua"
+
 local MODULE_ID = "Castbar"
 local store = nil
 local frame = nil
@@ -26,7 +30,7 @@ local setCastbarSize = function(f, s)
 end
 
 local setFramePosition = function(f, s)
-	Quiver_Event_FrameLock_SideEffectRestoreSize(s, {
+	FrameLock.SideEffectRestoreSize(s, {
 		w=240, h=20, dx=240 * -0.5, dy=-116,
 	})
 	f:SetWidth(s.FrameMeta.W)
@@ -71,8 +75,8 @@ local createUI = function()
 	centerVertically(f.SpellName)
 
 	setFramePosition(f, store)
-	Quiver_Event_FrameLock_SideEffectMakeMoveable(f, store)
-	Quiver_Event_FrameLock_SideEffectMakeResizeable(f, store, {
+	FrameLock.SideEffectMakeMoveable(f, store)
+	FrameLock.SideEffectMakeResizeable(f, store, {
 		GripMargin=0,
 		OnResizeEnd=function() setCastbarSize(f, store) end,
 		IsCenterX=true,
@@ -89,7 +93,7 @@ local onSpellcast = function(spellName)
 	if isCasting then return end
 	isCasting = true
 	local _timeStartLocal
-	castTime, timeStartCasting, _timeStartLocal = Quiver_Lib_Spellbook_CalcCastTime(spellName)
+	castTime, timeStartCasting, _timeStartLocal = Spellbook.CalcCastTime(spellName)
 	frame.SpellName:SetText(spellName)
 	frame.Castbar:SetWidth(1)
 	displayTime(0)
@@ -137,15 +141,15 @@ local onEnable = function()
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	if Quiver_Store.IsLockedFrames then frame:Hide() else frame:Show() end
-	Quiver_Event_Spellcast_CastableShot.Subscribe(MODULE_ID, onSpellcast)
+	Spellcast.CastableShot.Subscribe(MODULE_ID, onSpellcast)
 end
 local onDisable = function()
-	Quiver_Event_Spellcast_CastableShot.Dispose(MODULE_ID)
+	Spellcast.CastableShot.Dispose(MODULE_ID)
 	frame:Hide()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 
-Quiver_Module_Castbar = {
+return {
 	Id = MODULE_ID,
 	Name = QUIVER_T.ModuleName[MODULE_ID],
 	OnEnable = onEnable,

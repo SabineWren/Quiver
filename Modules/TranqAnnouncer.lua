@@ -1,3 +1,7 @@
+local FrameLock = require "Events/FrameLock.lua"
+local Print = require "Lib/Print.lua"
+local Spellbook = require "Lib/Spellbook.lua"
+
 local MODULE_ID = "TranqAnnouncer"
 local store = nil
 local frame = nil
@@ -145,7 +149,7 @@ end
 
 local setFramePosition = function(f, s)
 	local height = getIdealFrameHeight()
-	Quiver_Event_FrameLock_SideEffectRestoreSize(s, {
+	FrameLock.SideEffectRestoreSize(s, {
 		w=WIDTH_FRAME_DEFAULT, h=height, dx=110, dy=150,
 	})
 	f:SetWidth(s.FrameMeta.W)
@@ -165,8 +169,8 @@ local createUI = function()
 	frame:SetBackdropBorderColor(0.6, 0.9, 0.7, 1.0)
 
 	setFramePosition(frame, store)
-	Quiver_Event_FrameLock_SideEffectMakeMoveable(frame, store)
-	Quiver_Event_FrameLock_SideEffectMakeResizeable(frame, store, { GripMargin=4 })
+	FrameLock.SideEffectMakeMoveable(frame, store)
+	FrameLock.SideEffectMakeResizeable(frame, store, { GripMargin=4 })
 	return frame
 end
 
@@ -245,7 +249,7 @@ local EVENTS = {
 }
 local lastCastStart = 0
 local getHasFiredTranq = function()
-	local isCast, cdStart = Quiver_Lib_Spellbook.CheckNewCd(
+	local isCast, cdStart = Spellbook.CheckNewCd(
 		TRANQ_CD_SEC, lastCastStart, QUIVER_T.Spellbook.Tranquilizing_Shot)
 	lastCastStart = cdStart
 	return isCast
@@ -258,16 +262,16 @@ local handleEvent = function()
 			or string.find(arg1, QUIVER_T.CombatLog.Tranq.Resist)
 			or string.find(arg1, QUIVER_T.CombatLog.Tranq.Fail)
 		then
-			Quiver_Lib_Print.Say(store.MsgTranqMiss)
-			Quiver_Lib_Print.Raid(store.MsgTranqMiss)
+			Print.Line.Say(store.MsgTranqMiss)
+			Print.Line.Raid(store.MsgTranqMiss)
 		end
 	elseif event == "SPELL_UPDATE_COOLDOWN" then
 		if getHasFiredTranq() then
 			message.Broadcast()
 			if store.TranqChannel == "/Say" then
-				Quiver_Lib_Print.Say(store.MsgTranqCast)
+				Print.Line.Say(store.MsgTranqCast)
 			elseif store.TranqChannel == "/Raid" then
-				Quiver_Lib_Print.Raid(store.MsgTranqCast)
+				Print.Line.Raid(store.MsgTranqCast)
 			-- else don't announce
 			end
 		end
@@ -286,7 +290,7 @@ local onDisable = function()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 
-Quiver_Module_TranqAnnouncer = {
+return {
 	Id = MODULE_ID,
 	Name = QUIVER_T.ModuleName[MODULE_ID],
 	OnEnable = onEnable,

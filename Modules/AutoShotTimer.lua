@@ -1,3 +1,7 @@
+local FrameLock = require "Events/FrameLock.lua"
+local Spellcast = require "Events/Spellcast.lua"
+local Spellbook = require "Lib/Spellbook.lua"
+
 local MODULE_ID = "AutoShotTimer"
 local store = nil
 local frame = nil
@@ -62,7 +66,7 @@ local setBarAutoShot = function(f)
 end
 
 local setFramePosition = function(f, s)
-	Quiver_Event_FrameLock_SideEffectRestoreSize(s, {
+	FrameLock.SideEffectRestoreSize(s, {
 		w=240, h=14, dx=240 * -0.5, dy=-136,
 	})
 
@@ -91,8 +95,8 @@ local createUI = function()
 	setFramePosition(f, store)
 	local resizeBarAutoShot = function() setBarAutoShot(f) end
 
-	Quiver_Event_FrameLock_SideEffectMakeMoveable(f, store)
-	Quiver_Event_FrameLock_SideEffectMakeResizeable(f, store, {
+	FrameLock.SideEffectMakeMoveable(f, store)
+	FrameLock.SideEffectMakeResizeable(f, store, {
 		GripMargin=0,
 		OnResizeDrag=resizeBarAutoShot,
 		OnResizeEnd=resizeBarAutoShot,
@@ -321,7 +325,7 @@ local onSpellcast = function(spellName)
 	if isCasting then return end
 	isCasting = true
 	local _latAdjusted
-	castTime, _latAdjusted, timeStartCastLocal = Quiver_Lib_Spellbook_CalcCastTime(spellName)
+	castTime, _latAdjusted, timeStartCastLocal = Spellbook.CalcCastTime(spellName)
 	log("Start Cast")
 end
 
@@ -378,16 +382,16 @@ local onEnable = function()
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) else frame:SetAlpha(1) end
-	Quiver_Event_Spellcast_CastableShot.Subscribe(MODULE_ID, onSpellcast)
-	Quiver_Event_Spellcast_Instant.Subscribe(MODULE_ID, function(spellName)
-		isFiredInstant = Quiver_Lib_Spellbook_GetIsSpellInstantShot(spellName)
+	Spellcast.CastableShot.Subscribe(MODULE_ID, onSpellcast)
+	Spellcast.Instant.Subscribe(MODULE_ID, function(spellName)
+		isFiredInstant = Spellbook.GetIsSpellInstantShot(spellName)
 	end)
 	frame:Show()
 end
 
 local onDisable = function()
-	Quiver_Event_Spellcast_Instant.Dispose(MODULE_ID)
-	Quiver_Event_Spellcast_CastableShot.Dispose(MODULE_ID)
+	Spellcast.Instant.Dispose(MODULE_ID)
+	Spellcast.CastableShot.Dispose(MODULE_ID)
 	if frame ~= nil then
 		frame:Hide()
 		for _k, e in EVENTS do frame:UnregisterEvent(e) end

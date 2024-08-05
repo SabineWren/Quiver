@@ -1,4 +1,4 @@
-Quiver_Component_Dialog = function(padding)
+local Create = function(padding)
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:Hide()
 	f:SetPoint("Center", 0, 0)
@@ -25,3 +25,7 @@ Quiver_Component_Dialog = function(padding)
 	btnCloseBottom:SetScript("OnClick", function() f:Hide() end)
 	return f
 end
+
+return {
+	Create = Create,
+}

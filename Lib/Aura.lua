@@ -1,9 +1,11 @@
+local Tooltip = require "Lib/Tooltip.lua"
+
 -- This doesn't work for duplicate textures (ex. cheetah + zg mount).
 -- For those you have to scan by name using the GameTooltip.
-Quiver_Lib_Aura_GetIsActiveTimeLeftByTexture = function(targetTexture)
+local PredIsActiveTimeLeftByTexture = function(targetTexture)
 	-- This seems to check debuffs as well (tested with deserter)
 	local maxIndex = QUIVER.Aura_Cap - 1
-	for i=0,maxIndex do
+	for i=0, maxIndex do
 		local texture = GetPlayerBuffTexture(i)
 		if texture == targetTexture then
 			local timeLeft = GetPlayerBuffTimeLeft(i)
@@ -13,11 +15,11 @@ Quiver_Lib_Aura_GetIsActiveTimeLeftByTexture = function(targetTexture)
 	return false, 0
 end
 
-Quiver_Lib_Aura_GetIsBuffActive = (function()
-	local resetTooltip = Quiver_Lib_Tooltip_Factory("QuiverAuraScanningTooltip")
+local PredIsBuffActive = (function()
+	local resetTooltip = Tooltip.ResetF("QuiverAuraScanningTooltip")
 	return function(buffname)
 		local tooltip = resetTooltip()
-		for i=0,QUIVER.Buff_Cap do
+		for i=0, QUIVER.Buff_Cap do
 			local buffIndex, isCancellable = GetPlayerBuff(i, "HELPFUL|PASSIVE")
 			if buffIndex >= 0 then
 				tooltip:ClearLines()
@@ -34,7 +36,7 @@ end)()
 
 -- This works great. Don't delete because I'm sure it will be useful in the future.
 --[[
-Quiver_Lib_Aura_GetIsBuffActiveTimeLeftByName = function(buffname)
+local PredIsBuffActiveTimeLeftByName = function(buffname)
 	local tooltip = resetTooltip()
 	for i=0,QUIVER.Buff_Cap do
 		local buffIndex, isCancellable = GetPlayerBuff(i, "HELPFUL|PASSIVE")
@@ -61,3 +63,8 @@ Quiver_Lib_Aura_GetIsBuffActiveTimeLeftByName = function(buffname)
 	return false, 0
 end
 ]]
+
+return {
+	PredIsActiveTimeLeftByTexture = PredIsActiveTimeLeftByTexture,
+	PredIsBuffActive = PredIsBuffActive,
+}

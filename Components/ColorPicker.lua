@@ -1,4 +1,6 @@
-Quiver_Component_ColorPicker_WrapColor = function(store, name, default)
+local Button = require "Components/Button.lua"
+
+local WrapColor = function(store, name, default)
 	local set = function(r, g, b) store[name] = { r, g, b } end
 	return {
 		Get = function() return unpack(store[name]) end,
@@ -53,14 +55,14 @@ local createColorPicker = function(parent, color)
 	return f
 end
 
-Quiver_Component_ColorPicker_WithResetLabel = function(parent, labelText, color)
+local CreateWithResetLabel = function(parent, labelText, color)
 	local f = CreateFrame("Frame", nil, parent)
 
 	f.Label = f:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
 	f.Label:SetPoint("Left", f, "Left", 0, 0)
 	f.Label:SetText(labelText)
 
-	f.BtnReset = Quiver_Component_Button({
+	f.BtnReset = Button.Create({
 		Parent=f, Size=QUIVER.Size.Icon,
 		TooltipText=QUIVER_T.UI.ResetColor,
 	})
@@ -79,3 +81,8 @@ Quiver_Component_ColorPicker_WithResetLabel = function(parent, labelText, color)
 	f.WidthMinusLabel = 6 + x + f.Button:GetWidth()
 	return f
 end
+
+return {
+	CreateWithResetLabel = CreateWithResetLabel,
+	WrapColor = WrapColor,
+}

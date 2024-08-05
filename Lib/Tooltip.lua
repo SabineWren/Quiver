@@ -7,14 +7,17 @@ local createTooltip = function(frameName)
 	return tt
 end
 
---[[ [ Quiver_Lib_Tooltip_Factory ]
-	@description Returns a function that clears the tooltip and gets a reference to it.
-	@param frameName string name for tooltip element
-]]
-Quiver_Lib_Tooltip_Factory = function(frameName)
+---Returns a function that clears the tooltip and gets a reference to it.
+---@param frameName string# name for tooltip element
+---@return fun(): Frame
+local ResetF = function(frameName)
 	local tooltip = createTooltip(frameName)
 	return function()
 		tooltip:SetOwner(WorldFrame, "ANCHOR_NONE")
 		return tooltip
 	end
 end
+
+return {
+	ResetF = ResetF,
+}

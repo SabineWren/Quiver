@@ -1,3 +1,5 @@
+local Version = require "Lib/Version.lua"
+
 -- This file based on pfUI's updatenotify.lua
 -- Copyright (c) 2016-2021 Eric Mauser (Shagu)
 -- Copyright (c) 2022 SabineWren
@@ -42,7 +44,7 @@ local handleEvent = function()
 	if event == "CHAT_MSG_ADDON" and arg1 == "Quiver" then
 		local _, _, version = string.find(arg2, "VERSION:(.*)")
 		if version ~= nil
-			and Quiver_Lib_Version_GetIsNewer(CURRENT, version)
+			and Version.PredIsNewer(CURRENT, version)
 			and not hasNotified
 		then
 			local URL = "https://github.com/SabineWren/Quiver"
@@ -59,7 +61,7 @@ local handleEvent = function()
 end
 
 -- ************ Initialization ************
-Quiver_Module_UpdateNotifier_Init = function()
+return function()
 	local frame = CreateFrame("Frame", nil)
 	frame:SetScript("OnEvent", handleEvent)
 	-- We don't need to unsubscribe, as we never disable the update notifier

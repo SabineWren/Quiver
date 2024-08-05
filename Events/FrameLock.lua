@@ -1,3 +1,5 @@
+local Button = require "Components/Button.lua"
+
 --[[
 WoW persists positions for frames that have global names.
 However, we use custom meta (size+position) logic because
@@ -29,7 +31,7 @@ end
 local defaultOf = function(val, fallback)
 	if val == nil then return fallback else return val end
 end
-Quiver_Event_FrameLock_SideEffectRestoreSize = function(store, args)
+local SideEffectRestoreSize = function(store, args)
 	local sw = getRealScreenWidth()
 	local sh = getRealScreenheight()
 
@@ -44,7 +46,7 @@ end
 
 -- Tons of users don't read the readme file AT ALL. Not even the first line!
 -- We have to guide and strongly encourage them to lock the frames.
-Quiver_Event_FrameLock_Init = function()
+local Init = function()
 	openWarning = CreateFrame("Frame", nil, UIParent)
 	openWarning:SetFrameStrata("Medium")
 	openWarning.Text = openWarning:CreateFontString(nil, "Medium", "GameFontNormal")
@@ -105,7 +107,7 @@ local unlockFrames = function()
 	end
 end
 
-Quiver_Event_FrameLock_Set = function(isChecked)
+local SetIsLocked = function(isChecked)
 	Quiver_Store.IsLockedFrames = isChecked
 	if isChecked then lockFrames() else unlockFrames() end
 end
@@ -121,7 +123,7 @@ local absClamp = function(vOpt, vMax)
 	end
 end
 
-Quiver_Event_FrameLock_SideEffectMakeMoveable = function(f, store)
+local SideEffectMakeMoveable = function(f, store)
 	f:SetWidth(store.FrameMeta.W)
 	f:SetHeight(store.FrameMeta.H)
 	f:SetMinResize(30, GRIP_HEIGHT)
@@ -149,7 +151,7 @@ Quiver_Event_FrameLock_SideEffectMakeMoveable = function(f, store)
 	addFrameMoveable(f)
 end
 
-Quiver_Event_FrameLock_SideEffectMakeResizeable = function(frame, store, args)
+local SideEffectMakeResizeable = function(frame, store, args)
 	local margin, isCenterX, onResizeEnd, onResizeDrag =
 		args.GripMargin, args.IsCenterX, args.OnResizeEnd, args.OnResizeDrag
 
@@ -167,14 +169,14 @@ Quiver_Event_FrameLock_SideEffectMakeResizeable = function(frame, store, args)
 		frame:SetScript("OnSizeChanged", onResizeDrag)
 	end
 
-	local handle = Quiver_Component_Button({ Parent=frame, Size=GRIP_HEIGHT })
+	local handle = Button.Create({ Parent=frame, Size=GRIP_HEIGHT })
 	addFrameResizable(frame, handle)
 	handle:SetFrameLevel(100)-- Should be top element
 	handle:SetPoint("BottomRight", frame, "BottomRight", -margin, margin)
 
 	local scale = 0.5
 	handle.Texture:QuiverSetTexture(scale, QUIVER.Icon.GripHandle)
-	handle.HighlightTexture = Quiver_Component_Button_CreateTexture(handle, "OVERLAY")
+	handle.HighlightTexture = Button.CreateTexture(handle, "OVERLAY")
 	handle:SetHighlightTexture(handle.HighlightTexture)
 	handle.HighlightTexture:QuiverSetTexture(scale, QUIVER.Icon.GripHandle)
 
@@ -190,3 +192,11 @@ Quiver_Event_FrameLock_SideEffectMakeResizeable = function(frame, store, args)
 		if onResizeEnd ~= nil then onResizeEnd() end
 	end)
 end
+
+return {
+	Init = Init,
+	SetIsLocked = SetIsLocked,
+	SideEffectMakeMoveable = SideEffectMakeMoveable,
+	SideEffectMakeResizeable = SideEffectMakeResizeable,
+	SideEffectRestoreSize = SideEffectRestoreSize,
+}

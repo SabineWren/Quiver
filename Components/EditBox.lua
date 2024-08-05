@@ -1,6 +1,8 @@
-local GAP = QUIVER.Size.Gap
+local Button = require "Components/Button.lua"
 
-Quiver_Component_EditBox = function(parent, p)
+local _GAP = QUIVER.Size.Gap
+
+local Create = function(parent, p)
 	local tooltipReset = p.TooltipReset
 
 	local f = CreateFrame("EditBox", nil, parent)
@@ -8,10 +10,10 @@ Quiver_Component_EditBox = function(parent, p)
 	f:SetHeight(25)
 
 	local GAP_RESET = 4
-	local fMarginLeft = QUIVER.Size.Border + GAP
-	local fMarginRight = QUIVER.Size.Border + GAP + QUIVER.Size.Icon + GAP_RESET
+	local fMarginLeft = QUIVER.Size.Border + _GAP
+	local fMarginRight = QUIVER.Size.Border + _GAP + QUIVER.Size.Icon + GAP_RESET
 
-	f.BtnReset = Quiver_Component_Button({
+	f.BtnReset = Button.Create({
 		Parent=f, Size=QUIVER.Size.Icon,
 		TooltipText=tooltipReset,
 	})
@@ -43,3 +45,7 @@ Quiver_Component_EditBox = function(parent, p)
 	f:SetScript("OnEnterPressed", function() f:ClearFocus() end)
 	return f
 end
+
+return {
+	Create = Create,
+}

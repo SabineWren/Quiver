@@ -1,16 +1,22 @@
+local MainMenu = require "Config/MainMenu.lua"
 local ActionBar = require "Lib/ActionBar.lua"
 local Migrations = require "Migrations/Runner.lua"
 local AspectTracker = require "Modules/AspectTracker.lua"
 local AutoShotTimer = require "Modules/AutoShotTimer.lua"
+local Castbar = require "Modules/Castbar.lua"
+local RangeIndicator = require "Modules/RangeIndicator.lua"
+local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
+local TrueshotAuraAlarm = require "Modules/TrueshotAuraAlarm.lua"
+local UpdateNotifierInit = require "Modules/UpdateNotifier.lua"
 
 _G = _G or getfenv()
 _G.Quiver_Modules = {
 	AspectTracker,
 	AutoShotTimer,
-	Quiver_Module_Castbar,
-	Quiver_Module_RangeIndicator,
-	Quiver_Module_TranqAnnouncer,
-	Quiver_Module_TrueshotAuraAlarm,
+	Castbar,
+	RangeIndicator,
+	TranqAnnouncer,
+	TrueshotAuraAlarm,
 }
 
 local savedVariablesRestore = function()
@@ -37,7 +43,7 @@ local initSlashCommandsAndModules = function()
 	SLASH_QUIVER2 = "/quiver"
 	local _, cl = UnitClass("player")
 	if cl == "HUNTER" then
-		local frameConfigMenu = Quiver_Config_MainMenu_Create()
+		local frameConfigMenu = MainMenu.Create()
 		SlashCmdList["QUIVER"] = function(_args, _box) frameConfigMenu:Show() end
 		for _k, v in _G.Quiver_Modules do
 			if Quiver_Store.ModuleEnabled[v.Id] then v.OnEnable() end
@@ -72,7 +78,7 @@ frame:SetScript("OnEvent", function()
 		savedVariablesRestore()
 		initSlashCommandsAndModules()
 	elseif event == "PLAYER_LOGIN" then
-		Quiver_Module_UpdateNotifier_Init()
+		UpdateNotifierInit()
 	elseif event == "PLAYER_LOGOUT" then
 		savedVariablesPersist()
 	elseif event == "ACTIONBAR_SLOT_CHANGED" then

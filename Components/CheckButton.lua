@@ -1,4 +1,4 @@
-Quiver_Component_CheckButton = function(parent, p)
+local Create = function(parent, p)
 	local isChecked, label, tooltip, onClick =
 		p.IsChecked, p.Label, p.Tooltip, p.OnClick
 
@@ -32,3 +32,7 @@ Quiver_Component_CheckButton = function(parent, p)
 	wrapper:SetWidth(btn:GetWidth() + QUIVER.Size.Gap + btn.Text:GetWidth())
 	return wrapper
 end
+
+return {
+	Create = Create,
+}

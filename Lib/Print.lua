@@ -3,7 +3,7 @@ local neutral = function(text) DEFAULT_CHAT_FRAME:AddMessage(text) end
 local success = function(text) DEFAULT_CHAT_FRAME:AddMessage(text, 0, 1, 0) end
 local warning = function(text) DEFAULT_CHAT_FRAME:AddMessage(text, 1, 0.6, 0) end
 
-Quiver_Lib_Print = {
+local PrintLine = {
 	Danger = function(text) danger("Quiver -- " .. text) end,
 	Neutral = function(text) neutral("Quiver -- " .. text) end,
 	Success = function(text) success("Quiver -- " .. text) end,
@@ -15,7 +15,7 @@ Quiver_Lib_Print = {
 	Say = function(text) SendChatMessage(text, "Say") end,
 }
 
-Quiver_Lib_Print_Factory = function(callerName)
+local PrintPrefixedF = function(callerName)
 	local noNil = function(text) return text or "nil" end
 	local prefix = "Quiver ["..callerName.."] -- "
 	return {
@@ -25,3 +25,8 @@ Quiver_Lib_Print_Factory = function(callerName)
 		Warning = function(text) warning(prefix..noNil(text)) end,
 	}
 end
+
+return {
+	Line = PrintLine,
+	PrefixedF = PrintPrefixedF,
+}
