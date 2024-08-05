@@ -1,3 +1,5 @@
+local ActionBar = require("Lib/ActionBar.lua")
+
 _G = _G or getfenv()
 _G.Quiver_Modules = {
 	Quiver_Module_AspectTracker,
@@ -71,6 +73,6 @@ frame:SetScript("OnEvent", function()
 	elseif event == "PLAYER_LOGOUT" then
 		savedVariablesPersist()
 	elseif event == "ACTIONBAR_SLOT_CHANGED" then
-		Quiver_Lib_ActionBar_ValidateCache(arg1)
+		ActionBar.ValidateCache(arg1)
 	end
 end)
