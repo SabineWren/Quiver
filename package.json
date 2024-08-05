@@ -1,0 +1,15 @@
+{
+	"author": "SabineWren",
+	"devDependencies": {
+		"luabundle": "^1.7.0"
+	},
+	"engines": {
+		"node": ">= 22.4.1"
+	},
+	"scripts": {
+		"bundle": "node Build.js --lua-watch",
+		"not-implemented-bun-bundle": "bun",
+		"not-implemented-node-23-ts-bundle": "node --experimental-strip-types"
+	},
+	"type": "module"
+}

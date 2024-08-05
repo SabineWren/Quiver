@@ -44,4 +44,4 @@ Migrations\M002.lua
 Migrations\M003.lua
 Migrations\Runner.lua
 
-Quiver.lua
+Quiver.bundle.lua
