@@ -20,7 +20,7 @@ local Create = function(parent, label, optionsText, selected)
 	local f = CreateFrame("Button", nil, parent)
 
 	f.Menu = CreateFrame("Frame", nil, parent)
-	f.Menu:SetFrameStrata("Tooltip")
+	f.Menu:SetFrameStrata("TOOLTIP")
 	f.Menu:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8",
 		edgeFile="Interface/BUTTONS/WHITE8X8", edgeSize=1

@@ -12,7 +12,7 @@ end
 ---@generic A
 ---@param xs A[]
 ---@param f fun(x: A): boolean
----@return nil | A
+---@return nil|A
 local Find = function(xs, f)
 	for _k, v in ipairs(xs) do
 		if f(v) then

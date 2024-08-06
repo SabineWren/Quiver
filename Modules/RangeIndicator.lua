@@ -21,7 +21,7 @@ local createUI = function()
 	FrameLock.SideEffectMakeMoveable(f, store)
 	FrameLock.SideEffectMakeResizeable(f, store, { GripMargin=4 })
 
-	f:SetFrameStrata("Low")
+	f:SetFrameStrata("LOW")
 	f:SetBackdrop({
 		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
 		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",

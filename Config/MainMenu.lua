@@ -104,7 +104,7 @@ local Create = function()
 	local PADDING_CLOSE = QUIVER.Size.Border + 4
 	local PADDING_FAR = QUIVER.Size.Border + QUIVER.Size.Gap
 	local f = Dialog.Create(PADDING_CLOSE)
-	f:SetFrameStrata("Dialog")
+	f:SetFrameStrata("DIALOG")
 
 	local titleBox = TitleBox.Create(f)
 	titleBox:SetPoint("Center", f, "Top", 0, -10)

@@ -115,7 +115,7 @@ local poolProgressBar = (function()
 			local bar = table.remove(fs) or createProgressBar()
 			bar:SetParent(parent)
 			-- Clearing parent on release has side effects: hides frame and change stratas
-			bar:SetFrameStrata("Low")
+			bar:SetFrameStrata("LOW")
 			bar.ProgressFrame:SetFrameStrata("Medium")
 			bar:Show()
 			return bar
@@ -162,7 +162,7 @@ local createUI = function()
 	frame = CreateFrame("Frame", nil, UIParent)
 	frame.Bars = {}
 
-	frame:SetFrameStrata("Low")
+	frame:SetFrameStrata("LOW")
 	frame:SetBackdrop({
 		edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 16,
 		insets = { left=INSET, right=INSET, top=INSET, bottom=INSET },

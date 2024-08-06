@@ -48,7 +48,7 @@ end
 -- We have to guide and strongly encourage them to lock the frames.
 local Init = function()
 	openWarning = CreateFrame("Frame", nil, UIParent)
-	openWarning:SetFrameStrata("Medium")
+	openWarning:SetFrameStrata("MEDIUM")
 	openWarning.Text = openWarning:CreateFontString(nil, "Medium", "GameFontNormal")
 	openWarning.Text:SetAllPoints(openWarning)
 	openWarning.Text:SetJustifyH("Center")

@@ -79,7 +79,7 @@ end
 
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
-	f:SetFrameStrata("High")
+	f:SetFrameStrata("HIGH")
 	f.BarAutoShot = CreateFrame("Frame", nil, f)
 
 	f:SetBackdrop({

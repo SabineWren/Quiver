@@ -68,7 +68,7 @@ end
 
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
-	f:SetFrameStrata("Low")
+	f:SetFrameStrata("LOW")
 	setFramePosition(f, store)
 
 	f.Icon = CreateFrame("Frame", nil, f)

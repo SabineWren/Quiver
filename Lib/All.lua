@@ -1,4 +1,7 @@
+-- Reference library:
+-- https://github.com/codereport/blackbird/blob/main/combinators.hpp
 local Array = require "Lib/Array.lua"
+local Op = require "Lib/Operator.lua"
 
 -- ************ Combinators ************
 --- (>>), forward function composition
@@ -51,18 +54,20 @@ local Pipe3 = Pipe
 ---@type fun(a: A, f: (fun(a: A): B), g: (fun(b: B): C), h: (fun(c: C): D), i: (fun(d: D): E)): D
 local Pipe4 = Pipe
 
--- ************ Binary / Unary Operators ************
----@type fun(a: number, b: number): number
-local Add = function(a, b) return a + b end
-
 return {
-	-- Re-exports
 	Array = Array,
 	-- Combinators
 	Fw = Forward,
 	Pipe = Pipe,
 	Pipe3 = Pipe3,
 	Pipe4 = Pipe4,
-	-- Binary / Unary Operators
-	Add = Add,
+	-- Binary / Unary
+	Add = Op.Add,
+	-- Comparison
+	Lt = Op.Lt,
+	Le = Op.Le,
+	Eq = Op.Eq,
+	Ne = Op.Ne,
+	Ge = Op.Ge,
+	Gt = Op.Gt,
 }
