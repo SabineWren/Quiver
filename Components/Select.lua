@@ -1,5 +1,5 @@
 local Button = require "Components/Button.lua"
-local Array = require "Lib/Array.lua"
+local L = require "Lib/All.lua"
 
 local _BORDER, _INSET, _SPACING = 1, 4, 4
 local _OPTION_PAD_H, _OPTION_PAD_V = 8, 3
@@ -46,7 +46,7 @@ local Create = function(parent, label, optionsText, selected)
 	f.Selected:SetPoint("Right", f, "Right", -_INSET - f.Button:GetWidth(), 0)
 	f.Selected:SetText(selected)
 
-	f.Menu.Options = Array.Mapi(optionsText, function(t, i)
+	f.Menu.Options = L.Array.Mapi(optionsText, function(t, i)
 		local option = CreateFrame("Button", nil, f.Menu)
 		option.Text = option:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
 		option.Text:SetText(t)
@@ -67,9 +67,9 @@ local Create = function(parent, label, optionsText, selected)
 		option:SetScript("OnLeave", function() option:SetBackdropColor(0, 0, 0, 0) end)
 	end
 	local maxOptionHeights =
-		Array.mapReduce(f.Menu.Options, function(o) return o:GetHeight() end, math.max, 0)
+		L.Array.MapReduce(f.Menu.Options, function(o) return o:GetHeight() end, math.max, 0)
 	local maxOptionWidth =
-		Array.MapReduce(f.Menu.Options, function(o) return o.Text:GetWidth() end, math.max, 0)
+		L.Array.MapReduce(f.Menu.Options, function(o) return o.Text:GetWidth() end, math.max, 0)
 		+ 2 * _OPTION_PAD_H
 	local maxWidth = f.Label:GetWidth() > maxOptionWidth and f.Label:GetWidth() or maxOptionWidth
 

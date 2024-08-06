@@ -1,3 +1,6 @@
+local Array = require "Lib/Array.lua"
+
+-- ************ Combinators ************
 --- (>>), forward function composition
 ---@generic A
 ---@generic B
@@ -21,9 +24,8 @@ end
 ---@type fun(a: A, f: (fun(a: A): B), g: (fun(b: B): C)): C
 --@overload fun(a: A, f: (fun(a: A): B), g: (fun(b: B): C), h: (fun(c: C): D)): D
 --@overload fun(a: A, f: (fun(a: A): B), g: (fun(b: B): C), h: (fun(c: C): D), i: (fun(d: D): E)): D
-local Pipe = function (a, ...)
+local Pipe = function(a, ...)
 	local out = a
-	local arg = {...}
 	for _, fn in ipairs(arg) do
 		out = fn(out)
 	end
@@ -49,9 +51,18 @@ local Pipe3 = Pipe
 ---@type fun(a: A, f: (fun(a: A): B), g: (fun(b: B): C), h: (fun(c: C): D), i: (fun(d: D): E)): D
 local Pipe4 = Pipe
 
+-- ************ Binary / Unary Operators ************
+---@type fun(a: number, b: number): number
+local Add = function(a, b) return a + b end
+
 return {
+	-- Re-exports
+	Array = Array,
+	-- Combinators
 	Fw = Forward,
 	Pipe = Pipe,
 	Pipe3 = Pipe3,
 	Pipe4 = Pipe4,
+	-- Binary / Unary Operators
+	Add = Add,
 }

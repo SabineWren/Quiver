@@ -1,6 +1,6 @@
 local Button = require "Components/Button.lua"
 local ColorPicker = require "Components/ColorPicker.lua"
-local Array = require "Lib/Array.lua"
+local L = require "Lib/All.lua"
 local AutoShotTimer = require "Modules/AutoShotTimer.lua"
 local Castbar = require "Modules/Castbar.lua"
 local RangeIndicator = require "Modules/RangeIndicator.lua"
@@ -67,7 +67,7 @@ local Create = function(parent, gap)
 	local labels = {}; for _,frame in frames do table.insert(labels, frame.Label) end
 
 	-- Right align buttons using minimum amount of space
-	local labelMaxWidth = Array.MapReduce(labels, W.Region._GetWidth, math.max, 0)
+	local labelMaxWidth = L.Array.MapReduce(labels, W.Region._GetWidth, math.max, 0)
 
 	local y = 0
 	for _,frame in frames do
@@ -79,7 +79,7 @@ local Create = function(parent, gap)
 		y = y + frame:GetHeight() + gap
 	end
 
-	f:SetWidth(Array.MapReduce(frames, W.Region._GetWidth, math.max, 0))
+	f:SetWidth(L.Array.MapReduce(frames, W.Region._GetWidth, math.max, 0))
 	f:SetHeight(y)
 	return f
 end

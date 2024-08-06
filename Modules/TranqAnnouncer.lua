@@ -1,5 +1,5 @@
 local FrameLock = require "Events/FrameLock.lua"
-local Array = require "Lib/Array.lua"
+local L = require "Lib/All.lua"
 local Print = require "Lib/Print.lua"
 local Spellbook = require "Lib/Spellbook.lua"
 
@@ -183,7 +183,7 @@ local getCanHide = function()
 		return secElapsed >= TRANQ_CD_SEC
 	end
 	return not UnitAffectingCombat('player')
-		and Array.Every(frame.Bars, getIsFinished)
+		and L.Array.Every(frame.Bars, getIsFinished)
 		and Quiver_Store.IsLockedFrames
 end
 
@@ -221,7 +221,7 @@ local handleMsg = function(_source, msg)
 	-- For compatibility with other tranq addons, ignore the message source.
 	local nameCaster, timeCastSec = message.Deserialize(msg)
 	if nameCaster ~= nil then
-		local barVisible = Array.Find(frame.Bars, function(bar)
+		local barVisible = L.Array.Find(frame.Bars, function(bar)
 			return bar.FsPlayerName:GetText() == nameCaster
 		end)
 
