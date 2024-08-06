@@ -10,9 +10,12 @@ export class Result {
 		r.#r = { _tag: "Error", Cause: c }
 		return r
 	}
-	static OfNullable = (c, v) =>
-		v === undefined || v === null ? Result.Error(c) : Result.Ok(v)
+	static OfNullable = (v) =>
+		v === undefined || v === null
+			? Result.Error("Null or Undefined")
+			: Result.Ok(v)
 
+	// (>>=), flatMap, collect
 	Bind = (f) =>
 		this.#r._tag === "Error" ? this : f(this.#r.Val)
 	Default = (val) =>
@@ -23,8 +26,16 @@ export class Result {
 		else
 			return this
 	}
+	GetSome = (onError) =>
+		this.Match({ Ok: v => v, Error: onError })
 	Map = (f) =>
-		this.#r._tag === "Error" ? this : Result.Ok(f(this.#r.Val))
+		this.#r._tag === "Error"
+			? this
+			: Result.Ok(f(this.#r.Val))
+	MapError = (f) =>
+		this.#r._tag === "Error"
+			? Result.Error(f(this.#r.Cause))
+			: this
 	Match = ({ Error, Ok }) => {
 		if (this.#r._tag === "Error")
 			return Error(this.#r.Cause)

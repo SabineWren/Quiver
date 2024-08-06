@@ -4,7 +4,7 @@ print("Loaded path resolver plugin.")
 
 ---@param uri string # The URI of file
 ---@param name string # Argument of require()
----@return string[]?
+---@return string[]
 function ResolveRequire(uri, name)
 	local path = uri .. "/" .. name
 	print(path)

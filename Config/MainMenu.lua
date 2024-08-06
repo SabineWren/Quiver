@@ -6,6 +6,8 @@ local TitleBox = require "Components/TitleBox.lua"
 local Color = require "Config/Color.lua"
 local InputText = require "Config/InputText.lua"
 local FrameLock = require "Events/FrameLock.lua"
+local Array = require "Lib/Array.lua"
+local Op = require "Lib/Operator.lua"
 local AutoShotTimer = require "Modules/AutoShotTimer.lua"
 local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
 
@@ -81,17 +83,20 @@ end
 
 local createAllModuleControls = function(parent, gap)
 	local f = CreateFrame("Frame", nil, parent)
-	local frames = Quiver_Lib_F.Mapi(_G.Quiver_Modules, function(m, i)
+	local frames = Array.Mapi(_G.Quiver_Modules, function(m, i)
 		local frame = createModuleControls(f, m, gap)
 		local yOffset = i * (frame:GetHeight() + gap)
 		frame:SetPoint("Left", f, "Left", 0, 0)
 		frame:SetPoint("Top", f, "Top", 0, -yOffset)
 		return frame
 	end)
-	local widths = Quiver_Lib_F.Map(frames, function(x) return x:GetWidth() end)
-	local heights = Quiver_Lib_F.Map(frames, function(x) return x:GetHeight() + gap end)
-	f:SetHeight(Quiver_Lib_F.Sum(heights) - gap)
-	f:SetWidth(Quiver_Lib_F.Max0(widths))
+	local maxWidths =
+		Array.MapReduce(frames, function(x) return x:GetWidth() end, math.max, 0)
+	local totalHeight =
+		Array.MapReduce(frames, function(x) return x:GetHeight() + gap end, Op.Add, 0)
+		- gap
+	f:SetHeight(totalHeight)
+	f:SetWidth(maxWidths)
 	return f
 end
 

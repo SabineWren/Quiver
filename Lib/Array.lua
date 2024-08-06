@@ -22,6 +22,7 @@ local Find = function(xs, f)
 	return nil
 end
 
+---ϴ(N)
 ---@generic A
 ---@param xs A[]
 ---@return integer
@@ -59,28 +60,21 @@ local Mapi = function(xs, f)
 	return ys
 end
 
----@param identity number
----@return fun(xs: number[]): number
-local Max = function(identity)
-	return function(xs)
-		local max = identity
-		for _k, w in ipairs(xs) do
-			if w > max then max = w end
-		end
-		return max
+--- ϴ(1) memory allocation<br>
+--- ϴ(N) runtime complexity
+---@generic A
+---@generic B
+---@param xs A[]
+---@param f fun(a: A): B
+---@param reducer fun(b1: B, b2: B): B
+---@param identity B
+---@return B
+local MapReduce = function(xs, f, reducer, identity)
+	local zRef = identity
+	for _k, x in ipairs(xs) do
+		zRef = reducer(f(x), zRef)
 	end
-end
-
-local Max0 = Max(0)
-
----@param xs number[]
----@return number
-local Min = function(xs)
-	local min = math.huge
-	for _k, w in ipairs(xs) do
-		if w < min then min = w end
-	end
-	return min
+	return zRef
 end
 
 ---@generic A
@@ -104,6 +98,22 @@ local Sum = function(xs)
 	return total
 end
 
+--- ϴ(1) memory allocation<br>
+--- ϴ(N) runtime complexity
+---@generic A
+---@generic B
+---@param xs A[]
+---@param reducer fun(b1: B, b2: B): B
+---@param identity B
+---@return B
+local Reduce = function(xs, reducer, identity)
+	local zRef = identity
+	for _k, x in ipairs(xs) do
+		zRef = reducer(x, zRef)
+	end
+	return zRef
+end
+
 ---@generic A
 ---@generic B
 ---@param as A[]
@@ -111,23 +121,27 @@ end
 ---@return [A,B][]
 local Zip2 = function(as, bs)
 	local zipped = {}
-	local length = Min({ Length(as), Length(bs) })
+	local l1, l2 = Length(as), Length(bs)
+	if l1 ~= l2 then
+		DEFAULT_CHAT_FRAME:AddMessage("Warning -- Called Zip2 on arrays of unequal length.", 1.0, 0.5, 0)
+		DEFAULT_CHAT_FRAME:AddMessage(l1 .. " <> " .. l2, 1.0, 0, 0)
+	end
+	local length = math.min(l1, l2)
 	for i=1, length do
 		zipped[i] = { as[i], bs[i] }
 	end
 	return zipped
 end
 
-Quiver_Lib_F = {
+return {
 	Every=Every,
 	Find=Find,
 	Length=Length,
 	Map=Map,
 	Mapi=Mapi,
-	Max=Max,
-	Max0=Max0,
-	Min=Min,
+	MapReduce=MapReduce,
 	Some=Some,
 	Sum=Sum,
-	Zip2
+	Reduce=Reduce,
+	Zip2=Zip2,
 }

@@ -1,4 +1,5 @@
 local Button = require "Components/Button.lua"
+local Array = require "Lib/Array.lua"
 
 local _BORDER, _INSET, _SPACING = 1, 4, 4
 local _OPTION_PAD_H, _OPTION_PAD_V = 8, 3
@@ -45,7 +46,7 @@ local Create = function(parent, label, optionsText, selected)
 	f.Selected:SetPoint("Right", f, "Right", -_INSET - f.Button:GetWidth(), 0)
 	f.Selected:SetText(selected)
 
-	f.Menu.Options = Quiver_Lib_F.Mapi(optionsText, function(t, i)
+	f.Menu.Options = Array.Mapi(optionsText, function(t, i)
 		local option = CreateFrame("Button", nil, f.Menu)
 		option.Text = option:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
 		option.Text:SetText(t)
@@ -65,9 +66,11 @@ local Create = function(parent, label, optionsText, selected)
 		option:SetScript("OnEnter", function() option:SetBackdropColor(0.2, 0.1, 0, 1.0) end)
 		option:SetScript("OnLeave", function() option:SetBackdropColor(0, 0, 0, 0) end)
 	end
-	local widths = Quiver_Lib_F.Map(f.Menu.Options, function(o) return o.Text:GetWidth() end)
-	local heights = Quiver_Lib_F.Map(f.Menu.Options, function(o) return o:GetHeight() end)
-	local maxOptionWidth = Quiver_Lib_F.Max0(widths) + 2 * _OPTION_PAD_H
+	local maxOptionHeights =
+		Array.mapReduce(f.Menu.Options, function(o) return o:GetHeight() end, math.max, 0)
+	local maxOptionWidth =
+		Array.MapReduce(f.Menu.Options, function(o) return o.Text:GetWidth() end, math.max, 0)
+		+ 2 * _OPTION_PAD_H
 	local maxWidth = f.Label:GetWidth() > maxOptionWidth and f.Label:GetWidth() or maxOptionWidth
 
 	local handleClick = function()
@@ -98,7 +101,7 @@ local Create = function(parent, label, optionsText, selected)
 	f:SetHeight(f.Selected:GetHeight() + _SPACING + f.Label:GetHeight() + 2 * _INSET)
 	f:SetWidth(maxWidth + f.Button:GetWidth() + _SPACING + _INSET * 2)
 
-	f.Menu:SetHeight(Quiver_Lib_F.Sum(heights) + 2 * _BORDER)
+	f.Menu:SetHeight(maxOptionHeights + 2 * _BORDER)
 	f.Menu:SetWidth(maxOptionWidth + 2 * _BORDER)
 	f.Menu:SetPoint("Right", f, "Right", 0, 0)
 	f.Menu:SetPoint("Top", f, "Top", 0, -f:GetHeight())

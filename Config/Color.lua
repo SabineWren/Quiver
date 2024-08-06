@@ -1,15 +1,10 @@
 local Button = require "Components/Button.lua"
 local ColorPicker = require "Components/ColorPicker.lua"
+local Array = require "Lib/Array.lua"
 local AutoShotTimer = require "Modules/AutoShotTimer.lua"
 local Castbar = require "Modules/Castbar.lua"
 local RangeIndicator = require "Modules/RangeIndicator.lua"
-
---- Manually converting methods to functions
---- _Method = fun r -> r.Method()
-local region = {
-	--- @type fun(x: Region): number
-	_GetWidth = function(f) return f:GetWidth() end
-}
+local W = require "wow-api-type-definitions/Lambda.lua"
 
 local createBtnColorSwap = function(parent, f1, f2, c1, c2)
 	local f = Button.Create({
@@ -72,8 +67,7 @@ local Create = function(parent, gap)
 	local labels = {}; for _,frame in frames do table.insert(labels, frame.Label) end
 
 	-- Right align buttons using minimum amount of space
-	local labelWidths = Quiver_Lib_F.Map(labels, region._GetWidth)
-	local labelMaxWidth = Quiver_Lib_F.Max0(labelWidths)
+	local labelMaxWidth = Array.MapReduce(labels, W.Region._GetWidth, math.max, 0)
 
 	local y = 0
 	for _,frame in frames do
@@ -85,8 +79,7 @@ local Create = function(parent, gap)
 		y = y + frame:GetHeight() + gap
 	end
 
-	local frameWidths = Quiver_Lib_F.Map(frames, region._GetWidth)
-	f:SetWidth(Quiver_Lib_F.Max0(frameWidths))
+	f:SetWidth(Array.MapReduce(frames, W.Region._GetWidth, math.max, 0))
 	f:SetHeight(y)
 	return f
 end
