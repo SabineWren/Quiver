@@ -61,8 +61,10 @@ local createUI = function()
 	f.SpellTime:SetTextColor(1, 1, 1)
 
 	f:SetBackdrop({
-		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
-		edgeFile = "Interface/BUTTONS/WHITE8X8", edgeSize = BORDER,
+		bgFile = "Interface/BUTTONS/WHITE8X8",
+		edgeFile = "Interface/BUTTONS/WHITE8X8",
+		edgeSize = BORDER,
+		tile = false,
 	})
 	f.Castbar:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,

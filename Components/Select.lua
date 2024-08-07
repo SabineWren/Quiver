@@ -25,7 +25,8 @@ local Create = function(parent, label, optionsText, selected)
 	f.Menu:SetFrameStrata("TOOLTIP")
 	f.Menu:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8",
-		edgeFile="Interface/BUTTONS/WHITE8X8", edgeSize=1
+		edgeFile="Interface/BUTTONS/WHITE8X8",
+		edgeSize=1,
 	})
 	f.Menu:SetBackdropColor(0, 0, 0, 0.9)
 	f.Menu:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
@@ -84,7 +85,10 @@ local Create = function(parent, label, optionsText, selected)
 	end
 	local hoverStart = function()
 		f.Button.Texture:QuiverHighlight()
-		f:SetBackdrop({ edgeFile="Interface/BUTTONS/WHITE8X8", edgeSize=_BORDER })
+		f:SetBackdrop({
+			edgeFile="Interface/BUTTONS/WHITE8X8",
+			edgeSize=_BORDER,
+		})
 		f:SetBackdropBorderColor(1.0, 0.6, 0, 0.35)
 	end
 	local hoverEnd = function()

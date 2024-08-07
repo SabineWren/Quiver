@@ -83,11 +83,14 @@ local createUI = function()
 	f.BarAutoShot = CreateFrame("Frame", nil, f)
 
 	f:SetBackdrop({
-		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
-		edgeFile = "Interface/BUTTONS/WHITE8X8", edgeSize = BORDER,
+		bgFile = "Interface/BUTTONS/WHITE8X8",
+		edgeFile = "Interface/BUTTONS/WHITE8X8",
+		edgeSize = BORDER,
+		tile = false,
 	})
 	f.BarAutoShot:SetBackdrop({
-		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
+		bgFile = "Interface/BUTTONS/WHITE8X8",
+		tile = false,
 	})
 	f:SetBackdropColor(0, 0, 0, 0.8)
 	f:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)

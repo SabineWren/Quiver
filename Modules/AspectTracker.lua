@@ -46,9 +46,11 @@ local updateUI = function()
 	-- the cancellable bit is 1 even if a party member cast it.
 	if Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Pack) then
 		frame:SetBackdrop({
-			bgFile = "Interface/Tooltips/UI-Tooltip-Background", tile = false,
-			edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 20,
+			bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+			edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+			edgeSize = 20,
 			insets = { left=INSET, right=INSET, top=INSET, bottom=INSET },
+			tile = false,
 		})
 		frame:SetBackdropBorderColor(0.7, 0.8, 0.9, 1.0)
 	else

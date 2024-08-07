@@ -58,7 +58,8 @@ local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("LOW")
 	f:SetBackdrop({
-		edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 16,
+		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+		edgeSize = 16,
 		insets = { left=INSET, right=INSET, top=INSET, bottom=INSET },
 	})
 	setFramePosition(f, store)

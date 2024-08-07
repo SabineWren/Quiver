@@ -74,8 +74,10 @@ local createProgressBar = function()
 	local MARGIN_TEXT = 4
 	local bar = CreateFrame("Frame")
 	bar:SetBackdrop({
-		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
-		edgeFile = "Interface/BUTTONS/WHITE8X8", edgeSize = 1,
+		bgFile = "Interface/BUTTONS/WHITE8X8",
+		edgeFile = "Interface/BUTTONS/WHITE8X8",
+		edgeSize = 1,
+		tile = false,
 	})
 	bar:SetBackdropBorderColor(0, 0, 0, 0.6)
 
@@ -164,7 +166,8 @@ local createUI = function()
 
 	frame:SetFrameStrata("LOW")
 	frame:SetBackdrop({
-		edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 16,
+		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+		edgeSize = 16,
 		insets = { left=INSET, right=INSET, top=INSET, bottom=INSET },
 	})
 	frame:SetBackdropBorderColor(0.6, 0.9, 0.7, 1.0)
