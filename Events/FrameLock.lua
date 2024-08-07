@@ -49,7 +49,7 @@ end
 local Init = function()
 	openWarning = CreateFrame("Frame", nil, UIParent)
 	openWarning:SetFrameStrata("MEDIUM")
-	openWarning.Text = openWarning:CreateFontString(nil, "Medium", "GameFontNormal")
+	openWarning.Text = openWarning:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	openWarning.Text:SetAllPoints(openWarning)
 	openWarning.Text:SetJustifyH("Center")
 	openWarning.Text:SetJustifyV("Center")
@@ -176,7 +176,7 @@ local SideEffectMakeResizeable = function(frame, store, args)
 
 	local scale = 0.5
 	handle.Texture:QuiverSetTexture(scale, QUIVER.Icon.GripHandle)
-	handle.HighlightTexture = Button.CreateTexture(handle, "OVERLAY")
+	handle.HighlightTexture = Button.CreateHighlightTexture(handle, "OVERLAY")
 	handle:SetHighlightTexture(handle.HighlightTexture)
 	handle.HighlightTexture:QuiverSetTexture(scale, QUIVER.Icon.GripHandle)
 

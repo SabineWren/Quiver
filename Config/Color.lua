@@ -1,10 +1,10 @@
 local Button = require "Components/Button.lua"
 local ColorPicker = require "Components/ColorPicker.lua"
 local L = require "Lib/All.lua"
+local W = require "Lib/Sugar.lua"
 local AutoShotTimer = require "Modules/AutoShotTimer.lua"
 local Castbar = require "Modules/Castbar.lua"
 local RangeIndicator = require "Modules/RangeIndicator.lua"
-local W = require "wow-api-type-definitions/Lambda.lua"
 
 local createBtnColorSwap = function(parent, f1, f2, c1, c2)
 	local f = Button.Create({
@@ -13,7 +13,7 @@ local createBtnColorSwap = function(parent, f1, f2, c1, c2)
 	})
 	f.Texture:QuiverSetTexture(0.75, QUIVER.Icon.ArrowsSwap)
 
-	f.Label = f:CreateFontString(nil, "Background", "GameFontNormal")
+	f.Label = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	f.Label:SetPoint("Left", f, "Left", f:GetWidth() + 4, 0)
 	f.Label:SetText(QUIVER_T.UI.SwapColorsShort)
 

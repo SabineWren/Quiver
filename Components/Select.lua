@@ -4,11 +4,13 @@ local L = require "Lib/All.lua"
 local _BORDER, _INSET, _SPACING = 1, 4, 4
 local _OPTION_PAD_H, _OPTION_PAD_V = 8, 3
 
+---@param parent Frame
+---@return Button
 local createCaretButton = function(parent, size)
 	local f = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
 	f:SetWidth(size)
 	f:SetHeight(size)
-	f.Texture = Button.CreateTexture(f, "OVERLAY")
+	f.Texture = Button.CreateHighlightTexture(f, "OVERLAY")
 	f:SetNormalTexture(f.Texture)
 	f:SetHighlightTexture(nil)
 	f:SetPushedTexture(nil)

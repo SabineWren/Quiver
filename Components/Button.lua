@@ -1,4 +1,7 @@
-local CreateTexture = function(parent, layer)
+---@param parent Frame
+---@param layer DrawLayer
+---@return Texture
+local CreateHighlightTexture = function(parent, layer)
 	local t = parent:CreateTexture(nil, layer)
 	t.QuiverSetTexture = function(self, scale, texturePath)
 		-- We could edit the texture file, but it's a raster image
@@ -64,5 +67,5 @@ end
 
 return {
 	Create = Create,
-	CreateTexture = CreateTexture,
+	CreateHighlightTexture = CreateHighlightTexture,
 }

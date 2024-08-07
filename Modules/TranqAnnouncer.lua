@@ -91,14 +91,14 @@ local createProgressBar = function()
 		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
 	})
 
-	bar.FsPlayerName = bar.ProgressFrame:CreateFontString(nil, "Overlay", "GameFontNormal")
+	bar.FsPlayerName = bar.ProgressFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	centerVertically(bar.FsPlayerName)
 	bar.FsPlayerName:SetPoint("Left", bar, "Left", MARGIN_TEXT, 0)
 	bar.FsPlayerName:SetJustifyH("Left")
 	bar.FsPlayerName:SetJustifyV("Center")
 	bar.FsPlayerName:SetTextColor(1, 1, 1)
 
-	bar.FsCdTimer = bar.ProgressFrame:CreateFontString(nil, "Overlay", "GameFontNormal")
+	bar.FsCdTimer = bar.ProgressFrame:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	centerVertically(bar.FsCdTimer)
 	bar.FsCdTimer:SetPoint("Right", bar, "Right", -MARGIN_TEXT, 0)
 	bar.FsCdTimer:SetJustifyH("Right")

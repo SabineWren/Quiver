@@ -157,7 +157,6 @@ local updateBarReload = function()
 		isReloading = false
 		if isShooting then
 			startShooting()
-			updateBarShooting()-- Optional. I think this saves a frame
 		else
 			tryHideBar()
 		end
