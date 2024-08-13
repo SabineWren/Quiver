@@ -59,6 +59,7 @@ if (isWatch) {
 			.OfNullable(filename)// Why is it nullable?
 			.Filter("Ignoring output bundle", x => !predOutputFile(x))
 			.Filter("Ignoring non-Lua file", x => x.match(/.+\.lua$/))
+			.Filter("Ignoring type definitions", x => !x.match(/.+\.d\.lua$/))
 			.Match({
 				Ok: v => throttle(() => runBundler(eventType, v)),
 				Error: _cause => Promise.resolve(),

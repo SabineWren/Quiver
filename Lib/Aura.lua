@@ -20,7 +20,7 @@ local PredIsBuffActive = (function()
 	return function(buffname)
 		local tooltip = resetTooltip()
 		for i=0, QUIVER.Buff_Cap do
-			local buffIndex, isCancellable = GetPlayerBuff(i, "HELPFUL|PASSIVE")
+			local buffIndex, _untilCancelled = GetPlayerBuff(i, "HELPFUL|PASSIVE")
 			if buffIndex >= 0 then
 				tooltip:ClearLines()
 				tooltip:SetPlayerBuff(buffIndex)
@@ -39,7 +39,7 @@ end)()
 local PredIsBuffActiveTimeLeftByName = function(buffname)
 	local tooltip = resetTooltip()
 	for i=0,QUIVER.Buff_Cap do
-		local buffIndex, isCancellable = GetPlayerBuff(i, "HELPFUL|PASSIVE")
+		local buffIndex, _untilCancelled = GetPlayerBuff(i, "HELPFUL|PASSIVE")
 		if buffIndex >= 0 then
 			tooltip:ClearLines()
 			tooltip:SetPlayerBuff(buffIndex)

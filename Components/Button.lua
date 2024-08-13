@@ -29,40 +29,40 @@ end
 local Create = function(args)
 	local parent, size, tooltipText =
 		args.Parent, args.Size, args.TooltipText
-	local f = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
-	f:SetWidth(size)
-	f:SetHeight(size)
+	local frame = CreateFrame("Button", nil, parent, "UIPanelButtonTemplate")
+	frame:SetWidth(size)
+	frame:SetHeight(size)
 
-	f:SetScript("OnEnter", function()
-		f.Texture:QuiverHighlight()
+	frame:SetScript("OnEnter", function()
+		frame.Texture:QuiverHighlight()
 		if tooltipText ~= nil then
-			GameTooltip:SetOwner(f, "ANCHOR_RIGHT", 0)
+			GameTooltip:SetOwner(frame, "ANCHOR_RIGHT", 0)
 			GameTooltip:AddLine(tooltipText)
 			GameTooltip:Show()
 		end
 	end)
-	f:SetScript("OnLeave", function()
-		f.Texture:QuiverResetColor()
+	frame:SetScript("OnLeave", function()
+		frame.Texture:QuiverResetColor()
 		GameTooltip:Hide()
 		GameTooltip:ClearLines()
 	end)
 
-	f.Texture = CreateTexture(f, "OVERLAY")
-	f:SetNormalTexture(f.Texture)
+	frame.Texture = CreateHighlightTexture(frame, "OVERLAY")
+	frame:SetNormalTexture(frame.Texture)
 	-- Custom glow texture would go here
 	--f:SetHighlightTexture(nil)
-	f:SetPushedTexture(nil)
-	f:SetDisabledTexture(nil)
+	frame:SetPushedTexture(nil)
+	frame:SetDisabledTexture(nil)
 
-	f.QuiverDisable = function()
-		f:Disable()
-		f.Texture:SetVertexColor(0.6, 0.6, 0.6)
+	frame.QuiverDisable = function()
+		frame:Disable()
+		frame.Texture:SetVertexColor(0.6, 0.6, 0.6)
 	end
-	f.QuiverEnable = function()
-		f:Enable()
-		f.Texture:QuiverResetColor()
+	frame.QuiverEnable = function()
+		frame:Enable()
+		frame.Texture:QuiverResetColor()
 	end
-	return f
+	return frame
 end
 
 return {

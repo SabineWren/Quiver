@@ -1,8 +1,8 @@
 local MainMenu = require "Config/MainMenu.lua"
 local ActionBar = require "Lib/ActionBar.lua"
 local Migrations = require "Migrations/Runner.lua"
-local AspectTracker = require "Modules/AspectTracker.lua"
-local AutoShotTimer = require "Modules/AutoShotTimer.lua"
+local AspectTracker = require "Modules/Aspect_Tracker/AspectTracker.lua"
+local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
 local Castbar = require "Modules/Castbar.lua"
 local RangeIndicator = require "Modules/RangeIndicator.lua"
 local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
@@ -48,6 +48,7 @@ local initSlashCommandsAndModules = function()
 		for _k, v in _G.Quiver_Modules do
 			if Quiver_Store.ModuleEnabled[v.Id] then v.OnEnable() end
 		end
+		frameConfigMenu:Show()-- TODO temp code for faster debugging
 	else
 		SlashCmdList["QUIVER"] = function() DEFAULT_CHAT_FRAME:AddMessage(QUIVER_T.UI.WrongClass, 1, 0.5, 0) end
 	end

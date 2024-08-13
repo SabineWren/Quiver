@@ -1,4 +1,4 @@
-local AutoShotTimer = require "Modules/AutoShotTimer.lua"
+local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
 
 return function()
 	local mstore = Quiver_Store.ModuleStore or {}

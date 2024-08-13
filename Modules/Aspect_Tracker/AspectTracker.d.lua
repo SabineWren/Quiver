@@ -1,0 +1,3 @@
+---@meta
+
+---@class StoreAspectTracker: StoreFramePosition

@@ -50,9 +50,9 @@ local checkActionBarDistance = function(spellName)
 end
 local checkDistance = {
 	-- https://wowwiki-archive.fandom.com/wiki/API_CheckInteractDistance
-	Inspect=function() return CheckInteractDistance("target", 1) end,-- 28 yards
+	Inspect=function() return CheckInteractDistance("target", 1) end,-- 11.11 yards
 	Trade=function() return CheckInteractDistance("target", 2) end,-- 11.11 yards
-	Duel=function() return CheckInteractDistance("target", 3) end,-- 9.9 yards
+	Duel=function() return CheckInteractDistance("target", 3) end,-- 9.9 yards (or 10?)
 	Follow=function() return CheckInteractDistance("target", 4) end,-- 28 yards
 	-- Using Action Bars
 	Melee=function() return checkActionBarDistance(QUIVER_T.Spellbook.Wing_Clip) end,-- 5 yards

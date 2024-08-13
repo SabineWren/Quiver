@@ -1,10 +1,10 @@
 local Button = require "Components/Button.lua"
 local ColorPicker = require "Components/ColorPicker.lua"
 local L = require "Lib/All.lua"
-local W = require "Lib/Sugar.lua"
-local AutoShotTimer = require "Modules/AutoShotTimer.lua"
+local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
 local Castbar = require "Modules/Castbar.lua"
 local RangeIndicator = require "Modules/RangeIndicator.lua"
+local W = require "Shiver/Sugar.lua"
 
 local createBtnColorSwap = function(parent, f1, f2, c1, c2)
 	local f = Button.Create({

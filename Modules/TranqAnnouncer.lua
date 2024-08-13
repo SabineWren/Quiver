@@ -311,6 +311,7 @@ return {
 		store = savedVariables
 		store.MsgTranqMiss = savedVariables.MsgTranqMiss or QUIVER_T.Tranq.DefaultMiss
 		store.MsgTranqCast = store.MsgTranqCast or QUIVER_T.Tranq.DefaultCast
+		-- TODO DRY violation -- dropdown must match the module store init
 		store.TranqChannel = store.TranqChannel or "/Say"
 	end,
 	OnSavedVariablesPersist = function() return store end,

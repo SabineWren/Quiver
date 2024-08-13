@@ -3,7 +3,7 @@ local Spellcast = require "Events/Spellcast.lua"
 local Spellbook = require "Lib/Spellbook.lua"
 
 local MODULE_ID = "AutoShotTimer"
-local store = nil
+local store = nil---@type StoreAutoShotTimer
 local frame = nil
 local BORDER = 1
 -- Aimed Shot, Multi-Shot, Trueshot
@@ -417,9 +417,9 @@ return {
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
-		store.BarDirection = store.BarDirection or "LeftToRight"
-		store.ColorShoot = store.ColorShoot or QUIVER.ColorDefault.AutoShotShoot
-		store.ColorReload = store.ColorReload or QUIVER.ColorDefault.AutoShotReload
+		store.BarDirection = savedVariables.BarDirection or "LeftToRight"
+		store.ColorShoot = savedVariables.ColorShoot or QUIVER.ColorDefault.AutoShotShoot
+		store.ColorReload = savedVariables.ColorReload or QUIVER.ColorDefault.AutoShotReload
 	end,
 	OnSavedVariablesPersist = function() return store end,
 	UpdateDirection = function()
