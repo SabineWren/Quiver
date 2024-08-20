@@ -36,7 +36,7 @@ local createUI = function()
 	local fs = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	fs:SetAllPoints(f)
 	fs:SetJustifyH("Center")
-	fs:SetJustifyV("Center")
+	fs:SetJustifyV("Middle")
 	fs:SetText("Range Indicator")
 	fs:SetTextColor(1, 1, 1)
 
