@@ -8,6 +8,7 @@ local RangeIndicator = require "Modules/RangeIndicator.lua"
 local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
 local TrueshotAuraAlarm = require "Modules/TrueshotAuraAlarm.lua"
 local UpdateNotifierInit = require "Modules/UpdateNotifier.lua"
+local RegisterMacroFunctions = require "MacroFunctions.lua"
 
 _G = _G or getfenv()
 _G.Quiver_Modules = {
@@ -78,6 +79,7 @@ frame:SetScript("OnEvent", function()
 		Migrations()
 		savedVariablesRestore()
 		initSlashCommandsAndModules()
+		RegisterMacroFunctions()
 	elseif event == "PLAYER_LOGIN" then
 		UpdateNotifierInit()
 	elseif event == "PLAYER_LOGOUT" then

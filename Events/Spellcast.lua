@@ -52,8 +52,10 @@ local super = {
 	CastSpellByName = CastSpellByName,
 	UseAction = UseAction,
 }
+
 local findSlot = ActionBar.FindSlot("spellcast")
 local println = Print.PrefixedF("spellcast")
+
 local handleCastByName = function(spellName)
 	for shotName, _ in Spellbook.HUNTER_CASTABLE_SHOTS do
 		local knowsShot = Spellbook.GetIsSpellLearned(shotName)
@@ -71,25 +73,38 @@ local handleCastByName = function(spellName)
 		publishInstant(spellName)
 	end
 end
-CastSpell = function(spellIndex, spellbookTabNum)
-	super.CastSpell(spellIndex, spellbookTabNum)
-	local spellName, _rank = GetSpellName(spellIndex, spellbookTabNum)
+
+---@param spellIndex number
+---@param bookType BookType
+---@return nil
+CastSpell = function(spellIndex, bookType)
+	super.CastSpell(spellIndex, bookType)
+	local spellName, _rank = GetSpellName(spellIndex, bookType)
 	handleCastByName(spellName)
 end
+
 -- Some spells trigger this one time when spamming, others multiple
-CastSpellByName = function(spellName, onSelf)
-	super.CastSpellByName(spellName, onSelf)
-	handleCastByName(spellName)
+---@param name string
+---@param isSelf? boolean
+---@return nil
+CastSpellByName = function(name, isSelf)
+	super.CastSpellByName(name, isSelf)
+	handleCastByName(name)
 end
--- Trigger multiple times when spamming the cast
+
+-- Triggers multiple times when spamming the cast
+---@param slot ActionBarSlot
+---@param checkCursor? nil|0|1
+---@param onSelf? nil|0|1
+---@return nil
 UseAction = function(slot, checkCursor, onSelf)
 	super.UseAction(slot, checkCursor, onSelf)
-	if not IsCurrentAction(slot) then return end
 	-- Raw abilities return a nil action name. Macros, items, etc. don't.
-	if GetActionText(slot) or not IsCurrentAction(slot) or GetActionText(slot) ~= nil then return end
-	local actionTexture = GetActionTexture(slot)
-	local spellName = Spellbook.GetSpellNameFromTexture(actionTexture)
-	handleCastByName(spellName)
+	if IsCurrentAction(slot) and GetActionText(slot) == nil and GetActionText(slot) == nil then
+		local actionTexture = GetActionTexture(slot)
+		local spellName = Spellbook.GetSpellNameFromTexture(actionTexture)
+		handleCastByName(spellName)
+	end
 end
 
 return {

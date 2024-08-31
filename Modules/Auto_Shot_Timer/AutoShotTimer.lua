@@ -360,25 +360,16 @@ local handleEvent = function()
 end
 
 -- ************ Enable macros that avoid clipping shots ************
-local castNoClip = function(spellName)
-	return function(_args, _box)
-		local isMidShot = isShooting and not isReloading
-		if not isMidShot and not isCasting then
-			CastSpellByName(spellName)
-		end
-	end
+---@return boolean
+---@nodiscard
+local PredMidShot = function()
+	return isShooting and not isReloading
 end
 
 -- ************ Initialization ************
 local onEnable = function()
 	if frame == nil then
 		frame = createUI()
-		SLASH_QQAIMEDSHOT1 = "/qqaimedshot"
-		SLASH_QQMULTISHOT1 = "/qqmultishot"
-		SLASH_QQTRUESHOT1 = "/qqtrueshot"
-		SlashCmdList["QQAIMEDSHOT"] = castNoClip("Aimed Shot")
-		SlashCmdList["QQMULTISHOT"] = castNoClip("Multi-Shot")
-		SlashCmdList["QQTRUESHOT"] = castNoClip("Trueshot")
 	end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
@@ -422,6 +413,7 @@ return {
 		store.ColorReload = savedVariables.ColorReload or QUIVER.ColorDefault.AutoShotReload
 	end,
 	OnSavedVariablesPersist = function() return store end,
+	PredMidShot = PredMidShot,
 	UpdateDirection = function()
 		if frame then setBarAutoShot(frame) end
 	end
