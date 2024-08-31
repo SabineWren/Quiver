@@ -6,19 +6,15 @@ import { Result } from "./Result.js"
 
 const isWatch = Process.argv.includes("--lua-watch")
 const dirSource = Process.cwd()
-
-/** @param {string} filename
- ** @returns {boolean} */
-const predOutputFile = filename =>
-	filename.endsWith(".bundle.lua")
+const _BUNDLE_GLOB_EXTENSION = ".bundle.lua"
 
 const output = Result
 	.OfNullable(Process.argv.find(x => x.startsWith("--output=")))
 	.MapError(_ => "Missing output flag.\nUsage: --output=filename.lua")
 	.Map(x => x.replace("--output=", ""))
-	.Bind(x => predOutputFile(x)
-		? Result.Ok(x)
-		: Result.Error(["-- Invalid bundle name:", x, "-- Must end with:", ".bundle.lua"].join("\n"))
+	.Filter(
+		x => x.endsWith(_BUNDLE_GLOB_EXTENSION),
+		x => ["-- Invalid bundle name:", x, "-- Must end with:", ".bundle.lua"].join("\n"),
 	)
 	.GetSome(cause => {
 		console.error(cause)
@@ -48,18 +44,27 @@ const runBundler = async (event, source) => {
 
 await runBundler("Startup")
 
-// Loops asynchronously forever
 if (isWatch) {
 	const throttle = ThrottleF(50)
+	// Loops asynchronously forever
 	// https://bun.sh/guides/read-file/watch
 	const watcher = Fs.watch(dirSource, { recursive: true })
 	for await (const w of watcher) {
 		const { eventType, filename } = w
 		void await Result
-			.OfNullable(filename)// Why is it nullable?
-			.Filter("Ignoring output bundle", x => !predOutputFile(x))
-			.Filter("Ignoring non-Lua file", x => x.match(/.+\.lua$/))
-			.Filter("Ignoring type definitions", x => !x.match(/.+\.d\.lua$/))
+			.OfNullable(filename)
+			.Filter(
+				x => !x.endsWith(_BUNDLE_GLOB_EXTENSION),
+				_ => "Ignoring output bundle",
+			)
+			.Filter(
+				x => x.match(/.+\.lua$/),
+				_ => "Ignoring non-Lua file",
+			)
+			.Filter(
+				x => !x.match(/.+\.d\.lua$/),
+				_ => "Ignoring type definitions",
+			)
 			.Match({
 				Ok: v => throttle(() => runBundler(eventType, v)),
 				Error: _cause => Promise.resolve(),

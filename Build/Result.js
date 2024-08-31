@@ -20,9 +20,9 @@ export class Result {
 		this.#r._tag === "Error" ? this : f(this.#r.Val)
 	Default = (val) =>
 		this.#r._tag === "Error" ? val :this.#r.Val
-	Filter = (c, pred) => {
+	Filter = (pred, onFalse) => {
 		if (this.#r._tag === "Ok" && !pred(this.#r.Val))
-			return Result.Error(c)
+			return Result.Error(onFalse(this.#r.Val))
 		else
 			return this
 	}
