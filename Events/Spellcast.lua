@@ -1,23 +1,12 @@
-local ActionBar = require "Lib/ActionBar.lua"
 local Print = require "Lib/Print.lua"
 local Spellbook = require "Lib/Spellbook.lua"
+local Action = require "Shiver/API/Action.lua"
 local Spell = require "Shiver/API/Spell.lua"
 
 local log = function(text)
 	if Quiver_Store.DebugLevel == "Verbose" then
 		DEFAULT_CHAT_FRAME:AddMessage(text)
 	end
-end
-
---- Matches return type of IsCurrentAction
----@return nil|1 isBusy
-local predSomeActionBusy = function()
-	for i=1,120 do
-		if IsCurrentAction(i) then
-			return 1
-		end
-	end
-	return nil
 end
 
 -- Hooks get called even if spell didn't fire, but successful cast triggers GCD.
@@ -64,7 +53,6 @@ local super = {
 	UseAction = UseAction,
 }
 
-local findSlot = ActionBar.FindSlot("spellcast")
 local println = Print.PrefixedF("spellcast")
 
 ---@param name string
@@ -72,13 +60,10 @@ local println = Print.PrefixedF("spellcast")
 local handleCastByName = function(name, isCurrentAction)
 	for shotName, _ in Spellbook.HUNTER_CASTABLE_SHOTS do
 		local knowsShot = Spellbook.GetIsSpellLearned(shotName)
-		-- Bad code... findSlot has side effect of printing when a spell isn't on bars
-		if knowsShot and findSlot(shotName) == 0 and name == shotName then
+		if knowsShot and name == shotName and Action.FindBySpellName(shotName) == nil then
 			println.Warning(name .. " not on action bars, so can't track cast.")
 		end
 	end
-
-	log(name .. " Is current action... " .. (isCurrentAction and "yes" or "no"))
 
 	-- We pre-hook the cast, so confirm we actually cast it before triggering callbacks.
 	-- If it's castable, then check we're casting it, else check that we triggered GCD.
@@ -97,7 +82,7 @@ CastSpell = function(spellIndex, bookType)
 	local name, _rank = GetSpellName(spellIndex, bookType)
 	if name ~= nil then
 		log("Cast as spell... " .. name)
-		handleCastByName(name, predSomeActionBusy())
+		handleCastByName(name, Action.PredSomeActionBusy())
 	end
 end
 
@@ -108,7 +93,7 @@ end
 CastSpellByName = function(name, isSelf)
 	super.CastSpellByName(name, isSelf)
 	log("Cast by name... " .. name)
-	handleCastByName(name, predSomeActionBusy())
+	handleCastByName(name, Action.PredSomeActionBusy())
 end
 
 -- Triggers multiple times when spamming the cast

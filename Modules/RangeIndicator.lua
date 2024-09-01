@@ -1,5 +1,5 @@
 local FrameLock = require "Events/FrameLock.lua"
-local ActionBar = require "Lib/ActionBar.lua"
+local Action = require "Shiver/API/Action.lua"
 
 local MODULE_ID = "RangeIndicator"
 local store = nil
@@ -43,11 +43,20 @@ local createUI = function()
 	return f, fs
 end
 
-local findSlot = ActionBar.FindSlot(QUIVER_T.ModuleName[MODULE_ID])
-local checkActionBarDistance = function(spellName)
-	local slot = findSlot(spellName)
-	return IsActionInRange(slot) == 1
+---@param name string
+---@return fun(): boolean
+---@nodiscard
+local predSpellWithinRangeF = function(name)
+	return function()
+		local slot = Action.FindBySpellName(name)
+		if slot == nil then
+			return false
+		else
+			return IsActionInRange(slot) == 1
+		end
+	end
 end
+
 local checkDistance = {
 	-- https://wowwiki-archive.fandom.com/wiki/API_CheckInteractDistance
 	Inspect=function() return CheckInteractDistance("target", 1) end,-- 11.11 yards
@@ -55,11 +64,11 @@ local checkDistance = {
 	Duel=function() return CheckInteractDistance("target", 3) end,-- 9.9 yards (or 10?)
 	Follow=function() return CheckInteractDistance("target", 4) end,-- 28 yards
 	-- Using Action Bars
-	Melee=function() return checkActionBarDistance(QUIVER_T.Spellbook.Wing_Clip) end,-- 5 yards
-	Mark=function() return checkActionBarDistance(QUIVER_T.Spellbook.Hunters_Mark) end,-- 100 yards
-	Ranged=function() return checkActionBarDistance(QUIVER_T.Spellbook.Auto_Shot) end,-- 30-36 yards (talents)
-	Scare=function() return checkActionBarDistance(QUIVER_T.Spellbook.Scare_Beast) end,-- 10 yards
-	Scatter=function() return checkActionBarDistance(QUIVER_T.Spellbook.Scatter_Shot) end,-- 21 yards
+	Melee=predSpellWithinRangeF(QUIVER_T.Spellbook.Wing_Clip),-- 5 yards
+	Mark=predSpellWithinRangeF(QUIVER_T.Spellbook.Hunters_Mark),-- 100 yards
+	Ranged=predSpellWithinRangeF(QUIVER_T.Spellbook.Auto_Shot),-- 30-36 yards (talents)
+	Scare=predSpellWithinRangeF(QUIVER_T.Spellbook.Scare_Beast),-- 10 yards
+	Scatter=predSpellWithinRangeF(QUIVER_T.Spellbook.Scatter_Shot),-- 21 yards
 }
 
 local render = function(color, text)

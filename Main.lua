@@ -1,5 +1,4 @@
 local MainMenu = require "Config/MainMenu.lua"
-local ActionBar = require "Lib/ActionBar.lua"
 local Migrations = require "Migrations/Runner.lua"
 local AspectTracker = require "Modules/Aspect_Tracker/AspectTracker.lua"
 local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
@@ -70,7 +69,6 @@ PLAYER_ENTERING_WORLD fires on every load screen
 SPELLS_CHANGED fires every time the spellbook changes
 ]]
 local frame = CreateFrame("Frame", nil)
-frame:RegisterEvent("ACTIONBAR_SLOT_CHANGED")
 frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("PLAYER_LOGOUT")
 frame:RegisterEvent("ADDON_LOADED")
@@ -84,7 +82,5 @@ frame:SetScript("OnEvent", function()
 		UpdateNotifierInit()
 	elseif event == "PLAYER_LOGOUT" then
 		savedVariablesPersist()
-	elseif event == "ACTIONBAR_SLOT_CHANGED" then
-		ActionBar.ValidateCache(arg1)
 	end
 end)
