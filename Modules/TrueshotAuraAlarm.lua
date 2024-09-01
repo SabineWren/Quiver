@@ -1,7 +1,7 @@
 local FrameLock = require "Events/FrameLock.lua"
 local Spellcast = require "Events/Spellcast.lua"
 local Aura = require "Lib/Aura.lua"
-local Spellbook = require "Lib/Spellbook.lua"
+local Spell = require "Shiver/API/Spell.lua"
 
 local MODULE_ID = "TrueshotAuraAlarm"
 local store = nil
@@ -24,7 +24,7 @@ local aura = (function()
 			return knowsAura and lastUpdate > updateDelay
 		end,
 		UpdateUI = function()
-			knowsAura = Spellbook.GetIsSpellLearned(QUIVER_T.Spellbook.TrueshotAura)
+			knowsAura = Spell.PredSpellLearned(QUIVER_T.Spellbook.TrueshotAura)
 				or not Quiver_Store.IsLockedFrames
 			isActive, timeLeft = Aura.PredIsActiveTimeLeftByTexture(QUIVER.Icon.Trueshot)
 			lastUpdate = 0

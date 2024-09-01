@@ -41,12 +41,6 @@ QUIVER = {
 		Aspect_Pack = "Interface\\Icons\\Ability_Mount_WhiteTiger",
 		Aspect_Wild = "Interface\\Icons\\Spell_Nature_ProtectionformNature",-- 'form' is not a typo.
 		Aspect_Wolf = "Interface\\Icons\\Ability_Mount_WhiteDireWolf",
-		CurseOfTongues = "Interface\\Icons\\Spell_Shadow_CurseOfTounges",
-		-- Confirmed correct casting on Turtle
-		NaxxTrinket = "Interface\\Icons\\INV_Trinket_Naxxramas04",
-		-- I think this is wrong, but other addons use this casing.
-		-- Maybe Turtle changes the name? Can servers do that?
-		NaxxTrinketWrong = "Interface\\Icons\\Inv_Trinket_Naxxramas04",
 		Quickshots = "Interface\\Icons\\Ability_Warrior_InnerRage",
 		RapidFire = "Interface\\Icons\\Ability_Hunter_RunningShot",
 		TrollBerserk = "Interface\\Icons\\Racial_Troll_Berserk",

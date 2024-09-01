@@ -1,7 +1,7 @@
 local Print = require "Lib/Print.lua"
-local Spellbook = require "Lib/Spellbook.lua"
 local Action = require "Shiver/API/Action.lua"
 local Spell = require "Shiver/API/Spell.lua"
+local DB_SPELL = require "Shiver/Data/Spell.lua"
 
 local log = function(text)
 	if Quiver_Store.DebugLevel == "Verbose" then
@@ -12,7 +12,7 @@ end
 -- Hooks get called even if spell didn't fire, but successful cast triggers GCD.
 local lastGcdStart = 0
 local checkGCD = function()
-	local isTriggeredGcd, newStart = Spellbook.CheckNewGCD(lastGcdStart)
+	local isTriggeredGcd, newStart = Spell.CheckNewGCD(lastGcdStart)
 	lastGcdStart = newStart
 	return isTriggeredGcd
 end
@@ -39,6 +39,8 @@ local publishInstant = function(spellname)
 	for _i, v in callbacksInstant do v(spellname) end
 end
 local Instant = {
+	---@param moduleId string
+	---@param callback fun(n: string): nil
 	Subscribe = function(moduleId, callback)
 		callbacksInstant[moduleId] = callback
 	end,
@@ -55,20 +57,23 @@ local super = {
 
 local println = Print.PrefixedF("spellcast")
 
----@param name string
+---@param nameLocalized string
 ---@param isCurrentAction nil|1
-local handleCastByName = function(name, isCurrentAction)
-	for shotName, _ in Spellbook.HUNTER_CASTABLE_SHOTS do
-		local knowsShot = Spellbook.GetIsSpellLearned(shotName)
-		if knowsShot and name == shotName and Action.FindBySpellName(shotName) == nil then
-			println.Warning(name .. " not on action bars, so can't track cast.")
-		end
-	end
+local handleCastByName = function(nameLocalized, isCurrentAction)
+	-- TODO LOCALIZE - map locale name to English
+	local name = nameLocalized
+
+	local meta = DB_SPELL[name]
+	local isCastable = not Spell.PredInstant(meta)
 
 	-- We pre-hook the cast, so confirm we actually cast it before triggering callbacks.
 	-- If it's castable, then check we're casting it, else check that we triggered GCD.
-	if Spellbook.GetIsSpellCastableShot(name) then
-		if isCurrentAction then publishShotCastable(name) end
+	if isCastable then
+		if isCurrentAction then
+			publishShotCastable(name)
+		elseif Action.FindBySpellName(name) == nil then
+			println.Warning(name .. " not on action bars, so can't track cast.")
+		end
 	elseif checkGCD() then
 		publishInstant(name)
 	end

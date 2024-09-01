@@ -1,6 +1,6 @@
 local FrameLock = require "Events/FrameLock.lua"
 local Aura = require "Lib/Aura.lua"
-local Spellbook = require "Lib/Spellbook.lua"
+local Spell = require "Shiver/API/Spell.lua"
 
 local MODULE_ID = "AspectTracker"
 local store = nil
@@ -21,7 +21,7 @@ local chooseIconTexture = function()
 		return QUIVER.Icon.Aspect_Wild
 	elseif Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Wolf) then
 		return QUIVER.Icon.Aspect_Wolf
-	elseif Spellbook.GetIsSpellLearned(QUIVER_T.Spellbook.Aspect_Hawk)
+	elseif Spell.PredSpellLearned(QUIVER_T.Spellbook.Aspect_Hawk)
 		and not Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Hawk)
 		or not Quiver_Store.IsLockedFrames
 	then

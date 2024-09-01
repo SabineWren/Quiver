@@ -1,6 +1,7 @@
 local FrameLock = require "Events/FrameLock.lua"
 local Spellcast = require "Events/Spellcast.lua"
-local Spellbook = require "Lib/Spellbook.lua"
+local Spell = require "Shiver/API/Spell.lua"
+local Haste = require "Shiver/Haste.lua"
 
 local MODULE_ID = "AutoShotTimer"
 local store = nil---@type StoreAutoShotTimer
@@ -322,12 +323,13 @@ local handleEventStateIdle = function(event)
 	end
 end
 
+---@param spellName string
 local onSpellcast = function(spellName)
 	-- User can spam the ability while it's already casting
 	if isCasting then return end
 	isCasting = true
 	local _latAdjusted
-	castTime, _latAdjusted, timeStartCastLocal = Spellbook.CalcCastTime(spellName)
+	castTime, _latAdjusted, timeStartCastLocal = Haste.CalcCastTime(spellName)
 	log("Start Cast")
 end
 
@@ -377,7 +379,7 @@ local onEnable = function()
 	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) else frame:SetAlpha(1) end
 	Spellcast.CastableShot.Subscribe(MODULE_ID, onSpellcast)
 	Spellcast.Instant.Subscribe(MODULE_ID, function(spellName)
-		isFiredInstant = Spellbook.GetIsSpellInstantShot(spellName)
+		isFiredInstant = Spell.PredInstantShotByName(spellName)
 	end)
 	frame:Show()
 end

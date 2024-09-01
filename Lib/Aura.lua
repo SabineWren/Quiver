@@ -1,4 +1,4 @@
-local Tooltip = require "Lib/Tooltip.lua"
+local ScanningTooltip = require "Shiver/ScanningTooltip.lua"
 
 -- This doesn't work for duplicate textures (ex. cheetah + zg mount).
 -- For those you have to scan by name using the GameTooltip.
@@ -16,7 +16,11 @@ local PredIsActiveTimeLeftByTexture = function(targetTexture)
 end
 
 local PredIsBuffActive = (function()
-	local resetTooltip = Tooltip.ResetF("QuiverAuraScanningTooltip")
+	local resetTooltip = ScanningTooltip.Init("QuiverAuraScanningTooltip")
+
+	---@param buffname string
+	---@return boolean
+	---@nodiscard
 	return function(buffname)
 		local tooltip = resetTooltip()
 		for i=0, QUIVER.Buff_Cap do
@@ -24,12 +28,13 @@ local PredIsBuffActive = (function()
 			if buffIndex >= 0 then
 				tooltip:ClearLines()
 				tooltip:SetPlayerBuff(buffIndex)
-				local fs1 = _G["QuiverAuraScanningTooltipTextLeft1"]
-				if fs1 and fs1:GetText() == buffname then
+				if ScanningTooltip.GetText(tooltip, "TextLeft", 1) == buffname then
+					tooltip:Hide()
 					return true
 				end
 			end
 		end
+		tooltip:Hide()
 		return false
 	end
 end)()
