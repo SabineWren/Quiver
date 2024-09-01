@@ -1,4 +1,5 @@
 local Tooltip = require "Lib/Tooltip.lua"
+local Spell = require "Shiver/API/Spell.lua"
 
 -- TODO parse spellbook in case a patch changes them, instead of hard-coding here
 local HUNTER_CASTABLE_SHOTS = {
@@ -69,27 +70,6 @@ local GetIsSpellLearned = function(spellName)
 	end
 end
 
--- This assumes every Hunter spell has a unique texture. I don't
--- know if that's true for all spells, but at time of writing
--- we only care about spells that consume ammo.
-local cacheTextureName = {}
-local GetSpellNameFromTexture = function(textureSeek)
-	if cacheTextureName[textureSeek] ~= nil then
-		return cacheTextureName[textureSeek]
-	end
-	local i = 0
-	while true do
-		i = i + 1
-		local name, _rank = GetSpellName(i, BOOKTYPE_SPELL)
-		local texture = GetSpellTexture(i, BOOKTYPE_SPELL)
-		if not name then return nil end
-		if texture == textureSeek then
-			cacheTextureName[textureSeek] = name
-			return name
-		end
-	end
-end
-
 -- Spells can change texture, such as Auto Shot when equipping a ranged weapon.
 -- Therefore, don't rely on this always returning the correct texture
 local cacheNameTexture = {}
@@ -123,22 +103,8 @@ local GetIsSpellInstantShot = function(spellName)
 	return false
 end
 
----@param spellName string
-local findSpellIndex = function(spellName)
-	local numTabs = GetNumSpellTabs()
-	local _, _, tabOffset, numEntries = GetSpellTabInfo(numTabs)
-	local numSpells = tabOffset + numEntries
-	for spellIndex=1, numSpells do
-		local name, _rank = GetSpellName(spellIndex, BOOKTYPE_SPELL)
-		if name == spellName then
-			return spellIndex
-		end
-	end
-	return nil
-end
-
 local CheckNewCd = function(cooldown, lastCdStart, spellName)
-	local spellId = findSpellIndex(spellName)
+	local spellId = Spell.FindSpellIndex(spellName)
 	if spellId ~= nil then
 		local timeStartCD, durationCD = GetSpellCooldown(spellId, BOOKTYPE_SPELL)
 		-- Sometimes spells return a CD of 0 when cast fails.
@@ -161,7 +127,6 @@ return {
 	GetIsSpellCastableShot = GetIsSpellCastableShot,
 	GetIsSpellInstantShot = GetIsSpellInstantShot,
 	GetIsSpellLearned = GetIsSpellLearned,
-	GetSpellNameFromTexture=GetSpellNameFromTexture,
 	HUNTER_CASTABLE_SHOTS=HUNTER_CASTABLE_SHOTS,
 	TryFindTexture = TryFindTexture,
 }

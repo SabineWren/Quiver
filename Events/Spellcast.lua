@@ -1,12 +1,23 @@
 local ActionBar = require "Lib/ActionBar.lua"
 local Print = require "Lib/Print.lua"
 local Spellbook = require "Lib/Spellbook.lua"
+local Spell = require "Shiver/API/Spell.lua"
 
-local getIsBusy = function()
-	for i=1,120 do
-		if IsCurrentAction(i) then return true end
+local log = function(text)
+	if Quiver_Store.DebugLevel == "Verbose" then
+		DEFAULT_CHAT_FRAME:AddMessage(text)
 	end
-	return false
+end
+
+--- Matches return type of IsCurrentAction
+---@return nil|1 isBusy
+local predSomeActionBusy = function()
+	for i=1,120 do
+		if IsCurrentAction(i) then
+			return 1
+		end
+	end
+	return nil
 end
 
 -- Hooks get called even if spell didn't fire, but successful cast triggers GCD.
@@ -56,21 +67,25 @@ local super = {
 local findSlot = ActionBar.FindSlot("spellcast")
 local println = Print.PrefixedF("spellcast")
 
-local handleCastByName = function(spellName)
+---@param name string
+---@param isCurrentAction nil|1
+local handleCastByName = function(name, isCurrentAction)
 	for shotName, _ in Spellbook.HUNTER_CASTABLE_SHOTS do
 		local knowsShot = Spellbook.GetIsSpellLearned(shotName)
 		-- Bad code... findSlot has side effect of printing when a spell isn't on bars
-		if knowsShot and findSlot(shotName) == 0 and spellName == shotName then
-			println.Warning(spellName .. " not on action bars, so can't track cast.")
+		if knowsShot and findSlot(shotName) == 0 and name == shotName then
+			println.Warning(name .. " not on action bars, so can't track cast.")
 		end
 	end
 
+	log(name .. " Is current action... " .. (isCurrentAction and "yes" or "no"))
+
 	-- We pre-hook the cast, so confirm we actually cast it before triggering callbacks.
 	-- If it's castable, then check we're casting it, else check that we triggered GCD.
-	if Spellbook.GetIsSpellCastableShot(spellName) then
-		if getIsBusy() then publishShotCastable(spellName) end
+	if Spellbook.GetIsSpellCastableShot(name) then
+		if isCurrentAction then publishShotCastable(name) end
 	elseif checkGCD() then
-		publishInstant(spellName)
+		publishInstant(name)
 	end
 end
 
@@ -79,8 +94,11 @@ end
 ---@return nil
 CastSpell = function(spellIndex, bookType)
 	super.CastSpell(spellIndex, bookType)
-	local spellName, _rank = GetSpellName(spellIndex, bookType)
-	handleCastByName(spellName)
+	local name, _rank = GetSpellName(spellIndex, bookType)
+	if name ~= nil then
+		log("Cast as spell... " .. name)
+		handleCastByName(name, predSomeActionBusy())
+	end
 end
 
 -- Some spells trigger this one time when spamming, others multiple
@@ -89,7 +107,8 @@ end
 ---@return nil
 CastSpellByName = function(name, isSelf)
 	super.CastSpellByName(name, isSelf)
-	handleCastByName(name)
+	log("Cast by name... " .. name)
+	handleCastByName(name, predSomeActionBusy())
 end
 
 -- Triggers multiple times when spamming the cast
@@ -99,11 +118,21 @@ end
 ---@return nil
 UseAction = function(slot, checkCursor, onSelf)
 	super.UseAction(slot, checkCursor, onSelf)
-	-- Raw abilities return a nil action name. Macros, items, etc. don't.
-	if IsCurrentAction(slot) and GetActionText(slot) == nil and GetActionText(slot) == nil then
-		local actionTexture = GetActionTexture(slot)
-		local spellName = Spellbook.GetSpellNameFromTexture(actionTexture)
-		handleCastByName(spellName)
+	local texturePath = GetActionTexture(slot)
+	if texturePath ~= nil then
+		-- If we don't find a name, it means action is a macro with a custom texture.
+		-- The macro will call CastSpellByName, which triggers a different hook.
+		--
+		-- If the macro uses the same texture, then both these hooks are called!
+		-- We *could* check macro text etc. to disambiguate, but it's okay
+		-- to duplicate the spell event since it won't change CD or start time.
+		local name, index = Spell.FindSpellByTexture(texturePath)
+		if name ~= nil and index ~= nil then
+			log("Cast as Action... " .. name)
+			handleCastByName(name, IsCurrentAction(slot))
+		else
+			log("Skip Action... ")
+		end
 	end
 end
 
