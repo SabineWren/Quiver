@@ -1,10 +1,15 @@
 local DB_SPELL = require "Shiver/Data/Spell.lua"
 local ScanningTooltip = require "Shiver/ScanningTooltip.lua"
+local Enum = require "Shiver/Enum.lua"
 
+-- GetInventoryItemLink("Player", slot#) returns a link, ex. [name]
+-- Weapon name always appears at line TextLeft1
+-- TODo Might be cachable. Experiment which events would clear cache.
 local calcRangedWeaponSpeedBase = function()
 	return ScanningTooltip.Scan(function(tooltip)
 		tooltip:ClearLines()
-		local _, _, _ = tooltip:SetInventoryItem("player", 18)-- ranged weapon slot
+		local _RANGED = Enum.INVENTORY_SLOT.Ranged
+		local _, _, _ = tooltip:SetInventoryItem("player", _RANGED)
 
 		for i=1, tooltip:NumLines() do
 			local text = ScanningTooltip.GetText("TextRight", i)
@@ -21,7 +26,7 @@ local calcRangedWeaponSpeedBase = function()
 			end
 		end
 
-		-- Something went wrong. Maybe there's no ranged weapn equipped.
+		-- Something went wrong. Maybe there's no ranged weapon equipped.
 		return nil
 	end)
 end
