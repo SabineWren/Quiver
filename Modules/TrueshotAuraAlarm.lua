@@ -26,7 +26,7 @@ local aura = (function()
 		UpdateUI = function()
 			knowsAura = Spell.PredSpellLearned(QUIVER_T.Spellbook.TrueshotAura)
 				or not Quiver_Store.IsLockedFrames
-			isActive, timeLeft = Aura.PredIsActiveTimeLeftByTexture(QUIVER.Icon.Trueshot)
+			isActive, timeLeft = Aura.GetIsActiveAndTimeLeftByTexture(QUIVER.Icon.Trueshot)
 			lastUpdate = 0
 
 			if not Quiver_Store.IsLockedFrames or knowsAura and not isActive then

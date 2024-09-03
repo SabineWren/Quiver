@@ -12,7 +12,10 @@ local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
 
 local createIconBtnLock = function(parent)
 	local f = Button.Create({
-		Parent=parent, Size=QUIVER.Size.Icon, TooltipText=QUIVER_T.UI.FrameLockToggleTooltip })
+		Parent=parent,
+		Size=QUIVER.Size.Icon,
+		TooltipText=QUIVER_T.UI.FrameLockToggleTooltip,
+	})
 	local updateTexture = function()
 		local path = Quiver_Store.IsLockedFrames
 			and QUIVER.Icon.LockClosed

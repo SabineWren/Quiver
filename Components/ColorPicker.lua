@@ -1,4 +1,4 @@
-local Button = require "Components/Button.lua"
+local Button = require "Component/Button.lua"
 
 local WrapColor = function(store, name, default)
 	local set = function(r, g, b) store[name] = { r, g, b } end
@@ -30,10 +30,10 @@ local createColorPicker = function(parent, color)
 	})
 	f:SetBackdropColor(color.R(), color.G(), color.B(), 1)
 
+
 	f:SetScript("OnClick", function(_self)
 		-- colors at time of opening picker
 		local ri, gi, bi = color.Get()
-
 		-- Must replace existing callback before changing anything else,
 		-- or edits can fire previous callback, contaminating other values.
 		ColorPickerFrame.func = function()
@@ -55,7 +55,15 @@ local createColorPicker = function(parent, color)
 	return f
 end
 
+
+---@class ButtonColorPicker: Frame
+---@field Label FontString
+---@field ColorShoot StoreColor
+---@field Button Button
+---@field BtnReset Button
+
 local CreateWithResetLabel = function(parent, labelText, color)
+	---@type ButtonColorPicker
 	local f = CreateFrame("Frame", nil, parent)
 
 	f.Label = f:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
@@ -63,10 +71,12 @@ local CreateWithResetLabel = function(parent, labelText, color)
 	f.Label:SetText(labelText)
 
 	f.BtnReset = Button.Create({
-		Parent=f, Size=QUIVER.Size.Icon,
+		Parent=f,
+		Size=QUIVER.Size.Icon,
+		Texture=QUIVER.Icon.Reset,
 		TooltipText=QUIVER_T.UI.ResetColor,
 	})
-	f.BtnReset.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
+
 	f.BtnReset:SetPoint("Right", f, "Right", 0, 0)
 	f.BtnReset:SetScript("OnClick", function()
 		color.Reset()

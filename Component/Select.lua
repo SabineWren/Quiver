@@ -16,7 +16,12 @@ local allMenus = {}
 local Create = function(parent, labelText, optionsText, selectedText, onSet)
 	local select = CreateFrame("Button", nil, parent)
 	local menu = CreateFrame("Frame", nil, parent)
-	local btnCaret = Button.Caret(select, QUIVER.Size.Icon)
+	local btnCaret = Button.Create({
+		Parent=select,
+		Size=QUIVER.Size.Icon,
+		Texture=QUIVER.Icon.CaretDown,
+	})
+
 	local label = select:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
 	local selected = select:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
 	table.insert(allMenus, menu)

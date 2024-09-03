@@ -1,7 +1,7 @@
 local Create = function(padding)
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:Hide()
-	f:SetPoint("Center", 0, 0)
+	f:SetPoint("Center", nil, "Center", 0, 0)
 	f:SetBackdrop({
 		bgFile = "Interface/Tooltips/UI-Tooltip-Background",
 		edgeFile = "Interface/DialogFrame/UI-DialogBox-Border",
@@ -23,6 +23,7 @@ local Create = function(padding)
 	btnCloseBottom:SetPoint("BottomRight", f, "BottomRight", -padding, padding)
 	btnCloseBottom:SetText("Close")
 	btnCloseBottom:SetScript("OnClick", function() f:Hide() end)
+
 	return f
 end
 

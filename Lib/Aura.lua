@@ -2,7 +2,7 @@ local ScanningTooltip = require "Shiver/ScanningTooltip.lua"
 
 -- This doesn't work for duplicate textures (ex. cheetah + zg mount).
 -- For those you have to scan by name using the GameTooltip.
-local PredIsActiveTimeLeftByTexture = function(targetTexture)
+local GetIsActiveAndTimeLeftByTexture = function(targetTexture)
 	-- This seems to check debuffs as well (tested with deserter)
 	local maxIndex = QUIVER.Aura_Cap - 1
 	for i=0, maxIndex do
@@ -65,6 +65,6 @@ end
 ]]
 
 return {
-	PredIsActiveTimeLeftByTexture = PredIsActiveTimeLeftByTexture,
+	GetIsActiveAndTimeLeftByTexture = GetIsActiveAndTimeLeftByTexture,
 	PredBuffActive = PredBuffActive,
 }

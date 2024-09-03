@@ -1,26 +1,58 @@
--- ****** TODO ******
--- Since we have 2 dropdowns, let's make ONE of them differently:
--- Use LockHightlight() on the button
--- Set a highlight texture on the button to apply
+local Widget = require "Shiver/Widget.lua"
 
----@param bag { Parent: Frame, Size: number, TooltipText?: string }
+-- We could edit the texture file, but it's a raster image
+-- SetAllPoints() doesn't let us adjust padding
+-- SetTexCoord(0, 1, 0, 1) clips instead of overflowing
+-- This scaling approach is the easiest way to customize padding
+-- TODO -- this is a stupid approach to sizing
+-- See instead:
+-- Texture:SetTexCoord overload for affine transformations
+-- Texture:SetTexCoordModifiesRect
+---@param b Button
+---@param path string
+---@param scale number
+---@return Texture
+---@nodiscard
+local createTexture = function(b, path, scale)
+	local t = b:CreateTexture(nil, "OVERLAY")
+	t:SetWidth(b:GetWidth() * scale)
+	t:SetHeight(b:GetHeight() * scale)
+	t:SetPoint("Center", b, "Center", 0, 0)
+	t:SetTexture(path)
+	return t
+end
+
+---@param bag { Parent: Frame, Size: number, Texture?: string, TooltipText?: string }
 local Create = function(bag)
 	local btn = CreateFrame("Button", nil, bag.Parent, "UIPanelButtonTemplate")
 	btn:SetWidth(bag.Size)
 	btn:SetHeight(bag.Size)
 
-	local ta = btn:GetNormalTexture():GetTexture()
-	local tb = btn:GetDisabledTexture():GetTexture()
-	local tc = btn:GetHighlightTexture():GetTexture()
-	local td = btn:GetPushedTexture():GetTexture()
-	-- DEFAULT_CHAT_FRAME:AddMessage("Btn Normal: " .. ta)
-	-- DEFAULT_CHAT_FRAME:AddMessage("Btn Disabl: " .. tb)
-	-- DEFAULT_CHAT_FRAME:AddMessage("Btn Highli: " .. tc)
-	-- DEFAULT_CHAT_FRAME:AddMessage("Btn Pushed: " .. td)
+	if bag.Texture then
+		local r, g, b, _ = btn:GetTextColor()
+		local norm = createTexture(btn, bag.Texture, 0.7)
+		local high = createTexture(btn, bag.Texture, 0.7)
+		local push = createTexture(btn, bag.Texture, 0.7)
+		local disa = createTexture(btn, bag.Texture, 0.7)
+
+		btn:SetNormalTexture(norm)
+		btn:SetHighlightTexture(high)
+		btn:SetPushedTexture(push)
+		btn:SetDisabledTexture(disa)
+
+		norm:SetVertexColor(r, g, b)
+		high:SetVertexColor(r+0.3, g-0.2, b-0.1)
+		push:SetVertexColor(1.0, 0.0, 0.0)
+		disa:SetVertexColor(0.3, 0.3, 0.3)
+
+		-- This disables normal texture on hover so can darken instead of lighten.
+		-- This doesn't work for pushed, and doesn't override transparency.
+		high:SetBlendMode("DISABLE")
+	end
 
 	if bag.TooltipText then
 		btn:SetScript("OnEnter", function()
-			GameTooltip:SetOwner(btn, "BottomLeft", 0)
+			Widget.PositionTooltip(btn)
 			GameTooltip:AddLine(bag.TooltipText)
 			GameTooltip:Show()
 		end)
@@ -33,45 +65,6 @@ local Create = function(bag)
 	return btn
 end
 
----@param parent Frame
----@return Button
-local Caret = function(parent, size)
-	local btn = Create({ Parent=parent, Size=size })
-
-	local texNormal = btn:CreateTexture(nil, "OVERLAY")
-	local texHighlight = btn:CreateTexture(nil, "OVERLAY")
-	btn:SetNormalTexture(texNormal)
-	btn:SetHighlightTexture(texHighlight)
-	btn:SetPushedTexture(nil)
-	btn:SetDisabledTexture(nil)
-
-	local r, g, b, _ = btn:GetTextColor()
-	texNormal:SetVertexColor(r, g, b)
-	texHighlight:SetVertexColor(r+0.3, g-0.2, b)
-	texHighlight:SetBlendMode("BLEND")
-
-	-- We could edit the texture file, but it's a raster image
-	-- SetAllPoints() doesn't let us adjust padding
-	-- SetTexCoord(0, 1, 0, 1) clips instead of overflowing
-	-- This scaling approach is the easiest way to customize padding
-	-- UPDATE -- this is a stupid approach
-	-- See instead:
-	-- Texture:SetTexCoord overload for affine transformations
-	-- Texture:SetTexCoordModifiesRect
-	local resizeTexture = function(tex, scale)
-		local path = QUIVER.Icon.CaretDown
-		tex:SetWidth(btn:GetWidth() * scale)
-		tex:SetHeight(btn:GetHeight() * scale)
-		tex:SetPoint("Center", btn, "Center", 0, 0)
-		tex:SetTexture(path)
-	end
-	resizeTexture(texNormal, 0.7)
-	resizeTexture(texHighlight, 0.7)
-
-	return btn
-end
-
 return {
-	Caret = Caret,
 	Create = Create,
 }
