@@ -1,6 +1,6 @@
 local FrameLock = require "Events/FrameLock.lua"
-local Aura = require "Lib/Aura.lua"
 local Spell = require "Shiver/API/Spell.lua"
+local Aura = require "Util/Aura.lua"
 
 local MODULE_ID = "AspectTracker"
 local store = nil

@@ -1,7 +1,7 @@
 -- Reference library:
 -- https://github.com/codereport/blackbird/blob/main/combinators.hpp
-local Array = require "Lib/Array.lua"
-local Op = require "Lib/Operator.lua"
+local Array = require "Shiver/Lib/Array.lua"
+local Op = require "Shiver/Lib/Operator.lua"
 
 -- ************ Combinators ************
 --- (>>), forward function composition

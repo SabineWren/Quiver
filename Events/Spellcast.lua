@@ -1,7 +1,7 @@
-local Print = require "Lib/Print.lua"
 local Action = require "Shiver/API/Action.lua"
 local Spell = require "Shiver/API/Spell.lua"
 local DB_SPELL = require "Shiver/Data/Spell.lua"
+local Print = require "Util/Print.lua"
 
 local log = function(text)
 	if Quiver_Store.DebugLevel == "Verbose" then

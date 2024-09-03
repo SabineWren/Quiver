@@ -1,4 +1,4 @@
-local Version = require "Lib/Version.lua"
+local Version = require "Util/Version.lua"
 
 -- This file based on pfUI's updatenotify.lua
 -- Copyright (c) 2016-2021 Eric Mauser (Shagu)

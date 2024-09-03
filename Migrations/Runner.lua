@@ -1,7 +1,7 @@
-local Version = require "Lib/Version.lua"
 local M001 = require "Migrations/M001.lua"
 local M002 = require "Migrations/M002.lua"
 local M003 = require "Migrations/M003.lua"
+local Version = require "Util/Version.lua"
 
 return function()
 	-- toc version (after 1.0.0) persists to saved variables. A clean

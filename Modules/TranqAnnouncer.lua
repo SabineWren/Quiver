@@ -1,7 +1,7 @@
 local FrameLock = require "Events/FrameLock.lua"
-local L = require "Lib/All.lua"
-local Print = require "Lib/Print.lua"
 local Spell = require "Shiver/API/Spell.lua"
+local L = require "Shiver/Lib/All.lua"
+local Print = require "Util/Print.lua"
 
 local MODULE_ID = "TranqAnnouncer"
 local store = nil

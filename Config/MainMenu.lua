@@ -6,9 +6,9 @@ local TitleBox = require "Components/TitleBox.lua"
 local Color = require "Config/Color.lua"
 local InputText = require "Config/InputText.lua"
 local FrameLock = require "Events/FrameLock.lua"
-local L = require "Lib/All.lua"
 local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
 local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
+local L = require "Shiver/Lib/All.lua"
 
 local createIconBtnLock = function(parent)
 	local f = Button.Create({
