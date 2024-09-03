@@ -15,29 +15,24 @@ local PredIsActiveTimeLeftByTexture = function(targetTexture)
 	return false, 0
 end
 
-local PredIsBuffActive = (function()
-	local resetTooltip = ScanningTooltip.Init("QuiverAuraScanningTooltip")
-
-	---@param buffname string
-	---@return boolean
-	---@nodiscard
-	return function(buffname)
-		local tooltip = resetTooltip()
+---@param buffname string
+---@nodiscard
+local PredBuffActive = function(buffname)
+	return ScanningTooltip.Scan(function(tooltip)
 		for i=0, QUIVER.Buff_Cap do
 			local buffIndex, _untilCancelled = GetPlayerBuff(i, "HELPFUL|PASSIVE")
 			if buffIndex >= 0 then
 				tooltip:ClearLines()
 				tooltip:SetPlayerBuff(buffIndex)
-				if ScanningTooltip.GetText(tooltip, "TextLeft", 1) == buffname then
-					tooltip:Hide()
+				if ScanningTooltip.GetText("TextLeft", 1) == buffname then
 					return true
 				end
 			end
 		end
-		tooltip:Hide()
 		return false
-	end
-end)()
+	end)
+end
+
 
 -- This works great. Don't delete because I'm sure it will be useful in the future.
 --[[
@@ -71,5 +66,5 @@ end
 
 return {
 	PredIsActiveTimeLeftByTexture = PredIsActiveTimeLeftByTexture,
-	PredIsBuffActive = PredIsBuffActive,
+	PredBuffActive = PredBuffActive,
 }

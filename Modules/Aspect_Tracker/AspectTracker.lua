@@ -11,18 +11,18 @@ local INSET = 5
 local TRANSPARENCY = 0.5
 
 local chooseIconTexture = function()
-	if Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Beast) then
+	if Aura.PredBuffActive(QUIVER_T.Spellbook.Aspect_Beast) then
 		return QUIVER.Icon.Aspect_Beast
-	elseif Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Cheetah) then
+	elseif Aura.PredBuffActive(QUIVER_T.Spellbook.Aspect_Cheetah) then
 		return QUIVER.Icon.Aspect_Cheetah
-	elseif Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Monkey) then
+	elseif Aura.PredBuffActive(QUIVER_T.Spellbook.Aspect_Monkey) then
 		return QUIVER.Icon.Aspect_Monkey
-	elseif Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Wild) then
+	elseif Aura.PredBuffActive(QUIVER_T.Spellbook.Aspect_Wild) then
 		return QUIVER.Icon.Aspect_Wild
-	elseif Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Wolf) then
+	elseif Aura.PredBuffActive(QUIVER_T.Spellbook.Aspect_Wolf) then
 		return QUIVER.Icon.Aspect_Wolf
 	elseif Spell.PredSpellLearned(QUIVER_T.Spellbook.Aspect_Hawk)
-		and not Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Hawk)
+		and not Aura.PredBuffActive(QUIVER_T.Spellbook.Aspect_Hawk)
 		or not Quiver_Store.IsLockedFrames
 	then
 		return QUIVER.Icon.Aspect_Hawk
@@ -44,7 +44,7 @@ local updateUI = function()
 	-- Exclude Pack from main texture, since party members can apply it.
 	-- I don't have a simple way of detecting who cast it, because
 	-- the cancellable bit is 1 even if a party member cast it.
-	if Aura.PredIsBuffActive(QUIVER_T.Spellbook.Aspect_Pack) then
+	if Aura.PredBuffActive(QUIVER_T.Spellbook.Aspect_Pack) then
 		frame:SetBackdrop({
 			bgFile = "Interface/Tooltips/UI-Tooltip-Background",
 			edgeFile = "Interface/Tooltips/UI-Tooltip-Border",

@@ -1,18 +1,13 @@
 local DB_SPELL = require "Shiver/Data/Spell.lua"
 local ScanningTooltip = require "Shiver/ScanningTooltip.lua"
 
-local calcRangedWeaponSpeedBase = (function()
-	local resetTooltip = ScanningTooltip.Init("QuiverRangedWeaponScanningTooltip")
-
-	-- Might be cachable. GetInventoryItemLink("Player", slot#) returns a link, ex. [name]
-	-- Weapon name always appears at line TextLeft1
-	return function()
-		local tooltip = resetTooltip()
+local calcRangedWeaponSpeedBase = function()
+	return ScanningTooltip.Scan(function(tooltip)
 		tooltip:ClearLines()
 		local _, _, _ = tooltip:SetInventoryItem("player", 18)-- ranged weapon slot
 
 		for i=1, tooltip:NumLines() do
-			local text = ScanningTooltip.GetText(tooltip, "TextRight", i)
+			local text = ScanningTooltip.GetText("TextRight", i)
 			if text ~= nil then
 				--- TODO LOCALIZE
 				local _, _, speed = string.find(text, "Speed (%d+%.%d+)")
@@ -25,9 +20,11 @@ local calcRangedWeaponSpeedBase = (function()
 				end
 			end
 		end
-		tooltip:Hide()
-	end
-end)()
+
+		-- Something went wrong. Maybe there's no ranged weapn equipped.
+		return nil
+	end)
+end
 
 ---@param name string
 ---@return number casttime
@@ -44,8 +41,9 @@ local CalcCastTime = function(name)
 	local startLatAdjusted = startLocal + msLatency / 1000
 
 	if meta.Haste == "range" then
-		local speedCurrent = UnitRangedDamage("player")
-		local speedBase = calcRangedWeaponSpeedBase()
+		local speedCurrent, _, _ , _, _, _ = UnitRangedDamage("player")
+		local speedBaseNil = calcRangedWeaponSpeedBase()
+		local speedBase = speedBaseNil and speedBaseNil or speedCurrent
 		local speedMultiplier = speedCurrent / speedBase
 		-- https://www.mmo-champion.com/content/2188-Patch-4-0-6-Feb-22-Hotfixes-Blue-Posts-Artworks-Comic
 		local casttime = (offset + baseTime * speedMultiplier) / 1000

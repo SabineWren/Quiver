@@ -10,34 +10,31 @@ local createTooltip = function(name)
 	return tt
 end
 
----@param tooltip GameTooltip
+local _TOOLTIP_NAME = "QuiverScanningTooltip"
+local tooltip = createTooltip(_TOOLTIP_NAME)
+
 ---@param fsName "TextLeft" | "TextRight"
 ---@param lineNumber integer
 ---@return nil|string
-local GetText = function(tooltip, fsName, lineNumber)
-	local name = tooltip:GetName()
-	if name == nil then
-		return nil
-	else
-		---@type nil|FontString
-		local fs = _G[name .. fsName .. lineNumber]
-		return fs and fs:GetText()
-	end
+local GetText = function(fsName, lineNumber)
+	---@type nil|FontString
+	local fs = _G[_TOOLTIP_NAME .. fsName .. lineNumber]
+	return fs and fs:GetText()
 end
 
----Returns a function that clears the tooltip and gets a reference to it.
----@param name string Name for tooltip element
----@return fun(): GameTooltip
-local Init = function(name)
-	local tooltip = createTooltip(name)
-	return function()
-		tooltip:SetOwner(WorldFrame, "Center")
-		return tooltip
-	end
+--- Handles setup and teardown when scanning.
+---@generic Output
+---@param f fun(t: GameTooltip): Output
+---@return Output
+---@nodiscard
+local Scan = function(f)
+	tooltip:SetOwner(WorldFrame, "Center")
+	local output = f(tooltip)
+	tooltip:Hide()
+	return output
 end
 
--- TODO Caller has to hide tooltip. Figure out a 'Scan' function to hide automatically.
 return {
 	GetText = GetText,
-	Init = Init,
+	Scan = Scan,
 }
