@@ -1,7 +1,7 @@
 local Util = require "Component/_Util.lua"
 local Widget = require "Shiver/Widget.lua"
 
-local _SIZE = 14
+local _SIZE = 16
 
 -- see [Button](lua://QqButton)
 -- see [Switch](lua://QqSwitch)

@@ -4,7 +4,7 @@ local Sugar = require "Shiver/Sugar.lua"
 local Widget = require "Shiver/Widget.lua"
 
 local _GAP = 6
-local _SIZE = 14
+local _SIZE = 16
 
 -- see [CheckButton](lua://QqCheckButton)
 -- see [Switch](lua://QqSwitch)
