@@ -26,15 +26,15 @@ QUIVER = {
 	},
 	Icon = {
 		-- Custom
-		ArrowsSwap = "Interface\\AddOns\\Quiver\\Textures\\arrow-right-arrow-left",
-		CaretDown = "Interface\\AddOns\\Quiver\\Textures\\caret-down-fill",
+		ArrowsSwap = "Interface\\AddOns\\Quiver\\Textures\\Fa6\\arrow-right-arrow-left",
+		CaretDown = "Interface\\AddOns\\Quiver\\Textures\\Fa6\\caret-down-fill",
 		GripHandle = "Interface\\AddOns\\Quiver\\Textures\\grip-lines",
-		LockClosed = "Interface\\AddOns\\Quiver\\Textures\\lock",
-		LockOpen = "Interface\\AddOns\\Quiver\\Textures\\lock-open",
-		Reset = "Interface\\AddOns\\Quiver\\Textures\\arrow-rotate-right",
-		ToggleOff = "Interface\\AddOns\\Quiver\\Textures\\toggle-off",
-		ToggleOn = "Interface\\AddOns\\Quiver\\Textures\\toggle-on",
-		XMark = "Interface\\AddOns\\Quiver\\Textures\\xmark",
+		LockClosed = "Interface\\AddOns\\Quiver\\Textures\\Fa6\\lock",
+		LockOpen = "Interface\\AddOns\\Quiver\\Textures\\Fa6\\lock-open",
+		Reset = "Interface\\AddOns\\Quiver\\Textures\\Fa6\\arrow-rotate-right",
+		ToggleOff = "Interface\\AddOns\\Quiver\\Textures\\Fa6\\toggle-off",
+		ToggleOn = "Interface\\AddOns\\Quiver\\Textures\\Fa6\\toggle-on",
+		XMark = "Interface\\AddOns\\Quiver\\Textures\\Fa6\\xmark",
 		-- Client
 		Aspect_Beast = "Interface\\Icons\\Ability_Mount_PinkTiger",
 		Aspect_Cheetah = "Interface\\Icons\\Ability_Mount_JungleTiger",
