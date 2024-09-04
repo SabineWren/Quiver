@@ -1,4 +1,4 @@
-local Button = require "Components/Button.lua"
+local Button = require "Component/Button.lua"
 local ColorPicker = require "Components/ColorPicker.lua"
 local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
 local Castbar = require "Modules/Castbar.lua"
@@ -7,17 +7,12 @@ local L = require "Shiver/Lib/All.lua"
 local W = require "Shiver/Sugar.lua"
 
 local createBtnColorSwap = function(parent, f1, f2, c1, c2)
-	local f = Button.Create({
-		Parent=parent, Size=QUIVER.Size.Icon,
-		TooltipText=QUIVER_T.UI.SwapColorsLong,
+	local f = Button:Create(parent, {
+		LabelText = QUIVER_T.UI.SwapColorsShort,
+		TexPath = QUIVER.Icon.ArrowsSwap,
+		TooltipText = QUIVER_T.UI.SwapColorsLong,
 	})
-	f.Texture:QuiverSetTexture(0.75, QUIVER.Icon.ArrowsSwap)
-
-	f.Label = f:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-	f.Label:SetPoint("Left", f, "Left", f:GetWidth() + 4, 0)
-	f.Label:SetText(QUIVER_T.UI.SwapColorsShort)
-
-	f:SetScript("OnClick", function()
+	f.OnClick = function()
 		-- Swap colors
 		local r, g, b = c1.Get()
 		c1.Set(c2.R(), c2.G(), c2.B())
@@ -25,7 +20,8 @@ local createBtnColorSwap = function(parent, f1, f2, c1, c2)
 		-- Update preview button
 		f1.Button:SetBackdropColor(c1.R(), c1.G(), c1.B(), 1)
 		f2.Button:SetBackdropColor(c2.R(), c2.G(), c2.B(), 1)
-	end)
+	end
+
 	return f
 end
 
@@ -41,12 +37,12 @@ local Create = function(parent, gap)
 	local optionShoot = ColorPicker.CreateWithResetLabel(f, "Shooting", colorShoot)
 	local optionReload = ColorPicker.CreateWithResetLabel(f, "Reloading", colorReload)
 
-	local frames = {
+	local elements = {
 		ColorPicker.CreateWithResetLabel(f, "Casting",
 			wrap(storeCastbar, "ColorCastbar", QUIVER.ColorDefault.Castbar)),
+		createBtnColorSwap(f, optionShoot, optionReload, colorShoot, colorReload),
 		optionShoot,
 		optionReload,
-		createBtnColorSwap(f, optionShoot, optionReload, colorShoot, colorReload),
 		ColorPicker.CreateWithResetLabel(f, QUIVER_T.Range.Melee,
 			wrap(storeRange, "ColorMelee", QUIVER.ColorDefault.Range.Melee)),
 		ColorPicker.CreateWithResetLabel(f, QUIVER_T.Range.DeadZone,
@@ -64,22 +60,25 @@ local Create = function(parent, gap)
 		ColorPicker.CreateWithResetLabel(f, QUIVER_T.Range.TooFar,
 			wrap(storeRange, "ColorTooFar", QUIVER.ColorDefault.Range.TooFar)),
 	}
-	local labels = {}; for _,frame in frames do table.insert(labels, frame.Label) end
-
 	-- Right align buttons using minimum amount of space
-	local labelMaxWidth = L.Array.MapReduce(labels, W.Region._GetWidth, math.max, 0)
+	local labelMaxWidth = L.Array.MapReduce(
+		elements,
+		function(x) return x.Label and x.Label:GetWidth() or 0 end,
+		L.Max,
+		0
+	)
 
 	local y = 0
-	for _,frame in frames do
-		if frame.WidthMinusLabel ~= nil then
-			frame:SetWidth(frame.WidthMinusLabel + labelMaxWidth)
+	for _,ele in elements do
+		if ele.WidthMinusLabel ~= nil then
+			ele.Container:SetWidth(ele.WidthMinusLabel + labelMaxWidth)
 		end
-		frame:SetPoint("Left", f, "Left", 0, 0)
-		frame:SetPoint("Top", f, "Top", 0, -y)
-		y = y + frame:GetHeight() + gap
+		ele.Container:SetPoint("Left", f, "Left", 0, 0)
+		ele.Container:SetPoint("Top", f, "Top", 0, -y)
+		y = y + ele.Container:GetHeight() + gap
 	end
 
-	f:SetWidth(L.Array.MapReduce(frames, W.Region._GetWidth, math.max, 0))
+	f:SetWidth(L.Array.MapReduce(elements, function(x) return x.Container:GetWidth() end, math.max, 0))
 	f:SetHeight(y)
 	return f
 end

@@ -34,7 +34,7 @@ local Create = function(parent, labelText, optionsText, selectedText, onSet)
 	menu:SetBackdropColor(0, 0, 0, 1)
 	menu:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
 
-	btnCaret.Icon:SetPoint("Right", select, "Right", -_INSET, 0)
+	btnCaret.Container:SetPoint("Right", select, "Right", -_INSET, 0)
 
 	label:SetPoint("Left", select, "Left", _INSET, 0)
 	label:SetPoint("Top", select, "Top", 0, -_INSET)

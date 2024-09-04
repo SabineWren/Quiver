@@ -1,4 +1,4 @@
-local Button = require "Components/Button.lua"
+local Button = require "Component/Button.lua"
 local Dialog = require "Components/Dialog.lua"
 local CheckButton = require "Component/CheckButton.lua"
 local Select = require "Component/Select.lua"
@@ -11,35 +11,19 @@ local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
 local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
 local L = require "Shiver/Lib/All.lua"
 
-local createIconResetAll = function(parent)
-	local f = Button.Create({
-		Parent=parent, Size=QUIVER.Size.Icon,
-		TooltipText=QUIVER_T.UI.ResetFramesTooltipAll,
-	})
-	f.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
-	f:SetScript("OnClick", function(_self)
-		for _k, v in _G.Quiver_Modules do v.OnResetFrames() end
-	end)
-	return f
-end
-
 local createModuleControls = function(parent, m)
 	local f = CreateFrame("Frame", nil, parent)
 
-	local btnReset = Button.Create({
-		Parent=f,
-		Size=QUIVER.Size.Icon,
-		TooltipText=QUIVER_T.UI.ResetFramesTooltip,
+	local btnReset = Button:Create(f, {
+		TexPath = QUIVER.Icon.Reset,
+		TooltipText = QUIVER_T.UI.ResetFramesTooltip,
 	})
-	btnReset.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
-	btnReset:SetScript("OnClick", function(_self) m.OnResetFrames() end)
-
+	btnReset.OnClick = function() m.OnResetFrames() end
 	if not Quiver_Store.ModuleEnabled[m.Id] then
-		btnReset.QuiverDisable()
+		btnReset:ToggleEnabled(false)
 	end
 
 	local switch = Switch:Create(f, {
-		Gap = 6,
 		IsChecked = Quiver_Store.ModuleEnabled[m.Id],
 		LabelText = m.Name,
 		TooltipText = QUIVER_T.ModuleTooltip[m.Id],
@@ -47,18 +31,17 @@ local createModuleControls = function(parent, m)
 			Quiver_Store.ModuleEnabled[m.Id] = isChecked
 			if isChecked then
 				m.OnEnable()
-				btnReset.QuiverEnable()
 			else
 				m.OnDisable()
-				btnReset.QuiverDisable()
 			end
+			btnReset:ToggleEnabled(isChecked)
 		end,
 	})
 
 	local x = 0
 	local gap = 8
-	btnReset:SetPoint("Left", f, "Left", x, 0)
-	x = x + btnReset:GetWidth() + gap
+	btnReset.Container:SetPoint("Left", f, "Left", x, 0)
+	x = x + btnReset.Container:GetWidth() + gap
 	switch.Container:SetPoint("Left", f, "Left", x, 0)
 	x = x + switch.Container:GetWidth()
 
@@ -90,20 +73,20 @@ end
 
 local Create = function()
 	-- WoW uses border-box content sizing
-	local PADDING_CLOSE = QUIVER.Size.Border + 4
-	local PADDING_FAR = QUIVER.Size.Border + QUIVER.Size.Gap
-	local f = Dialog.Create(PADDING_CLOSE)
+	local _PADDING_CLOSE = QUIVER.Size.Border + 6
+	local _PADDING_FAR = QUIVER.Size.Border + QUIVER.Size.Gap
+	local f = Dialog.Create(_PADDING_CLOSE)
 	f:SetFrameStrata("DIALOG")
 
 	local titleBox = TitleBox.Create(f)
 	titleBox:SetPoint("Center", f, "Top", 0, -10)
 
-	local btnCloseTop = Button.Create({
-		Parent=f, Size=QUIVER.Size.Icon,
-		TooltipText=QUIVER_T.UI.CloseWindowTooltip })
-	btnCloseTop.Texture:QuiverSetTexture(0.7, QUIVER.Icon.XMark)
-	btnCloseTop:SetPoint("TopRight", f, "TopRight", -PADDING_CLOSE, -PADDING_CLOSE)
-	btnCloseTop:SetScript("OnClick", function() f:Hide() end)
+	local btnCloseTop = Button:Create(f, {
+		TexPath = QUIVER.Icon.XMark,
+		TooltipText = QUIVER_T.UI.CloseWindowTooltip,
+	})
+	btnCloseTop.OnClick = function() f:Hide() end
+	btnCloseTop.Container:SetPoint("TopRight", f, "TopRight", -_PADDING_CLOSE, -_PADDING_CLOSE)
 
 	local btnToggleLock = CheckButton:Create(f, {
 		IsChecked = Quiver_Store.IsLockedFrames,
@@ -114,24 +97,30 @@ local Create = function()
 	})
 	FrameLock.Init()
 
-	local lockOffsetX = PADDING_CLOSE + QUIVER.Size.Icon + QUIVER.Size.Gap/2
-	btnToggleLock.Icon:SetPoint("TopRight", f, "TopRight", -lockOffsetX, -PADDING_CLOSE)
+	local lockOffsetX = _PADDING_CLOSE + QUIVER.Size.Icon + QUIVER.Size.Gap/2
+	btnToggleLock.Icon:SetPoint("TopRight", f, "TopRight", -lockOffsetX, -_PADDING_CLOSE)
 
-	local btnResetFrames = createIconResetAll(f)
-	local resetOffsetX = lockOffsetX + QUIVER.Size.Icon + QUIVER.Size.Gap/2
-	btnResetFrames:SetPoint("TopRight", f, "TopRight", -resetOffsetX, -PADDING_CLOSE)
+	local btnResetFrames = Button:Create(f, {
+		TexPath = QUIVER.Icon.Reset,
+		TooltipText = QUIVER_T.UI.ResetFramesTooltipAll,
+	})
+	btnResetFrames.OnClick = function()
+		for _k, v in _G.Quiver_Modules do v.OnResetFrames() end
+	end
+	local resetOffsetX = lockOffsetX + btnResetFrames.Container:GetWidth() + QUIVER.Size.Gap/2
+	btnResetFrames.Container:SetPoint("TopRight", f, "TopRight", -resetOffsetX, -_PADDING_CLOSE)
 
 	local controls = createAllModuleControls(f, QUIVER.Size.Gap)
 	local colorPickers = Color.Create(f, QUIVER.Size.Gap)
 
-	local yOffset = -PADDING_CLOSE - QUIVER.Size.Icon - QUIVER.Size.Gap
+	local yOffset = -_PADDING_CLOSE - QUIVER.Size.Icon - QUIVER.Size.Gap
 	controls:SetPoint("Top", f, "Top", 0, yOffset)
-	controls:SetPoint("Left", f, "Left", PADDING_FAR, 0)
+	controls:SetPoint("Left", f, "Left", _PADDING_FAR, 0)
 	colorPickers:SetPoint("Top", f, "Top", 0, yOffset)
-	colorPickers:SetPoint("Right", f, "Right", -PADDING_FAR, 0)
-	f:SetWidth(PADDING_FAR + controls:GetWidth() + PADDING_FAR + colorPickers:GetWidth() + PADDING_FAR)
+	colorPickers:SetPoint("Right", f, "Right", -_PADDING_FAR, 0)
+	f:SetWidth(_PADDING_FAR + controls:GetWidth() + _PADDING_FAR + colorPickers:GetWidth() + _PADDING_FAR)
 
-	local dropdownX = PADDING_FAR + colorPickers:GetWidth() + PADDING_FAR
+	local dropdownX = _PADDING_FAR + colorPickers:GetWidth() + _PADDING_FAR
 	local dropdownY = 0
 
 	local selectDebugLevel = Select.Create(f,
@@ -191,7 +180,7 @@ local Create = function()
 	yOffset = yOffset - tranqOptions:GetHeight()
 	yOffset = yOffset - QUIVER.Size.Gap
 
-	f:SetHeight(-1 * yOffset + PADDING_CLOSE + QUIVER.Size.Button)
+	f:SetHeight(-1 * yOffset + _PADDING_CLOSE + QUIVER.Size.Button)
 	return f
 end
 

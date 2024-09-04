@@ -77,8 +77,9 @@ local render = function(color, text)
 	frame:SetBackdropColor(r, g, b, a)
 	frame:SetBackdropBorderColor(r, g, b, a)
 	if not Quiver_Store.IsLockedFrames then
-		frame.QuiverGripHandle:GetNormalTexture():SetVertexColor(r, g, b)
-		frame.QuiverGripHandle:GetHighlightTexture():SetVertexColor(r+0.3, g-0.1, b+0.3)
+		-- TODO do we care about grip handle color here?
+		-- frame.QuiverGripHandle:GetNormalTexture():SetVertexColor(r, g, b)
+		-- frame.QuiverGripHandle:GetHighlightTexture():SetVertexColor(r+0.3, g-0.1, b+0.3)
 	end
 end
 

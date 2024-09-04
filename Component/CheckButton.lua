@@ -1,7 +1,7 @@
 local Util = require "Component/_Util.lua"
 local Widget = require "Shiver/Widget.lua"
 
-local _SIZE = 18
+local _SIZE = 14
 
 -- see [Button](lua://QqButton)
 -- see [Switch](lua://QqSwitch)
@@ -44,7 +44,7 @@ function QqCheckButton:Create(parent, bag)
 	local icon = CreateFrame("Frame", nil, parent, nil)
 
 	---@type QqCheckButton
-	local cb = {
+	local r = {
 		Icon = icon,
 		IsChecked = bag.IsChecked,
 		TexPathOff = bag.TexPathOff,
@@ -54,46 +54,46 @@ function QqCheckButton:Create(parent, bag)
 		isHover = false,
 		isMouseDown = false,
 	}
-	setmetatable(cb, self)
+	setmetatable(r, self)
 	self.__index = self
 
-	cb.Texture:SetAllPoints(cb.Icon)
+	r.Texture:SetAllPoints(r.Icon)
 
 	local onEnter = function()
-		cb.isHover = true
-		resetTexture(cb)
-		Util.ToggleTooltip(cb, cb.Icon, bag.TooltipText)
+		r.isHover = true
+		resetTexture(r)
+		Util.ToggleTooltip(r, r.Icon, bag.TooltipText)
 	end
 	local onLeave = function()
-		cb.isHover = false
-		resetTexture(cb)
-		Util.ToggleTooltip(cb, cb.Icon, bag.TooltipText)
+		r.isHover = false
+		resetTexture(r)
+		Util.ToggleTooltip(r, r.Icon, bag.TooltipText)
 	end
 
 	local onMouseDown = function()
-		cb.isMouseDown = true
-		resetTexture(cb)
+		r.isMouseDown = true
+		resetTexture(r)
 	end
 	local onMouseUp = function()
-		cb.isMouseDown = false
-		if MouseIsOver(cb.Icon) == 1 then
-			cb.IsChecked = not cb.IsChecked
-			bag.OnChange(cb.IsChecked)
+		r.isMouseDown = false
+		if MouseIsOver(r.Icon) == 1 then
+			r.IsChecked = not r.IsChecked
+			bag.OnChange(r.IsChecked)
 		end
-		resetTexture(cb)
+		resetTexture(r)
 	end
 
-	cb.Icon:SetScript("OnEnter", onEnter)
-	cb.Icon:SetScript("OnLeave", onLeave)
-	cb.Icon:SetScript("OnMouseDown", onMouseDown)
-	cb.Icon:SetScript("OnMouseUp", onMouseUp)
+	r.Icon:SetScript("OnEnter", onEnter)
+	r.Icon:SetScript("OnLeave", onLeave)
+	r.Icon:SetScript("OnMouseDown", onMouseDown)
+	r.Icon:SetScript("OnMouseUp", onMouseUp)
 
-	cb.Icon:EnableMouse(true)
-	cb.Icon:SetWidth(_SIZE)
-	cb.Icon:SetHeight(_SIZE)
-	resetTexture(cb)
+	r.Icon:EnableMouse(true)
+	r.Icon:SetWidth(_SIZE)
+	r.Icon:SetHeight(_SIZE)
 
-	return cb
+	resetTexture(r)
+	return r
 end
 
 return QqCheckButton

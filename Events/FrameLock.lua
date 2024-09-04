@@ -1,4 +1,4 @@
-local Button = require "Components/Button.lua"
+local Button = require "Component/Button.lua"
 
 --[[
 WoW persists positions for frames that have global names.
@@ -72,7 +72,7 @@ end
 local addFrameResizable = function(frame, handle)
 	frame.QuiverGripHandle = handle
 	if Quiver_Store.IsLockedFrames
-	then handle:Hide()
+	then frame.QuiverGripHandle.Container:Hide()
 	else frame:SetResizable(true)
 	end
 	table.insert(framesResizeable, frame)
@@ -85,7 +85,7 @@ local lockFrames = function()
 		f:SetMovable(false)
 	end
 	for _k, f in framesResizeable do
-		f.QuiverGripHandle:Hide()
+		f.QuiverGripHandle.Container:Hide()
 		f:SetResizable(false)
 	end
 	for _k, v in _G.Quiver_Modules do
@@ -99,7 +99,7 @@ local unlockFrames = function()
 		f:SetMovable(true)
 	end
 	for _k, f in framesResizeable do
-		f.QuiverGripHandle:Show()
+		f.QuiverGripHandle.Container:Show()
 		f:SetResizable(true)
 	end
 	for _k, v in _G.Quiver_Modules do
@@ -145,7 +145,6 @@ local SideEffectMakeMoveable = function(f, store)
 		store.FrameMeta.X = math.floor(x)
 		store.FrameMeta.Y = math.floor(y)
 		f:SetPoint("TopLeft", nil, "TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
-		DEFAULT_CHAT_FRAME:AddMessage("resize " .. store.FrameMeta.X)
 	end)
 
 	addFrameMoveable(f)
@@ -169,28 +168,26 @@ local SideEffectMakeResizeable = function(frame, store, args)
 		frame:SetScript("OnSizeChanged", onResizeDrag)
 	end
 
-	local handle = Button.Create({ Parent=frame, Size=GRIP_HEIGHT })
+	-- size 12, scale 0.5 (compared to 0.75 on 16)
+	local handle = Button:Create(frame, {
+		Scale = 0.5,
+		TexPath = QUIVER.Icon.GripHandle,
+	})
 	addFrameResizable(frame, handle)
-	handle:SetFrameLevel(100)-- Should be top element
-	handle:SetPoint("BottomRight", frame, "BottomRight", -margin, margin)
+	handle.Container:SetFrameLevel(100)-- Should be top element
+	handle.Container:SetPoint("BottomRight", frame, "BottomRight", -margin, margin)
 
-	local scale = 0.5
-	handle.Texture:QuiverSetTexture(scale, QUIVER.Icon.GripHandle)
-	handle.HighlightTexture = Button.CreateHighlightTexture(handle, "OVERLAY")
-	handle:SetHighlightTexture(handle.HighlightTexture)
-	handle.HighlightTexture:QuiverSetTexture(scale, QUIVER.Icon.GripHandle)
-
-	handle:SetScript("OnMouseDown", function()
+	handle.OnMouseDown = function()
 		if frame:IsResizable() then frame:StartSizing("BottomRight") end
-	end)
-	handle:SetScript("OnMouseUp", function()
+	end
+	handle.OnMouseUp = function()
 		frame:StopMovingOrSizing()
 		store.FrameMeta.W = math.floor(frame:GetWidth() + 0.5)
 		store.FrameMeta.H = math.floor(frame:GetHeight() + 0.5)
 		frame:SetWidth(store.FrameMeta.W)
 		frame:SetHeight(store.FrameMeta.H)
 		if onResizeEnd ~= nil then onResizeEnd() end
-	end)
+	end
 end
 
 return {

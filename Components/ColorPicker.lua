@@ -56,36 +56,46 @@ local createColorPicker = function(parent, color)
 end
 
 
----@class ButtonColorPicker: Frame
----@field Label FontString
----@field ColorShoot StoreColor
+---@class ButtonColorPicker
 ---@field Button Button
+---@field ColorShoot StoreColor
+---@field Container Frame
+---@field Label FontString
+---@field WidthMinusLabel number
 
 local CreateWithResetLabel = function(parent, labelText, color)
+	local container = CreateFrame("Frame", nil, parent)
+
 	---@type ButtonColorPicker
-	local f = CreateFrame("Frame", nil, parent)
+	local r = {
+		Button = nil,
+		ColorShoot = nil,
+		Container = container,
+		Label = container:CreateFontString(nil, "BACKGROUND", "GameFontNormal"),
+		WidthMinusLabel = 0,
+	}
 
-	f.Label = f:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
-	f.Label:SetPoint("Left", f, "Left", 0, 0)
-	f.Label:SetText(labelText)
+	r.Label:SetPoint("Left", container, "Left", 0, 0)
+	r.Label:SetText(labelText)
 
-	local reset = Button:Create(f, {
+	local reset = Button:Create(container, {
 		TexPath = QUIVER.Icon.Reset,
 		TooltipText = QUIVER_T.UI.ResetColor,
 	})
 	reset.OnClick = function()
 		color.Reset()
-		f.Button:SetBackdropColor(color.R(), color.G(), color.B(), 1)
+		r.Button:SetBackdropColor(color.R(), color.G(), color.B(), 1)
 	end
-	reset.Icon:SetPoint("Right", f, "Right", 0, 0)
+	reset.Container:SetPoint("Right", container, "Right", 0, 0)
 
-	local x = 4 + reset.Icon:GetWidth()
-	f.Button = createColorPicker(f, color)
-	f.Button:SetPoint("Right", f, "Right", -x, 0)
+	local x = 4 + reset.Container:GetWidth()
+	r.Button = createColorPicker(container, color)
+	r.Button:SetPoint("Right", container, "Right", -x, 0)
 
-	f:SetHeight(f.Button:GetHeight())
-	f.WidthMinusLabel = 6 + x + f.Button:GetWidth()
-	return f
+	r.Container:SetHeight(r.Button:GetHeight())
+	r.WidthMinusLabel = 6 + x + r.Button:GetWidth()
+
+	return r
 end
 
 return {

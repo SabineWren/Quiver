@@ -3,6 +3,7 @@ local L = require "Shiver/Lib/All.lua"
 local Sugar = require "Shiver/Sugar.lua"
 local Widget = require "Shiver/Widget.lua"
 
+local _GAP = 6
 local _SIZE = 18
 
 -- Three frame types exist for implementing a Switch: CheckButton, Button, Frame
@@ -43,7 +44,6 @@ local _SIZE = 18
 local QqSwitch = {}
 
 ---@class (exact) paramsSwitch
----@field Gap number
 ---@field IsChecked boolean
 ---@field LabelText string
 ---@field OnChange fun(b: boolean): nil
@@ -70,7 +70,7 @@ function QqSwitch:Create(parent, bag)
 	local icon = CreateFrame("Frame", nil, container, nil)
 
 	---@type QqSwitch
-	local sw = {
+	local r = {
 		Container = container,
 		Icon = icon,
 		Label = container:CreateFontString(nil, "BACKGROUND", "GameFontNormal"),
@@ -80,55 +80,53 @@ function QqSwitch:Create(parent, bag)
 		isHover = false,
 		isMouseDown = false,
 	}
-	setmetatable(sw, self)
+	setmetatable(r, self)
 	self.__index = self
 
-	sw.Texture:SetAllPoints(sw.Icon)
-	sw.Label:SetText(bag.LabelText)
-
 	local onEnter = function()
-		sw.isHover = true
-		resetTexture(sw)
-		Util.ToggleTooltip(sw, sw.Icon, bag.TooltipText)
+		r.isHover = true
+		resetTexture(r)
+		Util.ToggleTooltip(r, r.Container, bag.TooltipText)
 	end
 	local onLeave = function()
-		sw.isHover = false
-		resetTexture(sw)
-		Util.ToggleTooltip(sw, sw.Icon, bag.TooltipText)
+		r.isHover = false
+		resetTexture(r)
+		Util.ToggleTooltip(r, r.Container, bag.TooltipText)
 	end
 
 	local onMouseDown = function()
-		sw.isMouseDown = true
-		resetTexture(sw)
+		r.isMouseDown = true
+		resetTexture(r)
 	end
 	local onMouseUp = function()
-		sw.isMouseDown = false
-		if MouseIsOver(sw.Container) == 1 then
-			sw.isChecked = not sw.isChecked
-			bag.OnChange(sw.isChecked)
+		r.isMouseDown = false
+		if MouseIsOver(r.Container) == 1 then
+			r.isChecked = not r.isChecked
+			bag.OnChange(r.isChecked)
 		end
-		resetTexture(sw)
+		resetTexture(r)
 	end
 
 	container:SetScript("OnEnter", onEnter)
 	container:SetScript("OnLeave", onLeave)
 	container:SetScript("OnMouseDown", onMouseDown)
 	container:SetScript("OnMouseUp", onMouseUp)
-
 	container:EnableMouse(true)
-	sw.Icon:SetWidth(_SIZE * 1.2)
-	sw.Icon:SetHeight(_SIZE)
-	resetTexture(sw)
 
-	sw.Icon:SetPoint("Left", container, "Left", 0, 0)
-	sw.Label:SetPoint("Right", container, "Right", 0, 0)
+	r.Texture:SetAllPoints(r.Icon)
+	r.Icon:SetWidth(_SIZE * 1.2)
+	r.Icon:SetHeight(_SIZE)
+	r.Label:SetText(bag.LabelText)
 
-	local h = L.Psi(L.Max, Sugar.Region._GetHeight, sw.Icon, sw.Label)
-	local w = L.Psi(L.Add, Sugar.Region._GetWidth, sw.Icon, sw.Label)
+	r.Icon:SetPoint("Left", container, "Left", 0, 0)
+	r.Label:SetPoint("Right", container, "Right", 0, 0)
+	local h = L.Psi(L.Max, Sugar.Region._GetHeight, r.Icon, r.Label)
+	local w = L.Psi(L.Add, Sugar.Region._GetWidth, r.Icon, r.Label) + _GAP
 	container:SetHeight(h)
-	container:SetWidth(w + bag.Gap)
+	container:SetWidth(w)
 
-	return sw
+	resetTexture(r)
+	return r
 end
 
 return QqSwitch
