@@ -3,6 +3,9 @@ return {
 	---@type fun(a: number, b: number): number
 	Add = function(a, b) return a + b end,
 
+	---@type fun(a: number, b: number): number
+	Max = function(a, b) return math.max(a, b) end,
+
 	-- ************ Comparison ************
 	---@generic A
 	---@type fun(a: A, b: A): boolean

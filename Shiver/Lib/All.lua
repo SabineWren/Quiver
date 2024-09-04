@@ -54,6 +54,15 @@ local Pipe3 = Pipe
 ---@type fun(a: A, f: (fun(a: A): B), g: (fun(b: B): C), h: (fun(c: C): D), i: (fun(d: D): E)): D
 local Pipe4 = Pipe
 
+--- f(g(x), (y))
+---@generic A
+---@generic B
+---@generic C
+---@type fun(f: (fun(x: B, y: B): C), g: (fun(x: A): B), x: A, y: A): C
+local Psi = function(f, g, x, y)
+	return f(g(x), g(y))
+end
+
 return {
 	Array = Array,
 	-- Combinators
@@ -61,8 +70,10 @@ return {
 	Pipe = Pipe,
 	Pipe3 = Pipe3,
 	Pipe4 = Pipe4,
+	Psi = Psi,
 	-- Binary / Unary
 	Add = Op.Add,
+	Max = Op.Max,
 	-- Comparison
 	Lt = Op.Lt,
 	Le = Op.Le,

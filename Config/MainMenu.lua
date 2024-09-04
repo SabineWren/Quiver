@@ -1,7 +1,7 @@
 local Button = require "Components/Button.lua"
-local CheckButton = require "Components/CheckButton.lua"
 local Dialog = require "Components/Dialog.lua"
 local Select = require "Component/Select.lua"
+local Switch = require "Component/Switch.lua"
 local TitleBox = require "Components/TitleBox.lua"
 local Color = require "Config/Color.lua"
 local InputText = require "Config/InputText.lua"
@@ -43,7 +43,7 @@ local createIconResetAll = function(parent)
 	return f
 end
 
-local createModuleControls = function(parent, m, gap)
+local createModuleControls = function(parent, m)
 	local f = CreateFrame("Frame", nil, parent)
 
 	local btnReset = Button.Create({
@@ -53,18 +53,17 @@ local createModuleControls = function(parent, m, gap)
 	})
 	btnReset.Texture:QuiverSetTexture(0.75, QUIVER.Icon.Reset)
 	btnReset:SetScript("OnClick", function(_self) m.OnResetFrames() end)
-	btnReset:SetPoint("Top", f, "Top", 0, 0)
-	btnReset:SetPoint("Left", f, "Left", 0, 0)
 
 	if not Quiver_Store.ModuleEnabled[m.Id] then
 		btnReset.QuiverDisable()
 	end
 
-	local btnSwitch = CheckButton.Create(f, {
+	local switch = Switch.Create(f, {
+		Gap = 6,
 		IsChecked = Quiver_Store.ModuleEnabled[m.Id],
-		Label = m.Name,
-		Tooltip = QUIVER_T.ModuleTooltip[m.Id],
-		OnClick = function (isChecked)
+		LabelText = m.Name,
+		TooltipText = QUIVER_T.ModuleTooltip[m.Id],
+		OnChange = function (isChecked)
 			Quiver_Store.ModuleEnabled[m.Id] = isChecked
 			if isChecked then
 				m.OnEnable()
@@ -75,18 +74,23 @@ local createModuleControls = function(parent, m, gap)
 			end
 		end,
 	})
-	btnSwitch:SetPoint("Top", f, "Top", 0, 0)
-	btnSwitch:SetPoint("Right", f, "Right", 0, 0)
 
-	f:SetHeight(btnSwitch:GetHeight())
-	f:SetWidth(btnReset:GetWidth() + gap + btnSwitch:GetWidth())
+	local x = 0
+	local gap = 8
+	btnReset:SetPoint("Left", f, "Left", x, 0)
+	x = x + btnReset:GetWidth() + gap
+	switch.Container:SetPoint("Left", f, "Left", x, 0)
+	x = x + switch.Container:GetWidth()
+
+	f:SetHeight(switch.Container:GetHeight())
+	f:SetWidth(x)
 	return f
 end
 
 local createAllModuleControls = function(parent, gap)
 	local f = CreateFrame("Frame", nil, parent)
 	local frames = L.Array.Mapi(_G.Quiver_Modules, function(m, i)
-		local frame = createModuleControls(f, m, gap)
+		local frame = createModuleControls(f, m)
 		local yOffset = i * (frame:GetHeight() + gap)
 		frame:SetPoint("Left", f, "Left", 0, 0)
 		frame:SetPoint("Top", f, "Top", 0, -yOffset)

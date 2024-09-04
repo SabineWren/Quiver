@@ -32,6 +32,8 @@ QUIVER = {
 		LockClosed = "Interface\\AddOns\\Quiver\\Textures\\lock",
 		LockOpen = "Interface\\AddOns\\Quiver\\Textures\\lock-open",
 		Reset = "Interface\\AddOns\\Quiver\\Textures\\arrow-rotate-right",
+		ToggleOff = "Interface\\AddOns\\Quiver\\Textures\\toggle-off",
+		ToggleOn = "Interface\\AddOns\\Quiver\\Textures\\toggle-on",
 		XMark = "Interface\\AddOns\\Quiver\\Textures\\xmark",
 		-- Client
 		Aspect_Beast = "Interface\\Icons\\Ability_Mount_PinkTiger",

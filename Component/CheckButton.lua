@@ -1,0 +1,8 @@
+-- TODO (see Switch)
+---@class QqCheckButton
+---@field Frame Frame
+---@field IsChecked boolean
+---@field IsEnabled boolean
+---@field TexPathOff string
+---@field TexPathOn string
+---@field Texture Texture
