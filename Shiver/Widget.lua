@@ -33,7 +33,7 @@ local PositionTooltip = function(anchor, x, y)
 end
 
 ---@alias Rgba [number, number, number, number]
----@alias Rgb [number, number, number, number]
+---@alias Rgb [number, number, number]
 
 ---@param color Rgb|Rgba
 local UnpackRgb = function(color)

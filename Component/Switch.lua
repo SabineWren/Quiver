@@ -1,6 +1,9 @@
+local Util = require "Component/_Util.lua"
 local L = require "Shiver/Lib/All.lua"
 local Sugar = require "Shiver/Sugar.lua"
 local Widget = require "Shiver/Widget.lua"
+
+local _SIZE = 18
 
 -- Three frame types exist for implementing a Switch: CheckButton, Button, Frame
 -- For custom functionality with minimal code, Frame is the easiest starting point.
@@ -23,108 +26,88 @@ local Widget = require "Shiver/Widget.lua"
 -- 2. Click event not implemented.
 -- 3. Disabled not implemented.
 
----@class QqSwitch
+-- see [Button](lua://QqButton)
+-- see [CheckButton](lua://QqCheckButton)
+---@class (exact) QqSwitch : IMouseInteract
+---@field __index? QqSwitch
 ---@field Container Frame
 ---@field Icon Frame
----@field IsChecked boolean
----@field IsEnabled boolean
 ---@field Label FontString
 ---@field Texture Texture
+---@field isChecked boolean
+---@field isEnabled boolean
+---@field isHover boolean
+---@field isMouseDown boolean
 
----@class paramsSwitch
+---@class QqSwitch
+local QqSwitch = {}
+
+---@class (exact) paramsSwitch
 ---@field Gap number
 ---@field IsChecked boolean
 ---@field LabelText string
 ---@field OnChange fun(b: boolean): nil
 ---@field TooltipText? string
 
-local _COLOR_NORMAL = { 1.0, 0.82, 0.0 }---@type Rgb
-local _COLOR_HOVER = { 1.0, 0.6, 0.0 }---@type Rgb
-local _COLOR_MOUSEDOWN = { 1.0, 0.3, 0.0 }---@type Rgb
-local _COLOR_DISABLE = { 0.3, 0.3, 0.3 }---@type Rgb
-local _SIZE = 18
+---@param self QqSwitch
+local resetTexture = function(self)
+	local path = self.isChecked and QUIVER.Icon.ToggleOn or QUIVER.Icon.ToggleOff
+	self.Texture:SetTexture(path)
 
----@param sw QqSwitch
----@param isHover boolean
----@param isMouseDown boolean
-local resetTexture = function(sw, isHover, isMouseDown)
-	local path = sw.IsChecked and QUIVER.Icon.ToggleOn or QUIVER.Icon.ToggleOff
-	local c = (function()
-		if not sw.IsEnabled then
-			return _COLOR_DISABLE
-		elseif isMouseDown then
-			return _COLOR_MOUSEDOWN
-		elseif isHover then
-			return _COLOR_HOVER
-		else
-			return _COLOR_NORMAL
-		end
-	end)()
-
-	sw.Texture:SetTexture(path)
+	local c = Util.SelectColor(self)
 	local r, g, b = Widget.UnpackRgb(c)
-	local a = sw.IsChecked and 1.0 or 0.7
-	sw.Texture:SetVertexColor(r, g, b, a)
-	sw.Label:SetTextColor(r, g, b, a)
+	local a = self.isChecked and 1.0 or 0.7
+	self.Texture:SetVertexColor(r, g, b, a)
+	self.Label:SetTextColor(r, g, b, a)
 end
 
----@param sw QqSwitch
----@param isHighlight boolean
----@param text nil|string
-local toggleTooltip = function(sw, isHighlight, text)
-	if text ~= nil then
-		if isHighlight then
-			Widget.PositionTooltip(sw.Icon)
-			GameTooltip:AddLine(text, nil, nil, nil, 1)
-			GameTooltip:Show()
-		else
-			GameTooltip:Hide()
-			GameTooltip:ClearLines()
-		end
-	end
-end
-
----@type fun(parent: Frame, bag: paramsSwitch): QqSwitch
-local Create = function(parent, bag)
+---@param parent Frame
+---@param bag paramsSwitch
+---@return QqSwitch
+---@nodiscard
+function QqSwitch:Create(parent, bag)
 	local container = CreateFrame("Frame", nil, parent, nil)
 	local icon = CreateFrame("Frame", nil, container, nil)
+
 	---@type QqSwitch
 	local sw = {
 		Container = container,
 		Icon = icon,
 		Label = container:CreateFontString(nil, "BACKGROUND", "GameFontNormal"),
-		IsChecked = bag.IsChecked,
-		IsEnabled = true,
-		Texture = icon:CreateTexture(nil, "OVERLAY")
+		Texture = icon:CreateTexture(nil, "OVERLAY"),
+		isChecked = bag.IsChecked,
+		isEnabled = true,
+		isHover = false,
+		isMouseDown = false,
 	}
+	setmetatable(sw, self)
+	self.__index = self
+
 	sw.Texture:SetAllPoints(sw.Icon)
 	sw.Label:SetText(bag.LabelText)
 
-	local isHover = false
-	local isMouseDown = false
-
 	local onEnter = function()
-		isHover = true
-		resetTexture(sw, isHover, isMouseDown)
-		toggleTooltip(sw, isHover, bag.TooltipText)
+		sw.isHover = true
+		resetTexture(sw)
+		Util.ToggleTooltip(sw, sw.Icon, bag.TooltipText)
 	end
 	local onLeave = function()
-		isHover = false
-		resetTexture(sw, isHover, isMouseDown)
-		toggleTooltip(sw, isHover, bag.TooltipText)
+		sw.isHover = false
+		resetTexture(sw)
+		Util.ToggleTooltip(sw, sw.Icon, bag.TooltipText)
 	end
 
 	local onMouseDown = function()
-		isMouseDown = true
-		resetTexture(sw, isHover, isMouseDown)
+		sw.isMouseDown = true
+		resetTexture(sw)
 	end
 	local onMouseUp = function()
-		isMouseDown = false
+		sw.isMouseDown = false
 		if MouseIsOver(sw.Container) == 1 then
-			sw.IsChecked = not sw.IsChecked
-			bag.OnChange(sw.IsChecked)
+			sw.isChecked = not sw.isChecked
+			bag.OnChange(sw.isChecked)
 		end
-		resetTexture(sw, isHover, isMouseDown)
+		resetTexture(sw)
 	end
 
 	container:SetScript("OnEnter", onEnter)
@@ -135,7 +118,7 @@ local Create = function(parent, bag)
 	container:EnableMouse(true)
 	sw.Icon:SetWidth(_SIZE * 1.2)
 	sw.Icon:SetHeight(_SIZE)
-	resetTexture(sw, isHover, isMouseDown)
+	resetTexture(sw)
 
 	sw.Icon:SetPoint("Left", container, "Left", 0, 0)
 	sw.Label:SetPoint("Right", container, "Right", 0, 0)
@@ -148,6 +131,4 @@ local Create = function(parent, bag)
 	return sw
 end
 
-return {
-	Create = Create,
-}
+return QqSwitch

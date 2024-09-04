@@ -16,10 +16,9 @@ local allMenus = {}
 local Create = function(parent, labelText, optionsText, selectedText, onSet)
 	local select = CreateFrame("Button", nil, parent)
 	local menu = CreateFrame("Frame", nil, parent)
-	local btnCaret = Button.Create({
-		Parent=select,
-		Size=QUIVER.Size.Icon,
-		Texture=QUIVER.Icon.CaretDown,
+
+	local btnCaret = Button:Create(select, {
+		TexPath = QUIVER.Icon.CaretDown,
 	})
 
 	local label = select:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
@@ -35,7 +34,7 @@ local Create = function(parent, labelText, optionsText, selectedText, onSet)
 	menu:SetBackdropColor(0, 0, 0, 1)
 	menu:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
 
-	btnCaret:SetPoint("Right", select, "Right", -_INSET, 0)
+	btnCaret.Icon:SetPoint("Right", select, "Right", -_INSET, 0)
 
 	label:SetPoint("Left", select, "Left", _INSET, 0)
 	label:SetPoint("Top", select, "Top", 0, -_INSET)
@@ -43,7 +42,7 @@ local Create = function(parent, labelText, optionsText, selectedText, onSet)
 
 	selected:SetPoint("Bottom", select, "Bottom", 0, _INSET)
 	selected:SetPoint("Left", select, "Left", _INSET, 0)
-	selected:SetPoint("Right", select, "Right", -_INSET - btnCaret:GetWidth(), 0)
+	selected:SetPoint("Right", select, "Right", -_INSET - btnCaret.Icon:GetWidth(), 0)
 	selected:SetText(selectedText or optionsText[1])
 
 	local options = L.Array.Mapi(optionsText, function(t, i)
@@ -89,7 +88,7 @@ local Create = function(parent, labelText, optionsText, selectedText, onSet)
 		if not isVisible then menu:Show() end
 	end
 	local hoverStart = function()
-		btnCaret:LockHighlight()
+		btnCaret:ToggleHover(true)
 		select:SetBackdrop({
 			edgeFile="Interface/BUTTONS/WHITE8X8",
 			edgeSize=_BORDER,
@@ -99,15 +98,15 @@ local Create = function(parent, labelText, optionsText, selectedText, onSet)
 	local hoverEnd = function()
 		if not MouseIsOver(select) then
 			select:SetBackdropBorderColor(0, 0, 0, 0)
-			btnCaret:UnlockHighlight()
+			btnCaret:ToggleHover(false)
 		end
 	end
 	select:SetScript("OnClick", handleClick)
 	select:SetScript("OnEnter", hoverStart)
 	select:SetScript("OnLeave", hoverEnd)
-	btnCaret:SetScript("OnClick", handleClick)
-	btnCaret:SetScript("OnEnter", hoverStart)
-	btnCaret:SetScript("OnLeave", hoverEnd)
+	btnCaret.OnClick = handleClick
+	btnCaret.Icon:SetScript("OnEnter", hoverStart)
+	btnCaret.Icon:SetScript("OnLeave", hoverEnd)
 
 	select:SetHeight(
 		selected:GetHeight()
@@ -117,7 +116,7 @@ local Create = function(parent, labelText, optionsText, selectedText, onSet)
 	)
 	select:SetWidth(
 		math.max(label:GetWidth(), maxOptionWidth)
-		+ btnCaret:GetWidth()
+		+ btnCaret.Icon:GetWidth()
 		+ _SPACING
 		+ _INSET * 2
 	)

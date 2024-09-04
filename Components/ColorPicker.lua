@@ -60,7 +60,6 @@ end
 ---@field Label FontString
 ---@field ColorShoot StoreColor
 ---@field Button Button
----@field BtnReset Button
 
 local CreateWithResetLabel = function(parent, labelText, color)
 	---@type ButtonColorPicker
@@ -70,20 +69,17 @@ local CreateWithResetLabel = function(parent, labelText, color)
 	f.Label:SetPoint("Left", f, "Left", 0, 0)
 	f.Label:SetText(labelText)
 
-	f.BtnReset = Button.Create({
-		Parent=f,
-		Size=QUIVER.Size.Icon,
-		Texture=QUIVER.Icon.Reset,
-		TooltipText=QUIVER_T.UI.ResetColor,
+	local reset = Button:Create(f, {
+		TexPath = QUIVER.Icon.Reset,
+		TooltipText = QUIVER_T.UI.ResetColor,
 	})
-
-	f.BtnReset:SetPoint("Right", f, "Right", 0, 0)
-	f.BtnReset:SetScript("OnClick", function()
+	reset.OnClick = function()
 		color.Reset()
 		f.Button:SetBackdropColor(color.R(), color.G(), color.B(), 1)
-	end)
+	end
+	reset.Icon:SetPoint("Right", f, "Right", 0, 0)
 
-	local x = 4 + f.BtnReset:GetWidth()
+	local x = 4 + reset.Icon:GetWidth()
 	f.Button = createColorPicker(f, color)
 	f.Button:SetPoint("Right", f, "Right", -x, 0)
 

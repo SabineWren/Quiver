@@ -1,5 +1,6 @@
 local Button = require "Components/Button.lua"
 local Dialog = require "Components/Dialog.lua"
+local CheckButton = require "Component/CheckButton.lua"
 local Select = require "Component/Select.lua"
 local Switch = require "Component/Switch.lua"
 local TitleBox = require "Components/TitleBox.lua"
@@ -9,27 +10,6 @@ local FrameLock = require "Events/FrameLock.lua"
 local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
 local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
 local L = require "Shiver/Lib/All.lua"
-
-local createIconBtnLock = function(parent)
-	local f = Button.Create({
-		Parent=parent,
-		Size=QUIVER.Size.Icon,
-		TooltipText=QUIVER_T.UI.FrameLockToggleTooltip,
-	})
-	local updateTexture = function()
-		local path = Quiver_Store.IsLockedFrames
-			and QUIVER.Icon.LockClosed
-			or QUIVER.Icon.LockOpen
-		f.Texture:QuiverSetTexture(1, path)
-	end
-	updateTexture()
-	f:SetScript("OnClick", function(_self)
-		FrameLock.SetIsLocked(not Quiver_Store.IsLockedFrames)
-		updateTexture()
-	end)
-	FrameLock.Init()
-	return f
-end
 
 local createIconResetAll = function(parent)
 	local f = Button.Create({
@@ -58,7 +38,7 @@ local createModuleControls = function(parent, m)
 		btnReset.QuiverDisable()
 	end
 
-	local switch = Switch.Create(f, {
+	local switch = Switch:Create(f, {
 		Gap = 6,
 		IsChecked = Quiver_Store.ModuleEnabled[m.Id],
 		LabelText = m.Name,
@@ -125,9 +105,17 @@ local Create = function()
 	btnCloseTop:SetPoint("TopRight", f, "TopRight", -PADDING_CLOSE, -PADDING_CLOSE)
 	btnCloseTop:SetScript("OnClick", function() f:Hide() end)
 
-	local btnToggleLock = createIconBtnLock(f)
+	local btnToggleLock = CheckButton:Create(f, {
+		IsChecked = Quiver_Store.IsLockedFrames,
+		OnChange = function(isLocked) FrameLock.SetIsLocked(isLocked) end,
+		TexPathOff = QUIVER.Icon.LockOpen,
+		TexPathOn = QUIVER.Icon.LockClosed,
+		TooltipText=QUIVER_T.UI.FrameLockToggleTooltip,
+	})
+	FrameLock.Init()
+
 	local lockOffsetX = PADDING_CLOSE + QUIVER.Size.Icon + QUIVER.Size.Gap/2
-	btnToggleLock:SetPoint("TopRight", f, "TopRight", -lockOffsetX, -PADDING_CLOSE)
+	btnToggleLock.Icon:SetPoint("TopRight", f, "TopRight", -lockOffsetX, -PADDING_CLOSE)
 
 	local btnResetFrames = createIconResetAll(f)
 	local resetOffsetX = lockOffsetX + QUIVER.Size.Icon + QUIVER.Size.Gap/2

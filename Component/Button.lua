@@ -1,70 +1,93 @@
+local Util = require "Component/_Util.lua"
 local Widget = require "Shiver/Widget.lua"
 
--- We could edit the texture file, but it's a raster image
--- SetAllPoints() doesn't let us adjust padding
--- SetTexCoord(0, 1, 0, 1) clips instead of overflowing
--- This scaling approach is the easiest way to customize padding
--- TODO -- this is a stupid approach to sizing
--- See instead:
--- Texture:SetTexCoord overload for affine transformations
--- Texture:SetTexCoordModifiesRect
----@param b Button
----@param path string
----@param scale number
----@return Texture
----@nodiscard
-local createTexture = function(b, path, scale)
-	local t = b:CreateTexture(nil, "OVERLAY")
-	t:SetWidth(b:GetWidth() * scale)
-	t:SetHeight(b:GetHeight() * scale)
-	t:SetPoint("Center", b, "Center", 0, 0)
-	t:SetTexture(path)
-	return t
+local _SIZE = 14
+
+-- see [CheckButton](lua://QqCheckButton)
+-- see [Switch](lua://QqSwitch)
+---@class (exact) QqButton : IMouseInteract
+---@field __index? QqButton
+---@field Icon Frame
+---@field OnClick nil|(fun(): nil)
+---@field Texture Texture
+---@field isEnabled boolean
+---@field isHover boolean
+---@field isMouseDown boolean
+
+---@class QqButton
+local QqButton = {}
+
+---@class (exact) paramsButton
+---@field TexPath string
+---@field TooltipText? string
+
+---@param self QqButton
+local resetTexture = function(self)
+	local c = Util.SelectColor(self)
+	local r, g, b = Widget.UnpackRgb(c)
+	self.Texture:SetVertexColor(r, g, b)
 end
 
----@param bag { Parent: Frame, Size: number, Texture?: string, TooltipText?: string }
-local Create = function(bag)
-	local btn = CreateFrame("Button", nil, bag.Parent, "UIPanelButtonTemplate")
-	btn:SetWidth(bag.Size)
-	btn:SetHeight(bag.Size)
-
-	if bag.Texture then
-		local r, g, b, _ = btn:GetTextColor()
-		local norm = createTexture(btn, bag.Texture, 0.7)
-		local high = createTexture(btn, bag.Texture, 0.7)
-		local push = createTexture(btn, bag.Texture, 0.7)
-		local disa = createTexture(btn, bag.Texture, 0.7)
-
-		btn:SetNormalTexture(norm)
-		btn:SetHighlightTexture(high)
-		btn:SetPushedTexture(push)
-		btn:SetDisabledTexture(disa)
-
-		norm:SetVertexColor(r, g, b)
-		high:SetVertexColor(r+0.3, g-0.2, b-0.1)
-		push:SetVertexColor(1.0, 0.0, 0.0)
-		disa:SetVertexColor(0.3, 0.3, 0.3)
-
-		-- This disables normal texture on hover so can darken instead of lighten.
-		-- This doesn't work for pushed, and doesn't override transparency.
-		high:SetBlendMode("DISABLE")
-	end
-
-	if bag.TooltipText then
-		btn:SetScript("OnEnter", function()
-			Widget.PositionTooltip(btn)
-			GameTooltip:AddLine(bag.TooltipText)
-			GameTooltip:Show()
-		end)
-		btn:SetScript("OnLeave", function()
-			GameTooltip:Hide()
-			GameTooltip:ClearLines()
-		end)
-	end
-
-	return btn
+---@param isHover boolean
+function QqButton:ToggleHover(isHover)
+	self.isHover = isHover
+	resetTexture(self)
 end
 
-return {
-	Create = Create,
-}
+---@param parent Frame
+---@param bag paramsButton
+---@return QqButton
+function QqButton:Create(parent, bag)
+	local icon = CreateFrame("Frame", nil, parent, nil)
+
+	---@type QqButton
+	local bn = {
+		Icon = icon,
+		Texture = icon:CreateTexture(nil, "OVERLAY"),
+		isEnabled = true,
+		isHover = false,
+		isMouseDown = false,
+	}
+	setmetatable(bn, self)
+	self.__index = self
+
+	icon:EnableMouse(true)
+	icon:SetWidth(_SIZE)
+	icon:SetHeight(_SIZE)
+
+	bn.Texture:SetAllPoints(bn.Icon)
+	bn.Texture:SetTexture(bag.TexPath)
+	resetTexture(bn)
+
+	local onEnter = function()
+		bn.isHover = true
+		resetTexture(bn)
+		Util.ToggleTooltip(bn, bn.Icon, bag.TooltipText)
+	end
+	local onLeave = function()
+		bn.isHover = false
+		resetTexture(bn)
+		Util.ToggleTooltip(bn, bn.Icon, bag.TooltipText)
+	end
+
+	local onMouseDown = function()
+		bn.isMouseDown = true
+		resetTexture(bn)
+	end
+	local onMouseUp = function()
+		bn.isMouseDown = false
+		if MouseIsOver(bn.Icon) == 1 and bn.OnClick ~= nil then
+			bn.OnClick()
+		end
+		resetTexture(bn)
+	end
+
+	bn.Icon:SetScript("OnEnter", onEnter)
+	bn.Icon:SetScript("OnLeave", onLeave)
+	bn.Icon:SetScript("OnMouseDown", onMouseDown)
+	bn.Icon:SetScript("OnMouseUp", onMouseUp)
+
+	return bn
+end
+
+return QqButton
