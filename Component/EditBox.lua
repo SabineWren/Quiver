@@ -1,35 +1,38 @@
 local Button = require "Component/Button.lua"
 
 local _GAP = QUIVER.Size.Gap
+local _GAP_RESET = 4
 
 ---@class QqEditBox
+---@field __index? QqEditBox
 ---@field Box EditBox
 ---@field Reset QqButton
+local QqEditBox = {}
 
 ---@param parent Frame
 ---@param tooltipText string
 ---@return QqEditBox
-local Create = function(parent, tooltipText)
+function QqEditBox:Create(parent, tooltipText)
 	local box = CreateFrame("EditBox", nil, parent)
 	box:SetWidth(300)
 	box:SetHeight(25)
 
 	---@type QqEditBox
-	local eb = {
+	local r = {
 		Box = box,
 		Reset = Button:Create(box, {
 			TexPath = QUIVER.Icon.Reset,
 			TooltipText = tooltipText,
 		}),
 	}
+	setmetatable(r, self)
+	self.__index = self
 
-
-	local GAP_RESET = 4
 	local fMarginLeft = QUIVER.Size.Border + _GAP
-	local fMarginRight = QUIVER.Size.Border + _GAP + QUIVER.Size.Icon + GAP_RESET
+	local fMarginRight = QUIVER.Size.Border + _GAP + QUIVER.Size.Icon + _GAP_RESET
 
-	local xr = eb.Reset.Container:GetWidth() + GAP_RESET
-	eb.Reset.Container:SetPoint("Right", box, "Right", xr, 0)
+	local xr = r.Reset.Container:GetWidth() + _GAP_RESET
+	r.Reset.Container:SetPoint("Right", box, "Right", xr, 0)
 
 	box:SetPoint("Left", parent, "Left", fMarginLeft, 0)
 	box:SetPoint("Right", parent, "Right", -fMarginRight, 0)
@@ -54,9 +57,7 @@ local Create = function(parent, tooltipText)
 	box:SetAutoFocus(false)
 	box:SetScript("OnEscapePressed", function() box:ClearFocus() end)
 	box:SetScript("OnEnterPressed", function() box:ClearFocus() end)
-	return eb
+	return r
 end
 
-return {
-	Create = Create,
-}
+return QqEditBox

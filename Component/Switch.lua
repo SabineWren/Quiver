@@ -1,7 +1,6 @@
 local Util = require "Component/_Util.lua"
 local L = require "Shiver/Lib/All.lua"
 local Sugar = require "Shiver/Sugar.lua"
-local Widget = require "Shiver/Widget.lua"
 
 local _GAP = 6
 local _SIZE = 18
@@ -39,8 +38,6 @@ local _SIZE = 18
 ---@field isEnabled boolean
 ---@field isHover boolean
 ---@field isMouseDown boolean
-
----@class QqSwitch
 local QqSwitch = {}
 
 ---@class (exact) paramsSwitch
@@ -54,8 +51,7 @@ local resetTexture = function(self)
 	local path = self.isChecked and QUIVER.Icon.ToggleOn or QUIVER.Icon.ToggleOff
 	self.Texture:SetTexture(path)
 
-	local c = Util.SelectColor(self)
-	local r, g, b = Widget.UnpackRgb(c)
+	local r, g, b = Util.SelectColor(self)
 	local a = self.isChecked and 1.0 or 0.7
 	self.Texture:SetVertexColor(r, g, b, a)
 	self.Label:SetTextColor(r, g, b, a)

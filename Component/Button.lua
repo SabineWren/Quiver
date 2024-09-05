@@ -1,7 +1,6 @@
 local Util = require "Component/_Util.lua"
 local L = require "Shiver/Lib/All.lua"
 local Sugar = require "Shiver/Sugar.lua"
-local Widget = require "Shiver/Widget.lua"
 
 local _GAP = 6
 local _SIZE = 16
@@ -20,8 +19,6 @@ local _SIZE = 16
 ---@field isEnabled boolean
 ---@field isHover boolean
 ---@field isMouseDown boolean
-
----@class QqButton
 local QqButton = {}
 
 ---@class (exact) paramsButton
@@ -32,8 +29,7 @@ local QqButton = {}
 
 ---@param self QqButton
 local resetTexture = function(self)
-	local c = Util.SelectColor(self)
-	local r, g, b = Widget.UnpackRgb(c)
+	local r, g, b = Util.SelectColor(self)
 	self.Texture:SetVertexColor(r, g, b)
 	if self.Label ~= nil then
 		self.Label:SetTextColor(r, g, b)

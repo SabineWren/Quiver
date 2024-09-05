@@ -1,5 +1,4 @@
 local Util = require "Component/_Util.lua"
-local Widget = require "Shiver/Widget.lua"
 
 local _SIZE = 16
 
@@ -15,8 +14,6 @@ local _SIZE = 16
 ---@field isEnabled boolean
 ---@field isHover boolean
 ---@field isMouseDown boolean
-
----@class QqCheckButton
 local QqCheckButton = {}
 
 ---@class (exact) paramsCheckButton
@@ -31,8 +28,7 @@ local resetTexture = function(self)
 	local path = self.IsChecked and self.TexPathOn or self.TexPathOff
 	self.Texture:SetTexture(path)
 
-	local c = Util.SelectColor(self)
-	local r, g, b = Widget.UnpackRgb(c)
+	local r, g, b = Util.SelectColor(self)
 	self.Texture:SetVertexColor(r, g, b)
 end
 

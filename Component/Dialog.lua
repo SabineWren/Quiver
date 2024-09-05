@@ -1,6 +1,7 @@
 local Create = function(padding)
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:Hide()
+	f:SetFrameStrata("DIALOG")
 	f:SetPoint("Center", nil, "Center", 0, 0)
 	f:SetBackdrop({
 		bgFile = "Interface/Tooltips/UI-Tooltip-Background",

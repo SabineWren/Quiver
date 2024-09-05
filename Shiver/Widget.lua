@@ -32,15 +32,6 @@ local PositionTooltip = function(anchor, x, y)
 	GameTooltip:SetOwner(anchor, anchorSide, xx, yy)
 end
 
----@alias Rgba [number, number, number, number]
----@alias Rgb [number, number, number]
-
----@param color Rgb|Rgba
-local UnpackRgb = function(color)
-	return color[1], color[2], color[3]
-end
-
 return {
 	PositionTooltip = PositionTooltip,
-	UnpackRgb = UnpackRgb
 }
