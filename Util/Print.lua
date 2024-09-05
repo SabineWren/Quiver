@@ -11,8 +11,8 @@ local PrintLine = {
 	-- BigWigs suppresses raid messages unless you guarantee
 	-- they don't match its spam filter. Adding a space works.
 	-- https://github.com/CosminPOP/BigWigs/issues/2
-	Raid = function(text) SendChatMessage(text.." ", "Raid") end,
-	Say = function(text) SendChatMessage(text, "Say") end,
+	Raid = function(text) SendChatMessage(text.." ", "RAID") end,
+	Say = function(text) SendChatMessage(text, "SAY") end,
 }
 
 local PrintPrefixedF = function(callerName)

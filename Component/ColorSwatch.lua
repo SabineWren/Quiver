@@ -1,16 +1,39 @@
 local Button = require "Component/Button.lua"
 
--- TODO this componnt has low code quality and type warnings
+---@param color Color
+---@param button Frame
+local openColorPicker = function(color, button)
+	-- colors at time of opening picker
+	local ri, gi, bi = color:Rgb()
+
+	-- Must replace existing callback before changing anything else,
+	-- or edits can fire previous callback, contaminating other values.
+	ColorPickerFrame.func = function()
+		local r, g, b = ColorPickerFrame:GetColorRGB()
+		color:SetRgb(r, g, b)
+		button:SetBackdropColor(r, g, b, 1)
+	end
+
+	ColorPickerFrame.cancelFunc = function()
+		color:SetRgb(ri, gi, bi)
+		button:SetBackdropColor(ri, gi, bi, 1)
+		-- Reset native picker
+		ColorPickerFrame:SetFrameStrata("MEDIUM")
+	end
+
+	ColorPickerFrame.hasOpacity = false
+	ColorPickerFrame:SetColorRGB(ri, gi, bi)
+	ColorPickerFrame:SetFrameStrata("FULLSCREEN_DIALOG")
+	ColorPickerFrame:Show()
+end
 
 ---@param parent Frame
 ---@param color Color
 ---@return Frame
----@nodiscard
-local createColorPicker = function(parent, color)
+local createButton = function(parent, color)
 	local f = CreateFrame("Button", nil, parent)
 	f:SetWidth(40)
 	f:SetHeight(20)
-
 	f:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8",
 		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
@@ -20,49 +43,27 @@ local createColorPicker = function(parent, color)
 		insets = { left=2, right=2, top=2, bottom=2 },
 	})
 	f:SetBackdropColor(color:Rgb())
-
-
-	f:SetScript("OnClick", function(_self)
-		-- colors at time of opening picker
-		local ri, gi, bi = color:Rgb()
-
-		-- Must replace existing callback before changing anything else,
-		-- or edits can fire previous callback, contaminating other values.
-		ColorPickerFrame.func = function()
-			local r, g, b = ColorPickerFrame:GetColorRGB()
-			color:SetRgb(r, g, b)
-			f:SetBackdropColor(r, g, b, 1)
-		end
-
-		ColorPickerFrame.cancelFunc = function()
-			color:SetRgb(ri, gi, bi)
-			f:SetBackdropColor(ri, gi, bi, 1)
-		end
-
-		ColorPickerFrame.hasOpacity = false
-		ColorPickerFrame:SetColorRGB(ri, gi, bi)
-		ColorPickerFrame:Show()
-	end)
-
+	f:SetScript("OnClick", function() openColorPicker(color, f) end)
 	return f
 end
 
-
 ---@class ButtonColorPicker
----@field Button Button
----@field ColorShoot StoreColor
+---@field Button Frame
 ---@field Container Frame
 ---@field Label FontString
 ---@field WidthMinusLabel number
+local ColorSwatch = {}
 
+---@param parent Frame
+---@param labelText string
 ---@param color Color
-local CreateWithResetLabel = function(parent, labelText, color)
+---@return ButtonColorPicker
+function ColorSwatch:Create(parent, labelText, color)
 	local container = CreateFrame("Frame", nil, parent)
 
 	---@type ButtonColorPicker
 	local r = {
-		Button = nil,
-		ColorShoot = nil,
+		Button = createButton(container, color),
 		Container = container,
 		Label = container:CreateFontString(nil, "BACKGROUND", "GameFontNormal"),
 		WidthMinusLabel = 0,
@@ -80,7 +81,6 @@ local CreateWithResetLabel = function(parent, labelText, color)
 	reset.Container:SetPoint("Right", container, "Right", 0, 0)
 
 	local x = 4 + reset.Container:GetWidth()
-	r.Button = createColorPicker(container, color)
 	r.Button:SetPoint("Right", container, "Right", -x, 0)
 
 	r.Container:SetHeight(r.Button:GetHeight())
@@ -89,6 +89,4 @@ local CreateWithResetLabel = function(parent, labelText, color)
 	return r
 end
 
-return {
-	CreateWithResetLabel = CreateWithResetLabel,
-}
+return ColorSwatch

@@ -1,5 +1,5 @@
 local Button = require "Component/Button.lua"
-local ColorPicker = require "Component/ColorPicker.lua"
+local ColorSwatch = require "Component/ColorSwatch.lua"
 local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
 local Castbar = require "Modules/Castbar.lua"
 local RangeIndicator = require "Modules/RangeIndicator.lua"
@@ -25,6 +25,15 @@ local createBtnColorSwap = function(parent, f1, f2, c1, c2)
 	return f
 end
 
+---@param f Frame
+---@param label string
+---@param store Rgb
+---@param default Rgb
+local swatch = function(f, label, store, default)
+	local color = Color:LiftReset(store, default)
+	return ColorSwatch:Create(f, label, color)
+end
+
 local Create = function(parent, gap)
 	local storeAutoShotTimer = Quiver_Store.ModuleStore[AutoShotTimer.Id]
 	local storeCastbar = Quiver_Store.ModuleStore[Castbar.Id]
@@ -33,31 +42,24 @@ local Create = function(parent, gap)
 
 	local colorShoot = Color:LiftReset(storeAutoShotTimer.ColorShoot, QUIVER.ColorDefault.AutoShotShoot)
 	local colorReload = Color:LiftReset(storeAutoShotTimer.ColorReload, QUIVER.ColorDefault.AutoShotReload)
-	local optionShoot = ColorPicker.CreateWithResetLabel(f, "Shooting", colorShoot)
-	local optionReload = ColorPicker.CreateWithResetLabel(f, "Reloading", colorReload)
+	-- TODO localize labels
+	local optionShoot = ColorSwatch:Create(f, "Shooting", colorShoot)
+	local optionReload = ColorSwatch:Create(f, "Reloading", colorReload)
 
 	local elements = {
-		ColorPicker.CreateWithResetLabel(f, "Casting",
-			Color:LiftReset(storeCastbar.ColorCastbar, QUIVER.ColorDefault.Castbar)),
+		-- TODO localize label
+		swatch(f, "Casting", storeCastbar.ColorCastbar, QUIVER.ColorDefault.Castbar),
 		createBtnColorSwap(f, optionShoot, optionReload, colorShoot, colorReload),
 		optionShoot,
 		optionReload,
-		ColorPicker.CreateWithResetLabel(f, QUIVER_T.Range.Melee,
-			Color:LiftReset(storeRange.ColorMelee, QUIVER.ColorDefault.Range.Melee)),
-		ColorPicker.CreateWithResetLabel(f, QUIVER_T.Range.DeadZone,
-			Color:LiftReset(storeRange.ColorDeadZone, QUIVER.ColorDefault.Range.DeadZone)),
-		ColorPicker.CreateWithResetLabel(f, QUIVER_T.Range.ScareBeast,
-			Color:LiftReset(storeRange.ColorScareBeast, QUIVER.ColorDefault.Range.ScareBeast)),
-		ColorPicker.CreateWithResetLabel(f, QUIVER_T.Range.ScatterShot,
-			Color:LiftReset(storeRange.ColorScatterShot, QUIVER.ColorDefault.Range.ScatterShot)),
-		ColorPicker.CreateWithResetLabel(f, QUIVER_T.Range.Short,
-			Color:LiftReset(storeRange.ColorShort, QUIVER.ColorDefault.Range.Short)),
-		ColorPicker.CreateWithResetLabel(f, QUIVER_T.Range.Long,
-			Color:LiftReset(storeRange.ColorLong, QUIVER.ColorDefault.Range.Long)),
-		ColorPicker.CreateWithResetLabel(f, QUIVER_T.Range.Mark,
-			Color:LiftReset(storeRange.ColorMark, QUIVER.ColorDefault.Range.Mark)),
-		ColorPicker.CreateWithResetLabel(f, QUIVER_T.Range.TooFar,
-			Color:LiftReset(storeRange.ColorTooFar, QUIVER.ColorDefault.Range.TooFar)),
+		swatch(f, QUIVER_T.Range.Melee, storeRange.ColorMelee, QUIVER.ColorDefault.Range.Melee),
+		swatch(f, QUIVER_T.Range.DeadZone, storeRange.ColorDeadZone, QUIVER.ColorDefault.Range.DeadZone),
+		swatch(f, QUIVER_T.Range.ScareBeast, storeRange.ColorScareBeast, QUIVER.ColorDefault.Range.ScareBeast),
+		swatch(f, QUIVER_T.Range.ScatterShot, storeRange.ColorScatterShot, QUIVER.ColorDefault.Range.ScatterShot),
+		swatch(f, QUIVER_T.Range.Short, storeRange.ColorShort, QUIVER.ColorDefault.Range.Short),
+		swatch(f, QUIVER_T.Range.Long, storeRange.ColorLong, QUIVER.ColorDefault.Range.Long),
+		swatch(f, QUIVER_T.Range.Mark, storeRange.ColorMark, QUIVER.ColorDefault.Range.Mark),
+		swatch(f, QUIVER_T.Range.TooFar, storeRange.ColorTooFar, QUIVER.ColorDefault.Range.TooFar),
 	}
 	-- Right align buttons using minimum amount of space
 	local labelMaxWidth = L.Array.MapReduce(
