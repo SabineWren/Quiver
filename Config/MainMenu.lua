@@ -129,14 +129,18 @@ local Create = function()
 	selectDebugLevel.Container:SetPoint("Right", dialog, "Right", -dropdownX, 0)
 	selectDebugLevel.Container:SetPoint("Top", dialog, "Top", 0, dropdownY)
 
+	-- Factored out until we can re-render options upon locale change.
+	-- Otherwise, the change handler with compare wrong locale.
+	local leftToRight = Quiver.T["Left to Right"]
+	local selectedDirection = Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection
 	-- Dropdown auto shot bar direction
 	local selectAutoShotTimerDirection = Select:Create(dialog,
 		QUIVER_T.ModuleName.AutoShotTimer,
-		{ QUIVER_T.AutoShot.LeftToRight, QUIVER_T.AutoShot.BothDirections },
-		QUIVER_T.AutoShot[Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection],
+		{ leftToRight, Quiver.T["Both Directions"] },
+		Quiver.T[selectedDirection],
 		function(text)
 			-- Maps from localized text to binary key
-			local direction = text == QUIVER_T.AutoShot.LeftToRight and "LeftToRight" or "BothDirections"
+			local direction = text == leftToRight and "LeftToRight" or "BothDirections"
 			Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection = direction
 			AutoShotTimer.UpdateDirection()
 		end

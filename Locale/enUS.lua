@@ -1,8 +1,4 @@
 QUIVER_T = {
-	AutoShot = {
-		BothDirections = "Both Directions",
-		LeftToRight = "Left to Right",
-	},
 	CombatLog = {
 		Consumes = {
 			ManaPotion = "You gain (.*) Mana from Restore Mana.",

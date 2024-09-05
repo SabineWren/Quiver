@@ -1,4 +1,5 @@
 local MainMenu = require "Config/MainMenu.lua"
+local LoadLocale = require "Locale/Lang.lua"
 local Migrations = require "Migrations/Runner.lua"
 local AspectTracker = require "Modules/Aspect_Tracker/AspectTracker.lua"
 local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
@@ -74,6 +75,7 @@ frame:RegisterEvent("PLAYER_LOGOUT")
 frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function()
 	if event == "ADDON_LOADED" and arg1 == "Quiver" then
+		LoadLocale()
 		Migrations()
 		savedVariablesRestore()
 		initSlashCommandsAndModules()

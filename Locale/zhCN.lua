@@ -1,8 +1,4 @@
 QUIVER_T = {
-	AutoShot = {
-		BothDirections = "双向",
-		LeftToRight = "从左到右",
-	},
 	CombatLog = {
 		Consumes = {
 			ManaPotion = "你从恢复法力中获得(.*)点法力值。",
