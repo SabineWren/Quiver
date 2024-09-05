@@ -8,6 +8,7 @@
 	},
 	"scripts": {
 		"bundle": "node Build/Main.js --lua-watch --output=Quiver.bundle.lua",
+		"bundle-once": "node Build/Main.js --output=Quiver.bundle.lua",
 		"not-implemented-bun-bundle": "bun",
 		"not-implemented-node-23-ts-bundle": "node --experimental-strip-types"
 	},
