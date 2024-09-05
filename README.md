@@ -1,9 +1,10 @@
 WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration menu.
 
-<img src="/Media/Config_UI.jpg" height="462px" align="right">
+$${\color{red}\* \color{orange}\* \color{yellow}\*}$$
+**[Installation Methods](#installation)**
+$${\color{yellow}\* \color{orange}\* \color{red}\*}$$
 
-- [Installation](#installation)
-- [Contributing](#contributing)
+<img src="/Media/Config_UI.jpg" height="462px" align="right">
 
 ## Features
 - [Aspect Tracker](#aspect-tracker)
@@ -88,25 +89,31 @@ Shows the Tranquilizing Shot cooldown of every hunter. Announces when casting Tr
 
 This checks if you have Trueshot Aura talented. If so, Quiver tracks the buff and duration, and warns you to recast it.
 
-# Installation
+## Installation
+### Option 1 - Pre-bundled zip
+Simplest installation, but doesn't automate version updates.
 1. [Download](https://github.com/SabineWren/Quiver/releases) latest version
 2. Extract the Zip file
 3. Change the folder name to `Quiver`
 4. Move folder into `<WoW install>/Interface/AddOns/`
-5. Restart WoW.
+5. Restart WoW
 
-# Possible Future Features
-I currently have no plans to work on more features.
+### Option 2 - Clone latest release
+Requires Git. Easy to update with addon managers or `git pull`
+1. Open a terminal in your addons directory
+2. `git clone https://github.com/SabineWren/Quiver/tree/latest-release`
+3. Restart WoW
 
-### Hunter's Mark Timer
-Maybe something like the Tranq UI for keeping track of hunters mark for each hunter and target.
-
-### Pet Management
-It's a rabbit hole to go down, and other addons exist for pet management.
+### Option 3 - Build from source
+Do you live on the bleeding edge?
+1. Open a terminal in your addons directory
+2. `git clone https://github.com/SabineWren/Quiver`
+3. `npm install`
+4. `npm run bundle-once`
 
 ## Contributing
 ### Localization
-Quiver localizes text, so theoretically it supports translations, but I don't know where to download a non-English client.
+Coming soon.
 
 ### Custom Events
 Files in `/Events` hook into game functions. Use these events if possible instead of declaring your own hooks.
