@@ -71,11 +71,9 @@ local CreateWithResetLabel = function(parent, labelText, color)
 	r.Label:SetPoint("Left", container, "Left", 0, 0)
 	r.Label:SetText(labelText)
 
-	local reset = Button:Create(container, {
-		TexPath = QUIVER.Icon.Reset,
-		TooltipText = QUIVER_T.UI.ResetColor,
-	})
-	reset.OnClick = function()
+	local reset = Button:Create(container, QUIVER.Icon.Reset)
+	reset.TooltipText = QUIVER_T.UI.ResetColor
+	reset.HookClick = function()
 		color:Reset()
 		r.Button:SetBackdropColor(color:Rgb())
 	end

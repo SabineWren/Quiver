@@ -20,11 +20,9 @@ function QqEditBox:Create(parent, tooltipText)
 	---@type QqEditBox
 	local r = {
 		Box = box,
-		Reset = Button:Create(box, {
-			TexPath = QUIVER.Icon.Reset,
-			TooltipText = tooltipText,
-		}),
+		Reset = Button:Create(box, QUIVER.Icon.Reset),
 	}
+	r.Reset.TooltipText = tooltipText
 	setmetatable(r, self)
 	self.__index = self
 

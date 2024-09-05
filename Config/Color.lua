@@ -9,12 +9,9 @@ local L = require "Shiver/Lib/All.lua"
 ---@param c1 Color
 ---@param c2 Color
 local createBtnColorSwap = function(parent, f1, f2, c1, c2)
-	local f = Button:Create(parent, {
-		LabelText = QUIVER_T.UI.SwapColorsShort,
-		TexPath = QUIVER.Icon.ArrowsSwap,
-		TooltipText = QUIVER_T.UI.SwapColorsLong,
-	})
-	f.OnClick = function()
+	local f = Button:Create(parent, QUIVER.Icon.ArrowsSwap, QUIVER_T.UI.SwapColorsShort)
+	f.TooltipText = QUIVER_T.UI.SwapColorsLong
+	f.HookClick = function()
 		-- Swap colors
 		local r, g, b = c1:Rgb()
 		c1:SetRgb(c2:Rgb())

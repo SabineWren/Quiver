@@ -81,4 +81,7 @@ return {
 	Ne = Op.Ne,
 	Ge = Op.Ge,
 	Gt = Op.Gt,
+	-- Logic
+	And = Op.And,
+	Or = Op.Or,
 }

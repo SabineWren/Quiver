@@ -1,52 +1,148 @@
-local Button = require "Component/Button.lua"
+local Util = require "Component/_Util.lua"
 local L = require "Shiver/Lib/All.lua"
 
 local _BORDER, _INSET, _SPACING = 1, 4, 4
 local _OPTION_PAD_H, _OPTION_PAD_V = 8, 4
 local _MENU_PAD_TOP = 6
 
----@type Frame[]
-local allMenus = {}
+---@type QqSelect[]
+local allSelects = {}
+
+---@class Icon
+---@field Frame Frame
+---@field Texture Texture
+
+---@param container Frame
+---@return Icon
+---@nodiscard
+local createIcon = function(container)
+	local f = CreateFrame("Frame", nil, container)
+	f:SetPoint("Right", container, "Right", -_INSET, 0)
+	f:SetWidth(16)
+	f:SetHeight(16)
+
+	local t = f:CreateTexture(nil, "OVERLAY")
+	t:SetAllPoints(f)
+	t:SetTexture(QUIVER.Icon.CaretDown)
+	return { Frame=f, Texture=t }
+end
+
+---@class (exact) QqSelect : IMouseInteract
+---@field private __index? QqSelect
+---@field Container Frame
+---@field private icon Icon
+---@field private label FontString
+---@field private isEnabled boolean
+---@field private isHover boolean
+---@field private isMouseDown boolean
+---@field Menu Frame
+---@field Selected FontString
+local QqSelect = {}
+
+function QqSelect:resetTexture()
+	local r, g, b = Util.SelectColor(self)
+
+	local borderAlpha = self.isHover and 0.6 or 0.0
+	self.Container:SetBackdropBorderColor(r, g, b, borderAlpha)
+
+	self.label:SetTextColor(r, g, b)
+	self.Selected:SetTextColor(r, g, b)
+
+	self.icon.Texture:SetVertexColor(r, g, b)
+
+	-- Vertically flip caret
+	if self.Menu:IsVisible() then
+		self.icon.Texture:SetTexCoord(0, 1, 1, 0)
+	else
+		self.icon.Texture:SetTexCoord(0, 1, 0, 1)
+	end
+end
+
+function QqSelect:OnHoverStart()
+	self.isHover = true
+	self:resetTexture()
+end
+
+function QqSelect:OnHoverEnd()
+	self.isHover = false
+	self:resetTexture()
+end
+
+function QqSelect:OnMouseDown()
+	self.isMouseDown = true
+	self:resetTexture()
+end
+
+function QqSelect:OnMouseUp()
+	self.isMouseDown = false
+	if self:predMouseOver() then
+		local isVisible = self.Menu:IsVisible()
+		for _k, m in allSelects do
+			m.Menu:Hide()
+			m:resetTexture()
+		end
+		if not isVisible then self.Menu:Show() end
+	end
+	self:resetTexture()
+end
+
+---@private
+---@return boolean
+---@nodiscard
+function QqSelect:predMouseOver()
+	local xs = { self.Container, self.icon.Frame }
+	return L.Array.MapReduce(xs, function(x) return MouseIsOver(x) == 1 end, L.Or, false)
+end
 
 ---@param parent Frame
 ---@param labelText string
 ---@param optionsText string[]
 ---@param selectedText nil|string
 ---@param onSet fun(text: string): nil
-local Create = function(parent, labelText, optionsText, selectedText, onSet)
-	local select = CreateFrame("Button", nil, parent)
-	local menu = CreateFrame("Frame", nil, parent)
+---@return QqSelect
+function QqSelect:Create(parent, labelText, optionsText, selectedText, onSet)
+	local select = CreateFrame("Frame", nil, parent)
 
-	local btnCaret = Button:Create(select, {
-		TexPath = QUIVER.Icon.CaretDown,
+	---@type QqSelect
+	local r = {
+		Container = select,
+		icon = createIcon(select),
+		label = select:CreateFontString(nil, "BACKGROUND", "GameFontNormal"),
+		isEnabled = true,
+		isHover = false,
+		isMouseDown = false,
+		Menu = CreateFrame("Frame", nil, parent),
+		Selected = select:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
+	}
+	setmetatable(r, self)
+	self.__index = self
+	table.insert(allSelects, r)
+
+	r.Container:SetBackdrop({
+		edgeFile="Interface/BUTTONS/WHITE8X8",
+		edgeSize=_BORDER,
 	})
 
-	local label = select:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
-	local selected = select:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
-	table.insert(allMenus, menu)
-
-	menu:SetFrameStrata("TOOLTIP")
-	menu:SetBackdrop({
+	r.Menu:SetFrameStrata("TOOLTIP")
+	r.Menu:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8",
 		edgeFile="Interface/BUTTONS/WHITE8X8",
 		edgeSize=1,
 	})
-	menu:SetBackdropColor(0, 0, 0, 1)
-	menu:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
+	r.Menu:SetBackdropColor(0, 0, 0, 1)
+	r.Menu:SetBackdropBorderColor(0.3, 0.3, 0.3, 1)
 
-	btnCaret.Container:SetPoint("Right", select, "Right", -_INSET, 0)
+	r.label:SetPoint("Left", select, "Left", _INSET, 0)
+	r.label:SetPoint("Top", select, "Top", 0, -_INSET)
+	r.label:SetText(labelText)
 
-	label:SetPoint("Left", select, "Left", _INSET, 0)
-	label:SetPoint("Top", select, "Top", 0, -_INSET)
-	label:SetText(labelText)
-
-	selected:SetPoint("Bottom", select, "Bottom", 0, _INSET)
-	selected:SetPoint("Left", select, "Left", _INSET, 0)
-	selected:SetPoint("Right", select, "Right", -_INSET - btnCaret.Icon:GetWidth(), 0)
-	selected:SetText(selectedText or optionsText[1])
+	r.Selected:SetPoint("Bottom", select, "Bottom", 0, _INSET)
+	r.Selected:SetPoint("Left", select, "Left", _INSET, 0)
+	r.Selected:SetPoint("Right", select, "Right", -_INSET - r.icon.Frame:GetWidth(), 0)
+	r.Selected:SetText(selectedText or optionsText[1])
 
 	local options = L.Array.Mapi(optionsText, function(t, i)
-		local option = CreateFrame("Button", nil, menu)
+		local option = CreateFrame("Button", nil, r.Menu)
 		local optionFs = option:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 
 		option:SetFontString(optionFs)
@@ -54,9 +150,9 @@ local Create = function(parent, labelText, optionsText, selectedText, onSet)
 		optionFs:SetText(t)
 
 		option:SetHeight(optionFs:GetHeight() + 2 * _OPTION_PAD_V)
-		option:SetPoint("Left", menu, "Left", _BORDER, 0)
-		option:SetPoint("Right", menu, "Right", -_BORDER, 0)
-		option:SetPoint("Top", menu, "Top", 0, -i * option:GetHeight() - _BORDER - _MENU_PAD_TOP)
+		option:SetPoint("Left", r.Menu, "Left", _BORDER, 0)
+		option:SetPoint("Right", r.Menu, "Right", -_BORDER, 0)
+		option:SetPoint("Top", r.Menu, "Top", 0, -i * option:GetHeight() - _BORDER - _MENU_PAD_TOP)
 
 		local texHighlight = option:CreateTexture(nil, "OVERLAY")
 		-- It would probably look better to set a fancy texture and adjust vertex color.
@@ -72,8 +168,8 @@ local Create = function(parent, labelText, optionsText, selectedText, onSet)
 		option:SetScript("OnClick", function()
 			local text = option:GetFontString():GetText() or ""
 			onSet(text)
-			selected:SetText(text)
-			menu:Hide()
+			r.Selected:SetText(text)
+			r.Menu:Hide()
 		end)
 	end
 
@@ -82,54 +178,33 @@ local Create = function(parent, labelText, optionsText, selectedText, onSet)
 	local maxOptionWidth =
 		L.Array.MapReduce(options, function(o) return o:GetFontString():GetWidth() end, math.max, 0)
 
-	local handleClick = function()
-		local isVisible = menu:IsVisible()
-		for _k, m in allMenus do m:Hide() end
-		if not isVisible then menu:Show() end
-	end
-	local hoverStart = function()
-		btnCaret:ToggleHover(true)
-		select:SetBackdrop({
-			edgeFile="Interface/BUTTONS/WHITE8X8",
-			edgeSize=_BORDER,
-		})
-		select:SetBackdropBorderColor(1.0, 0.6, 0, 0.35)
-	end
-	local hoverEnd = function()
-		if not MouseIsOver(select) then
-			select:SetBackdropBorderColor(0, 0, 0, 0)
-			btnCaret:ToggleHover(false)
-		end
-	end
-	select:SetScript("OnClick", handleClick)
-	select:SetScript("OnEnter", hoverStart)
-	select:SetScript("OnLeave", hoverEnd)
-	btnCaret.OnClick = handleClick
-	btnCaret.Icon:SetScript("OnEnter", hoverStart)
-	btnCaret.Icon:SetScript("OnLeave", hoverEnd)
+	select:SetScript("OnEnter", function() r:OnHoverStart() end)
+	select:SetScript("OnLeave", function() r:OnHoverEnd() end)
+	select:SetScript("OnMouseDown", function() r:OnMouseDown() end)
+	select:SetScript("OnMouseUp", function() r:OnMouseUp() end)
+	select:EnableMouse(true)
 
 	select:SetHeight(
-		selected:GetHeight()
+		r.Selected:GetHeight()
 		+ _SPACING
-		+ label:GetHeight()
+		+ r.label:GetHeight()
 		+ 2 * _INSET
 	)
 	select:SetWidth(
-		math.max(label:GetWidth(), maxOptionWidth)
-		+ btnCaret.Icon:GetWidth()
+		math.max(r.label:GetWidth(), maxOptionWidth)
+		+ r.icon.Frame:GetWidth()
 		+ _SPACING
 		+ _INSET * 2
 	)
 
-	menu:SetHeight(sumOptionHeights + _MENU_PAD_TOP + 2 * _BORDER)
-	menu:SetWidth(maxOptionWidth + 2 * (_OPTION_PAD_H + _BORDER))
-	menu:SetPoint("Right", select, "Right", 0, 0)
-	menu:SetPoint("Top", select, "Top", 0, -select:GetHeight())
-	menu:Hide()
+	r.Menu:SetHeight(sumOptionHeights + _MENU_PAD_TOP + 2 * _BORDER)
+	r.Menu:SetWidth(maxOptionWidth + 2 * (_OPTION_PAD_H + _BORDER))
+	r.Menu:SetPoint("Right", select, "Right", 0, 0)
+	r.Menu:SetPoint("Top", select, "Top", 0, -select:GetHeight())
+	r.Menu:Hide()
 
-	return select
+	r:resetTexture()
+	return r
 end
 
-return {
-	Create = Create,
-}
+return QqSelect

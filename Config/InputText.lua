@@ -12,7 +12,7 @@ local Create = function(parent, gap)
 	editCast.Box:SetScript("OnTextChanged", function()
 		store.MsgTranqCast = editCast.Box:GetText()
 	end)
-	editCast.Reset.OnClick = function()
+	editCast.Reset.HookClick = function()
 		editCast.Box:SetText(QUIVER_T.Tranq.DefaultCast)
 	end
 
@@ -21,7 +21,7 @@ local Create = function(parent, gap)
 	editMiss.Box:SetScript("OnTextChanged", function()
 		store.MsgTranqMiss = editMiss.Box:GetText()
 	end)
-	editMiss.Reset.OnClick = function()
+	editMiss.Reset.HookClick = function()
 		editMiss.Box:SetText(QUIVER_T.Tranq.DefaultMiss)
 	end
 

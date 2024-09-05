@@ -168,19 +168,15 @@ local SideEffectMakeResizeable = function(frame, store, args)
 		frame:SetScript("OnSizeChanged", onResizeDrag)
 	end
 
-	-- size 12, scale 0.5 (compared to 0.75 on 16)
-	local handle = Button:Create(frame, {
-		Scale = 0.5,
-		TexPath = QUIVER.Icon.GripHandle,
-	})
+	local handle = Button:Create(frame, QUIVER.Icon.GripHandle, nil, 0.5)
 	addFrameResizable(frame, handle)
 	handle.Container:SetFrameLevel(100)-- Should be top element
 	handle.Container:SetPoint("BottomRight", frame, "BottomRight", -margin, margin)
 
-	handle.OnMouseDown = function()
+	handle.HookMouseDown = function()
 		if frame:IsResizable() then frame:StartSizing("BottomRight") end
 	end
-	handle.OnMouseUp = function()
+	handle.HookMouseUp = function()
 		frame:StopMovingOrSizing()
 		store.FrameMeta.W = math.floor(frame:GetWidth() + 0.5)
 		store.FrameMeta.H = math.floor(frame:GetHeight() + 0.5)

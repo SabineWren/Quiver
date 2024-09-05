@@ -14,11 +14,9 @@ local L = require "Shiver/Lib/All.lua"
 local createModuleControls = function(parent, m)
 	local f = CreateFrame("Frame", nil, parent)
 
-	local btnReset = Button:Create(f, {
-		TexPath = QUIVER.Icon.Reset,
-		TooltipText = QUIVER_T.UI.ResetFramesTooltip,
-	})
-	btnReset.OnClick = function() m.OnResetFrames() end
+	local btnReset = Button:Create(f, QUIVER.Icon.Reset)
+	btnReset.TooltipText = QUIVER_T.UI.ResetFramesTooltip
+	btnReset.HookClick = function() m.OnResetFrames() end
 	if not Quiver_Store.ModuleEnabled[m.Id] then
 		btnReset:ToggleEnabled(false)
 	end
@@ -81,11 +79,9 @@ local Create = function()
 	local titleBox = TitleBox.Create(dialog, titleText)
 	titleBox:SetPoint("Center", dialog, "Top", 0, -10)
 
-	local btnCloseTop = Button:Create(dialog, {
-		TexPath = QUIVER.Icon.XMark,
-		TooltipText = QUIVER_T.UI.CloseWindowTooltip,
-	})
-	btnCloseTop.OnClick = function() dialog:Hide() end
+	local btnCloseTop = Button:Create(dialog, QUIVER.Icon.XMark)
+	btnCloseTop.TooltipText = QUIVER_T.UI.CloseWindowTooltip
+	btnCloseTop.HookClick = function() dialog:Hide() end
 	btnCloseTop.Container:SetPoint("TopRight", dialog, "TopRight", -_PADDING_CLOSE, -_PADDING_CLOSE)
 
 	local btnToggleLock = CheckButton:Create(dialog, {
@@ -100,11 +96,9 @@ local Create = function()
 	local lockOffsetX = _PADDING_CLOSE + QUIVER.Size.Icon + QUIVER.Size.Gap/2
 	btnToggleLock.Icon:SetPoint("TopRight", dialog, "TopRight", -lockOffsetX, -_PADDING_CLOSE)
 
-	local btnResetFrames = Button:Create(dialog, {
-		TexPath = QUIVER.Icon.Reset,
-		TooltipText = QUIVER_T.UI.ResetFramesTooltipAll,
-	})
-	btnResetFrames.OnClick = function()
+	local btnResetFrames = Button:Create(dialog, QUIVER.Icon.Reset)
+	btnResetFrames.TooltipText = QUIVER_T.UI.ResetFramesTooltipAll
+	btnResetFrames.HookClick = function()
 		for _k, v in _G.Quiver_Modules do v.OnResetFrames() end
 	end
 	local resetOffsetX = lockOffsetX + btnResetFrames.Container:GetWidth() + QUIVER.Size.Gap/2
@@ -123,7 +117,7 @@ local Create = function()
 	local dropdownX = _PADDING_FAR + colorPickers:GetWidth() + _PADDING_FAR
 	local dropdownY = 0
 
-	local selectDebugLevel = Select.Create(dialog,
+	local selectDebugLevel = Select:Create(dialog,
 		"Debug Level",
 		{ "None", "Verbose" },
 		Quiver_Store.DebugLevel,
@@ -131,12 +125,12 @@ local Create = function()
 			Quiver_Store.DebugLevel = text
 		end
 	)
-	dropdownY = yOffset - colorPickers:GetHeight() + selectDebugLevel:GetHeight() + QUIVER.Size.Gap
-	selectDebugLevel:SetPoint("Right", dialog, "Right", -dropdownX, 0)
-	selectDebugLevel:SetPoint("Top", dialog, "Top", 0, dropdownY)
+	dropdownY = yOffset - colorPickers:GetHeight() + selectDebugLevel.Container:GetHeight() + QUIVER.Size.Gap
+	selectDebugLevel.Container:SetPoint("Right", dialog, "Right", -dropdownX, 0)
+	selectDebugLevel.Container:SetPoint("Top", dialog, "Top", 0, dropdownY)
 
 	-- Dropdown auto shot bar direction
-	local selectAutoShotTimerDirection = Select.Create(dialog,
+	local selectAutoShotTimerDirection = Select:Create(dialog,
 		QUIVER_T.ModuleName.AutoShotTimer,
 		{ QUIVER_T.AutoShot.LeftToRight, QUIVER_T.AutoShot.BothDirections },
 		QUIVER_T.AutoShot[Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection],
@@ -147,9 +141,9 @@ local Create = function()
 			AutoShotTimer.UpdateDirection()
 		end
 	)
-	dropdownY = dropdownY + QUIVER.Size.Gap + selectAutoShotTimerDirection:GetHeight()
-	selectAutoShotTimerDirection:SetPoint("Right", dialog, "Right", -dropdownX, 0)
-	selectAutoShotTimerDirection:SetPoint("Top", dialog, "Top", 0, dropdownY)
+	dropdownY = dropdownY + QUIVER.Size.Gap + selectAutoShotTimerDirection.Container:GetHeight()
+	selectAutoShotTimerDirection.Container:SetPoint("Right", dialog, "Right", -dropdownX, 0)
+	selectAutoShotTimerDirection.Container:SetPoint("Top", dialog, "Top", 0, dropdownY)
 
 	-- Dropdown tranq shot announce channel
 	local defaultTranqText = (function()
@@ -157,7 +151,7 @@ local Create = function()
 		-- TODO DRY violation -- dropdown must match the module store init
 		return store and store.TranqChannel or "/Say"
 	end)()
-	local selectChannelHit = Select.Create(dialog,
+	local selectChannelHit = Select:Create(dialog,
 		"Tranq Speech",
 		{ "None", "/Say", "/Raid" },
 		defaultTranqText,
@@ -166,9 +160,9 @@ local Create = function()
 			Quiver_Store.ModuleStore[TranqAnnouncer.Id].TranqChannel = text or "/Say"
 		end
 	)
-	dropdownY = dropdownY + QUIVER.Size.Gap + selectChannelHit:GetHeight()
-	selectChannelHit:SetPoint("Right", dialog, "Right", -dropdownX, 0)
-	selectChannelHit:SetPoint("Top", dialog, "Top", 0, dropdownY)
+	dropdownY = dropdownY + QUIVER.Size.Gap + selectChannelHit.Container:GetHeight()
+	selectChannelHit.Container:SetPoint("Right", dialog, "Right", -dropdownX, 0)
+	selectChannelHit.Container:SetPoint("Top", dialog, "Top", 0, dropdownY)
 
 	local hLeft = controls:GetHeight()
 	local hRight = colorPickers:GetHeight()

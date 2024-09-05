@@ -25,4 +25,11 @@ return {
 	---@generic A
 	---@type fun(a: A, b: A): boolean
 	Gt = function(a, b) return a > b end,
+
+	-- ************ Logic ************
+	---@type fun(a: boolean, b: boolean): boolean
+	And = function(a, b) return a and b end,
+
+	---@type fun(a: boolean, b: boolean): boolean
+	Or = function(a, b) return a or b end,
 }
