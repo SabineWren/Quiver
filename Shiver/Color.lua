@@ -1,7 +1,7 @@
 ---@alias Rgb [number, number, number]
 
 ---@class Color
----@field __index? Color
+---@field private __index? Color
 ---@field private cache Rgb
 ---@field private default Rgb
 local Color = {}

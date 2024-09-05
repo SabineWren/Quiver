@@ -5,7 +5,7 @@ local _SIZE = 16
 -- see [Button](lua://QqButton)
 -- see [Switch](lua://QqSwitch)
 ---@class (exact) QqCheckButton : IMouseInteract
----@field __index? QqCheckButton
+---@field private __index? QqCheckButton
 ---@field Icon Frame
 ---@field IsChecked boolean
 ---@field TexPathOff string

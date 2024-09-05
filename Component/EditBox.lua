@@ -4,7 +4,7 @@ local _GAP = QUIVER.Size.Gap
 local _GAP_RESET = 4
 
 ---@class QqEditBox
----@field __index? QqEditBox
+---@field private __index? QqEditBox
 ---@field Box EditBox
 ---@field Reset QqButton
 local QqEditBox = {}

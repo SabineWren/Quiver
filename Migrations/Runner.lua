@@ -9,14 +9,10 @@ return function()
 	if Quiver_Store == nil then
 		Quiver_Store = {}
 	else
-		local vOld = Quiver_Store.Version or "1.0.0"
-		local getIsNewer = function(b)
-			return Version.PredIsNewer(vOld, b)
-		end
-
-		if getIsNewer("2.0.0") then M001() end
-		if getIsNewer("2.3.1") then M002() end
-		if getIsNewer("2.5.0") then M003() end
+		local vOld = Version:ParseThrows(Quiver_Store.Version or "1.0.0")
+		if vOld:PredNewer("2.0.0") then M001() end
+		if vOld:PredNewer("2.3.1") then M002() end
+		if vOld:PredNewer("2.5.0") then M003() end
 	end
 	Quiver_Store.Version = GetAddOnMetadata("Quiver", "Version")
 end

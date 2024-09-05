@@ -4,14 +4,14 @@ local Version = require "Util/Version.lua"
 -- Copyright (c) 2016-2021 Eric Mauser (Shagu)
 -- Copyright (c) 2022 SabineWren
 local hasNotified = false
-local CURRENT = GetAddOnMetadata("Quiver", "Version")
+local CURRENT = Version:ParseThrows(GetAddOnMetadata("Quiver", "Version"))
 
 local broadcast = (function()
 	local channelsLogin = { "Battleground", "Raid", "guild" }
 	local channelsPlayerGroup = { "Battleground", "Raid" }
 	local send = function(channels)
 		for _k, chan in channels do
-			SendAddonMessage("Quiver", "VERSION:"..CURRENT, chan)
+			SendAddonMessage("Quiver", "VERSION:"..CURRENT.Text, chan)
 		end
 	end
 	return {
@@ -42,13 +42,13 @@ local EVENTS = {
 }
 local handleEvent = function()
 	if event == "CHAT_MSG_ADDON" and arg1 == "Quiver" then
-		local _, _, version = string.find(arg2, "VERSION:(.*)")
-		if version ~= nil
-			and Version.PredIsNewer(CURRENT, version)
+		local _, _, versionText = string.find(arg2, "VERSION:(.*)")
+		if versionText ~= nil
+			and CURRENT:PredNewer(versionText)
 			and not hasNotified
 		then
 			local URL = "https://github.com/SabineWren/Quiver"
-			local text = string.format(QUIVER_T.VersionAvailable, version, URL)
+			local text = string.format(QUIVER_T.VersionAvailable, versionText, URL)
 			DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00Quiver|r - "..text)
 			DEFAULT_CHAT_FRAME:AddMessage("|cffdddddd"..QUIVER_T.VersionSafeToUpdate)
 			hasNotified = true

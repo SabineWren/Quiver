@@ -29,7 +29,7 @@ local _SIZE = 18
 -- see [Button](lua://QqButton)
 -- see [CheckButton](lua://QqCheckButton)
 ---@class (exact) QqSwitch : IMouseInteract
----@field __index? QqSwitch
+---@field private __index? QqSwitch
 ---@field Container Frame
 ---@field Icon Frame
 ---@field Label FontString
