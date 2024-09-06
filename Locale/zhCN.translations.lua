@@ -6,8 +6,10 @@ return {
 	["Castbar"] = "施法条",
 	["Casting"] = "Casting",-- TODO
 	["Casting Tranq Shot"] = "施放宁神射击",
+	["Close"] = "Close",-- TODO
 	["Close Window"] = "关闭窗口",
 	["Dead Zone"] = "死区",
+	["Debug Level"] = "Debug Level",-- TODO
 	["Hunter's Mark"] = "猎人印记",
 	["It's always safe to upgrade Quiver. You won't lose any of your configuration."] = "升级Quiver是安全的，你不会丢失任何配置。",
 	["Left to Right"] = "从左到右",
@@ -16,6 +18,7 @@ return {
 	["Melee Range"] = "近战范围",
 	["*** MISSED Tranq Shot ***"] = "*** 宁神射击未命中 ***",
 	["New version %s available at %s"] = "新版本%s可在%s下载",
+	["None"] = "None",-- TODO
 	["Out of Range"] = "超出范围",
 	["Quiver is for hunters."] = "Quiver仅适用于猎人。",
 	["Quiver Unlocked. Show config dialog with /qq or /quiver.\nClick the lock icon when done."] = "Quiver已解锁。使用/qq或/quiver显示配置对话框。\n完成后点击锁定图标。",
@@ -35,5 +38,7 @@ return {
 	["Shows when abilities are in range. Requires spellbook abilities placed somewhere on your action bars."] = "显示技能是否在范围内。需要将技能书中的技能放在动作条上。",
 	["Swap Shoot and Reload Colours"] = "交换射击和装填颜色",
 	["Tranq Shot Announcer"] = "宁神射击通告器",
+	["Tranq Speech"] = "Tranq Speech",-- TODO
 	["Trueshot Aura Alarm"] = "强击光环警报",
+	["Verbose"] = "Verbose",-- TODO
 }

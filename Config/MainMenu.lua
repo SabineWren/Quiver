@@ -118,11 +118,12 @@ local Create = function()
 	local dropdownY = 0
 
 	local selectDebugLevel = Select:Create(dialog,
-		"Debug Level",
-		{ "None", "Verbose" },
+		Quiver.T["Debug Level"],
+		{ Quiver.T["None"], Quiver.T["Verbose"] },
 		Quiver_Store.DebugLevel,
 		function(text)
-			Quiver_Store.DebugLevel = text
+			local level = text == Quiver.T["None"] and "None" or "Verbose"
+			Quiver_Store.DebugLevel = level
 		end
 	)
 	dropdownY = yOffset - colorPickers:GetHeight() + selectDebugLevel.Container:GetHeight() + QUIVER.Size.Gap
@@ -156,12 +157,18 @@ local Create = function()
 		return store and store.TranqChannel or "/Say"
 	end)()
 	local selectChannelHit = Select:Create(dialog,
-		"Tranq Speech",
-		{ "None", "/Say", "/Raid" },
+		Quiver.T["Tranq Speech"],
+		{ Quiver.T["None"], "/Say", "/Raid" },
 		defaultTranqText,
 		function(text)
-			-- TODO Keys aren't localized, so right now we don't need to map option text to key
-			Quiver_Store.ModuleStore[TranqAnnouncer.Id].TranqChannel = text or "/Say"
+			local val = (function()
+				if text == Quiver.T["None"] then
+					return "None"
+				else
+					return text or "/Say"
+				end
+			end)()
+			Quiver_Store.ModuleStore[TranqAnnouncer.Id].TranqChannel = val
 		end
 	)
 	dropdownY = dropdownY + QUIVER.Size.Gap + selectChannelHit.Container:GetHeight()

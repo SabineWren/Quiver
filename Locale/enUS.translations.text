@@ -5,8 +5,10 @@ Both Directions
 Castbar
 Casting
 Casting Tranq Shot
+Close
 Close Window
 Dead Zone
+Debug Level
 Hunter's Mark
 It's always safe to upgrade Quiver. You won't lose any of your configuration.
 Left to Right
@@ -15,6 +17,7 @@ Long Range
 Melee Range
 *** MISSED Tranq Shot ***
 New version %s available at %s
+None
 Out of Range
 Quiver is for hunters.
 Quiver Unlocked. Show config dialog with /qq or /quiver.\nClick the lock icon when done.
@@ -34,4 +37,6 @@ Shows Aimed Shot, Multi-Shot, and Trueshot.
 Shows when abilities are in range. Requires spellbook abilities placed somewhere on your action bars.
 Swap Shoot and Reload Colours
 Tranq Shot Announcer
+Tranq Speech
 Trueshot Aura Alarm
+Verbose
