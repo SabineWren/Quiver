@@ -66,9 +66,9 @@ local checkDistance = {
 	-- Using Action Bars
 	Melee=predSpellWithinRangeF(QUIVER_T.Spellbook.Wing_Clip),-- 5 yards
 	Mark=predSpellWithinRangeF(QUIVER_T.Spellbook.Hunters_Mark),-- 100 yards
-	Ranged=predSpellWithinRangeF(QUIVER_T.Spellbook.Auto_Shot),-- 30-36 yards (talents)
+	Ranged=predSpellWithinRangeF(QUIVER_T.Spellbook.Auto_Shot),-- 35-41 yards (talents)
 	Scare=predSpellWithinRangeF(QUIVER_T.Spellbook.Scare_Beast),-- 10 yards
-	Scatter=predSpellWithinRangeF(QUIVER_T.Spellbook.Scatter_Shot),-- 21 yards
+	Scatter=predSpellWithinRangeF(QUIVER_T.Spellbook.Scatter_Shot),-- 15-21 yards (talents)
 }
 
 local render = function(color, text)
@@ -76,11 +76,11 @@ local render = function(color, text)
 	local r, g, b, a = unpack(color)
 	frame:SetBackdropColor(r, g, b, a)
 	frame:SetBackdropBorderColor(r, g, b, a)
-	if not Quiver_Store.IsLockedFrames then
-		-- TODO do we care about grip handle color here?
-		-- frame.QuiverGripHandle:GetNormalTexture():SetVertexColor(r, g, b)
-		-- frame.QuiverGripHandle:GetHighlightTexture():SetVertexColor(r+0.3, g-0.1, b+0.3)
-	end
+	-- if not Quiver_Store.IsLockedFrames then
+	-- 	TODO do we care about grip handle color here?
+	-- 	frame.QuiverGripHandle:GetNormalTexture():SetVertexColor(r, g, b)
+	-- 	frame.QuiverGripHandle:GetHighlightTexture():SetVertexColor(r+0.3, g-0.1, b+0.3)
+	-- end
 end
 
 -- ************ Event Handlers ************
