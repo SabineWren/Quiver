@@ -254,7 +254,7 @@ local EVENTS = {
 local lastCastStart = 0
 local getHasFiredTranq = function()
 	local isCast, cdStart = Spell.CheckNewCd(
-		TRANQ_CD_SEC, lastCastStart, QUIVER_T.Spellbook.Tranquilizing_Shot)
+		TRANQ_CD_SEC, lastCastStart, Quiver.L.Spellbook["Tranquilizing Shot"])
 	lastCastStart = cdStart
 	return isCast
 end
@@ -262,9 +262,9 @@ local handleEvent = function()
 	if event == "CHAT_MSG_ADDON" then
 		handleMsg(arg1, arg2)
 	elseif event == "CHAT_MSG_SPELL_SELF_DAMAGE" then
-		if string.find(arg1, QUIVER_T.CombatLog.Tranq.Miss)
-			or string.find(arg1, QUIVER_T.CombatLog.Tranq.Resist)
-			or string.find(arg1, QUIVER_T.CombatLog.Tranq.Fail)
+		if string.find(arg1, Quiver.L.CombatLog.Tranq.Miss)
+			or string.find(arg1, Quiver.L.CombatLog.Tranq.Resist)
+			or string.find(arg1, Quiver.L.CombatLog.Tranq.Fail)
 		then
 			Print.Line.Say(store.MsgTranqMiss)
 			Print.Line.Raid(store.MsgTranqMiss)
@@ -296,7 +296,8 @@ end
 
 return {
 	Id = MODULE_ID,
-	Name = QUIVER_T.ModuleName[MODULE_ID],
+	GetName = function() return Quiver.T["Tranq Shot Announcer"] end,
+	GetTooltipText = function() return Quiver.T["Announces in chat when your tranquilizing shot hits or misses a target."] end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
 	OnInterfaceLock = function()
@@ -309,8 +310,8 @@ return {
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
-		store.MsgTranqMiss = savedVariables.MsgTranqMiss or QUIVER_T.Tranq.DefaultMiss
-		store.MsgTranqCast = store.MsgTranqCast or QUIVER_T.Tranq.DefaultCast
+		store.MsgTranqMiss = savedVariables.MsgTranqMiss or Quiver.T["*** MISSED Tranq Shot ***"]
+		store.MsgTranqCast = store.MsgTranqCast or Quiver.T["Casting Tranq Shot"]
 		-- TODO DRY violation -- dropdown must match the module store init
 		store.TranqChannel = store.TranqChannel or "/Say"
 	end,

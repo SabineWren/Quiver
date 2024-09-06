@@ -1,0 +1,55 @@
+return {
+	CombatLog = {
+		Consumes = {
+			ManaPotion = "You gain (.*) Mana from Restore Mana.",
+			HealthPotion = "Your Healing Potion heals you for (.*).",
+			Healthstone = "Your (.*) Healthstone heals you for (.*).",
+			Tea = "Your Tea with Sugar heals you for (.*).",
+		},
+		Tranq = {
+			Fail = "You fail to dispel",
+			Miss = "Your Tranquilizing Shot miss",
+			Resist = "Your Tranquilizing Shot was resisted",
+		},
+	},
+	Spellbook = {
+		-- Aspect
+		["Aspect of the Beast"] = "Aspect of the Beast",
+		["Aspect of the Cheetah"] = "Aspect of the Cheetah",
+		["Aspect of the Hawk"] = "Aspect of the Hawk",
+		["Aspect of the Monkey"] = "Aspect of the Monkey",
+		["Aspect of the Pack"] = "Aspect of the Pack",
+		["Aspect of the Wild"] = "Aspect of the Wild",
+		["Aspect of the Wolf"] = "Aspect of the Wolf",
+		-- Uses Ammo
+		["Aimed Shot"] = "Aimed Shot",
+		["Arcane Shot"] = "Arcane Shot",
+		["Auto Shot"] = "Auto Shot",
+		["Concussive Shot"] = "Concussive Shot",
+		["Multi-Shot"] = "Multi-Shot",
+		["Scatter Shot"] = "Scatter Shot",
+		["Scorpid Sting"] = "Scorpid Sting",
+		["Serpent Sting"] = "Serpent Sting",
+		["Tranquilizing Shot"] = "Tranquilizing Shot",
+		["Trueshot"] = "Trueshot",
+		["Viper Sting"] = "Viper Sting",
+		["Wyvern Sting"] = "Wyvern Sting",
+		-- Trap
+		["Explosive Trap"] = "Explosive Trap",
+		["Freezing Trap"] = "Freezing Trap",
+		["Frost Trap"] = "Frost Trap",
+		["Immolation Trap"] = "Immolation Trap",
+		-- Misc
+		["Call Pet"] = "Call Pet",
+		["Counterattack"] = "Counterattack",
+		["Deterrence"] = "Deterrence",
+		["Feign Death"] = "Feign Death",
+		["Flare"] = "Flare",
+		["Quick Shots"] = "Quick Shots",
+		["Rapid Fire"] = "Rapid Fire",
+		["Hunter's Mark"] = "Hunter's Mark",
+		["Scare Beast"] = "Scare Beast",
+		["Trueshot Aura"] = "Trueshot Aura",
+		["Wing Clip"] = "Wing Clip",
+	},
+}

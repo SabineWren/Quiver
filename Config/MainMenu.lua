@@ -15,7 +15,7 @@ local createModuleControls = function(parent, m)
 	local f = CreateFrame("Frame", nil, parent)
 
 	local btnReset = Button:Create(f, QUIVER.Icon.Reset)
-	btnReset.TooltipText = QUIVER_T.UI.ResetFramesTooltip
+	btnReset.TooltipText = Quiver.T["Reset Frame Size and Position"]
 	btnReset.HookClick = function() m.OnResetFrames() end
 	if not Quiver_Store.ModuleEnabled[m.Id] then
 		btnReset:ToggleEnabled(false)
@@ -23,8 +23,8 @@ local createModuleControls = function(parent, m)
 
 	local switch = Switch:Create(f, {
 		IsChecked = Quiver_Store.ModuleEnabled[m.Id],
-		LabelText = m.Name,
-		TooltipText = QUIVER_T.ModuleTooltip[m.Id],
+		LabelText = m.GetName(),
+		TooltipText = m.GetTooltipText(),
 		OnChange = function (isChecked)
 			Quiver_Store.ModuleEnabled[m.Id] = isChecked
 			if isChecked then
@@ -80,7 +80,7 @@ local Create = function()
 	titleBox:SetPoint("Center", dialog, "Top", 0, -10)
 
 	local btnCloseTop = Button:Create(dialog, QUIVER.Icon.XMark)
-	btnCloseTop.TooltipText = QUIVER_T.UI.CloseWindowTooltip
+	btnCloseTop.TooltipText = Quiver.T["Close Window"]
 	btnCloseTop.HookClick = function() dialog:Hide() end
 	btnCloseTop.Container:SetPoint("TopRight", dialog, "TopRight", -_PADDING_CLOSE, -_PADDING_CLOSE)
 
@@ -89,7 +89,7 @@ local Create = function()
 		OnChange = function(isLocked) FrameLock.SetIsLocked(isLocked) end,
 		TexPathOff = QUIVER.Icon.LockOpen,
 		TexPathOn = QUIVER.Icon.LockClosed,
-		TooltipText=QUIVER_T.UI.FrameLockToggleTooltip,
+		TooltipText=Quiver.T["Lock/Unlock Frames"],
 	})
 	FrameLock.Init()
 
@@ -97,7 +97,7 @@ local Create = function()
 	btnToggleLock.Icon:SetPoint("TopRight", dialog, "TopRight", -lockOffsetX, -_PADDING_CLOSE)
 
 	local btnResetFrames = Button:Create(dialog, QUIVER.Icon.Reset)
-	btnResetFrames.TooltipText = QUIVER_T.UI.ResetFramesTooltipAll
+	btnResetFrames.TooltipText = Quiver.T["Reset All Frame Sizes and Positions"]
 	btnResetFrames.HookClick = function()
 		for _k, v in _G.Quiver_Modules do v.OnResetFrames() end
 	end
@@ -118,25 +118,30 @@ local Create = function()
 	local dropdownY = 0
 
 	local selectDebugLevel = Select:Create(dialog,
-		"Debug Level",
-		{ "None", "Verbose" },
+		Quiver.T["Debug Level"],
+		{ Quiver.T["None"], Quiver.T["Verbose"] },
 		Quiver_Store.DebugLevel,
 		function(text)
-			Quiver_Store.DebugLevel = text
+			local level = text == Quiver.T["None"] and "None" or "Verbose"
+			Quiver_Store.DebugLevel = level
 		end
 	)
 	dropdownY = yOffset - colorPickers:GetHeight() + selectDebugLevel.Container:GetHeight() + QUIVER.Size.Gap
 	selectDebugLevel.Container:SetPoint("Right", dialog, "Right", -dropdownX, 0)
 	selectDebugLevel.Container:SetPoint("Top", dialog, "Top", 0, dropdownY)
 
+	-- Factored out until we can re-render options upon locale change.
+	-- Otherwise, the change handler with compare wrong locale.
+	local leftToRight = Quiver.T["Left to Right"]
+	local selectedDirection = Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection
 	-- Dropdown auto shot bar direction
 	local selectAutoShotTimerDirection = Select:Create(dialog,
-		QUIVER_T.ModuleName.AutoShotTimer,
-		{ QUIVER_T.AutoShot.LeftToRight, QUIVER_T.AutoShot.BothDirections },
-		QUIVER_T.AutoShot[Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection],
+		Quiver.T["Auto Shot Timer"],
+		{ leftToRight, Quiver.T["Both Directions"] },
+		Quiver.T[selectedDirection],
 		function(text)
 			-- Maps from localized text to binary key
-			local direction = text == QUIVER_T.AutoShot.LeftToRight and "LeftToRight" or "BothDirections"
+			local direction = text == leftToRight and "LeftToRight" or "BothDirections"
 			Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection = direction
 			AutoShotTimer.UpdateDirection()
 		end
@@ -152,12 +157,18 @@ local Create = function()
 		return store and store.TranqChannel or "/Say"
 	end)()
 	local selectChannelHit = Select:Create(dialog,
-		"Tranq Speech",
-		{ "None", "/Say", "/Raid" },
+		Quiver.T["Tranq Speech"],
+		{ Quiver.T["None"], "/Say", "/Raid" },
 		defaultTranqText,
 		function(text)
-			-- TODO Keys aren't localized, so right now we don't need to map option text to key
-			Quiver_Store.ModuleStore[TranqAnnouncer.Id].TranqChannel = text or "/Say"
+			local val = (function()
+				if text == Quiver.T["None"] then
+					return "None"
+				else
+					return text or "/Say"
+				end
+			end)()
+			Quiver_Store.ModuleStore[TranqAnnouncer.Id].TranqChannel = val
 		end
 	)
 	dropdownY = dropdownY + QUIVER.Size.Gap + selectChannelHit.Container:GetHeight()

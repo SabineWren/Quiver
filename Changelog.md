@@ -6,8 +6,8 @@ Scheduled for version 3.0.0
 2. Removed specialized /qq-macros. Instead, Quiver exposes global functions for use within user-defined macros.
 
 CastNoClip – Cast spell by name if it won't clip a shot.
-ex. equivalent to the old `/qqtrueshot`
 ```lua
+-- ex. equivalent to the old /qqtrueshot
 /script Quiver.CastNoClip("Trueshot")
 ```
 

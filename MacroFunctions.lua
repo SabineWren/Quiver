@@ -20,7 +20,6 @@ local CastPetAction = function(actionName)
 end
 
 return function()
-	Quiver = Quiver or {}
 	Quiver.CastNoClip = CastNoClip
 	Quiver.CastPetAction = CastPetAction
 	Quiver.PredMidShot = AutoShotTimer.PredMidShot

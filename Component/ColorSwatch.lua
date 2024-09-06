@@ -73,7 +73,7 @@ function ColorSwatch:Create(parent, labelText, color)
 	r.Label:SetText(labelText)
 
 	local reset = Button:Create(container, QUIVER.Icon.Reset)
-	reset.TooltipText = QUIVER_T.UI.ResetColor
+	reset.TooltipText = Quiver.T["Reset Color"]
 	reset.HookClick = function()
 		color:Reset()
 		r.Button:SetBackdropColor(color:Rgb())

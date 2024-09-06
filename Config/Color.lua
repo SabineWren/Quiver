@@ -9,8 +9,8 @@ local L = require "Shiver/Lib/All.lua"
 ---@param c1 Color
 ---@param c2 Color
 local createBtnColorSwap = function(parent, f1, f2, c1, c2)
-	local f = Button:Create(parent, QUIVER.Icon.ArrowsSwap, QUIVER_T.UI.SwapColorsShort)
-	f.TooltipText = QUIVER_T.UI.SwapColorsLong
+	local f = Button:Create(parent, QUIVER.Icon.ArrowsSwap, Quiver.T["Shoot / Reload"])
+	f.TooltipText = Quiver.T["Swap Shoot and Reload Colours"]
 	f.HookClick = function()
 		-- Swap colors
 		local r, g, b = c1:Rgb()
@@ -42,24 +42,22 @@ local Create = function(parent, gap)
 
 	local colorShoot = Color:LiftReset(storeAutoShotTimer.ColorShoot, QUIVER.ColorDefault.AutoShotShoot)
 	local colorReload = Color:LiftReset(storeAutoShotTimer.ColorReload, QUIVER.ColorDefault.AutoShotReload)
-	-- TODO localize labels
-	local optionShoot = ColorSwatch:Create(f, "Shooting", colorShoot)
-	local optionReload = ColorSwatch:Create(f, "Reloading", colorReload)
+	local optionShoot = ColorSwatch:Create(f, Quiver.T["Shooting"], colorShoot)
+	local optionReload = ColorSwatch:Create(f, Quiver.T["Reloading"], colorReload)
 
 	local elements = {
-		-- TODO localize label
-		swatch(f, "Casting", storeCastbar.ColorCastbar, QUIVER.ColorDefault.Castbar),
+		swatch(f, Quiver.T["Casting"], storeCastbar.ColorCastbar, QUIVER.ColorDefault.Castbar),
 		createBtnColorSwap(f, optionShoot, optionReload, colorShoot, colorReload),
 		optionShoot,
 		optionReload,
-		swatch(f, QUIVER_T.Range.Melee, storeRange.ColorMelee, QUIVER.ColorDefault.Range.Melee),
-		swatch(f, QUIVER_T.Range.DeadZone, storeRange.ColorDeadZone, QUIVER.ColorDefault.Range.DeadZone),
-		swatch(f, QUIVER_T.Range.ScareBeast, storeRange.ColorScareBeast, QUIVER.ColorDefault.Range.ScareBeast),
-		swatch(f, QUIVER_T.Range.ScatterShot, storeRange.ColorScatterShot, QUIVER.ColorDefault.Range.ScatterShot),
-		swatch(f, QUIVER_T.Range.Short, storeRange.ColorShort, QUIVER.ColorDefault.Range.Short),
-		swatch(f, QUIVER_T.Range.Long, storeRange.ColorLong, QUIVER.ColorDefault.Range.Long),
-		swatch(f, QUIVER_T.Range.Mark, storeRange.ColorMark, QUIVER.ColorDefault.Range.Mark),
-		swatch(f, QUIVER_T.Range.TooFar, storeRange.ColorTooFar, QUIVER.ColorDefault.Range.TooFar),
+		swatch(f, Quiver.T["Melee Range"], storeRange.ColorMelee, QUIVER.ColorDefault.Range.Melee),
+		swatch(f, Quiver.T["Dead Zone"], storeRange.ColorDeadZone, QUIVER.ColorDefault.Range.DeadZone),
+		swatch(f, Quiver.T["Scare Beast"], storeRange.ColorScareBeast, QUIVER.ColorDefault.Range.ScareBeast),
+		swatch(f, Quiver.T["Scatter Shot"], storeRange.ColorScatterShot, QUIVER.ColorDefault.Range.ScatterShot),
+		swatch(f, Quiver.T["Short Range"], storeRange.ColorShort, QUIVER.ColorDefault.Range.Short),
+		swatch(f, Quiver.T["Long Range"], storeRange.ColorLong, QUIVER.ColorDefault.Range.Long),
+		swatch(f, Quiver.T["Hunter's Mark"], storeRange.ColorMark, QUIVER.ColorDefault.Range.Mark),
+		swatch(f, Quiver.T["Out of Range"], storeRange.ColorTooFar, QUIVER.ColorDefault.Range.TooFar),
 	}
 	-- Right align buttons using minimum amount of space
 	local labelMaxWidth = L.Array.MapReduce(

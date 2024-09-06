@@ -53,7 +53,7 @@ local Init = function()
 	openWarning.Text:SetAllPoints(openWarning)
 	openWarning.Text:SetJustifyH("Center")
 	openWarning.Text:SetJustifyV("Center")
-	openWarning.Text:SetText(QUIVER_T.UI.WarnUnlocked)
+	openWarning.Text:SetText(Quiver.T["Quiver Unlocked. Show config dialog with /qq or /quiver.\nClick the lock icon when done."])
 	openWarning.Text:SetTextColor(1, 1, 1)
 	openWarning:SetAllPoints(UIParent)
 	if Quiver_Store.IsLockedFrames

@@ -14,8 +14,9 @@ local calcRangedWeaponSpeedBase = function()
 		for i=1, tooltip:NumLines() do
 			local text = ScanningTooltip.GetText("TextRight", i)
 			if text ~= nil then
-				--- TODO LOCALIZE
-				local _, _, speed = string.find(text, "Speed (%d+%.%d+)")
+				-- ex. "Speed 3.2"
+				-- Not matching on the text part since that requires localization
+				local _, _, speed = string.find(text, "(%d+%.%d+)")
 				if speed ~= nil then
 					local parsed = tonumber(speed)
 					if parsed ~= nil then

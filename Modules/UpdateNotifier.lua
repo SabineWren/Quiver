@@ -48,9 +48,11 @@ local handleEvent = function()
 			and not hasNotified
 		then
 			local URL = "https://github.com/SabineWren/Quiver"
-			local text = string.format(QUIVER_T.VersionAvailable, versionText, URL)
+			local m1 = Quiver.T["New version %s available at %s"]
+			local m2 = Quiver.T["It's always safe to upgrade Quiver. You won't lose any of your configuration."]
+			local text = string.format(m1, versionText, URL)
 			DEFAULT_CHAT_FRAME:AddMessage("|cff00ff00Quiver|r - "..text)
-			DEFAULT_CHAT_FRAME:AddMessage("|cffdddddd"..QUIVER_T.VersionSafeToUpdate)
+			DEFAULT_CHAT_FRAME:AddMessage("|cffdddddd"..m2)
 			hasNotified = true
 		end
 	elseif event == "PARTY_MEMBERS_CHANGED" then

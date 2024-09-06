@@ -22,7 +22,7 @@ local Create = function(padding)
 	btnCloseBottom:SetWidth(70)
 	btnCloseBottom:SetHeight(QUIVER.Size.Button)
 	btnCloseBottom:SetPoint("BottomRight", f, "BottomRight", -padding, padding)
-	btnCloseBottom:SetText("Close")
+	btnCloseBottom:SetText(Quiver.T["Close"])
 	btnCloseBottom:SetScript("OnClick", function() f:Hide() end)
 
 	return f
