@@ -15,7 +15,7 @@ local createModuleControls = function(parent, m)
 	local f = CreateFrame("Frame", nil, parent)
 
 	local btnReset = Button:Create(f, QUIVER.Icon.Reset)
-	btnReset.TooltipText = QUIVER_T.UI.ResetFramesTooltip
+	btnReset.TooltipText = Quiver.T["Reset Frame Size and Position"]
 	btnReset.HookClick = function() m.OnResetFrames() end
 	if not Quiver_Store.ModuleEnabled[m.Id] then
 		btnReset:ToggleEnabled(false)
@@ -23,8 +23,8 @@ local createModuleControls = function(parent, m)
 
 	local switch = Switch:Create(f, {
 		IsChecked = Quiver_Store.ModuleEnabled[m.Id],
-		LabelText = m.Name,
-		TooltipText = QUIVER_T.ModuleTooltip[m.Id],
+		LabelText = m.GetName(),
+		TooltipText = m.GetTooltipText(),
 		OnChange = function (isChecked)
 			Quiver_Store.ModuleEnabled[m.Id] = isChecked
 			if isChecked then
@@ -80,7 +80,7 @@ local Create = function()
 	titleBox:SetPoint("Center", dialog, "Top", 0, -10)
 
 	local btnCloseTop = Button:Create(dialog, QUIVER.Icon.XMark)
-	btnCloseTop.TooltipText = QUIVER_T.UI.CloseWindowTooltip
+	btnCloseTop.TooltipText = Quiver.T["Close Window"]
 	btnCloseTop.HookClick = function() dialog:Hide() end
 	btnCloseTop.Container:SetPoint("TopRight", dialog, "TopRight", -_PADDING_CLOSE, -_PADDING_CLOSE)
 
@@ -89,7 +89,7 @@ local Create = function()
 		OnChange = function(isLocked) FrameLock.SetIsLocked(isLocked) end,
 		TexPathOff = QUIVER.Icon.LockOpen,
 		TexPathOn = QUIVER.Icon.LockClosed,
-		TooltipText=QUIVER_T.UI.FrameLockToggleTooltip,
+		TooltipText=Quiver.T["Lock/Unlock Frames"],
 	})
 	FrameLock.Init()
 
@@ -97,7 +97,7 @@ local Create = function()
 	btnToggleLock.Icon:SetPoint("TopRight", dialog, "TopRight", -lockOffsetX, -_PADDING_CLOSE)
 
 	local btnResetFrames = Button:Create(dialog, QUIVER.Icon.Reset)
-	btnResetFrames.TooltipText = QUIVER_T.UI.ResetFramesTooltipAll
+	btnResetFrames.TooltipText = Quiver.T["Reset All Frame Sizes and Positions"]
 	btnResetFrames.HookClick = function()
 		for _k, v in _G.Quiver_Modules do v.OnResetFrames() end
 	end
@@ -135,7 +135,7 @@ local Create = function()
 	local selectedDirection = Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection
 	-- Dropdown auto shot bar direction
 	local selectAutoShotTimerDirection = Select:Create(dialog,
-		QUIVER_T.ModuleName.AutoShotTimer,
+		Quiver.T["Auto Shot Timer"],
 		{ leftToRight, Quiver.T["Both Directions"] },
 		Quiver.T[selectedDirection],
 		function(text)

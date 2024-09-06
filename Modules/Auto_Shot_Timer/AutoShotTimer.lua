@@ -42,7 +42,7 @@ end)()
 
 local getIsConsumable = function(combatLogMsg)
 	if combatLogMsg == nil then return false end
-	for _k, v in QUIVER_T.CombatLog.Consumes do
+	for _k, v in Quiver.L.CombatLog.Consumes do
 		local startPos, _ = string.find(combatLogMsg, v)
 		if startPos then return true end
 	end
@@ -395,7 +395,8 @@ end
 
 return {
 	Id = MODULE_ID,
-	Name = QUIVER_T.ModuleName[MODULE_ID],
+	GetName = function() return Quiver.T["Auto Shot Timer"] end,
+	GetTooltipText = function() return nil end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
 	OnInterfaceLock = function()

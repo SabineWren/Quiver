@@ -9,7 +9,7 @@ return function()
 		-- release version, attempt changing contradictory text.
 		local startPos, _ = string.find(string.lower(s.MsgTranqHit), "hit")
 		if startPos then
-			s.MsgTranqHit = QUIVER_T.Tranq.DefaultCast
+			s.MsgTranqHit = Quiver.T["Casting Tranq Shot"]
 		end
 
 		-- Change name to account for new behaviour

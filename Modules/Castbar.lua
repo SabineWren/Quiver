@@ -154,7 +154,8 @@ end
 
 return {
 	Id = MODULE_ID,
-	Name = QUIVER_T.ModuleName[MODULE_ID],
+	GetName = function() return Quiver.T["Castbar"] end,
+	GetTooltipText = function() return Quiver.T["Shows Aimed Shot, Multi-Shot, and Trueshot."] end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
 	OnInterfaceLock = function() if not isCasting then frame:Hide() end end,

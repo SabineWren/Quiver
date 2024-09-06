@@ -1,5 +1,5 @@
-local MainMenu = require "Config/MainMenu.lua"
 local LoadLocale = require "Locale/Lang.lua"
+local MainMenu = require "Config/MainMenu.lua"
 local Migrations = require "Migrations/Runner.lua"
 local AspectTracker = require "Modules/Aspect_Tracker/AspectTracker.lua"
 local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
@@ -11,6 +11,7 @@ local UpdateNotifierInit = require "Modules/UpdateNotifier.lua"
 local RegisterMacroFunctions = require "MacroFunctions.lua"
 
 _G = _G or getfenv()
+Quiver = Quiver or {}
 _G.Quiver_Modules = {
 	AspectTracker,
 	AutoShotTimer,
@@ -51,7 +52,7 @@ local initSlashCommandsAndModules = function()
 		end
 		frameConfigMenu:Show()-- TODO temp code for faster debugging
 	else
-		SlashCmdList["QUIVER"] = function() DEFAULT_CHAT_FRAME:AddMessage(QUIVER_T.UI.WrongClass, 1, 0.5, 0) end
+		SlashCmdList["QUIVER"] = function() DEFAULT_CHAT_FRAME:AddMessage(Quiver.T["Quiver is for hunters."], 1, 0.5, 0) end
 	end
 end
 
@@ -75,9 +76,10 @@ frame:RegisterEvent("PLAYER_LOGOUT")
 frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function()
 	if event == "ADDON_LOADED" and arg1 == "Quiver" then
-		LoadLocale()
-		Migrations()
-		savedVariablesRestore()
+		-- TODO set preferred language in saved variables to use here
+		LoadLocale()-- Must run before everything else
+		Migrations()-- Modifies saved variables
+		savedVariablesRestore()-- Passes saved data to modules for init
 		initSlashCommandsAndModules()
 		RegisterMacroFunctions()
 	elseif event == "PLAYER_LOGIN" then

@@ -44,16 +44,14 @@ local createUI = function()
 end
 
 ---@param name string
----@return fun(): boolean
+---@return boolean
 ---@nodiscard
-local predSpellWithinRangeF = function(name)
-	return function()
-		local slot = Action.FindBySpellName(name)
-		if slot == nil then
-			return false
-		else
-			return IsActionInRange(slot) == 1
-		end
+local predSpellInRange = function(name)
+	local slot = Action.FindBySpellName(name)
+	if slot == nil then
+		return false
+	else
+		return IsActionInRange(slot) == 1
 	end
 end
 
@@ -64,11 +62,11 @@ local checkDistance = {
 	Duel=function() return CheckInteractDistance("target", 3) end,-- 9.9 yards (or 10?)
 	Follow=function() return CheckInteractDistance("target", 4) end,-- 28 yards
 	-- Using Action Bars
-	Melee=predSpellWithinRangeF(QUIVER_T.Spellbook.Wing_Clip),-- 5 yards
-	Mark=predSpellWithinRangeF(QUIVER_T.Spellbook.Hunters_Mark),-- 100 yards
-	Ranged=predSpellWithinRangeF(QUIVER_T.Spellbook.Auto_Shot),-- 35-41 yards (talents)
-	Scare=predSpellWithinRangeF(QUIVER_T.Spellbook.Scare_Beast),-- 10 yards
-	Scatter=predSpellWithinRangeF(QUIVER_T.Spellbook.Scatter_Shot),-- 15-21 yards (talents)
+	Melee=function() return predSpellInRange(Quiver.L.Spellbook.Wing_Clip) end,-- 5 yards
+	Mark=function() return predSpellInRange(Quiver.L.Spellbook.Hunters_Mark) end,-- 100 yards
+	Ranged=function() return predSpellInRange(Quiver.L.Spellbook.Auto_Shot) end,-- 35-41 yards (talents)
+	Scare=function() return predSpellInRange(Quiver.L.Spellbook.Scare_Beast) end,-- 10 yards
+	Scatter=function() return predSpellInRange(Quiver.L.Spellbook.Scatter_Shot) end,-- 15-21 yards (talents)
 }
 
 local render = function(color, text)
@@ -86,23 +84,23 @@ end
 -- ************ Event Handlers ************
 local handleUpdate = function()
 	if checkDistance.Melee() then
-		render(store.ColorMelee, QUIVER_T.Range.Melee)
+		render(store.ColorMelee, Quiver.T["Melee Range"])
 	elseif checkDistance.Ranged() then
 		if UnitCreatureType("target") == "Beast" and checkDistance.Scare() then
-			render(store.ColorScareBeast, QUIVER_T.Range.ScareBeast)
+			render(store.ColorScareBeast, Quiver.T["Scare Beast"])
 		elseif checkDistance.Scatter() then
-			render(store.ColorScatterShot, QUIVER_T.Range.ScatterShot)
+			render(store.ColorScatterShot, Quiver.T["Scatter Shot"])
 		elseif checkDistance.Follow() then
-			render(store.ColorShort, QUIVER_T.Range.Short)
+			render(store.ColorShort, Quiver.T["Short Range"])
 		else
-			render(store.ColorLong, QUIVER_T.Range.Long)
+			render(store.ColorLong, Quiver.T["Long Range"])
 		end
 	elseif checkDistance.Follow() then
-		render(store.ColorDeadZone, QUIVER_T.Range.DeadZone)
+		render(store.ColorDeadZone, Quiver.T["Dead Zone"])
 	elseif checkDistance.Mark() then
-		render(store.ColorMark, QUIVER_T.Range.Mark)
+		render(store.ColorMark, Quiver.T["Hunter's Mark"])
 	else
-		render(store.ColorTooFar, QUIVER_T.Range.TooFar)
+		render(store.ColorTooFar, Quiver.T["Out of Range"])
 	end
 end
 
@@ -138,7 +136,8 @@ end
 
 return {
 	Id = MODULE_ID,
-	Name = QUIVER_T.ModuleName[MODULE_ID],
+	GetName = function() return Quiver.T["Range Indicator"] end,
+	GetTooltipText = function() return Quiver.T["Shows when abilities are in range. Requires spellbook abilities placed somewhere on your action bars."] end,
 	OnEnable = onEnable,
 	OnDisable = onDisable,
 	OnInterfaceLock = function() handleEvent() end,

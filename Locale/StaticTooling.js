@@ -12,6 +12,6 @@ export const WarblerKeyValue = (contents) => {
 		.trim()
 		.split("\n")
 		.map(x => `"${x}"`)
-		.map(x => `\t[${x}]=${x},\n`)
+		.map(x => `\t[${x}] = ${x},\n`)
 	return "return {\n" + lines.join("") + "}\n"
 }

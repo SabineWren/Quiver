@@ -7,22 +7,22 @@ local Create = function(parent, gap)
 	local store = Quiver_Store.ModuleStore[TranqAnnouncer.Id]
 	local f = CreateFrame("Frame", nil, parent)
 
-	local editCast = EditBox:Create(f, QUIVER_T.Tranq.TooltipCast)
+	local editCast = EditBox:Create(f, Quiver.T["Reset Tranq Message to Default"])
 	editCast.Box:SetText(store.MsgTranqCast)
 	editCast.Box:SetScript("OnTextChanged", function()
 		store.MsgTranqCast = editCast.Box:GetText()
 	end)
 	editCast.Reset.HookClick = function()
-		editCast.Box:SetText(QUIVER_T.Tranq.DefaultCast)
+		editCast.Box:SetText(Quiver.T["Casting Tranq Shot"])
 	end
 
-	local editMiss = EditBox:Create(f, QUIVER_T.Tranq.TooltipMiss)
+	local editMiss = EditBox:Create(f, Quiver.T["Reset Miss Message to Default"])
 	editMiss.Box:SetText(store.MsgTranqMiss)
 	editMiss.Box:SetScript("OnTextChanged", function()
 		store.MsgTranqMiss = editMiss.Box:GetText()
 	end)
 	editMiss.Reset.HookClick = function()
-		editMiss.Box:SetText(QUIVER_T.Tranq.DefaultMiss)
+		editMiss.Box:SetText(Quiver.T["*** MISSED Tranq Shot ***"])
 	end
 
 	local height1 = editCast.Box:GetHeight()
