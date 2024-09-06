@@ -42,13 +42,11 @@ local Create = function(parent, gap)
 
 	local colorShoot = Color:LiftReset(storeAutoShotTimer.ColorShoot, QUIVER.ColorDefault.AutoShotShoot)
 	local colorReload = Color:LiftReset(storeAutoShotTimer.ColorReload, QUIVER.ColorDefault.AutoShotReload)
-	-- TODO localize labels
-	local optionShoot = ColorSwatch:Create(f, "Shooting", colorShoot)
-	local optionReload = ColorSwatch:Create(f, "Reloading", colorReload)
+	local optionShoot = ColorSwatch:Create(f, Quiver.T["Shooting"], colorShoot)
+	local optionReload = ColorSwatch:Create(f, Quiver.T["Reloading"], colorReload)
 
 	local elements = {
-		-- TODO localize label
-		swatch(f, "Casting", storeCastbar.ColorCastbar, QUIVER.ColorDefault.Castbar),
+		swatch(f, Quiver.T["Casting"], storeCastbar.ColorCastbar, QUIVER.ColorDefault.Castbar),
 		createBtnColorSwap(f, optionShoot, optionReload, colorShoot, colorReload),
 		optionShoot,
 		optionReload,

@@ -57,25 +57,41 @@ local super = {
 
 local println = Print.PrefixedF("spellcast")
 
+-- TODO This is ϴ(n). Maybe we should build a reverse-map table instead?
+-- The spell table is small, so with cache hits this loop might actually be faster.
+local findSpellId = function(nameLocalized)
+	-- Short circuit for performance. I didn't check if it actually helps.
+	if GetLocale() == "enUS" then return nameLocalized end
+
+	for k,v in Quiver.L.Spellbook do
+		if v == nameLocalized then
+			return k
+		end
+	end
+	return nil
+end
+
 ---@param nameLocalized string
 ---@param isCurrentAction nil|1
 local handleCastByName = function(nameLocalized, isCurrentAction)
-	-- TODO LOCALIZE - map locale name to English
-	local name = nameLocalized
+	local name = findSpellId(nameLocalized)
+	if name == nil then
+		log("Localized spellname not found: "..nameLocalized)
+	else
+		local meta = DB_SPELL[name]
+		local isCastable = not Spell.PredInstant(meta)
 
-	local meta = DB_SPELL[name]
-	local isCastable = not Spell.PredInstant(meta)
-
-	-- We pre-hook the cast, so confirm we actually cast it before triggering callbacks.
-	-- If it's castable, then check we're casting it, else check that we triggered GCD.
-	if isCastable then
-		if isCurrentAction then
-			publishShotCastable(name)
-		elseif Action.FindBySpellName(name) == nil then
-			println.Warning(name .. " not on action bars, so can't track cast.")
+		-- We pre-hook the cast, so confirm we actually cast it before triggering callbacks.
+		-- If it's castable, then check we're casting it, else check that we triggered GCD.
+		if isCastable then
+			if isCurrentAction then
+				publishShotCastable(name)
+			elseif Action.FindBySpellName(name) == nil then
+				println.Warning(name .. " not on action bars, so can't track cast.")
+			end
+		elseif checkGCD() then
+			publishInstant(name)
 		end
-	elseif checkGCD() then
-		publishInstant(name)
 	end
 end
 

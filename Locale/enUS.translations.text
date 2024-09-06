@@ -3,6 +3,7 @@ Aspect Tracker
 Auto Shot Timer
 Both Directions
 Castbar
+Casting
 Casting Tranq Shot
 Close Window
 Dead Zone
@@ -18,6 +19,7 @@ Out of Range
 Quiver is for hunters.
 Quiver Unlocked. Show config dialog with /qq or /quiver.\nClick the lock icon when done.
 Range Indicator
+Reloading
 Reset All Frame Sizes and Positions
 Reset Color
 Reset Frame Size and Position
@@ -26,6 +28,7 @@ Reset Tranq Message to Default
 Scare Beast
 Scatter Shot
 Shoot / Reload
+Shooting
 Short Range
 Shows Aimed Shot, Multi-Shot, and Trueshot.
 Shows when abilities are in range. Requires spellbook abilities placed somewhere on your action bars.

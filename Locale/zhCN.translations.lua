@@ -4,6 +4,7 @@ return {
 	["Auto Shot Timer"] = "自动射击计时器",
 	["Both Directions"] = "双向",
 	["Castbar"] = "施法条",
+	["Casting"] = "Casting",-- TODO
 	["Casting Tranq Shot"] = "施放宁神射击",
 	["Close Window"] = "关闭窗口",
 	["Dead Zone"] = "死区",
@@ -19,6 +20,7 @@ return {
 	["Quiver is for hunters."] = "Quiver仅适用于猎人。",
 	["Quiver Unlocked. Show config dialog with /qq or /quiver.\nClick the lock icon when done."] = "Quiver已解锁。使用/qq或/quiver显示配置对话框。\n完成后点击锁定图标。",
 	["Range Indicator"] = "距离指示器",
+	["Reloading"] = "Reloading",-- TODO
 	["Reset All Frame Sizes and Positions"] = "重置所有框架大小和位置",
 	["Reset Color"] = "重置颜色",
 	["Reset Frame Size and Position"] = "重置框架大小和位置",
@@ -27,6 +29,7 @@ return {
 	["Scare Beast"] = "恐吓野兽",
 	["Scatter Shot"] = "驱散射击",
 	["Shoot / Reload"] = "射击/装填",
+	["Shooting"] = "Shooting",-- TODO
 	["Short Range"] = "近距离",
 	["Shows Aimed Shot, Multi-Shot, and Trueshot."] = "显示瞄准射击、多重射击和强击光环的施法条。",
 	["Shows when abilities are in range. Requires spellbook abilities placed somewhere on your action bars."] = "显示技能是否在范围内。需要将技能书中的技能放在动作条上。",
