@@ -89,23 +89,23 @@ end
 ---@param nameLocalized string
 ---@param isCurrentAction nil|1
 local handleCastByName = function(nameLocalized, isCurrentAction)
-	local name = findSpellId(nameLocalized)
-	if name == nil then
+	local nameEnglish = findSpellId(nameLocalized)
+	if nameEnglish == nil then
 		log("Localized spellname not found: "..nameLocalized)
 	else
-		local meta = DB_SPELL[name]
+		local meta = DB_SPELL[nameEnglish]
 		local isCastable = not Spell.PredInstant(meta)
 
 		-- We pre-hook the cast, so confirm we actually cast it before triggering callbacks.
 		-- If it's castable, then check we're casting it, else check that we triggered GCD.
 		if isCastable then
 			if isCurrentAction then
-				publishShotCastable(name, nameLocalized)
-			elseif Action.FindBySpellName(name) == nil then
-				println.Warning(name .. " not on action bars, so can't track cast.")
+				publishShotCastable(nameEnglish, nameLocalized)
+			elseif Action.FindBySpellName(nameLocalized) == nil then
+				println.Warning(nameLocalized .. " not on action bars, so can't track cast.")
 			end
 		elseif checkGCD() then
-			publishInstant(name, nameLocalized)
+			publishInstant(nameEnglish, nameLocalized)
 		end
 	end
 end
