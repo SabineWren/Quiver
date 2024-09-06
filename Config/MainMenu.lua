@@ -120,9 +120,9 @@ local Create = function()
 	local selectDebugLevel = Select:Create(dialog,
 		Quiver.T["Debug Level"],
 		{ Quiver.T["None"], Quiver.T["Verbose"] },
-		Quiver_Store.DebugLevel,
+		Quiver_Store.DebugLevel == "Verbose" and Quiver.T["Verbose"] or Quiver.T["None"],
 		function(text)
-			local level = text == Quiver.T["None"] and "None" or "Verbose"
+			local level = text == Quiver.T["Verbose"] and "Verbose" or "None"
 			Quiver_Store.DebugLevel = level
 		end
 	)

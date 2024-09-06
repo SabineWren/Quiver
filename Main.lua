@@ -50,7 +50,6 @@ local initSlashCommandsAndModules = function()
 		for _k, v in _G.Quiver_Modules do
 			if Quiver_Store.ModuleEnabled[v.Id] then v.OnEnable() end
 		end
-		frameConfigMenu:Show()-- TODO temp code for faster debugging
 	else
 		SlashCmdList["QUIVER"] = function() DEFAULT_CHAT_FRAME:AddMessage(Quiver.T["Quiver is for hunters."], 1, 0.5, 0) end
 	end

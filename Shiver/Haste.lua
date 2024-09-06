@@ -32,13 +32,13 @@ local calcRangedWeaponSpeedBase = function()
 	end)
 end
 
----@param name string
+---@param nameEnglish string
 ---@return number casttime
 ---@return number startLatAdjusted
 ---@return number startLocal
 ---@nodiscard
-local CalcCastTime = function(name)
-	local meta = DB_SPELL[name]
+local CalcCastTime = function(nameEnglish)
+	local meta = DB_SPELL[nameEnglish]
 	local baseTime = meta and meta.Time or 0
 	local offset = meta and meta.Offset or 0
 

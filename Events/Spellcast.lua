@@ -21,29 +21,44 @@ end
 -- 1. User starts casting Aimed Shot, Multi-Shot, or Trueshot
 -- 2. User is already casting, but presses the spell again
 -- It's up to the subscriber to differentiate.
+---@type (fun(x: string, y: string): nil)[]
 local callbacksCastableShot = {}
-local publishShotCastable = function(spellname)
-	for _i, v in callbacksCastableShot do v(spellname) end
+
+---@param nameEnglish string
+---@param nameLocalized string
+local publishShotCastable = function(nameEnglish, nameLocalized)
+	for _i, v in pairs(callbacksCastableShot) do
+		v(nameEnglish, nameLocalized)
+	end
 end
+
 local CastableShot = {
+	---@param moduleId string
+	---@param callback fun(x: string, y: string): nil
 	Subscribe = function(moduleId, callback)
 		callbacksCastableShot[moduleId] = callback
 	end,
+	---@param moduleId string
 	Dispose = function(moduleId)
 		callbacksCastableShot[moduleId] = nil
 	end,
 }
 
+---@type (fun(x: string, y: string): nil)[]
 local callbacksInstant = {}
-local publishInstant = function(spellname)
-	for _i, v in callbacksInstant do v(spellname) end
+
+---@param nameEnglish string
+---@param nameLocalized string
+local publishInstant = function(nameEnglish, nameLocalized)
+	for _i, v in pairs(callbacksInstant) do v(nameEnglish, nameLocalized) end
 end
 local Instant = {
 	---@param moduleId string
-	---@param callback fun(n: string): nil
+	---@param callback fun(x: string, y: string): nil
 	Subscribe = function(moduleId, callback)
 		callbacksInstant[moduleId] = callback
 	end,
+	---@param moduleId string
 	Dispose = function(moduleId)
 		callbacksInstant[moduleId] = nil
 	end,
@@ -85,12 +100,12 @@ local handleCastByName = function(nameLocalized, isCurrentAction)
 		-- If it's castable, then check we're casting it, else check that we triggered GCD.
 		if isCastable then
 			if isCurrentAction then
-				publishShotCastable(name)
+				publishShotCastable(name, nameLocalized)
 			elseif Action.FindBySpellName(name) == nil then
 				println.Warning(name .. " not on action bars, so can't track cast.")
 			end
 		elseif checkGCD() then
-			publishInstant(name)
+			publishInstant(name, nameLocalized)
 		end
 	end
 end

@@ -323,13 +323,14 @@ local handleEventStateIdle = function(event)
 	end
 end
 
----@param spellName string
-local onSpellcast = function(spellName)
+---@param nameEnglish string
+---@param nameLocalized string
+local onSpellcast = function(nameEnglish, nameLocalized)
 	-- User can spam the ability while it's already casting
 	if isCasting then return end
 	isCasting = true
 	local _latAdjusted
-	castTime, _latAdjusted, timeStartCastLocal = Haste.CalcCastTime(spellName)
+	castTime, _latAdjusted, timeStartCastLocal = Haste.CalcCastTime(nameEnglish)
 	log("Start Cast")
 end
 

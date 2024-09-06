@@ -91,13 +91,15 @@ local displayTime = function(current)
 	if current < 0 then current = 0 end
 	frame.SpellTime:SetText(string.format("%.1f / %.2f", current, castTime))
 end
----@param spellName string
-local onSpellcast = function(spellName)
+
+---@param nameEnglish string
+---@param nameLocalized string
+local onSpellcast = function(nameEnglish, nameLocalized)
 	if isCasting then return end
 	isCasting = true
 	local _timeStartLocal
-	castTime, timeStartCasting, _timeStartLocal = Haste.CalcCastTime(spellName)
-	frame.SpellName:SetText(spellName)
+	castTime, timeStartCasting, _timeStartLocal = Haste.CalcCastTime(nameEnglish)
+	frame.SpellName:SetText(nameLocalized)
 	frame.Castbar:SetWidth(1)
 	displayTime(0)
 
