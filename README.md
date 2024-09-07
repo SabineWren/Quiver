@@ -4,7 +4,7 @@ $${\color{red}\* \color{orange}\* \color{yellow}\*}$$
 **[Installation Methods](#installation)**
 $${\color{yellow}\* \color{orange}\* \color{red}\*}$$
 
-<img src="/Media/Config_UI.jpg" height="462px" align="right">
+<img src="/Media/Config_UI.jpg" height="900px" align="right">
 
 ## Features
 - [Aspect Tracker](#aspect-tracker)
