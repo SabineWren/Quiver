@@ -4,7 +4,7 @@ $${\color{red}\* \color{orange}\* \color{yellow}\*}$$
 **[Installation Methods](#installation)**
 $${\color{yellow}\* \color{orange}\* \color{red}\*}$$
 
-<img src="/Media/Config_UI.jpg" height="462px" align="right">
+<img src="/Media/Config_UI_enUS.jpg" height="462px" align="right">
 
 ## Features
 - [Aspect Tracker](#aspect-tracker)
@@ -101,7 +101,7 @@ Simplest installation, but doesn't automate version updates.
 ### Option 2 - Clone latest release
 Requires Git. Easy to update with addon managers or `git pull`
 1. Open a terminal in your addons directory
-2. `git clone https://github.com/SabineWren/Quiver/tree/latest-release`
+2. `git clone https://github.com/SabineWren/Quiver --branch latest-release`
 3. Restart WoW
 
 ### Option 3 - Build from source
@@ -110,6 +110,7 @@ Do you live on the bleeding edge?
 2. `git clone https://github.com/SabineWren/Quiver`
 3. `npm install`
 4. `npm run bundle-once`
+5. Restart WoW
 
 ## Contributing
 ### Localization
