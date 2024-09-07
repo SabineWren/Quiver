@@ -126,9 +126,10 @@ end
 
 ---@param time number
 local startReloading = function(time)
+	local speed, _, _, _, _, _ = UnitRangedDamage("player")
 	timeStartReloading = time
 	isReloading = true
-	reloadTime = UnitRangedDamage("player") - AIMING_TIME
+	reloadTime = speed - AIMING_TIME
 	log("starting reload")
 end
 
@@ -240,16 +241,22 @@ local handleEventStateCasting = function(event, arg1)
 		if not isReloading then timeStartShooting = GetTime() end
 		log("Stopped Casting")
 	elseif event == "ITEM_LOCK_CHANGED" then
+		-- Failed event means Stop, but we also dropped target before the cast finished.
 		-- Two possibilities:
-		-- 1 - Auto Shot fired as cast started. (Cast -> lock -> lock -> Cast Stop)
-		-- 2 - Cast Fired. A stop or failed event will follow, or failed event when target dropped.
-		-- For case 1, confirm plausible timing.
-		-- The fastest possible cast (multi-shot) takes 0.5 seconds,
-		-- so we can use any number between that and zero.
-		-- For case 2, wait for the stop / fail event.
+		-- 1 - Cast Start -> Lock -> Lock -> Cast Stop or Cast Failed
+		--   - Cause: Auto Shot fired as cast started.
+		--   - Action: Trigger reload and continue casting.
+		-- 2 - Cast Start -> Lock         -> Cast Stop or Cast Failed
+		--   - Cause: Cast completed.
+		--   - Action: End casting.
+		-- Case 1 happens immediately, while case 2 can't happen faster than the fastest cast.
+		-- The cast start is latency-adjusted, so we pick a number between 0 and 0.5 (Multi-Shot cast time).
+		-- Too high a threshold and multi-shot occasionally triggers reload when latency changes.
+		-- Too low and we get stuck in a shooting state. This is much worse than an extra reload.
+		-- 0.4 frequently trigger reloads over 100ms latency.
 		local elapsed = GetTime() - timeStartCastLocal
 		log(elapsed)
-		if (elapsed < 0.4) then
+		if (elapsed < 0.25) then
 			-- We must have started the cast exactly as an auto shot fired.
 			-- This happens when server lag causes the bar the skip.
 			startReloading(GetTime())
