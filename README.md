@@ -4,12 +4,13 @@ $${\color{red}\* \color{orange}\* \color{yellow}\*}$$
 **[Installation Methods](#installation)**
 $${\color{yellow}\* \color{orange}\* \color{red}\*}$$
 
-<img src="/Media/Config_UI_enUS.jpg" height="462px" align="right">
+<img src="/Media/Config_UI.jpg" height="462px" align="right">
 
 ## Features
 - [Aspect Tracker](#aspect-tracker)
 - [Auto Shot Timer](#auto-shot-timer)
 - [Castbar](#castbar)
+- [Lua Functions](#lua-functions)
 - [Range Indicator](#range-indicator)
 - [Tranq Shot Announcer](#tranq-shot-announcer)
 - [Trueshot Aura Alarm](#trueshot-aura-alarm)
@@ -43,15 +44,6 @@ Never lose track of your current aspect
    <img src="/Media/Bar_2_Reloading.jpg" height="180px">
 </figure>
 
-The Auto Shot Timer module enables macros that avoid clipping auto shot:
-- Aimed Shot `/qqaimedshot`
-- Multi-Shot `/qqmultishot`
-- Trueshot `/qqtrueshot`
-
-Casting this way won't interrupt current cast, so move first if casting volley.
-
-Quiver uses a more reliable state machine than any other auto shot timer addon. If you think you've found a bug, record your game with "verbose logging" enabled in the Quiver configuration menu. Sometimes the bar gets stuck from the game not triggering addon events, which is common for movement inside instances, but rare when firing shots. A shot without a corresponding ITEM_LOCK_CHANGED event will break every auto shot timer addon.
-
 Inspired by:
 - [HSK](https://github.com/anstellaire/HunterSwissKnife) -- Ignores instant spells such as Arcane Shot
 - [YaHT](https://github.com/Aviana/YaHT/tree/1.12.1) -- Resets swing timer while casting a shot
@@ -60,6 +52,22 @@ Inspired by:
 <img src="/Media/Bar_3_Casting.jpg" height="180px">
 
 - Shows Aimed Shot, Multi-Shot, and Trueshot
+
+### Lua Functions
+CastNoClip – Cast spell by name if it won't clip a shot. Requires the Auto Shot module.
+```lua
+/script Quiver.CastNoClip("Trueshot")
+```
+
+CastPetAction – Find and cast pet action if possible.
+```lua
+/script Quiver.CastPetAction("Furious Howl"); CastSpellByName("Multi-Shot")
+```
+
+PredMidShot – Low level predicate for no-clip behavior. Used internally to implement CastNoClip.
+```lua
+/script if not Quiver.PredMidShot() then DEFAULT_CHAT_FRAME:AddMessage("Reloading") end
+```
 
 ### Range Indicator
 [<img src="/Media/Range_Indicator_Thumbnail.jpg" height="180px">](https://raw.githubusercontent.com/SabineWren/Quiver/main/Media/Range_Indicator_Preview.mp4)
@@ -114,7 +122,9 @@ Do you live on the bleeding edge?
 
 ## Contributing
 ### Localization
-Coming soon.
+Quiver is fully localized. If you want to contribute a new locale, see zhCN for reference in `/Locale/`:
+1. `<locale>.client.lua` for values that exactly correspond to the client, ex. "Multi-Shot". Should be identical values to what other addons use.
+2. `<locale>.translations.lua` for Quiver-specific text that requires translation.
 
 ### Custom Events
 Files in `/Events` hook into game functions. Use these events if possible instead of declaring your own hooks.
@@ -124,6 +134,7 @@ Files in `/Events` hook into game functions. Use these events if possible instea
 ```
 Id: string
 Name: string (use locale)
+TooltipText: nil|string (use locale)
 
 OnEnable: unit -> unit
 Called every time user enables the module.
