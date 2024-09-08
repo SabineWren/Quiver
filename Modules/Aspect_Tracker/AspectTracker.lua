@@ -3,7 +3,7 @@ local Spell = require "Shiver/API/Spell.lua"
 local Aura = require "Util/Aura.lua"
 
 local MODULE_ID = "AspectTracker"
-local store = nil
+local store = nil---@type StoreAspectTracker
 local frame = nil
 
 local DEFAULT_ICON_SIZE = 40
@@ -111,6 +111,7 @@ local onDisable = function()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 
+---@type QqModule
 return {
 	Id = MODULE_ID,
 	GetName = function() return Quiver.T["Aspect Tracker"] end,
@@ -123,6 +124,7 @@ return {
 		store.FrameMeta = nil
 		if frame then setFramePosition(frame, store) end
 	end,
+	---@param savedVariables StoreAspectTracker
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 	end,

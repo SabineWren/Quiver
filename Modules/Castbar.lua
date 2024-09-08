@@ -154,6 +154,7 @@ local onDisable = function()
 	for _k, e in EVENTS do frame:UnregisterEvent(e) end
 end
 
+---@type QqModule
 return {
 	Id = MODULE_ID,
 	GetName = function() return Quiver.T["Castbar"] end,

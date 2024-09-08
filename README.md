@@ -4,7 +4,7 @@ $${\color{red}\* \color{orange}\* \color{yellow}\*}$$
 **[Installation Methods](#installation)**
 $${\color{yellow}\* \color{orange}\* \color{red}\*}$$
 
-<img src="/Media/Config_UI.jpg" height="900px" align="right">
+<img src="/Media/Config_UI.5bdddf.jpg" height="900px" align="right">
 
 ## Features
 - [Aspect Tracker](#aspect-tracker)
@@ -76,7 +76,7 @@ PredMidShot – Low level predicate for no-clip behavior. Used internally to imp
 - Automatically locates action bar slots
 - Warns you when abilities missing from action bar
 
-Requires some raw spellbook abilities on your action bars (not macros). Hidden action bars work fine.
+Requires corresponding spellbook abilities on your action bars, or macros using the same texture. Hidden action bars work fine.
 
 ### Tranq Shot Announcer
 <img src="/Media/Tranq_UI.png">
@@ -130,38 +130,5 @@ Quiver is fully localized. If you want to contribute a new locale, see zhCN for 
 Files in `/Events` hook into game functions. Use these events if possible instead of declaring your own hooks.
 - Spellcast: CastSpell, CastSpellByName, UseAction
 
-### Module Fields and Lifecycle Hooks
-```
-Id: string
-Name: string (use locale)
-TooltipText: nil|string (use locale)
-
-OnEnable: unit -> unit
-Called every time user enables the module.
-Called during initialization after RestoreSavedVariables.
-
-OnDisable: unit -> unit
-Called every time user disables the module.
-
-OnInterfaceLock: unit -> unit
-Not called while module disabled.
-Called every time user locks the UI.
-
-OnInterfaceUnlock: unit -> unit
-Not called while module disabled.
-Called every time user unlocks the UI.
-
-OnResetFrames: unit -> unit
-Called when user clicks a reset button.
-Reset All calls this even while module disabled.
-
-OnSavedVariablesRestore: table -> unit
-GameEvent: "PLAYER_LOGIN"
-Loads state used exclusively used by the module (don't add SavedVariables to the .toc).
-Called exactly once, even for disabled modules.
-
-OnSavedVariablesPersist: unit -> table
-GameEvent: "PLAYER_LOGOUT"
-Persists state used exclusively by the module.
-Called exactly once, even for disabled modules.
-```
+### Module Lifecycle
+Feature are packaged and enabled as 'modules' that implement lifecycle hooks. See the type definitions for details.

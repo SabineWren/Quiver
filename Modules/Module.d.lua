@@ -1,0 +1,35 @@
+---@meta
+
+---@class QqModule
+---@field Id string
+---@field GetName fun(): string Use current locale
+---@field GetTooltipText fun(): nil|string Use current locale
+---
+--- - Called every time user enables the module.
+--- - Called during initialization after RestoreSavedVariables.
+---@field OnEnable fun(): nil
+---
+--- - Called every time user disables the module.
+---@field OnDisable fun(): nil
+---
+--- - Not called while module disabled.
+--- - Called every time user locks the UI.
+---@field OnInterfaceLock fun(): nil
+---
+--- - Not called while module disabled.
+--- - Called every time user unlocks the UI.
+---@field OnInterfaceUnlock fun(): nil
+---
+--- - Called when user clicks a reset button.
+--- - Reset All calls this even while module disabled.
+---@field OnResetFrames fun(): nil
+---
+--- - GameEvent: "PLAYER_LOGIN"
+--- - Loads state used exclusively used by the module (don't add SavedVariables to the .toc).
+--- - Called exactly once, even for disabled modules.
+---@field OnSavedVariablesRestore fun(t: table): nil
+---
+--- - GameEvent: "PLAYER_LOGOUT"
+--- - Persists state used exclusively by the module.
+--- - Called exactly once, even for disabled modules.
+---@field OnSavedVariablesPersist fun(): table

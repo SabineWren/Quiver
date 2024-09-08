@@ -1,3 +1,4 @@
 ---@meta
 
----@class StoreAspectTracker: StoreFramePosition
+---@class StoreAspectTracker
+---@field FrameMeta StoreFramePosition

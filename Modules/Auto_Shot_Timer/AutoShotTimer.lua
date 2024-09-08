@@ -401,6 +401,7 @@ local onDisable = function()
 	end
 end
 
+---@type QqModule
 return {
 	Id = MODULE_ID,
 	GetName = function() return Quiver.T["Auto Shot Timer"] end,
@@ -417,6 +418,7 @@ return {
 		store.FrameMeta = nil
 		if frame then setFramePosition(frame, store) end
 	end,
+	---@param savedVariables StoreAutoShotTimer
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 		store.BarDirection = savedVariables.BarDirection or "LeftToRight"
