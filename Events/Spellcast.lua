@@ -74,7 +74,7 @@ local println = Print.PrefixedF("spellcast")
 
 -- TODO This is ϴ(n). Maybe we should build a reverse-map table instead?
 -- The spell table is small, so with cache hits this loop might actually be faster.
-local findSpellId = function(nameLocalized)
+local findSpellNameEnglish = function(nameLocalized)
 	-- Short circuit for performance. I didn't check if it actually helps.
 	if GetLocale() == "enUS" then return nameLocalized end
 
@@ -89,7 +89,7 @@ end
 ---@param nameLocalized string
 ---@param isCurrentAction nil|1
 local handleCastByName = function(nameLocalized, isCurrentAction)
-	local nameEnglish = findSpellId(nameLocalized)
+	local nameEnglish = findSpellNameEnglish(nameLocalized)
 	if nameEnglish == nil then
 		log("Localized spellname not found: "..nameLocalized)
 	else

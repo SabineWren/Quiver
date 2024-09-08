@@ -71,9 +71,9 @@ local PredSpellLearned = function(spellName)
 end
 
 local CheckNewCd = function(cooldown, lastCdStart, spellName)
-	local spellId = FindSpellIndex(spellName)
-	if spellId ~= nil then
-		local timeStartCD, durationCD = GetSpellCooldown(spellId, BOOKTYPE_SPELL)
+	local spellIndex = FindSpellIndex(spellName)
+	if spellIndex ~= nil then
+		local timeStartCD, durationCD = GetSpellCooldown(spellIndex, BOOKTYPE_SPELL)
 		-- Sometimes spells return a CD of 0 when cast fails.
 		-- If it's non-zero, we have a valid timeStart to check.
 		if durationCD == cooldown and timeStartCD ~= lastCdStart then

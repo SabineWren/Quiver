@@ -1,13 +1,15 @@
 local Spell = require "Shiver/API/Spell.lua"
 
+local _MAX_NUM_ACTION_SLOTS = 120
+
 ---@param name string
 ---@return nil|ActionBarSlot
 ---@nodiscard
 local FindBySpellName = function(name)
 	local index = Spell.FindSpellIndex(name)
-	if index ~= nil then
-		local texture = GetSpellTexture(index, BOOKTYPE_SPELL)
-		for i=0,120 do
+	local texture = index ~= nil and GetSpellTexture(index, BOOKTYPE_SPELL) or nil
+	if texture ~= nil then
+		for i=0,_MAX_NUM_ACTION_SLOTS do
 			if HasAction(i) then
 				local isSpell = ActionHasRange(i) or GetActionText(i) == nil
 				local isSameTexture = GetActionTexture(i) == texture
@@ -24,7 +26,7 @@ end
 ---@return nil|1 isBusy
 ---@nodiscard
 local PredSomeActionBusy = function()
-	for i=1,120 do
+	for i=1,_MAX_NUM_ACTION_SLOTS do
 		if IsCurrentAction(i) then
 			return 1
 		end
