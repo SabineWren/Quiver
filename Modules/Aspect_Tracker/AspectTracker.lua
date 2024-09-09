@@ -11,18 +11,18 @@ local INSET = 5
 local TRANSPARENCY = 0.5
 
 local chooseIconTexture = function()
-	if Aura.PredBuffActive(Quiver.L.Spellbook["Aspect of the Beast"]) then
+	if Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Beast"]) then
 		return QUIVER.Icon.Aspect_Beast
-	elseif Aura.PredBuffActive(Quiver.L.Spellbook["Aspect of the Cheetah"]) then
+	elseif Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Cheetah"]) then
 		return QUIVER.Icon.Aspect_Cheetah
-	elseif Aura.PredBuffActive(Quiver.L.Spellbook["Aspect of the Monkey"]) then
+	elseif Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Monkey"]) then
 		return QUIVER.Icon.Aspect_Monkey
-	elseif Aura.PredBuffActive(Quiver.L.Spellbook["Aspect of the Wild"]) then
+	elseif Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Wild"]) then
 		return QUIVER.Icon.Aspect_Wild
-	elseif Aura.PredBuffActive(Quiver.L.Spellbook["Aspect of the Wolf"]) then
+	elseif Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Wolf"]) then
 		return QUIVER.Icon.Aspect_Wolf
-	elseif Spell.PredSpellLearned(Quiver.L.Spellbook["Aspect of the Hawk"])
-		and not Aura.PredBuffActive(Quiver.L.Spellbook["Aspect of the Hawk"])
+	elseif Spell.PredSpellLearned(Quiver.L.Spell["Aspect of the Hawk"])
+		and not Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Hawk"])
 		or not Quiver_Store.IsLockedFrames
 	then
 		return QUIVER.Icon.Aspect_Hawk
@@ -44,7 +44,7 @@ local updateUI = function()
 	-- Exclude Pack from main texture, since party members can apply it.
 	-- I don't have a simple way of detecting who cast it, because
 	-- the cancellable bit is 1 even if a party member cast it.
-	if Aura.PredBuffActive(Quiver.L.Spellbook["Aspect of the Pack"]) then
+	if Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Pack"]) then
 		frame:SetBackdrop({
 			bgFile = "Interface/Tooltips/UI-Tooltip-Background",
 			edgeFile = "Interface/Tooltips/UI-Tooltip-Border",

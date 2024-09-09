@@ -9,8 +9,9 @@
 // }
 export const WarblerKeyValue = (contents) => {
 	const lines = contents
-		.trim()
 		.split("\n")
+		.filter(x => x.length > 0)
+		.filter(x => !x.startsWith("--"))// Comments
 		.map(x => `"${x}"`)
 		.map(x => `\t[${x}] = ${x},\n`)
 	return "return {\n" + lines.join("") + "}\n"

@@ -72,26 +72,14 @@ local super = {
 
 local println = Print.PrefixedF("spellcast")
 
--- TODO This is ϴ(n). Maybe we should build a reverse-map table instead?
--- The spell table is small, so with cache hits this loop might actually be faster.
-local findSpellNameEnglish = function(nameLocalized)
-	-- Short circuit for performance. I didn't check if it actually helps.
-	if GetLocale() == "enUS" then return nameLocalized end
-
-	for k,v in Quiver.L.Spellbook do
-		if v == nameLocalized then
-			return k
-		end
-	end
-	return nil
-end
-
 ---@param nameLocalized string
 ---@param isCurrentAction nil|1
 local handleCastByName = function(nameLocalized, isCurrentAction)
-	local nameEnglish = findSpellNameEnglish(nameLocalized)
+	local nameEnglish = Quiver.L.SpellReverse[nameLocalized]
 	if nameEnglish == nil then
 		log("Localized spellname not found: "..nameLocalized)
+		-- TODO implement zhCN
+		nameEnglish = nameLocalized
 	else
 		local meta = DB_SPELL[nameEnglish]
 		local isCastable = not Spell.PredInstant(meta)

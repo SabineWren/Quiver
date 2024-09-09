@@ -24,7 +24,7 @@ local aura = (function()
 			return knowsAura and lastUpdate > updateDelay
 		end,
 		UpdateUI = function()
-			knowsAura = Spell.PredSpellLearned(Quiver.L.Spellbook["Trueshot Aura"])
+			knowsAura = Spell.PredSpellLearned(Quiver.L.Spell["Trueshot Aura"])
 				or not Quiver_Store.IsLockedFrames
 			isActive, timeLeft = Aura.GetIsActiveAndTimeLeftByTexture(QUIVER.Icon.Trueshot)
 			lastUpdate = 0
@@ -101,7 +101,7 @@ local onEnable = function()
 	frame:Show()
 	aura.UpdateUI()
 	Spellcast.Instant.Subscribe(MODULE_ID, function(spellName)
-		if spellName == Quiver.L.Spellbook["Trueshot Aura"] then
+		if spellName == Quiver.L.Spell["Trueshot Aura"] then
 			-- Buffs don't update right away, but we want fast user feedback
 			updateDelay = UPDATE_DELAY_FAST
 		end

@@ -1,7 +1,7 @@
-local enUS_C = require "Locale/enUS.client.lua"
-local enUS_T = require "Locale/enUS.translations.lua"
-local zhCN_C = require "Locale/zhCN.client.lua"
-local zhCN_T = require "Locale/zhCN.translations.lua"
+local enUS_C = require "Locale/enUS/Client.enUS.lua"
+local enUS_T = require "Locale/enUS/Translations.enUS.lua"
+local zhCN_C = require "Locale/zhCN/Client.zhCN.lua"
+local zhCN_T = require "Locale/zhCN/Translations.zhCN.lua"
 
 return function()
 	local translation = {
