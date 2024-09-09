@@ -1,10 +1,9 @@
-WoW 1.12.1 addon for Hunters. Use `/Quiver` or `/qq` to open the configuration menu.
-
-$${\color{red}\* \color{orange}\* \color{yellow}\*}$$
-**[Installation Methods](#installation)**
-$${\color{yellow}\* \color{orange}\* \color{red}\*}$$
-
 <img src="/Media/Config_UI.5bdddf.jpg" height="900px" align="right">
+
+> [!IMPORTANT]
+> $${\color{red}\* \color{orange}\* \color{yellow}\*}$$ **[Installation Methods](#installation)** $${\color{yellow}\* \color{orange}\* \color{red}\*}$$
+>
+> Use `/Quiver` or `/qq` to open the configuration menu.
 
 ## Features
 - [Aspect Tracker](#aspect-tracker)
@@ -76,7 +75,7 @@ PredMidShot – Low level predicate for no-clip behavior. Used internally to imp
 - Automatically locates action bar slots
 - Warns you when abilities missing from action bar
 
-Requires corresponding spellbook abilities on your action bars, or macros using the same texture. Hidden action bars work fine.
+Requires corresponding spellbook abilities on your action bars. Hidden action bars work fine, but macros are [ignored](https://github.com/SabineWren/Quiver/issues/21).
 
 ### Tranq Shot Announcer
 <img src="/Media/Tranq_UI.png">
@@ -107,10 +106,14 @@ Simplest installation, but doesn't automate version updates.
 5. Restart WoW
 
 ### Option 2 - Clone latest release
-Requires Git. Easy to update with addon managers or `git pull`
+Requires Git. Easy to update with addon managers or `git pull --rebase`
 1. Open a terminal in your addons directory
 2. `git clone https://github.com/SabineWren/Quiver --branch latest-release`
 3. Restart WoW
+> [!Tip]
+> If you download Quiver through an addon manager, it may default to source code. Change the branch to `latest-release`.
+>
+> Addon managers do not warn you about breaking changes. See the [changelog](https://github.com/SabineWren/Quiver/blob/main/Changelog.md) or [release notes](https://github.com/SabineWren/Quiver/releases) after updating.
 
 ### Option 3 - Build from source
 Do you live on the bleeding edge?
@@ -125,6 +128,11 @@ Do you live on the bleeding edge?
 Quiver is fully localized. If you want to contribute a new locale, see zhCN for reference in `/Locale/`:
 1. `<locale>.client.lua` for values that exactly correspond to the client, ex. "Multi-Shot". Should be identical values to what other addons use.
 2. `<locale>.translations.lua` for Quiver-specific text that requires translation.
+
+### Dependencies
+Type definitions are gitignored, so [clone](https://github.com/SabineWren/wow-api-type-definitions) them separately.
+
+See `package.json` for everything else.
 
 ### Custom Events
 Files in `/Events` hook into game functions. Use these events if possible instead of declaring your own hooks.
