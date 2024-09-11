@@ -1,5 +1,3 @@
-<img src="/Media/Config_UI.5bdddf.jpg" height="900px" align="right">
-
 > [!IMPORTANT]
 > $${\color{red}\* \color{orange}\* \color{yellow}\*}$$ **[Installation Methods](#installation)** $${\color{yellow}\* \color{orange}\* \color{red}\*}$$
 >
@@ -13,6 +11,8 @@
 - [Range Indicator](#range-indicator)
 - [Tranq Shot Announcer](#tranq-shot-announcer)
 - [Trueshot Aura Alarm](#trueshot-aura-alarm)
+
+<img src="/Media/Config_UI_0f9e20.jpg" height="400px">
 
 ### Aspect Tracker
 Never lose track of your current aspect
