@@ -1,5 +1,6 @@
 import { promises as Fs } from "fs"
 import { bundle } from "luabundle"
+import * as Path from "path"
 import * as Process from "process"
 import { ThrottleF } from "./Throttle.js"
 import { Result } from "./Result.js"
@@ -7,33 +8,32 @@ import { WarblerKeyValue } from "../Locale/StaticTooling.js"
 
 const isWatch = Process.argv.includes("--lua-watch")
 const dirSource = Process.cwd()
-const _OUTPUT_EXTENSION = ".bundle.lua"
-const _ENGLISH_EXTENSION_IN = ".enUS.text"
-const _ENGLISH_EXTENSION_OUT = ".enUS.lua"
+const _OUTPUT_EXT = ".bundle.lua"
+const _ENGLISH_EXT_IN = ".enUS.text"
+const _ENGLISH_EXT_OUT = ".enUS.lua"
 
 const output = Result
 	.OfNullable(Process.argv.find(x => x.startsWith("--output=")))
 	.MapError(_ => "Missing output flag.\nUsage: --output=filename.lua")
 	.Map(x => x.replace("--output=", ""))
 	.Filter(
-		x => x.endsWith(_OUTPUT_EXTENSION),
-		x => ["-- Invalid bundle name:", x, "-- Must end with:", _OUTPUT_EXTENSION].join("\n"),
+		x => x.endsWith(_OUTPUT_EXT),
+		x => ["-- Invalid bundle name:", x, "-- Must end with:", _OUTPUT_EXT].join("\n"),
 	)
 	.GetSome(cause => {
 		console.error(cause)
 		return Process.exit(1)
 	})
 
-const makeEnglishTranslations = async (filename) => {
-	const dir = dirSource + "/Locale/enUS/"
-	const x = await Fs.readFile(dir + filename, { encoding: "utf8" })
+const makeEnglishTranslations = async (partialPath) => {
+	const dir = dirSource + "/" + Path.dirname(partialPath) + "/"
+	const filenameIn = Path.basename(partialPath)
+	const filenameOut = filenameIn.replace(_ENGLISH_EXT_IN, _ENGLISH_EXT_OUT)
+	const [pathIn, pathOut] = [filenameIn, filenameOut].map(x => dir + x)
+	const x = await Fs.readFile(pathIn, { encoding: "utf8" })
 	const y = WarblerKeyValue(x)
-	const filenameOut = filename.replace(
-		_ENGLISH_EXTENSION_IN,
-		_ENGLISH_EXTENSION_OUT,
-	)
-	await Fs.writeFile(dir + filenameOut, y, { flag: "w" })
-	console.log(`locale -- ${filename} -> ${filenameOut}`)
+	await Fs.writeFile(pathOut, y, { flag: "w" })
+	console.log(`locale -- ${filenameIn} -> ${filenameOut}`)
 	return Promise.resolve()
 }
 
@@ -58,9 +58,9 @@ const runBundler = async (event, source) => {
 	console.log(`${colorize(msgTime)}ms -- ${output} [${event}] ${msgSource}`)
 }
 
-await makeEnglishTranslations("Spell.enUS.text")
-await makeEnglishTranslations("Translations.enUS.text")
-await makeEnglishTranslations("Zone.enUS.text")
+await makeEnglishTranslations("Locale/enUS/Spell.enUS.text")
+await makeEnglishTranslations("Locale/enUS/Translations.enUS.text")
+await makeEnglishTranslations("Locale/enUS/Zone.enUS.text")
 await runBundler("Startup")
 
 const throttleEnglish = ThrottleF(50)
@@ -83,7 +83,7 @@ if (isWatch) {
 		const _ = await Result
 			.OfNullable(filename)
 			.Filter(
-				x => !x.endsWith(_OUTPUT_EXTENSION),
+				x => !x.endsWith(_OUTPUT_EXT),
 				_ => "Ignoring output bundle",
 			)
 			.Filter(
@@ -91,12 +91,12 @@ if (isWatch) {
 				_ => "Ignoring type definitions",
 			)
 			.Bind(x => {
-				if (x.endsWith(_ENGLISH_EXTENSION_IN))
+				if (x.endsWith(_ENGLISH_EXT_IN))
 					return Result.Ok(rebuildEnglish(eventType, x))
 				else if (x.match(/.+\.lua$/))
 					return Result.Ok(rebuildCode(eventType, x))
 				else
-					return Result.Error(`Expected .lua or ${_ENGLISH_EXTENSION_IN}`)
+					return Result.Error(`Expected .lua or ${_ENGLISH_EXT_IN}`)
 			})
 			.Default(Promise.resolve())
 	}

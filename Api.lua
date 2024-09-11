@@ -12,11 +12,22 @@ end
 
 ---@param actionName string
 ---@return nil
-local CastPetAction = function(actionName)
+local CastPetActionByName = function(actionName)
 	-- local hasSpells = HasPetUI()
 	-- local hasUI = HasPetUI()
 	if GetPetActionsUsable() then
 		Pet.CastActionByName(actionName)
+	end
+end
+
+---@param spellNameLocalized string
+local predOffCd = function(spellNameLocalized)
+	local index = Spell.FindSpellIndex(spellNameLocalized)
+	if index ~= nil then
+		local timeStartCd, _ = GetSpellCooldown(index, BOOKTYPE_SPELL)
+		return timeStartCd == 0
+	else
+		return false
 	end
 end
 
@@ -27,31 +38,19 @@ end
 local FdPrepareTrap = function()
 	-- Requires level 16, which makes it the lowest level trap
 	local trap = Quiver.L.Spell["Immolation Trap"]
-	local spellIndex = Spell.FindSpellIndex(trap)
-	if spellIndex == nil then
-		DEFAULT_CHAT_FRAME:AddMessage("Could not find "..trap.." in spellbook.")
-	else
-		local timeStartCdTrap, _ = GetSpellCooldown(spellIndex, BOOKTYPE_SPELL)
-		local timeStartCdFd = 0
-
-		local fd = Quiver.L.Spell["Feign Death"]
-		local fdIndex = Spell.FindSpellIndex(fd)
-		if fdIndex ~= nil then
-			timeStartCdFd = GetSpellCooldown(fdIndex, BOOKTYPE_SPELL)
+	local fd = Quiver.L.Spell["Feign Death"]
+	if UnitAffectingCombat("player") and predOffCd(trap) and predOffCd(fd) then
+		if UnitExists("pettarget") and UnitAffectingCombat("pet") then
+			PetPassiveMode()
+			PetFollow()
 		end
-
-		if timeStartCdTrap == 0 and timeStartCdFd == 0 and UnitAffectingCombat("player") then
-			if UnitExists("pettarget") and UnitAffectingCombat("pet") then
-				PetPassiveMode()
-			end
-			CastSpellByName(fd)
-		end
+		CastSpellByName(fd)
 	end
 end
 
 return function()
 	Quiver.CastNoClip = CastNoClip
-	Quiver.CastPetAction = CastPetAction
+	Quiver.CastPetAction = CastPetActionByName
 	Quiver.FdPrepareTrap = FdPrepareTrap
 	Quiver.PredMidShot = AutoShotTimer.PredMidShot
 end
