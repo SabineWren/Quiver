@@ -4,7 +4,7 @@ import * as Path from "path"
 import * as Process from "process"
 import { ThrottleF } from "./Throttle.js"
 import { Result } from "./Result.js"
-import { WarblerKeyValue } from "../Locale/StaticTooling.js"
+import { CloneKeyToValue, ReverseLuaHashmap } from "../Locale/StaticTooling.js"
 
 const isWatch = Process.argv.includes("--lua-watch")
 const dirSource = Process.cwd()
@@ -31,10 +31,21 @@ const makeEnglishTranslations = async (partialPath) => {
 	const filenameOut = filenameIn.replace(_ENGLISH_EXT_IN, _ENGLISH_EXT_OUT)
 	const [pathIn, pathOut] = [filenameIn, filenameOut].map(x => dir + x)
 	const x = await Fs.readFile(pathIn, { encoding: "utf8" })
-	const y = WarblerKeyValue(x)
+	const y = CloneKeyToValue(x)
 	await Fs.writeFile(pathOut, y, { flag: "w" })
 	console.log(`locale -- ${filenameIn} -> ${filenameOut}`)
-	return Promise.resolve()
+}
+
+const reverseHashmap = async (partialPath) => {
+	const dir = dirSource + "/" + Path.dirname(partialPath) + "/"
+	const filenameIn = Path.basename(partialPath)
+	const ext = filenameIn.split(".").slice(1).join(".")
+	const filenameOut = filenameIn.replace(ext, "reverse." + ext)
+	const [pathIn, pathOut] = [filenameIn, filenameOut].map(x => dir + x)
+	const x = await Fs.readFile(pathIn, { encoding: "utf8" })
+	const y = ReverseLuaHashmap(x)
+	await Fs.writeFile(pathOut, y, { flag: "w" })
+	console.log(`locale -- ${filenameIn} -> ${filenameOut}`)
 }
 
 const runBundler = async (event, source) => {
@@ -58,9 +69,13 @@ const runBundler = async (event, source) => {
 	console.log(`${colorize(msgTime)}ms -- ${output} [${event}] ${msgSource}`)
 }
 
-await makeEnglishTranslations("Locale/enUS/Spell.enUS.text")
-await makeEnglishTranslations("Locale/enUS/Translations.enUS.text")
-await makeEnglishTranslations("Locale/enUS/Zone.enUS.text")
+await Promise.all([
+	makeEnglishTranslations("Locale/enUS/Spell.enUS.text"),
+	makeEnglishTranslations("Locale/enUS/Translations.enUS.text"),
+	makeEnglishTranslations("Locale/enUS/Zone.enUS.text"),
+	reverseHashmap("Locale/zhCN/Spell.zhCN.lua"),
+	// reverseHashmap("Locale/zhCN/Zone.zhCN.lua"),
+])
 await runBundler("Startup")
 
 const throttleEnglish = ThrottleF(50)

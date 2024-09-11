@@ -1,4 +1,5 @@
 local Spell = require "Locale/zhCN/Spell.zhCN.lua"
+local SpellReverse = require "Locale/zhCN/Spell.reverse.zhCN.lua"
 -- local Zone = require "Locale/zhCN/Zone.zhCN.lua"
 
 return {
@@ -16,5 +17,7 @@ return {
 		},
 	},
 	Spell = Spell,
-	SpellReverse = Spell,-- TODO
+	-- TODO it turns out spellnames aren't unique in Chinese.
+	-- This approach isn't going to work in the general case.
+	SpellReverse = SpellReverse,
 }

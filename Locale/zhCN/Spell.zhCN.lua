@@ -1055,7 +1055,7 @@ return {
 	["Radiation Poisoning"] = "Radiation Poisoning",-- TODO translate
 	["Rain of Fire"] = "火焰之雨",
 	["Rake"] = "扫击",
-	["Ram Riding"] = " 	骑术：羊",-- [TODO Translate why is there leading whitespace]
+	["Ram Riding"] = "骑术：羊",
 	["Rampage"] = "Rampage",-- TODO translate
 	["Ranged Weapon Specialization"] = "远程武器专精",
 	["Rapid Concealment"] = "迅速隐蔽",
