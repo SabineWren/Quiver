@@ -18,7 +18,8 @@ export const CloneKeyToValue = (contents) => {
 
 export const ReverseLuaHashmap = (fileContents) => {
 	const hashmap = luaToJson(fileContents)
-	const lines = Object.entries(hashmap).map(swap)
+	const reversed = Object.entries(hashmap).map(swap)
+	const lines = [...new Map(reversed)]// Remove duplicate keys from target locale
 	return tuplesToTable(lines)
 }
 
