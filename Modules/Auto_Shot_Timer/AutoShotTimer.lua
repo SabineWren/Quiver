@@ -3,29 +3,24 @@ local Spellcast = require "Events/Spellcast.lua"
 local Spell = require "Shiver/API/Spell.lua"
 local Haste = require "Shiver/Haste.lua"
 
-local MODULE_ID = "AutoShotTimer"
-local store = nil---@type StoreAutoShotTimer
-local frame = nil
-local BORDER = 1
--- Aimed Shot, Multi-Shot, Trueshot
-local castTime = 0
-local isCasting = false
-local isFiredInstant = false
-local timeStartCastLocal = 0
--- Auto Shot
-local AIMING_TIME = 0.65
-local isReloading = false
-local isShooting = false
-local maxBarWidth = 0
-local reloadTime = 0
-local timeStartShooting = GetTime()
-local timeStartReloading = GetTime()
-
 local log = function(text)
 	if Quiver_Store.DebugLevel == "Verbose" then
 		DEFAULT_CHAT_FRAME:AddMessage(text)
 	end
 end
+
+-- Auto Shot
+local _AIMING_TIME = 0.5-- HSK, rais, and YaHT use 0.65. However, 0.5 seems better.
+local BORDER = 1
+local MODULE_ID = "AutoShotTimer"
+local store = nil---@type StoreAutoShotTimer
+local frame = nil
+local maxBarWidth = 0
+-- Aimed Shot, Multi-Shot, Trueshot
+local castTime = 0
+local isCasting = false
+local isFiredInstant = false
+local timeStartCastLocal = 0
 
 local position = (function()
 	local x, y = 0, 0
@@ -39,6 +34,57 @@ local position = (function()
 		end,
 	}
 end)()
+
+local isReloading = false
+local timeReload = (function()
+	local reloadTime = 0
+	local time = GetTime()
+	local getElapsed = function() return GetTime() - time end
+	return {
+		GetPercentCompleted = function()
+			local elapsed = getElapsed()
+			if elapsed <= reloadTime then
+				return elapsed / reloadTime
+			else
+				return 1.0
+			end
+		end,
+		GetRemaining = function() return reloadTime - getElapsed() end,
+		Reset = function() time = GetTime() end,
+		---@param t number
+		StartAt = function(t)
+			time = t
+			local speed, _, _, _, _, _ = UnitRangedDamage("player")
+			isReloading = true
+			reloadTime = speed - _AIMING_TIME
+			log("starting reload")
+		end,
+	}
+end)()
+
+local isShooting = false
+local timeShoot = (function()
+	local time = GetTime()
+	local getElapsed = function() return GetTime() - time end
+	return {
+		GetPercentCompleted = function()
+			local elapsed = getElapsed()
+			if elapsed <= _AIMING_TIME then
+				return elapsed / _AIMING_TIME
+			else
+				return 1.0
+			end
+		end,
+		GetRemaining = function() return _AIMING_TIME - getElapsed() end,
+		Reset = function() time = GetTime() end,
+	}
+end)()
+-- May be called after reload while already shooting
+local startShooting = function()
+	if not isReloading then timeShoot.Reset() end
+	isShooting = true
+	position.UpdateXY()
+end
 
 local getIsConsumable = function(combatLogMsg)
 	if combatLogMsg == nil then return false end
@@ -62,7 +108,7 @@ local setBarAutoShot = function(f)
 	end
 
 	maxBarWidth = f:GetWidth() - 2 * BORDER
-	f.BarAutoShot:SetWidth(1)
+	f.BarAutoShot:SetWidth(0)
 	f.BarAutoShot:SetHeight(f:GetHeight() - 2 * BORDER)
 end
 
@@ -114,29 +160,11 @@ local updateBarShooting = function()
 	frame:SetAlpha(1)
 	local r, g, b = unpack(store.ColorShoot)
 	frame.BarAutoShot:SetBackdropColor(r, g, b, 0.8)
-	local timePassed = GetTime() - timeStartShooting
 	if isCasting then
-		frame.BarAutoShot:SetWidth(1)-- Can't set to zero
-	elseif timePassed <= AIMING_TIME then
-		frame.BarAutoShot:SetWidth(maxBarWidth * timePassed / AIMING_TIME)
+		frame.BarAutoShot:SetWidth(0)
 	else
-		frame.BarAutoShot:SetWidth(maxBarWidth)
+		frame.BarAutoShot:SetWidth(maxBarWidth * timeShoot.GetPercentCompleted())
 	end
-end
-
----@param time number
-local startReloading = function(time)
-	local speed, _, _, _, _, _ = UnitRangedDamage("player")
-	timeStartReloading = time
-	isReloading = true
-	reloadTime = speed - AIMING_TIME
-	log("starting reload")
-end
-
-local startShooting = function()
-	if not isReloading then timeStartShooting = GetTime() end
-	isShooting = true
-	position.UpdateXY()
 end
 
 local tryHideBar = function()
@@ -144,9 +172,9 @@ local tryHideBar = function()
 		frame:SetAlpha(0)
 	else
 		-- Reset bar if it's locked open
-		frame.BarAutoShot:SetWidth(1)
-		timeStartShooting = GetTime()
-		timeStartReloading = GetTime()
+		frame.BarAutoShot:SetWidth(0)
+		timeShoot.Reset()
+		timeReload.Reset()
 	end
 end
 
@@ -154,9 +182,9 @@ local updateBarReload = function()
 	frame:SetAlpha(1)
 	local r, g, b = unpack(store.ColorReload)
 	frame.BarAutoShot:SetBackdropColor(r, g, b, 0.8)
-	local timePassed = GetTime() - timeStartReloading
-	if timePassed <= reloadTime then
-		frame.BarAutoShot:SetWidth(maxBarWidth - maxBarWidth * timePassed / reloadTime)
+	local percentCompleted = timeReload.GetPercentCompleted()
+	if percentCompleted < 1.0 then
+		frame.BarAutoShot:SetWidth(maxBarWidth - maxBarWidth * percentCompleted)
 	else
 		log("End reload")
 		isReloading = false
@@ -174,8 +202,8 @@ local handleUpdate = function()
 	elseif isShooting and position.CheckStandingStill() then
 		updateBarShooting()
 	else
-		-- We may have moved while shooting, so reset time
-		timeStartShooting = GetTime()
+		-- We probably moved while shooting
+		timeShoot.Reset()
 		tryHideBar()
 	end
 end
@@ -238,7 +266,7 @@ local handleEventStateCasting = function(event, arg1)
 		-- so it's a false positive and we need to override it to avoid breaking our state machine.
 		isFiredInstant = false
 		isCasting = false -- Exit this handler
-		if not isReloading then timeStartShooting = GetTime() end
+		if not isReloading then timeShoot.Reset() end
 		log("Stopped Casting")
 	elseif event == "ITEM_LOCK_CHANGED" then
 		-- Failed event means Stop, but we also dropped target before the cast finished.
@@ -259,7 +287,7 @@ local handleEventStateCasting = function(event, arg1)
 		if (elapsed < 0.25) then
 			-- We must have started the cast exactly as an auto shot fired.
 			-- This happens when server lag causes the bar the skip.
-			startReloading(GetTime())
+			timeReload.StartAt(GetTime())
 		end
 	end
 end
@@ -277,12 +305,9 @@ local handleEventStateShooting = function(event)
 	-- Don't have to handle other spellcast events because they only trigger on successful
 	-- casts without a selected target. However, dropping target cancels Auto Shot.
 	if event == "SPELLCAST_STOP" then
-		-- There's a measurable 0.5 second reset to Auto Shot when casting any instant spell (ex. Hunter's Mark)
-		-- Can ignore this if our remaining time is longer than that reset.
-		local aimTimeOffset = AIMING_TIME - 0.5
-		if (GetTime() - timeStartShooting > aimTimeOffset) then
-			timeStartShooting = GetTime() - aimTimeOffset
-		end
+		-- There's a measurable 0.5 second reset to Auto Shot when casting any instant spell (ex. Hunter's Mark).
+		-- Since auto shot also seems to use 0.5 second shoot time, we can reset it to 0.
+		timeShoot.Reset()
 	end
 
 	if stateAuto.IsInitial then
@@ -293,9 +318,13 @@ local handleEventStateShooting = function(event)
 				stateAuto.TimeLock = GetTime()
 				isFiredInstant = false
 				log("State Advance")
+			elseif timeReload.GetRemaining() > 0 then
+				-- Sometimes SPELLCAST_STOP triggers before ITEM_LOCK_CHANGED
+				-- No-op from multi-shot during reload.
+				log("Edge case -- out-of-order events. Probably mutli-shot: "..timeReload.GetRemaining())
 			else
 				log("Auto Fired")
-				startReloading(GetTime())
+				timeReload.StartAt(GetTime())
 			end
 		end
 		-- else ignore
@@ -306,7 +335,7 @@ local handleEventStateShooting = function(event)
 			-- Retroactively start reload and reset state.
 			stateAuto.IsInitial = true
 			isFiredInstant = false
-			startReloading(stateAuto.TimeLock)
+			timeReload.StartAt(stateAuto.TimeLock)
 			log("State Reset: Auto -> Instant")
 		elseif event == "SPELLCAST_STOP" then
 			-- Previous shot must have been an instant, so reset state.
@@ -376,6 +405,25 @@ local PredMidShot = function()
 	return isShooting and not isReloading
 end
 
+local GetSecondsRemainingReload = function()
+	if isReloading then
+		return true, timeReload.GetRemaining()
+	else
+		return false, 0
+	end
+end
+
+local GetSecondsRemainingShoot = function()
+	local t = timeShoot.GetRemaining()
+	local isFiring = isShooting and not isReloading
+	if isFiring then
+		if t < -0.2 then DEFAULT_CHAT_FRAME:AddMessage(t) end
+		return true, t
+	else
+		return false, 0
+	end
+end
+
 -- ************ Initialization ************
 local onEnable = function()
 	if frame == nil then
@@ -426,8 +474,11 @@ return {
 		store.ColorReload = savedVariables.ColorReload or QUIVER.ColorDefault.AutoShotReload
 	end,
 	OnSavedVariablesPersist = function() return store end,
-	PredMidShot = PredMidShot,
 	UpdateDirection = function()
 		if frame then setBarAutoShot(frame) end
-	end
+	end,
+	-- API exports
+	GetSecondsRemainingReload = GetSecondsRemainingReload,
+	GetSecondsRemainingShoot = GetSecondsRemainingShoot,
+	PredMidShot = PredMidShot,
 }

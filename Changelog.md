@@ -1,3 +1,21 @@
+# 3.1.0 (Next)
+
+### Features
+API Additions:
+- Quiver.GetSecondsRemainingShoot
+- Quiver.GetSecondsRemainingReload
+
+These return true/false (isShooting/isReloading) and the time remaining (zero if false), ex.
+```
+// This macro detects when the auto shot timer bugs out by more than
+// 0.25 seconds, and switches from CastNoClip to CastSpellByName.
+// Trueshot can hang a while before firing, so tune the cutoff.
+/script local a, b = Quiver.GetSecondsRemainingShoot(); local c = a and b < -0.25; local f = c and CastSpellByName or Quiver.CastNoClip; f("Trueshot")
+```
+
+### Bugfixes
+1. Fixed Multi-Shot occasionally triggering a reload on the auto shot bar.
+
 # 3.0.0
 ### Breaking Changes
 1. Quiver now has a build step. See Readme for updated installation instructions.

@@ -84,7 +84,7 @@ local CheckNewCd = function(cooldown, lastCdStart, spellName)
 end
 
 local CheckNewGCD = function(lastCdStart)
-	return CheckNewCd(1.5, lastCdStart, Quiver.L.Spellbook["Serpent Sting"])
+	return CheckNewCd(1.5, lastCdStart, Quiver.L.Spell["Serpent Sting"])
 end
 
 return {

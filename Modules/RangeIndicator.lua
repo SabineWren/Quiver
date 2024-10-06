@@ -62,11 +62,11 @@ local checkDistance = {
 	Duel=function() return CheckInteractDistance("target", 3) end,-- 9.9 yards (or 10?)
 	Follow=function() return CheckInteractDistance("target", 4) end,-- 28 yards
 	-- Using Action Bars
-	Melee=function() return predSpellInRange(Quiver.L.Spellbook["Wing Clip"]) end,-- 5 yards
-	Mark=function() return predSpellInRange(Quiver.L.Spellbook["Hunter's Mark"]) end,-- 100 yards
-	Ranged=function() return predSpellInRange(Quiver.L.Spellbook["Auto Shot"]) end,-- 35-41 yards (talents)
-	Scare=function() return predSpellInRange(Quiver.L.Spellbook["Scare Beast"]) end,-- 10 yards
-	Scatter=function() return predSpellInRange(Quiver.L.Spellbook["Scatter Shot"]) end,-- 15-21 yards (talents)
+	Melee=function() return predSpellInRange(Quiver.L.Spell["Wing Clip"]) end,-- 5 yards
+	Mark=function() return predSpellInRange(Quiver.L.Spell["Hunter's Mark"]) end,-- 100 yards
+	Ranged=function() return predSpellInRange(Quiver.L.Spell["Auto Shot"]) end,-- 35-41 yards (talents)
+	Scare=function() return predSpellInRange(Quiver.L.Spell["Scare Beast"]) end,-- 10 yards
+	Scatter=function() return predSpellInRange(Quiver.L.Spell["Scatter Shot"]) end,-- 15-21 yards (talents)
 }
 
 local render = function(color, text)

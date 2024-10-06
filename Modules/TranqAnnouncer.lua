@@ -254,7 +254,7 @@ local EVENTS = {
 local lastCastStart = 0
 local getHasFiredTranq = function()
 	local isCast, cdStart = Spell.CheckNewCd(
-		TRANQ_CD_SEC, lastCastStart, Quiver.L.Spellbook["Tranquilizing Shot"])
+		TRANQ_CD_SEC, lastCastStart, Quiver.L.Spell["Tranquilizing Shot"])
 	lastCastStart = cdStart
 	return isCast
 end
