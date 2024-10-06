@@ -1,15 +1,23 @@
-# 3.1.0 (Next)
+# 3.1.0
 
 ### Features
-API Additions:
-- Quiver.GetSecondsRemainingShoot
+API functions:
+- Quiver.FdPrepareTrap
 - Quiver.GetSecondsRemainingReload
-
-These return true/false (isShooting/isReloading) and the time remaining (zero if false), ex.
+- Quiver.GetSecondsRemainingShoot
+```lua
+-- Spammable FD-Trap macro
+-- Checks: FD CD, Trap CD, is-player-in-combat, is-pet-in-combat
+-- Casts: FD, petPassive, petFollow
+-- WARNING: this will pull your pet even if you're stunned etc.
+/script CastSpellByName("Frost Trap"); Quiver.FdPrepareTrap()
 ```
-// This macro detects when the auto shot timer bugs out by more than
-// 0.25 seconds, and switches from CastNoClip to CastSpellByName.
-// Trueshot can hang a while before firing, so tune the cutoff.
+
+Timing functions return true/false (isShooting/isReloading) and the time remaining (zero if false).
+```lua
+-- This macro detects when the auto shot timer bugs out by more than
+-- 0.25 seconds, and switches from CastNoClip to CastSpellByName.
+-- Trueshot can hang a while before firing, so tune the cutoff.
 /script local a, b = Quiver.GetSecondsRemainingShoot(); local c = a and b < -0.25; local f = c and CastSpellByName or Quiver.CastNoClip; f("Trueshot")
 ```
 
