@@ -52,5 +52,7 @@ return function()
 	Quiver.CastNoClip = CastNoClip
 	Quiver.CastPetAction = CastPetActionByName
 	Quiver.FdPrepareTrap = FdPrepareTrap
+	Quiver.GetSecondsRemainingReload = AutoShotTimer.GetSecondsRemainingReload
+	Quiver.GetSecondsRemainingShoot = AutoShotTimer.GetSecondsRemainingShoot
 	Quiver.PredMidShot = AutoShotTimer.PredMidShot
 end
