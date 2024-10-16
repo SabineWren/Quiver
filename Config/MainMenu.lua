@@ -8,6 +8,7 @@ local Color = require "Config/Color.lua"
 local InputText = require "Config/InputText.lua"
 local FrameLock = require "Events/FrameLock.lua"
 local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
+local BorderStyle = require "Modules/BorderStyle.provider.lua"
 local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
 local L = require "Shiver/Lib/All.lua"
 
@@ -130,6 +131,21 @@ local Create = function()
 	selectDebugLevel.Container:SetPoint("Right", dialog, "Right", -dropdownX, 0)
 	selectDebugLevel.Container:SetPoint("Top", dialog, "Top", 0, dropdownY)
 
+	local tooltip = Quiver.T["Tooltip"]
+	local selectBorderStyle = Select:Create(dialog,
+		Quiver.T["Border Style"],
+		{ Quiver.T["Simple"], tooltip },
+		Quiver_Store.Border_Style,
+		function(text)
+			-- Reverse map from localized text to saved value
+			local style = text == tooltip and "Tooltip" or "Simple"
+			BorderStyle.ChangeAndPublish(style)
+		end
+	)
+	dropdownY = dropdownY + QUIVER.Size.Gap + selectBorderStyle.Container:GetHeight()
+	selectBorderStyle.Container:SetPoint("Right", dialog, "Right", -dropdownX, 0)
+	selectBorderStyle.Container:SetPoint("Top", dialog, "Top", 0, dropdownY)
+
 	-- Factored out until we can re-render options upon locale change.
 	-- Otherwise, the change handler with compare wrong locale.
 	local leftToRight = Quiver.T["Left to Right"]
@@ -140,7 +156,7 @@ local Create = function()
 		{ leftToRight, Quiver.T["Both Directions"] },
 		Quiver.T[selectedDirection],
 		function(text)
-			-- Maps from localized text to binary key
+			-- Reverse map from localized text to saved value
 			local direction = text == leftToRight and "LeftToRight" or "BothDirections"
 			Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection = direction
 			AutoShotTimer.UpdateDirection()
