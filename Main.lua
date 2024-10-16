@@ -27,6 +27,7 @@ local savedVariablesRestore = function()
 	Quiver_Store.ModuleEnabled = Quiver_Store.ModuleEnabled or {}
 	Quiver_Store.ModuleStore = Quiver_Store.ModuleStore or {}
 	Quiver_Store.DebugLevel = Quiver_Store.DebugLevel or "None"
+	Quiver_Store.Border_Style = Quiver_Store.Border_Style or "Simple"
 	for _k, v in _G.Quiver_Modules do
 		Quiver_Store.ModuleEnabled[v.Id] = Quiver_Store.ModuleEnabled[v.Id] ~= false
 		Quiver_Store.ModuleStore[v.Id] = Quiver_Store.ModuleStore[v.Id] or {}

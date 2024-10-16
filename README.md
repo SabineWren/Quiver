@@ -53,17 +53,40 @@ Inspired by:
 - Shows Aimed Shot, Multi-Shot, and Trueshot
 
 ### Lua Functions
-CastNoClip – Cast spell by name if it won't clip a shot. Requires the Auto Shot module.
+#### CastNoClip
+Cast spell by name if it won't clip a shot. Requires the Auto Shot module.
 ```lua
 /script Quiver.CastNoClip("Trueshot")
 ```
 
-CastPetAction – Find and cast pet action if possible.
+#### CastPetAction
+Find and cast pet action if possible.
 ```lua
 /script Quiver.CastPetAction("Furious Howl"); CastSpellByName("Multi-Shot")
 ```
 
-PredMidShot – Low level predicate for no-clip behavior. Used internally to implement CastNoClip.
+#### FdPrepareTrap
+- Spammable FD-Trap macro
+- Checks: FD CD, Trap CD, is-player-in-combat, is-pet-in-combat
+- Casts: FD, petPassive, petFollow
+
+```lua
+/script CastSpellByName("Frost Trap"); Quiver.FdPrepareTrap()
+```
+> [!WARNING]
+> this will pull your pet even if you're stunned etc.
+
+#### GetSecondsRemainingReload
+#### GetSecondsRemainingShoot
+Timing functions return true/false (isShooting/isReloading) and the time remaining (zero if false).
+```lua
+-- This macro detects when the auto shot timer bugs out by more than
+-- 0.25 seconds, and switches from CastNoClip to CastSpellByName.
+-- Trueshot can hang a while before firing, so tune the cutoff.
+/script local a, b = Quiver.GetSecondsRemainingShoot(); local c = a and b < -0.25; local f = c and CastSpellByName or Quiver.CastNoClip; f("Trueshot")
+```
+
+#### PredMidShot – Low level predicate for no-clip behavior. Used internally to implement CastNoClip.
 ```lua
 /script if not Quiver.PredMidShot() then DEFAULT_CHAT_FRAME:AddMessage("Reloading") end
 ```

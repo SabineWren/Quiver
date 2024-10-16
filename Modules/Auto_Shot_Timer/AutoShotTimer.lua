@@ -11,7 +11,8 @@ end
 
 -- Auto Shot
 local _AIMING_TIME = 0.5-- HSK, rais, and YaHT use 0.65. However, 0.5 seems better.
-local BORDER = 1
+local _BORDER_SIZE_SIMPLE = 1
+local _BORDER_TEXTURED = { Size=10, Inset={ left=3, right=3, top=3, bottom=3 } }
 local MODULE_ID = "AutoShotTimer"
 local store = nil---@type StoreAutoShotTimer
 local frame = nil
@@ -98,18 +99,22 @@ local isConsumable = false
 
 -- ************ UI ************
 local setBarAutoShot = function(f)
+	local borderSize = Quiver_Store.Border_Style == "Tooltip"
+		and _BORDER_TEXTURED.Inset.left
+		or _BORDER_SIZE_SIMPLE
+
 	-- Coerce to boolean because there's nothing sensible to do if we have an invalid value.
 	if store.BarDirection == "LeftToRight" then
 		f.BarAutoShot:ClearAllPoints()
-		f.BarAutoShot:SetPoint("Left", f, "Left", BORDER, 0)
+		f.BarAutoShot:SetPoint("Left", f, "Left", borderSize, 0)
 	else
 		f.BarAutoShot:ClearAllPoints()
 		f.BarAutoShot:SetPoint("Center", f, "Center", 0, 0)
 	end
 
-	maxBarWidth = f:GetWidth() - 2 * BORDER
+	maxBarWidth = f:GetWidth() - 2 * borderSize
 	f.BarAutoShot:SetWidth(0)
-	f.BarAutoShot:SetHeight(f:GetHeight() - 2 * BORDER)
+	f.BarAutoShot:SetHeight(f:GetHeight() - 2 * borderSize)
 end
 
 local setFramePosition = function(f, s)
@@ -127,20 +132,31 @@ end
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("HIGH")
-	f.BarAutoShot = CreateFrame("Frame", nil, f)
 
-	f:SetBackdrop({
-		bgFile = "Interface/BUTTONS/WHITE8X8",
-		edgeFile = "Interface/BUTTONS/WHITE8X8",
-		edgeSize = BORDER,
-		tile = false,
-	})
+	if Quiver_Store.Border_Style == "Tooltip" then
+		f:SetBackdrop({
+			bgFile = "Interface/BUTTONS/WHITE8X8",
+			edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+			edgeSize = _BORDER_TEXTURED.Size,
+			insets = _BORDER_TEXTURED.Inset,
+		})
+		f:SetBackdropBorderColor(0.6, 0.9, 0.7, 1.0)
+	else
+		f:SetBackdrop({
+			bgFile = "Interface/BUTTONS/WHITE8X8",
+			edgeFile = "Interface/BUTTONS/WHITE8X8",
+			edgeSize = _BORDER_SIZE_SIMPLE,
+			tile = false,
+		})
+		f:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)
+	end
+	f:SetBackdropColor(0, 0, 0, 0.8)
+
+	f.BarAutoShot = CreateFrame("Frame", nil, f)
 	f.BarAutoShot:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8",
 		tile = false,
 	})
-	f:SetBackdropColor(0, 0, 0, 0.8)
-	f:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)
 
 	setFramePosition(f, store)
 	local resizeBarAutoShot = function() setBarAutoShot(f) end
