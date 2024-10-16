@@ -123,6 +123,18 @@ local absClamp = function(vOpt, vMax)
 	end
 end
 
+
+---@param a number
+---@return integer
+local round = function(a)
+	return math.floor(a + 0.5)
+end
+---@param a number
+---@return integer
+local round4 = function(a)
+	return math.floor(a / 4 + 0.5) * 4
+end
+
 local SideEffectMakeMoveable = function(f, store)
 	f:SetWidth(store.FrameMeta.W)
 	f:SetHeight(store.FrameMeta.H)
@@ -142,8 +154,8 @@ local SideEffectMakeMoveable = function(f, store)
 	f:SetScript("OnMouseUp", function()
 		f:StopMovingOrSizing()
 		local _, _, _, x, y = f:GetPoint()
-		store.FrameMeta.X = math.floor(x)
-		store.FrameMeta.Y = math.floor(y)
+		store.FrameMeta.X = round4(x)
+		store.FrameMeta.Y = round4(y)
 		f:SetPoint("TopLeft", nil, "TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
 	end)
 
@@ -157,7 +169,7 @@ local SideEffectMakeResizeable = function(frame, store, args)
 	if isCenterX then
 		frame:SetScript("OnSizeChanged", function()
 			local wOld = store.FrameMeta.W
-			local delta = frame:GetWidth() - wOld
+			local delta = round(frame:GetWidth() - wOld)
 			store.FrameMeta.W = wOld + 2 * delta
 			store.FrameMeta.X = store.FrameMeta.X - delta
 			frame:SetWidth(store.FrameMeta.W)

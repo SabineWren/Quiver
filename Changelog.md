@@ -1,6 +1,6 @@
 # 3.1.0
 ### Features
-Implemented tooltip border style option for auto shot timer and castbar.
+Implemented tooltip border style option for auto shot timer and castbar. Improved grid-snapping for these frames when dragging or resizing.
 
 API functions:
 - Quiver.FdPrepareTrap

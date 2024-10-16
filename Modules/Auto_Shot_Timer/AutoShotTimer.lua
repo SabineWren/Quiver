@@ -156,7 +156,7 @@ local createUI = function()
 
 	FrameLock.SideEffectMakeMoveable(f, store)
 	FrameLock.SideEffectMakeResizeable(f, store, {
-		GripMargin=0,
+		GripMargin=4,
 		OnResizeDrag=function() styleBarAutoShot(f) end,
 		OnResizeEnd=function() styleBarAutoShot(f) end,
 		IsCenterX=true,
