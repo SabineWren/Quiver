@@ -1,6 +1,7 @@
 Announces in chat when your tranquilizing shot hits or misses a target.
 Aspect Tracker
 Auto Shot Timer
+Border Style
 Both Directions
 Castbar
 Casting
@@ -35,7 +36,9 @@ Shooting
 Short Range
 Shows Aimed Shot, Multi-Shot, and Trueshot.
 Shows when abilities are in range. Requires spellbook abilities placed somewhere on your action bars.
+Simple
 Swap Shoot and Reload Colours
+Tooltip
 Tranq Shot Announcer
 Tranq Speech
 Trueshot Aura Alarm

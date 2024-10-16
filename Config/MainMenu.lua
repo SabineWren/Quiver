@@ -8,6 +8,7 @@ local Color = require "Config/Color.lua"
 local InputText = require "Config/InputText.lua"
 local FrameLock = require "Events/FrameLock.lua"
 local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
+local BorderStyle = require "Modules/BorderStyle.provider.lua"
 local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
 local L = require "Shiver/Lib/All.lua"
 
@@ -69,6 +70,76 @@ local createAllModuleControls = function(parent, gap)
 	return f
 end
 
+local makeSelectAutoShotTimerDirection = function(parent)
+	-- Factored out text until we can re-render options upon locale change.
+	-- Otherwise, the change handler with compare wrong locale.
+	local both = Quiver.T["Both Directions"]
+	local selected = Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection
+	local options = { Quiver.T["Left to Right"], both }
+	return Select:Create(parent,
+		Quiver.T["Auto Shot Timer"],
+		options,
+		Quiver.T[selected],
+		function(text)
+			-- Reverse map from localized text to saved value
+			local direction = text == both and "BothDirections" or "LeftToRight"
+			Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection = direction
+			AutoShotTimer.UpdateDirection()
+		end
+	)
+end
+
+local makeSelectBorderStyle = function(parent)
+	local tooltip = Quiver.T["Tooltip"]
+	local selected = Quiver_Store.Border_Style
+	local options = { Quiver.T["Simple"], tooltip }
+	return Select:Create(parent,
+		Quiver.T["Border Style"],
+		options,
+		Quiver.T[selected],
+		function(text)
+			-- Reverse map from localized text to saved value
+			local style = text == tooltip and "Tooltip" or "Simple"
+			BorderStyle.ChangeAndPublish(style)
+		end
+	)
+end
+
+local makeSelectChannelHit = function(parent)
+	local defaultTranqText = (function()
+		local store = Quiver_Store.ModuleStore[TranqAnnouncer.Id]
+		-- TODO DRY violation -- dropdown must match the module store init
+		return store and store.TranqChannel or "/Say"
+	end)()
+	return Select:Create(parent,
+		Quiver.T["Tranq Speech"],
+		{ Quiver.T["None"], "/Say", "/Raid" },
+		defaultTranqText,
+		function(text)
+			local val = (function()
+				if text == Quiver.T["None"] then
+					return "None"
+				else
+					return text or "/Say"
+				end
+			end)()
+			Quiver_Store.ModuleStore[TranqAnnouncer.Id].TranqChannel = val
+		end
+	)
+end
+
+local makeSelectDebugLevel = function(parent)
+	return Select:Create(parent,
+		Quiver.T["Debug Level"],
+		{ Quiver.T["None"], Quiver.T["Verbose"] },
+		Quiver_Store.DebugLevel == "Verbose" and Quiver.T["Verbose"] or Quiver.T["None"],
+		function(text)
+			local level = text == Quiver.T["Verbose"] and "Verbose" or "None"
+			Quiver_Store.DebugLevel = level
+		end
+	)
+end
+
 local Create = function()
 	-- WoW uses border-box content sizing
 	local _PADDING_CLOSE = QUIVER.Size.Border + 6
@@ -114,68 +185,40 @@ local Create = function()
 	colorPickers:SetPoint("Right", dialog, "Right", -_PADDING_FAR, 0)
 	dialog:SetWidth(_PADDING_FAR + controls:GetWidth() + _PADDING_FAR + colorPickers:GetWidth() + _PADDING_FAR)
 
-	local dropdownX = _PADDING_FAR + colorPickers:GetWidth() + _PADDING_FAR
+	local ddContainer = CreateFrame("Frame", nil, dialog)
+	local selectChannelHit = makeSelectChannelHit(ddContainer)
+	local selectAutoShotTimerDirection = makeSelectAutoShotTimerDirection(ddContainer)
+	local selectBorderStyle = makeSelectBorderStyle(ddContainer)
+	local selectDebugLevel = makeSelectDebugLevel(ddContainer)
+
+	selectChannelHit.Container:SetPoint("Right", ddContainer, "Right")
+	selectAutoShotTimerDirection.Container:SetPoint("Right", ddContainer, "Right")
+	selectBorderStyle.Container:SetPoint("Right", ddContainer, "Right")
+	selectDebugLevel.Container:SetPoint("Right", ddContainer, "Right")
+
 	local dropdownY = 0
+	selectChannelHit.Container:SetPoint("Top", ddContainer, "Top", 0, dropdownY)
+	dropdownY = dropdownY - QUIVER.Size.Gap - selectChannelHit.Container:GetHeight()
 
-	local selectDebugLevel = Select:Create(dialog,
-		Quiver.T["Debug Level"],
-		{ Quiver.T["None"], Quiver.T["Verbose"] },
-		Quiver_Store.DebugLevel == "Verbose" and Quiver.T["Verbose"] or Quiver.T["None"],
-		function(text)
-			local level = text == Quiver.T["Verbose"] and "Verbose" or "None"
-			Quiver_Store.DebugLevel = level
-		end
-	)
-	dropdownY = yOffset - colorPickers:GetHeight() + selectDebugLevel.Container:GetHeight() + QUIVER.Size.Gap
-	selectDebugLevel.Container:SetPoint("Right", dialog, "Right", -dropdownX, 0)
-	selectDebugLevel.Container:SetPoint("Top", dialog, "Top", 0, dropdownY)
+	selectAutoShotTimerDirection.Container:SetPoint("Top", ddContainer, "Top", 0, dropdownY)
+	dropdownY = dropdownY - QUIVER.Size.Gap - selectAutoShotTimerDirection.Container:GetHeight()
 
-	-- Factored out until we can re-render options upon locale change.
-	-- Otherwise, the change handler with compare wrong locale.
-	local leftToRight = Quiver.T["Left to Right"]
-	local selectedDirection = Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection
-	-- Dropdown auto shot bar direction
-	local selectAutoShotTimerDirection = Select:Create(dialog,
-		Quiver.T["Auto Shot Timer"],
-		{ leftToRight, Quiver.T["Both Directions"] },
-		Quiver.T[selectedDirection],
-		function(text)
-			-- Maps from localized text to binary key
-			local direction = text == leftToRight and "LeftToRight" or "BothDirections"
-			Quiver_Store.ModuleStore[AutoShotTimer.Id].BarDirection = direction
-			AutoShotTimer.UpdateDirection()
-		end
-	)
-	dropdownY = dropdownY + QUIVER.Size.Gap + selectAutoShotTimerDirection.Container:GetHeight()
-	selectAutoShotTimerDirection.Container:SetPoint("Right", dialog, "Right", -dropdownX, 0)
-	selectAutoShotTimerDirection.Container:SetPoint("Top", dialog, "Top", 0, dropdownY)
+	selectBorderStyle.Container:SetPoint("Top", ddContainer, "Top", 0, dropdownY)
+	dropdownY = dropdownY - QUIVER.Size.Gap - selectBorderStyle.Container:GetHeight()
 
-	-- Dropdown tranq shot announce channel
-	local defaultTranqText = (function()
-		local store = Quiver_Store.ModuleStore[TranqAnnouncer.Id]
-		-- TODO DRY violation -- dropdown must match the module store init
-		return store and store.TranqChannel or "/Say"
-	end)()
-	local selectChannelHit = Select:Create(dialog,
-		Quiver.T["Tranq Speech"],
-		{ Quiver.T["None"], "/Say", "/Raid" },
-		defaultTranqText,
-		function(text)
-			local val = (function()
-				if text == Quiver.T["None"] then
-					return "None"
-				else
-					return text or "/Say"
-				end
-			end)()
-			Quiver_Store.ModuleStore[TranqAnnouncer.Id].TranqChannel = val
-		end
-	)
-	dropdownY = dropdownY + QUIVER.Size.Gap + selectChannelHit.Container:GetHeight()
-	selectChannelHit.Container:SetPoint("Right", dialog, "Right", -dropdownX, 0)
-	selectChannelHit.Container:SetPoint("Top", dialog, "Top", 0, dropdownY)
+	selectDebugLevel.Container:SetPoint("Top", ddContainer, "Top", 0, dropdownY)
+	dropdownY = dropdownY - selectDebugLevel.Container:GetHeight()
 
-	local hLeft = controls:GetHeight()
+	ddContainer:SetPoint("Top", dialog, "Top", 0, yOffset - controls:GetHeight() - _PADDING_FAR)
+	ddContainer:SetPoint("Right", dialog, "Right", -(_PADDING_FAR + colorPickers:GetWidth() + _PADDING_FAR), 0)
+	ddContainer:SetHeight(-dropdownY)
+
+	local dropdowns = { selectChannelHit, selectAutoShotTimerDirection, selectBorderStyle, selectDebugLevel }
+	local maxWidth = L.Array.MapReduce(dropdowns, function(x) return x.Container:GetWidth() end, math.max, 0)
+	ddContainer:SetHeight(-dropdownY)
+	ddContainer:SetWidth(maxWidth)
+
+	local hLeft = controls:GetHeight() + _PADDING_FAR + ddContainer:GetHeight()
 	local hRight = colorPickers:GetHeight()
 	local hMax = hRight > hLeft and hRight or hLeft
 	yOffset = yOffset - hMax - QUIVER.Size.Gap

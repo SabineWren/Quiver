@@ -1,5 +1,6 @@
 local FrameLock = require "Events/FrameLock.lua"
 local Spellcast = require "Events/Spellcast.lua"
+local BorderStyle = require "Modules/BorderStyle.provider.lua"
 local Spell = require "Shiver/API/Spell.lua"
 local Haste = require "Shiver/Haste.lua"
 
@@ -11,7 +12,6 @@ end
 
 -- Auto Shot
 local _AIMING_TIME = 0.5-- HSK, rais, and YaHT use 0.65. However, 0.5 seems better.
-local BORDER = 1
 local MODULE_ID = "AutoShotTimer"
 local store = nil---@type StoreAutoShotTimer
 local frame = nil
@@ -97,59 +97,68 @@ end
 local isConsumable = false
 
 -- ************ UI ************
-local setBarAutoShot = function(f)
+local styleBarAutoShot = function(f)
+	local sizeInset = BorderStyle.GetInsetSize()
+
+	if BorderStyle.GetStyle() == "Tooltip" then
+		f:SetBackdrop({
+			bgFile = "Interface/BUTTONS/WHITE8X8",
+			edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+			edgeSize = 10,
+			insets = { left=sizeInset, right=sizeInset, top=sizeInset, bottom=sizeInset },
+		})
+		f:SetBackdropBorderColor(BorderStyle.GetColor())
+	else
+		f:SetBackdrop({
+			bgFile = "Interface/BUTTONS/WHITE8X8",
+			edgeFile = "Interface/BUTTONS/WHITE8X8",
+			edgeSize = sizeInset,
+		})
+		f:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)
+	end
+	f:SetBackdropColor(0, 0, 0, 0.8)
+
 	-- Coerce to boolean because there's nothing sensible to do if we have an invalid value.
 	if store.BarDirection == "LeftToRight" then
 		f.BarAutoShot:ClearAllPoints()
-		f.BarAutoShot:SetPoint("Left", f, "Left", BORDER, 0)
+		f.BarAutoShot:SetPoint("Left", f, "Left", sizeInset, 0)
 	else
 		f.BarAutoShot:ClearAllPoints()
 		f.BarAutoShot:SetPoint("Center", f, "Center", 0, 0)
 	end
 
-	maxBarWidth = f:GetWidth() - 2 * BORDER
-	f.BarAutoShot:SetWidth(0)
-	f.BarAutoShot:SetHeight(f:GetHeight() - 2 * BORDER)
+	maxBarWidth = f:GetWidth() - 2 * sizeInset
+	f.BarAutoShot:SetWidth(1)-- Must be > 0 or UI doesn't resize.
+	f.BarAutoShot:SetHeight(f:GetHeight() - 2 * sizeInset)
 end
 
 local setFramePosition = function(f, s)
 	FrameLock.SideEffectRestoreSize(s, {
 		w=240, h=14, dx=240 * -0.5, dy=-136,
 	})
-
 	f:SetWidth(s.FrameMeta.W)
 	f:SetHeight(s.FrameMeta.H)
 	f:SetPoint("TopLeft", s.FrameMeta.X, s.FrameMeta.Y)
-
-	setBarAutoShot(f)
 end
 
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("HIGH")
-	f.BarAutoShot = CreateFrame("Frame", nil, f)
 
-	f:SetBackdrop({
-		bgFile = "Interface/BUTTONS/WHITE8X8",
-		edgeFile = "Interface/BUTTONS/WHITE8X8",
-		edgeSize = BORDER,
-		tile = false,
-	})
+	f.BarAutoShot = CreateFrame("Frame", nil, f)
 	f.BarAutoShot:SetBackdrop({
 		bgFile = "Interface/BUTTONS/WHITE8X8",
 		tile = false,
 	})
-	f:SetBackdropColor(0, 0, 0, 0.8)
-	f:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)
 
 	setFramePosition(f, store)
-	local resizeBarAutoShot = function() setBarAutoShot(f) end
+	styleBarAutoShot(f)
 
 	FrameLock.SideEffectMakeMoveable(f, store)
 	FrameLock.SideEffectMakeResizeable(f, store, {
-		GripMargin=0,
-		OnResizeDrag=resizeBarAutoShot,
-		OnResizeEnd=resizeBarAutoShot,
+		GripMargin=4,
+		OnResizeDrag=function() styleBarAutoShot(f) end,
+		OnResizeEnd=function() styleBarAutoShot(f) end,
 		IsCenterX=true,
 	})
 	return f
@@ -161,7 +170,7 @@ local updateBarShooting = function()
 	local r, g, b = unpack(store.ColorShoot)
 	frame.BarAutoShot:SetBackdropColor(r, g, b, 0.8)
 	if isCasting then
-		frame.BarAutoShot:SetWidth(0)
+		frame.BarAutoShot:SetWidth(1)
 	else
 		frame.BarAutoShot:SetWidth(maxBarWidth * timeShoot.GetPercentCompleted())
 	end
@@ -172,7 +181,7 @@ local tryHideBar = function()
 		frame:SetAlpha(0)
 	else
 		-- Reset bar if it's locked open
-		frame.BarAutoShot:SetWidth(0)
+		frame.BarAutoShot:SetWidth(1)
 		timeShoot.Reset()
 		timeReload.Reset()
 	end
@@ -417,7 +426,6 @@ local GetSecondsRemainingShoot = function()
 	local t = timeShoot.GetRemaining()
 	local isFiring = isShooting and not isReloading
 	if isFiring then
-		if t < -0.2 then DEFAULT_CHAT_FRAME:AddMessage(t) end
 		return true, t
 	else
 		return false, 0
@@ -433,6 +441,9 @@ local onEnable = function()
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
 	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) else frame:SetAlpha(1) end
+	BorderStyle.Subscribe(MODULE_ID, function(_style)
+		if frame ~= nil then styleBarAutoShot(frame) end
+	end)
 	Spellcast.CastableShot.Subscribe(MODULE_ID, onSpellcast)
 	Spellcast.Instant.Subscribe(MODULE_ID, function(spellName)
 		isFiredInstant = Spell.PredInstantShotByName(spellName)
@@ -443,6 +454,7 @@ end
 local onDisable = function()
 	Spellcast.Instant.Dispose(MODULE_ID)
 	Spellcast.CastableShot.Dispose(MODULE_ID)
+	BorderStyle.Dispose(MODULE_ID)
 	if frame ~= nil then
 		frame:Hide()
 		for _k, e in EVENTS do frame:UnregisterEvent(e) end
@@ -464,7 +476,10 @@ return {
 	end,
 	OnResetFrames = function()
 		store.FrameMeta = nil
-		if frame then setFramePosition(frame, store) end
+		if frame then
+			setFramePosition(frame, store)
+			styleBarAutoShot(frame)
+		end
 	end,
 	---@param savedVariables StoreAutoShotTimer
 	OnSavedVariablesRestore = function(savedVariables)
@@ -475,7 +490,7 @@ return {
 	end,
 	OnSavedVariablesPersist = function() return store end,
 	UpdateDirection = function()
-		if frame then setBarAutoShot(frame) end
+		if frame then styleBarAutoShot(frame) end
 	end,
 	-- API exports
 	GetSecondsRemainingReload = GetSecondsRemainingReload,

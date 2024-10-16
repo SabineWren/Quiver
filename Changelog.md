@@ -1,6 +1,7 @@
 # 3.1.0
-
 ### Features
+Implemented tooltip border style option for auto shot timer and castbar. Improved grid-snapping for these frames when dragging or resizing.
+
 API functions:
 - Quiver.FdPrepareTrap
 - Quiver.GetSecondsRemainingReload
@@ -23,6 +24,7 @@ Timing functions return true/false (isShooting/isReloading) and the time remaini
 
 ### Bugfixes
 1. Fixed Multi-Shot occasionally triggering a reload on the auto shot bar.
+2. Adjusted shoot time from 0.65 to 0.5 seconds. This is different from other addons, but seems more accurate.
 
 # 3.0.0
 ### Breaking Changes
