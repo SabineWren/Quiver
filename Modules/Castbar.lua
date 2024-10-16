@@ -1,29 +1,56 @@
 local FrameLock = require "Events/FrameLock.lua"
 local Spellcast = require "Events/Spellcast.lua"
+local BorderStyle = require "Modules/BorderStyle.provider.lua"
 local Haste = require "Shiver/Haste.lua"
 
 local MODULE_ID = "Castbar"
 local store = nil
 local frame = nil
 
-local BORDER = 1
 local maxBarWidth = 0
 local castTime = 0
 local isCasting = false
 local timeStartCasting = 0
 
 -- ************ UI ************
-local setCastbarSize = function(f, s)
-	maxBarWidth = s.FrameMeta.W - 2 * BORDER
+local styleCastbar = function(f)
+	local sizeInset = BorderStyle.GetInsetSize()
+
+	if BorderStyle.GetStyle() == "Tooltip" then
+		f:SetBackdrop({
+			bgFile = "Interface/BUTTONS/WHITE8X8",
+			edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+			edgeSize = 10,
+			insets = { left=sizeInset, right=sizeInset, top=sizeInset, bottom=sizeInset },
+		})
+		f:SetBackdropBorderColor(BorderStyle.GetColor())
+	else
+		f:SetBackdrop({
+			bgFile = "Interface/BUTTONS/WHITE8X8",
+			edgeFile = "Interface/BUTTONS/WHITE8X8",
+			edgeSize = sizeInset,
+		})
+		f:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)
+	end
+	f:SetBackdropColor(0, 0, 0, 0.8)
+
+	maxBarWidth = f:GetWidth() - 2 * sizeInset
+	f.Castbar:SetPoint("Left", f, "Left", sizeInset, 0)
 	f.Castbar:SetWidth(1)
+	f.Castbar:SetHeight(f:GetHeight() - 2 * sizeInset)
+
 	f.SpellName:SetWidth(maxBarWidth)
 	f.SpellTime:SetWidth(maxBarWidth)
 
 	local path, _size, flags = f.SpellName:GetFont()
-	local calcFontSize = s.FrameMeta.H - 4 * BORDER
+	local textMargin = 5
+	local calcFontSize = f:GetHeight() - sizeInset - textMargin
 	local fontSize = calcFontSize > 18 and 18
 		or calcFontSize < 10 and 10
 		or calcFontSize
+
+	f.SpellName:SetPoint("Left", f, "Left", textMargin, 0)
+	f.SpellTime:SetPoint("Right", f, "Right", -textMargin, 0)
 
 	f.SpellName:SetFont(path, fontSize, flags)
 	f.SpellTime:SetFont(path, fontSize, flags)
@@ -36,51 +63,33 @@ local setFramePosition = function(f, s)
 	f:SetWidth(s.FrameMeta.W)
 	f:SetHeight(s.FrameMeta.H)
 	f:SetPoint("TopLeft", s.FrameMeta.X, s.FrameMeta.Y, 0, 0)
-	setCastbarSize(f, s)
 end
 
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("HIGH")
-	local centerVertically = function(ele)
-		ele:SetPoint("Top", f, "Top", 0, -BORDER)
-		ele:SetPoint("Bottom", f, "Bottom", 0, BORDER)
-	end
 
 	f.Castbar = CreateFrame("Frame", nil, f)
-	f.Castbar:SetPoint("Left", f, "Left", BORDER, 0)
+	f.Castbar:SetBackdrop({
+		bgFile = "Interface/BUTTONS/WHITE8X8",
+	})
 
 	f.SpellName = f.Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	f.SpellName:SetPoint("Left", f, "Left", 4*BORDER, 0)
 	f.SpellName:SetJustifyH("Left")
 	f.SpellName:SetTextColor(1, 1, 1)
 
 	f.SpellTime = f.Castbar:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	f.SpellTime:SetPoint("Right", f, "Right", -4*BORDER, 0)
 	f.SpellTime:SetJustifyH("Right")
 	f.SpellTime:SetTextColor(1, 1, 1)
 
-	f:SetBackdrop({
-		bgFile = "Interface/BUTTONS/WHITE8X8",
-		edgeFile = "Interface/BUTTONS/WHITE8X8",
-		edgeSize = BORDER,
-		tile = false,
-	})
-	f.Castbar:SetBackdrop({
-		bgFile = "Interface/BUTTONS/WHITE8X8", tile = false,
-	})
-	f:SetBackdropColor(0, 0, 0, 0.8)
-	f:SetBackdropBorderColor(0.2, 0.2, 0.2, 0.8)
-
-	centerVertically(f.Castbar)
-	centerVertically(f.SpellTime)
-	centerVertically(f.SpellName)
-
 	setFramePosition(f, store)
+	styleCastbar(f)
+
 	FrameLock.SideEffectMakeMoveable(f, store)
 	FrameLock.SideEffectMakeResizeable(f, store, {
 		GripMargin=0,
-		OnResizeEnd=function() setCastbarSize(f, store) end,
+		OnResizeDrag=function() styleCastbar(f) end,
+		OnResizeEnd=function() styleCastbar(f) end,
 		IsCenterX=true,
 	})
 	return f
@@ -142,16 +151,22 @@ local EVENTS = {
 }
 local onEnable = function()
 	if frame == nil then frame = createUI() end
+	if Quiver_Store.IsLockedFrames then frame:Hide() else frame:Show() end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
 	for _k, e in EVENTS do frame:RegisterEvent(e) end
-	if Quiver_Store.IsLockedFrames then frame:Hide() else frame:Show() end
+	BorderStyle.Subscribe(MODULE_ID, function(_style)
+		if frame ~= nil then styleCastbar(frame) end
+	end)
 	Spellcast.CastableShot.Subscribe(MODULE_ID, onSpellcast)
 end
 local onDisable = function()
 	Spellcast.CastableShot.Dispose(MODULE_ID)
-	frame:Hide()
-	for _k, e in EVENTS do frame:UnregisterEvent(e) end
+	BorderStyle.Dispose(MODULE_ID)
+	if frame ~= nil then
+		frame:Hide()
+		for _k, e in EVENTS do frame:UnregisterEvent(e) end
+	end
 end
 
 ---@type QqModule
@@ -165,7 +180,10 @@ return {
 	OnInterfaceUnlock = function() frame:Show() end,
 	OnResetFrames = function()
 		store.FrameMeta = nil
-		if frame then setFramePosition(frame, store) end
+		if frame then
+			setFramePosition(frame, store)
+			styleCastbar(frame)
+		end
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables

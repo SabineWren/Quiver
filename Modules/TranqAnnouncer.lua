@@ -1,4 +1,5 @@
 local FrameLock = require "Events/FrameLock.lua"
+local BorderStyle = require "Modules/BorderStyle.provider.lua"
 local Spell = require "Shiver/API/Spell.lua"
 local L = require "Shiver/Lib/All.lua"
 local Print = require "Util/Print.lua"
@@ -170,7 +171,7 @@ local createUI = function()
 		edgeSize = 16,
 		insets = { left=INSET, right=INSET, top=INSET, bottom=INSET },
 	})
-	frame:SetBackdropBorderColor(0.6, 0.9, 0.7, 1.0)
+	frame:SetBackdropBorderColor(BorderStyle.GetColor())
 
 	setFramePosition(frame, store)
 	FrameLock.SideEffectMakeMoveable(frame, store)

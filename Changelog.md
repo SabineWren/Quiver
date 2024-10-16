@@ -1,5 +1,7 @@
 # 3.1.0
 ### Features
+Implemented tooltip border style option for auto shot timer and castbar.
+
 API functions:
 - Quiver.FdPrepareTrap
 - Quiver.GetSecondsRemainingReload

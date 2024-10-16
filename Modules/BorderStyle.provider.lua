@@ -28,15 +28,17 @@ return {
 		end
 	end,
 
-	-- TODO Ideally, subscribing would return a provider instance that can access state.
-	-- However, that's going to require considerable re-architecting to support with type safety.
-	---@return BorderStyle
-	---@nodiscard
-	GetStyle = function() return Quiver_Store.Border_Style end,
+	GetColor = function() return 0.6, 0.7, 0.7, 1.0 end,
 
 	---@return integer
 	---@nodiscard
 	GetInsetSize = function()
 		return Quiver_Store.Border_Style == "Tooltip" and 3 or 1
 	end,
+
+	-- TODO Ideally, subscribing would return a provider instance that can access state.
+	-- However, that's going to require considerable re-architecting to support with type safety.
+	---@return BorderStyle
+	---@nodiscard
+	GetStyle = function() return Quiver_Store.Border_Style end,
 }

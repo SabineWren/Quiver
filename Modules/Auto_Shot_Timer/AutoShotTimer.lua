@@ -1,6 +1,6 @@
-local BorderStyle = require "Modules/BorderStyle.provider.lua"
 local FrameLock = require "Events/FrameLock.lua"
 local Spellcast = require "Events/Spellcast.lua"
+local BorderStyle = require "Modules/BorderStyle.provider.lua"
 local Spell = require "Shiver/API/Spell.lua"
 local Haste = require "Shiver/Haste.lua"
 
@@ -107,7 +107,7 @@ local styleBarAutoShot = function(f)
 			edgeSize = 10,
 			insets = { left=sizeInset, right=sizeInset, top=sizeInset, bottom=sizeInset },
 		})
-		f:SetBackdropBorderColor(0.6, 0.9, 0.7, 1.0)
+		f:SetBackdropBorderColor(BorderStyle.GetColor())
 	else
 		f:SetBackdrop({
 			bgFile = "Interface/BUTTONS/WHITE8X8",
@@ -136,7 +136,6 @@ local setFramePosition = function(f, s)
 	FrameLock.SideEffectRestoreSize(s, {
 		w=240, h=14, dx=240 * -0.5, dy=-136,
 	})
-
 	f:SetWidth(s.FrameMeta.W)
 	f:SetHeight(s.FrameMeta.H)
 	f:SetPoint("TopLeft", s.FrameMeta.X, s.FrameMeta.Y)
@@ -154,13 +153,12 @@ local createUI = function()
 
 	setFramePosition(f, store)
 	styleBarAutoShot(f)
-	local resizeBarAutoShot = function() styleBarAutoShot(f) end
 
 	FrameLock.SideEffectMakeMoveable(f, store)
 	FrameLock.SideEffectMakeResizeable(f, store, {
 		GripMargin=0,
-		OnResizeDrag=resizeBarAutoShot,
-		OnResizeEnd=resizeBarAutoShot,
+		OnResizeDrag=function() styleBarAutoShot(f) end,
+		OnResizeEnd=function() styleBarAutoShot(f) end,
 		IsCenterX=true,
 	})
 	return f
@@ -172,7 +170,7 @@ local updateBarShooting = function()
 	local r, g, b = unpack(store.ColorShoot)
 	frame.BarAutoShot:SetBackdropColor(r, g, b, 0.8)
 	if isCasting then
-		frame.BarAutoShot:SetWidth(0)
+		frame.BarAutoShot:SetWidth(1)
 	else
 		frame.BarAutoShot:SetWidth(maxBarWidth * timeShoot.GetPercentCompleted())
 	end
@@ -183,7 +181,7 @@ local tryHideBar = function()
 		frame:SetAlpha(0)
 	else
 		-- Reset bar if it's locked open
-		frame.BarAutoShot:SetWidth(0)
+		frame.BarAutoShot:SetWidth(1)
 		timeShoot.Reset()
 		timeReload.Reset()
 	end
@@ -428,7 +426,6 @@ local GetSecondsRemainingShoot = function()
 	local t = timeShoot.GetRemaining()
 	local isFiring = isShooting and not isReloading
 	if isFiring then
-		if t < -0.2 then DEFAULT_CHAT_FRAME:AddMessage(t) end
 		return true, t
 	else
 		return false, 0
