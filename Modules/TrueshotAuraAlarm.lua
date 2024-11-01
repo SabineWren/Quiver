@@ -26,7 +26,7 @@ local aura = (function()
 		UpdateUI = function()
 			knowsAura = Spell.PredSpellLearned(Quiver.L.Spell["Trueshot Aura"])
 				or not Quiver_Store.IsLockedFrames
-			isActive, timeLeft = Aura.GetIsActiveAndTimeLeftByTexture(QUIVER.Icon.Trueshot)
+			isActive, timeLeft = Aura.GetIsActiveAndTimeLeftByTexture(QUIVER.Icon.TrueshotAura)
 			lastUpdate = 0
 
 			if not Quiver_Store.IsLockedFrames or knowsAura and not isActive then
@@ -65,7 +65,7 @@ local createUI = function()
 	setFramePosition(f, store)
 
 	f.Icon = CreateFrame("Frame", nil, f)
-	f.Icon:SetBackdrop({ bgFile = QUIVER.Icon.Trueshot, tile = false })
+	f.Icon:SetBackdrop({ bgFile = QUIVER.Icon.TrueshotAura, tile = false })
 	f.Icon:SetPoint("Left", f, "Left", INSET, 0)
 	f.Icon:SetPoint("Right", f, "Right", -INSET, 0)
 	f.Icon:SetPoint("Top", f, "Top", 0, -INSET)

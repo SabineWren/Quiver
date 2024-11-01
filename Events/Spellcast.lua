@@ -18,7 +18,7 @@ local checkGCD = function()
 end
 
 -- Castable shot event has 2 triggers:
--- 1. User starts casting Aimed Shot, Multi-Shot, or Trueshot
+-- 1. User starts casting Aimed Shot, Multi-Shot, or Steady Shot
 -- 2. User is already casting, but presses the spell again
 -- It's up to the subscriber to differentiate.
 ---@type (fun(x: string, y: string): nil)[]

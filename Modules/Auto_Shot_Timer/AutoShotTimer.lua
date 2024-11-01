@@ -16,7 +16,7 @@ local MODULE_ID = "AutoShotTimer"
 local store = nil---@type StoreAutoShotTimer
 local frame = nil
 local maxBarWidth = 0
--- Aimed Shot, Multi-Shot, Trueshot
+-- Aimed Shot, Multi-Shot, Steady Shot
 local castTime = 0
 local isCasting = false
 local isFiredInstant = false

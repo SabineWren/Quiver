@@ -1,3 +1,7 @@
+# 3.1.0-twow-cc2
+Added "Steady Shot" alias for "Trueshot".
+- Only necessary for English clients on Turtle WoW 1.17.2 servers
+
 # 3.1.0
 ### Features
 Implemented tooltip border style option for auto shot timer and castbar. Improved grid-snapping for these frames when dragging or resizing.
@@ -18,8 +22,8 @@ Timing functions return true/false (isShooting/isReloading) and the time remaini
 ```lua
 -- This macro detects when the auto shot timer bugs out by more than
 -- 0.25 seconds, and switches from CastNoClip to CastSpellByName.
--- Trueshot can hang a while before firing, so tune the cutoff.
-/script local a, b = Quiver.GetSecondsRemainingShoot(); local c = a and b < -0.25; local f = c and CastSpellByName or Quiver.CastNoClip; f("Trueshot")
+-- Steady Shot can hang a while before firing, so tune the cutoff.
+/script local a, b = Quiver.GetSecondsRemainingShoot(); local c = a and b < -0.25; local f = c and CastSpellByName or Quiver.CastNoClip; f("Steady Shot")
 ```
 
 ### Bugfixes

@@ -35,7 +35,7 @@ return {
 	["Shoot / Reload"] = "射击/装填",
 	["Shooting"] = "正在射击",
 	["Short Range"] = "近距离",
-	["Shows Aimed Shot, Multi-Shot, and Trueshot."] = "显示瞄准射击、多重射击和稳固射击的施法条。",
+	["Shows Aimed Shot, Multi-Shot, and Steady Shot."] = "显示瞄准射击、多重射击和稳固射击的施法条。",
 	["Shows when abilities are in range. Requires spellbook abilities placed somewhere on your action bars."] = "显示技能是否在范围内。需要将技能书中的技能放在动作条上。",
 	["Simple"] = "简单的",
 	["Swap Shoot and Reload Colours"] = "交换射击和装填颜色",

@@ -50,13 +50,13 @@ Inspired by:
 ### Castbar
 <img src="/Media/Bar_3_Casting.jpg" height="180px">
 
-- Shows Aimed Shot, Multi-Shot, and Trueshot
+- Shows Aimed Shot, Multi-Shot, and Steady Shot
 
 ### Lua Functions
 #### CastNoClip
-Cast spell by name if it won't clip a shot. Requires the Auto Shot module.
+Cast spell by name if it won't clip a shot. Requires the Auto Shot module enabled in the config menu.
 ```lua
-/script Quiver.CastNoClip("Trueshot")
+/script Quiver.CastNoClip("Steady Shot")
 ```
 
 #### CastPetAction
@@ -82,8 +82,8 @@ Timing functions return true/false (isShooting/isReloading) and the time remaini
 ```lua
 -- This macro detects when the auto shot timer bugs out by more than
 -- 0.25 seconds, and switches from CastNoClip to CastSpellByName.
--- Trueshot can hang a while before firing, so tune the cutoff.
-/script local a, b = Quiver.GetSecondsRemainingShoot(); local c = a and b < -0.25; local f = c and CastSpellByName or Quiver.CastNoClip; f("Trueshot")
+-- Steady Shot can hang a while before firing, so tune the cutoff.
+/script local a, b = Quiver.GetSecondsRemainingShoot(); local c = a and b < -0.25; local f = c and CastSpellByName or Quiver.CastNoClip; f("Steady Shot")
 ```
 
 #### PredMidShot – Low level predicate for no-clip behavior. Used internally to implement CastNoClip.
