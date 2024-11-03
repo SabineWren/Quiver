@@ -120,13 +120,16 @@ Shows the Tranquilizing Shot cooldown of every hunter. Announces when casting Tr
 This checks if you have Trueshot Aura talented. If so, Quiver tracks the buff and duration, and warns you to recast it.
 
 ## Installation
-### Option 1 - Pre-bundled zip
+### Option 1 - Pre-bundled release zip
 Simplest installation, but doesn't automate version updates.
 1. [Download](https://github.com/SabineWren/Quiver/releases) latest version
 2. Extract the Zip file
-3. Change the folder name to `Quiver`
+3. Change the folder name from `Quiver-x.x.x` to `Quiver`
 4. Move folder into `<WoW install>/Interface/AddOns/`
 5. Restart WoW
+
+> [!Tip]
+> Release zip filenames ends with a version `-x.x.x` and contain the file `Quiver.bundle.lua`.
 
 ### Option 2 - Clone latest release
 Requires Git. Easy to update with addon managers or `git pull --rebase`
