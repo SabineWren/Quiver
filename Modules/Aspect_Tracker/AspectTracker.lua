@@ -86,7 +86,7 @@ end
 
 -- ************ Event Handlers ************
 --- @type Event[]
-local EVENTS = {
+local _EVENTS = {
 	"PLAYER_AURAS_CHANGED",
 	"SPELLS_CHANGED",-- Open or click thru spellbook, learn/unlearn spell
 }
@@ -103,12 +103,12 @@ local onEnable = function()
 	if frame == nil then frame = createUI() end
 	updateUI()
 	frame:SetScript("OnEvent", handleEvent)
-	for _k, e in EVENTS do frame:RegisterEvent(e) end
+	for _k, e in _EVENTS do frame:RegisterEvent(e) end
 	frame:Show()
 end
 local onDisable = function()
 	frame:Hide()
-	for _k, e in EVENTS do frame:UnregisterEvent(e) end
+	for _k, e in _EVENTS do frame:UnregisterEvent(e) end
 end
 
 ---@type QqModule

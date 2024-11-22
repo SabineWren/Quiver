@@ -117,7 +117,7 @@ end
 
 -- ************ Initialization ************
 --- @type Event[]
-local EVENTS = {
+local _EVENTS = {
 	"PLAYER_TARGET_CHANGED",
 	"UNIT_FACTION",
 }
@@ -125,13 +125,13 @@ local onEnable = function()
 	if frame == nil then frame, fontString = createUI() end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
-	for _k, e in EVENTS do frame:RegisterEvent(e) end
+	for _k, e in _EVENTS do frame:RegisterEvent(e) end
 	if Quiver_Store.IsLockedFrames then handleEvent() else frame:Show() end
 end
 
 local onDisable = function()
 	frame:Hide()
-	for _k, e in EVENTS do frame:UnregisterEvent(e) end
+	for _k, e in _EVENTS do frame:UnregisterEvent(e) end
 end
 
 ---@type QqModule

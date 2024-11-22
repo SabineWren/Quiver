@@ -247,7 +247,7 @@ local handleMsg = function(_source, msg)
 end
 
 --- @type Event[]
-local EVENTS = {
+local _EVENTS = {
 	"CHAT_MSG_ADDON",-- Also works with macros
 	"CHAT_MSG_SPELL_SELF_DAMAGE",-- Detect misses
 	"SPELL_UPDATE_COOLDOWN",
@@ -287,12 +287,12 @@ local onEnable = function()
 	if frame == nil then frame = createUI() end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
-	for _k, e in EVENTS do frame:RegisterEvent(e) end
+	for _k, e in _EVENTS do frame:RegisterEvent(e) end
 	if getCanHide() then hideFrameDeleteBars() else frame:Show() end
 end
 local onDisable = function()
 	frame:Hide()
-	for _k, e in EVENTS do frame:UnregisterEvent(e) end
+	for _k, e in _EVENTS do frame:UnregisterEvent(e) end
 end
 
 ---@type QqModule

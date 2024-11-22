@@ -1,5 +1,5 @@
 {
-	"cSpell.import": ["cSpell.json"],
+	"cSpell.import": ["./.vscode/cSpell.json"],
 	"editor.insertSpaces": false,
 	"files.exclude": {
 		"LICENSE": true,

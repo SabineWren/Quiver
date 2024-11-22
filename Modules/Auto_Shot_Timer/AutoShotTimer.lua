@@ -244,7 +244,7 @@ end
 -> ITEM_LOCK_CHANGED (auto)
 ]]
 --- @type Event[]
-local EVENTS = {
+local _EVENTS = {
 	-- Fires after SPELLCAST_STOP, but before ITEM_LOCK_CHANGED.
 	-- Use to ignore whitelisted inventory events corresponding to consumables.
 	"CHAT_MSG_SPELL_SELF_BUFF",
@@ -439,7 +439,7 @@ local onEnable = function()
 	end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
-	for _k, e in EVENTS do frame:RegisterEvent(e) end
+	for _k, e in _EVENTS do frame:RegisterEvent(e) end
 	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) else frame:SetAlpha(1) end
 	BorderStyle.Subscribe(MODULE_ID, function(_style)
 		if frame ~= nil then styleBarAutoShot(frame) end
@@ -457,7 +457,7 @@ local onDisable = function()
 	BorderStyle.Dispose(MODULE_ID)
 	if frame ~= nil then
 		frame:Hide()
-		for _k, e in EVENTS do frame:UnregisterEvent(e) end
+		for _k, e in _EVENTS do frame:UnregisterEvent(e) end
 	end
 end
 

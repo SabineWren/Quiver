@@ -35,7 +35,7 @@ local checkGroupGrew = (function()
 end)()
 
 --- @type Event[]
-local EVENTS = {
+local _EVENTS = {
 	"CHAT_MSG_ADDON",
 	"PARTY_MEMBERS_CHANGED",
 	"PLAYER_ENTERING_WORLD",
@@ -67,5 +67,5 @@ return function()
 	local frame = CreateFrame("Frame", nil)
 	frame:SetScript("OnEvent", handleEvent)
 	-- We don't need to unsubscribe, as we never disable the update notifier
-	for _k, e in EVENTS do frame:RegisterEvent(e) end
+	for _k, e in _EVENTS do frame:RegisterEvent(e) end
 end

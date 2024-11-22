@@ -143,7 +143,7 @@ end
 
 -- ************ Initialization ************
 --- @type Event[]
-local EVENTS = {
+local _EVENTS = {
 	"SPELLCAST_DELAYED",
 	"SPELLCAST_FAILED",
 	"SPELLCAST_INTERRUPTED",
@@ -154,7 +154,7 @@ local onEnable = function()
 	if Quiver_Store.IsLockedFrames then frame:Hide() else frame:Show() end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
-	for _k, e in EVENTS do frame:RegisterEvent(e) end
+	for _k, e in _EVENTS do frame:RegisterEvent(e) end
 	BorderStyle.Subscribe(MODULE_ID, function(_style)
 		if frame ~= nil then styleCastbar(frame) end
 	end)
@@ -165,7 +165,7 @@ local onDisable = function()
 	BorderStyle.Dispose(MODULE_ID)
 	if frame ~= nil then
 		frame:Hide()
-		for _k, e in EVENTS do frame:UnregisterEvent(e) end
+		for _k, e in _EVENTS do frame:UnregisterEvent(e) end
 	end
 end
 
