@@ -1,6 +1,7 @@
 local Button = require "Component/Button.lua"
+local Const = require "Constants.lua"
 
-local _GAP = QUIVER.Size.Gap
+local _GAP = Const.Size.Gap
 local _GAP_RESET = 4
 
 ---@class QqEditBox
@@ -20,14 +21,14 @@ function QqEditBox:Create(parent, tooltipText)
 	---@type QqEditBox
 	local r = {
 		Box = box,
-		Reset = Button:Create(box, QUIVER.Icon.Reset),
+		Reset = Button:Create(box, Const.Icon.Reset),
 	}
 	r.Reset.TooltipText = tooltipText
 	setmetatable(r, self)
 	self.__index = self
 
-	local fMarginLeft = QUIVER.Size.Border + _GAP
-	local fMarginRight = QUIVER.Size.Border + _GAP + QUIVER.Size.Icon + _GAP_RESET
+	local fMarginLeft = Const.Size.Border + _GAP
+	local fMarginRight = Const.Size.Border + _GAP + Const.Size.Icon + _GAP_RESET
 
 	local xr = r.Reset.Container:GetWidth() + _GAP_RESET
 	r.Reset.Container:SetPoint("Right", box, "Right", xr, 0)

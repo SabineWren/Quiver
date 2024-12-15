@@ -1,4 +1,5 @@
 local Button = require "Component/Button.lua"
+local Const = require "Constants.lua"
 
 --[[
 WoW persists positions for frames that have global names.
@@ -180,7 +181,7 @@ local SideEffectMakeResizeable = function(frame, store, args)
 		frame:SetScript("OnSizeChanged", onResizeDrag)
 	end
 
-	local handle = Button:Create(frame, QUIVER.Icon.GripHandle, nil, 0.5)
+	local handle = Button:Create(frame, Const.Icon.GripHandle, nil, 0.5)
 	addFrameResizable(frame, handle)
 	handle.Container:SetFrameLevel(100)-- Should be top element
 	handle.Container:SetPoint("BottomRight", frame, "BottomRight", -margin, margin)

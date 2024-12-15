@@ -1,4 +1,5 @@
 local Util = require "Component/_Util.lua"
+local Const = require "Constants.lua"
 local L = require "Shiver/Lib/All.lua"
 local Sugar = require "Shiver/Sugar.lua"
 
@@ -48,7 +49,7 @@ local QqSwitch = {}
 
 ---@param self QqSwitch
 local resetTexture = function(self)
-	local path = self.isChecked and QUIVER.Icon.ToggleOn or QUIVER.Icon.ToggleOff
+	local path = self.isChecked and Const.Icon.ToggleOn or Const.Icon.ToggleOff
 	self.Texture:SetTexture(path)
 
 	local r, g, b = Util.SelectColor(self)

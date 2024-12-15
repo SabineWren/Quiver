@@ -1,4 +1,5 @@
 local Util = require "Component/_Util.lua"
+local Const = require "Constants.lua"
 local L = require "Shiver/Lib/All.lua"
 
 local _BORDER, _INSET, _SPACING = 1, 4, 4
@@ -23,7 +24,7 @@ local createIcon = function(container)
 
 	local t = f:CreateTexture(nil, "OVERLAY")
 	t:SetAllPoints(f)
-	t:SetTexture(QUIVER.Icon.CaretDown)
+	t:SetTexture(Const.Icon.CaretDown)
 	return { Frame=f, Texture=t }
 end
 

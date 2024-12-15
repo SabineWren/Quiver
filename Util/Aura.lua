@@ -1,10 +1,11 @@
+local Const = require "Constants.lua"
 local ScanningTooltip = require "Shiver/ScanningTooltip.lua"
 
 -- This doesn't work for duplicate textures (ex. cheetah + zg mount).
 -- For those you have to scan by name using the GameTooltip.
 local GetIsActiveAndTimeLeftByTexture = function(targetTexture)
 	-- This seems to check debuffs as well (tested with deserter)
-	local maxIndex = QUIVER.Aura_Cap - 1
+	local maxIndex = Const.Aura_Cap - 1
 	for i=0, maxIndex do
 		local texture = GetPlayerBuffTexture(i)
 		if texture == targetTexture then
@@ -19,7 +20,7 @@ end
 ---@nodiscard
 local PredBuffActive = function(buffname)
 	return ScanningTooltip.Scan(function(tooltip)
-		for i=0, QUIVER.Buff_Cap do
+		for i=0, Const.Buff_Cap do
 			local buffIndex, _untilCancelled = GetPlayerBuff(i, "HELPFUL|PASSIVE")
 			if buffIndex >= 0 then
 				tooltip:ClearLines()
@@ -38,7 +39,7 @@ end
 --[[
 local PredIsBuffActiveTimeLeftByName = function(buffname)
 	local tooltip = resetTooltip()
-	for i=0,QUIVER.Buff_Cap do
+	for i=0, Const.Buff_Cap do
 		local buffIndex, _untilCancelled = GetPlayerBuff(i, "HELPFUL|PASSIVE")
 		if buffIndex >= 0 then
 			tooltip:ClearLines()

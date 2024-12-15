@@ -1,4 +1,4 @@
-QUIVER = {
+return {
 	-- I don't know if hidden auras show via GameTooltip.
 	Buff_Cap = 32,-- I think UI shows up to 24.
 	Debuff_Cap = 24,-- UI shows 16. Turtle allows 8 more hidden.

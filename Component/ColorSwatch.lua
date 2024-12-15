@@ -1,4 +1,5 @@
 local Button = require "Component/Button.lua"
+local Const = require "Constants.lua"
 
 ---@param color Color
 ---@param button Frame
@@ -72,7 +73,7 @@ function ColorSwatch:Create(parent, labelText, color)
 	r.Label:SetPoint("Left", container, "Left", 0, 0)
 	r.Label:SetText(labelText)
 
-	local reset = Button:Create(container, QUIVER.Icon.Reset)
+	local reset = Button:Create(container, Const.Icon.Reset)
 	reset.TooltipText = Quiver.T["Reset Color"]
 	reset.HookClick = function()
 		color:Reset()

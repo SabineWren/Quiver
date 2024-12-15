@@ -5,5 +5,4 @@
 ## Version: 3.1.0
 ## SavedVariables: Quiver_Store
 
-Constants.lua
 Quiver.bundle.lua

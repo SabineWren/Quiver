@@ -1,3 +1,4 @@
+local Const = require "Constants.lua"
 local FrameLock = require "Events/FrameLock.lua"
 local Spellcast = require "Events/Spellcast.lua"
 local BorderStyle = require "Modules/BorderStyle.provider.lua"
@@ -187,7 +188,7 @@ return {
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
-		store.ColorCastbar = store.ColorCastbar or QUIVER.ColorDefault.Castbar
+		store.ColorCastbar = store.ColorCastbar or Const.ColorDefault.Castbar
 	end,
 	OnSavedVariablesPersist = function() return store end,
 }

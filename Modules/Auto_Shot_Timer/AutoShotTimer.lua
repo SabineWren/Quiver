@@ -1,3 +1,4 @@
+local Const = require "Constants.lua"
 local FrameLock = require "Events/FrameLock.lua"
 local Spellcast = require "Events/Spellcast.lua"
 local BorderStyle = require "Modules/BorderStyle.provider.lua"
@@ -475,8 +476,8 @@ return {
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
 		store.BarDirection = savedVariables.BarDirection or "LeftToRight"
-		store.ColorShoot = savedVariables.ColorShoot or QUIVER.ColorDefault.AutoShotShoot
-		store.ColorReload = savedVariables.ColorReload or QUIVER.ColorDefault.AutoShotReload
+		store.ColorShoot = savedVariables.ColorShoot or Const.ColorDefault.AutoShotShoot
+		store.ColorReload = savedVariables.ColorReload or Const.ColorDefault.AutoShotReload
 	end,
 	OnSavedVariablesPersist = function() return store end,
 	UpdateDirection = function()

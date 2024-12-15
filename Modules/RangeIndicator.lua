@@ -1,3 +1,4 @@
+local Const = require "Constants.lua"
 local FrameLock = require "Events/FrameLock.lua"
 local Action = require "Shiver/API/Action.lua"
 
@@ -149,14 +150,14 @@ return {
 	end,
 	OnSavedVariablesRestore = function(savedVariables)
 		store = savedVariables
-		store.ColorMelee = store.ColorMelee or QUIVER.ColorDefault.Range.Melee
-		store.ColorDeadZone = store.ColorDeadZone or QUIVER.ColorDefault.Range.DeadZone
-		store.ColorScareBeast = store.ColorScareBeast or QUIVER.ColorDefault.Range.ScareBeast
-		store.ColorScatterShot = store.ColorScatterShot or QUIVER.ColorDefault.Range.ScatterShot
-		store.ColorShort = store.ColorShort or QUIVER.ColorDefault.Range.Short
-		store.ColorLong = store.ColorLong or QUIVER.ColorDefault.Range.Long
-		store.ColorMark = store.ColorMark or QUIVER.ColorDefault.Range.Mark
-		store.ColorTooFar = store.ColorTooFar or QUIVER.ColorDefault.Range.TooFar
+		store.ColorMelee = store.ColorMelee or Const.ColorDefault.Range.Melee
+		store.ColorDeadZone = store.ColorDeadZone or Const.ColorDefault.Range.DeadZone
+		store.ColorScareBeast = store.ColorScareBeast or Const.ColorDefault.Range.ScareBeast
+		store.ColorScatterShot = store.ColorScatterShot or Const.ColorDefault.Range.ScatterShot
+		store.ColorShort = store.ColorShort or Const.ColorDefault.Range.Short
+		store.ColorLong = store.ColorLong or Const.ColorDefault.Range.Long
+		store.ColorMark = store.ColorMark or Const.ColorDefault.Range.Mark
+		store.ColorTooFar = store.ColorTooFar or Const.ColorDefault.Range.TooFar
 	end,
 	OnSavedVariablesPersist = function() return store end,
 }

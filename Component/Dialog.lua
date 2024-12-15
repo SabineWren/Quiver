@@ -1,3 +1,5 @@
+local Const = require "Constants.lua"
+
 local Create = function(padding)
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:Hide()
@@ -20,7 +22,7 @@ local Create = function(padding)
 
 	local btnCloseBottom = CreateFrame("Button", nil, f, "UIPanelButtonTemplate")
 	btnCloseBottom:SetWidth(70)
-	btnCloseBottom:SetHeight(QUIVER.Size.Button)
+	btnCloseBottom:SetHeight(Const.Size.Button)
 	btnCloseBottom:SetPoint("BottomRight", f, "BottomRight", -padding, padding)
 	btnCloseBottom:SetText(Quiver.T["Close"])
 	btnCloseBottom:SetScript("OnClick", function() f:Hide() end)

@@ -1,3 +1,4 @@
+local Const = require "Constants.lua"
 local FrameLock = require "Events/FrameLock.lua"
 local Spell = require "Shiver/API/Spell.lua"
 local Aura = require "Util/Aura.lua"
@@ -12,20 +13,20 @@ local TRANSPARENCY = 0.5
 
 local chooseIconTexture = function()
 	if Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Beast"]) then
-		return QUIVER.Icon.Aspect_Beast
+		return Const.Icon.Aspect_Beast
 	elseif Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Cheetah"]) then
-		return QUIVER.Icon.Aspect_Cheetah
+		return Const.Icon.Aspect_Cheetah
 	elseif Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Monkey"]) then
-		return QUIVER.Icon.Aspect_Monkey
+		return Const.Icon.Aspect_Monkey
 	elseif Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Wild"]) then
-		return QUIVER.Icon.Aspect_Wild
+		return Const.Icon.Aspect_Wild
 	elseif Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Wolf"]) then
-		return QUIVER.Icon.Aspect_Wolf
+		return Const.Icon.Aspect_Wolf
 	elseif Spell.PredSpellLearned(Quiver.L.Spell["Aspect of the Hawk"])
 		and not Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Hawk"])
 		or not Quiver_Store.IsLockedFrames
 	then
-		return QUIVER.Icon.Aspect_Hawk
+		return Const.Icon.Aspect_Hawk
 	else
 		return nil
 	end
