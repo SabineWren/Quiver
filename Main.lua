@@ -57,25 +57,18 @@ local initSlashCommandsAndModules = function()
 end
 
 --[[
--- TODO revisit this now that we don't load any pfUI plugins
-https://wowpedia.fandom.com/wiki/AddOn_loading_process
-All of these events fire on login and UI reload. We don't need to clutter chat
-until the user interacts with Quiver, and we don't pre-cache action bars. That
-means it's okay to load before other addons (action bars, chat windows).
-pfUI loads before we register plugins for it. Quiver comes alphabetically later,
-but it's safer to use a later event in case names change.
-
-ADDON_LOADED Fires each time any addon loads, but can't yet print to pfUI's chat menu
-PLAYER_LOGIN Fires once, but can't yet read talent tree
-PLAYER_ENTERING_WORLD fires on every load screen
-SPELLS_CHANGED fires every time the spellbook changes
+-- https://wowpedia.fandom.com/wiki/AddOn_loading_process
+-- Addon load alphabetically (affected by color characters)
+1 - ADDON_LOADED Fires each time any addon can load variables (arg1 = addon name) (can't yet print to pfUI chat frame)
+2 - VARIABLES_LOADED Fires once after variables are available to all addons
+3 - PLAYER_LOGIN Fires once, but can't yet read talent tree
 ]]
 local frame = CreateFrame("Frame", nil)
+frame:RegisterEvent("VARIABLES_LOADED")
 frame:RegisterEvent("PLAYER_LOGIN")
 frame:RegisterEvent("PLAYER_LOGOUT")
-frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function()
-	if event == "ADDON_LOADED" and arg1 == "Quiver" then
+	if event == "VARIABLES_LOADED" then
 		LoadLocale()-- Must run before everything else
 		Migrations()-- Modifies saved variables
 		savedVariablesRestore()-- Passes saved data to modules for init
