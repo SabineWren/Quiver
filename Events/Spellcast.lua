@@ -1,13 +1,8 @@
 local Action = require "Shiver/API/Action.lua"
 local Spell = require "Shiver/API/Spell.lua"
 local DB_SPELL = require "Shiver/Data/Spell.lua"
+local Log = require "Util/Log.lua"
 local Print = require "Util/Print.lua"
-
-local log = function(text)
-	if Quiver_Store.DebugLevel == "Verbose" then
-		DEFAULT_CHAT_FRAME:AddMessage(text)
-	end
-end
 
 -- Hooks get called even if spell didn't fire, but successful cast triggers GCD.
 local lastGcdStart = 0
@@ -77,8 +72,7 @@ local println = Print.PrefixedF("spellcast")
 local handleCastByName = function(nameLocalized, isCurrentAction)
 	local nameEnglish = Quiver.L.SpellReverse[nameLocalized]
 	if nameEnglish == nil then
-		log("Localized spellname not found: "..nameLocalized)
-		-- TODO implement zhCN
+		Log.Error("Localized spellname not found: "..nameLocalized)
 		nameEnglish = nameLocalized
 	else
 		local meta = DB_SPELL[nameEnglish]
@@ -105,7 +99,7 @@ CastSpell = function(spellIndex, bookType)
 	super.CastSpell(spellIndex, bookType)
 	local name, _rank = GetSpellName(spellIndex, bookType)
 	if name ~= nil then
-		log("Cast as spell... " .. name)
+		Log.Debug("Cast as spell... " .. name)
 		handleCastByName(name, Action.PredSomeActionBusy())
 	end
 end
@@ -116,7 +110,7 @@ end
 ---@return nil
 CastSpellByName = function(name, isSelf)
 	super.CastSpellByName(name, isSelf)
-	log("Cast by name... " .. name)
+	Log.Debug("Cast by name... " .. name)
 	handleCastByName(name, Action.PredSomeActionBusy())
 end
 
@@ -137,10 +131,10 @@ UseAction = function(slot, checkCursor, onSelf)
 		-- to duplicate the spell event since it won't change CD or start time.
 		local name, index = Spell.FindSpellByTexture(texturePath)
 		if name ~= nil and index ~= nil then
-			log("Cast as Action... " .. name)
+			Log.Debug("Cast as Action... " .. name)
 			handleCastByName(name, IsCurrentAction(slot))
 		else
-			log("Skip Action... ")
+			Log.Debug("Skip Action... ")
 		end
 	end
 end

@@ -1,5 +1,6 @@
 {
 	"cSpell.import": ["./.vscode/cSpell.json"],
+	"editor.detectIndentation": false,
 	"editor.insertSpaces": false,
 	"files.exclude": {
 		"LICENSE": true,
@@ -13,5 +14,9 @@
 	},
 	"search.exclude": {
 		"*.bundle.lua": true,
+		"node_modules": true,
 	},
+	"todo-tree.highlights.highlightDelay": 0,
+	"todo-tree.regex.regex": "--\\[\\[[\\s|\\n|\\r]*($TAGS)[\\s|\\n|\\r]*\\]\\]|--\\s*($TAGS)",
+	"todo-tree.tree.showCountsInTree": true,
 }

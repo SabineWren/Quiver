@@ -57,7 +57,7 @@ local initSlashCommandsAndModules = function()
 end
 
 --[[
-// TODO revisit this now that we don't load any pfUI plugins
+-- TODO revisit this now that we don't load any pfUI plugins
 https://wowpedia.fandom.com/wiki/AddOn_loading_process
 All of these events fire on login and UI reload. We don't need to clutter chat
 until the user interacts with Quiver, and we don't pre-cache action bars. That
@@ -76,7 +76,6 @@ frame:RegisterEvent("PLAYER_LOGOUT")
 frame:RegisterEvent("ADDON_LOADED")
 frame:SetScript("OnEvent", function()
 	if event == "ADDON_LOADED" and arg1 == "Quiver" then
-		-- TODO set preferred language in saved variables to use here
 		LoadLocale()-- Must run before everything else
 		Migrations()-- Modifies saved variables
 		savedVariablesRestore()-- Passes saved data to modules for init
