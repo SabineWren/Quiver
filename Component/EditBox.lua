@@ -4,7 +4,7 @@ local Const = require "Constants.lua"
 local _GAP = Const.Size.Gap
 local _GAP_RESET = 4
 
----@class QqEditBox
+---@class (exact) QqEditBox
 ---@field private __index? QqEditBox
 ---@field Box EditBox
 ---@field Reset QqButton
@@ -23,9 +23,9 @@ function QqEditBox:Create(parent, tooltipText)
 		Box = box,
 		Reset = Button:Create(box, Const.Icon.Reset),
 	}
-	r.Reset.TooltipText = tooltipText
 	setmetatable(r, self)
 	self.__index = self
+	r.Reset.TooltipText = tooltipText
 
 	local fMarginLeft = Const.Size.Border + _GAP
 	local fMarginRight = Const.Size.Border + _GAP + Const.Size.Icon + _GAP_RESET

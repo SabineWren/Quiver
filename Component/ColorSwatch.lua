@@ -48,27 +48,30 @@ local createButton = function(parent, color)
 	return f
 end
 
----@class ButtonColorPicker
+---@class (exact) QqColorSwatch
+---@field private __index? QqColorSwatch
 ---@field Button Frame
 ---@field Container Frame
 ---@field Label FontString
 ---@field WidthMinusLabel number
-local ColorSwatch = {}
+local QqColorSwatch = {}
 
 ---@param parent Frame
 ---@param labelText string
 ---@param color Color
----@return ButtonColorPicker
-function ColorSwatch:Create(parent, labelText, color)
+---@return QqColorSwatch
+function QqColorSwatch:Create(parent, labelText, color)
 	local container = CreateFrame("Frame", nil, parent)
 
-	---@type ButtonColorPicker
+	---@type QqColorSwatch
 	local r = {
 		Button = createButton(container, color),
 		Container = container,
 		Label = container:CreateFontString(nil, "BACKGROUND", "GameFontNormal"),
 		WidthMinusLabel = 0,
 	}
+	setmetatable(r, self)
+	self.__index = self
 
 	r.Label:SetPoint("Left", container, "Left", 0, 0)
 	r.Label:SetText(labelText)
@@ -90,4 +93,4 @@ function ColorSwatch:Create(parent, labelText, color)
 	return r
 end
 
-return ColorSwatch
+return QqColorSwatch

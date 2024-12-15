@@ -1,6 +1,6 @@
 ---@alias Rgb [number, number, number]
 
----@class Color
+---@class (exact) Color
 ---@field private __index? Color
 ---@field private cache Rgb
 ---@field private default Rgb
