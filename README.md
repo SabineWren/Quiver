@@ -1,7 +1,5 @@
 > [!IMPORTANT]
 > $${\color{red}\* \color{orange}\* \color{yellow}\*}$$ **[Installation Methods](#installation)** $${\color{yellow}\* \color{orange}\* \color{red}\*}$$
->
-> Use `/Quiver` or `/qq` to open the configuration menu.
 
 ## Features
 - [Aspect Tracker](#aspect-tracker)
@@ -13,6 +11,8 @@
 - [Trueshot Aura Alarm](#trueshot-aura-alarm)
 
 <img src="/Media/Config_UI_0f9e20.jpg" height="400px">
+
+Use `/Quiver` or `/qq` to open the configuration menu.
 
 ### Aspect Tracker
 Never lose track of your current aspect
