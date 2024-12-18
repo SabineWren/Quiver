@@ -46,7 +46,15 @@ local initSlashCommandsAndModules = function()
 	SLASH_QUIVER2 = "/quiver"
 	local _, cl = UnitClass("player")
 	if cl == "HUNTER" then
-		local frameConfigMenu = MainMenu.Create()
+		-- Support Aero animations if installed.
+		-- https://github.com/gashole/Aero
+		local aeroTarget = "QuiverConfigDialog"
+		local frameConfigMenu = MainMenu.Create(aeroTarget)
+		Aero = Aero or nil-- suppresses undefined global
+		if IsAddOnLoaded("Aero") and Aero ~= nil then
+			Aero:RegisterFrames(aeroTarget)
+		end
+
 		SlashCmdList["QUIVER"] = function(_args, _box) frameConfigMenu:Show() end
 		for _k, v in _G.Quiver_Modules do
 			if Quiver_Store.ModuleEnabled[v.Id] then v.OnEnable() end

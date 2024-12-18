@@ -141,11 +141,14 @@ local makeSelectDebugLevel = function(parent)
 	)
 end
 
-local Create = function()
+---@param frameName nil|string
+---@return Frame
+---@nodiscard
+local Create = function(frameName)
 	-- WoW uses border-box content sizing
 	local _PADDING_CLOSE = Const.Size.Border + 6
 	local _PADDING_FAR = Const.Size.Border + Const.Size.Gap
-	local dialog = Dialog.Create(_PADDING_CLOSE)
+	local dialog = Dialog.Create(_PADDING_CLOSE, frameName)
 
 	local titleText = "Quiver " .. GetAddOnMetadata("Quiver", "Version")
 	local titleBox = TitleBox.Create(dialog, titleText)

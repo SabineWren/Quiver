@@ -1,7 +1,11 @@
 local Const = require "Constants.lua"
 
-local Create = function(padding)
-	local f = CreateFrame("Frame", nil, UIParent)
+---@param padding number
+---@param frameName nil|string
+---@return Frame
+---@nodiscard
+local Create = function(padding, frameName)
+	local f = CreateFrame("Frame", frameName, UIParent)
 	f:Hide()
 	f:SetFrameStrata("DIALOG")
 	f:SetPoint("Center", nil, "Center", 0, 0)
