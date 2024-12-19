@@ -39,20 +39,20 @@ end
 ---@nodiscard
 local CalcCastTime = function(nameEnglish)
 	local meta = DB_SPELL[nameEnglish]
-	local baseTime = meta and meta.Time or 0
-	local offset = meta and meta.Offset or 0
-
 	local _,_, msLatency = GetNetStats()
 	local startLocal = GetTime()
 	local startLatAdjusted = startLocal + msLatency / 1000
 
-	if meta.Haste == "range" then
+	-- No spell metadata means it's not a spell we care about. Assume instant.
+	if meta == nil then
+		return 0, startLatAdjusted, startLocal
+	elseif meta.Haste == "range" then
 		local speedCurrent, _, _ , _, _, _ = UnitRangedDamage("player")
 		local speedBaseNil = calcRangedWeaponSpeedBase()
 		local speedBase = speedBaseNil and speedBaseNil or speedCurrent
 		local speedMultiplier = speedCurrent / speedBase
 		-- https://www.mmo-champion.com/content/2188-Patch-4-0-6-Feb-22-Hotfixes-Blue-Posts-Artworks-Comic
-		local casttime = (offset + baseTime * speedMultiplier) / 1000
+		local casttime = (meta.Offset + meta.Time * speedMultiplier) / 1000
 		return casttime, startLatAdjusted, startLocal
 	elseif meta.Haste == "none" then
 		return 0, startLatAdjusted, startLocal
@@ -62,8 +62,8 @@ local CalcCastTime = function(nameEnglish)
 		-- https://github.com/LuaLS/lua-language-server/issues/704
 		-- Even when narrowing, it doesn't support exhaustive checks (no issue).
 		-- The best we can do is provide some debug output for QA.
-		DEFAULT_CHAT_FRAME:AddMessage("Failed exhaustive check", 1, 0, 0)
-		DEFAULT_CHAT_FRAME:AddMessage(meta.Haste, 1, 0, 0)
+		DEFAULT_CHAT_FRAME:AddMessage("Failed exhaustive check", 1, 1, 0)
+		DEFAULT_CHAT_FRAME:AddMessage(meta.Haste, 1, 1, 0)
 		return 0, startLatAdjusted, startLocal
 	end
 end

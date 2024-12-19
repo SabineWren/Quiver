@@ -35,25 +35,25 @@ local FindSpellByTexture = function(texturePath)
 	return nil, nil
 end
 
---- Returns true if spell is instant cast
---- If meta is nil, we can't run cast time code, so assume instant.
----@param meta nil|{ Time: number; Offset: number }
+--- Returns true if spell is instant cast. If nil, assume instant.
+---@param name string
 ---@return boolean
 ---@nodiscard
-local PredInstant = function(meta)
+local PredInstantCast = function(name)
+	local meta = DB_SPELL[name]
 	if meta == nil then
 		return true
 	else
-		return 0 == meta.Time + meta.Offset
+		return meta.Haste == "none"
 	end
 end
 
 ---@param name string
 ---@return boolean
 ---@nodiscard
-local PredInstantShotByName = function(name)
+local PredInstantShot = function(name)
 	local meta = DB_SPELL[name]
-	return meta ~= nil and meta.IsAmmo and (meta.Offset + meta.Time == 0)
+	return meta ~= nil and meta.IsAmmo and PredInstantCast(name)
 end
 
 ---@param spellName string
@@ -92,7 +92,7 @@ return {
 	CheckNewGCD=CheckNewGCD,
 	FindSpellByTexture = FindSpellByTexture,
 	FindSpellIndex = FindSpellIndex,
-	PredInstant = PredInstant,
-	PredInstantShotByName = PredInstantShotByName,
+	PredInstantCast = PredInstantCast,
+	PredInstantShot = PredInstantShot,
 	PredSpellLearned = PredSpellLearned,
 }

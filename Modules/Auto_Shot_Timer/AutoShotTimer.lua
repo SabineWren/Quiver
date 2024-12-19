@@ -368,11 +368,12 @@ end
 ---@param nameLocalized string
 local onSpellcast = function(nameEnglish, nameLocalized)
 	-- User can spam the ability while it's already casting
-	if isCasting then return end
-	isCasting = true
-	local _latAdjusted
-	castTime, _latAdjusted, timeStartCastLocal = Haste.CalcCastTime(nameEnglish)
-	Log.Debug("Start Cast")
+	if not isCasting then
+		isCasting = true
+		local _latAdjusted
+		castTime, _latAdjusted, timeStartCastLocal = Haste.CalcCastTime(nameEnglish)
+		Log.Debug("Start Cast")
+	end
 end
 
 local handleEvent = function()
@@ -437,7 +438,7 @@ local onEnable = function()
 	end)
 	Spellcast.CastableShot.Subscribe(MODULE_ID, onSpellcast)
 	Spellcast.Instant.Subscribe(MODULE_ID, function(spellName)
-		isFiredInstant = Spell.PredInstantShotByName(spellName)
+		isFiredInstant = Spell.PredInstantShot(spellName)
 	end)
 	frame:Show()
 end

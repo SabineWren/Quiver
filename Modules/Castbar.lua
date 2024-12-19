@@ -105,17 +105,18 @@ end
 ---@param nameEnglish string
 ---@param nameLocalized string
 local onSpellcast = function(nameEnglish, nameLocalized)
-	if isCasting then return end
-	isCasting = true
-	local _timeStartLocal
-	castTime, timeStartCasting, _timeStartLocal = Haste.CalcCastTime(nameEnglish)
-	frame.SpellName:SetText(nameLocalized)
-	frame.Castbar:SetWidth(1)
-	displayTime(0)
+	if not isCasting then
+		isCasting = true
+		local _timeStartLocal
+		castTime, timeStartCasting, _timeStartLocal = Haste.CalcCastTime(nameEnglish)
+		frame.SpellName:SetText(nameLocalized)
+		frame.Castbar:SetWidth(1)
+		displayTime(0)
 
-	local r, g, b = unpack(store.ColorCastbar)
-	frame.Castbar:SetBackdropColor(r, g, b, 1)
-	frame:Show()
+		local r, g, b = unpack(store.ColorCastbar)
+		frame.Castbar:SetBackdropColor(r, g, b, 1)
+		frame:Show()
+	end
 end
 
 -- ************ Frame Update Handlers ************
