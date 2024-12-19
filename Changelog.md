@@ -1,3 +1,9 @@
+# Next
+Config menu improvements:
+- Aero integration
+- Escape key closes
+- Open/Close sound effects
+
 # 3.1.0-twow-cc2
 Added "Steady Shot" alias for "Trueshot".
 - Only necessary for English clients on Turtle WoW 1.17.2 servers

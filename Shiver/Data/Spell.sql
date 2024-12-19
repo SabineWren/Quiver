@@ -5,9 +5,6 @@ Create Table SpellsUsingAmmo (
 /*
 Insert Into SpellsUsingAmmo
 
--- Turtle 1.17.1 (TODO remove Trueshot for 1.17.2)
-Trueshot
-
 -- Turtle 1.17.2
 Steady Shot
 

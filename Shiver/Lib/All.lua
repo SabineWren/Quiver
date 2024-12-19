@@ -7,6 +7,15 @@ local Lib = {}
 
 Lib.Array = Array
 
+---@generic A
+---@param x nil|A
+---@param fallback A
+---@return A
+---@nodiscard
+Lib.GetNil = function(x, fallback)
+	if x == nil then return fallback else return x end
+end
+
 -- ************ Combinators ************
 --- (>>), forward function composition, pipe without application
 ---@generic A

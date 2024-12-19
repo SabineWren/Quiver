@@ -1,7 +1,5 @@
 return {
-	-- Turtle 1.17 (TODO remove Trueshot for 1.17.2)
 	["Aspect of the Wolf"] = "孤狼守护",
-	["Trueshot"] = "稳固射击",
 
 	-- Vanilla 1.12
 	["Abolish Disease"] = "驱除疾病",
