@@ -1,4 +1,4 @@
----@class Version
+---@class (exact) Version
 ---@field private __index? Version
 ---@field private breaking integer
 ---@field private feature integer

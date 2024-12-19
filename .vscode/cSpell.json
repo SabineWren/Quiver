@@ -1,8 +1,16 @@
 {
 	"language": "en",
 	"words": [
+		"Ability_Hunter_Quickshot",
+		"cachable",
+		"castbar",
+		"casttime",
 		"gatekeep",
 		"luabundle",
-		"spellbook"
+		"nodiscard",
+		"scorpid",
+		"spellbook",
+		"tranq",
+		"trueshot",
 	]
 }

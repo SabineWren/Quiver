@@ -54,11 +54,18 @@ local CalcCastTime = function(nameEnglish)
 		-- https://www.mmo-champion.com/content/2188-Patch-4-0-6-Feb-22-Hotfixes-Blue-Posts-Artworks-Comic
 		local casttime = (offset + baseTime * speedMultiplier) / 1000
 		return casttime, startLatAdjusted, startLocal
+	elseif meta.Haste == "none" then
+		return 0, startLatAdjusted, startLocal
+	else
+		-- LuaLS type narrows on objects, but not literals
+		-- https://github.com/LuaLS/lua-language-server/pull/2864
+		-- https://github.com/LuaLS/lua-language-server/issues/704
+		-- Even when narrowing, it doesn't support exhaustive checks (no issue).
+		-- The best we can do is provide some debug output for QA.
+		DEFAULT_CHAT_FRAME:AddMessage("Failed exhaustive check", 1, 0, 0)
+		DEFAULT_CHAT_FRAME:AddMessage(meta.Haste, 1, 0, 0)
+		return 0, startLatAdjusted, startLocal
 	end
-
-	-- LuaLS doesn't support exhaustive checks? TODO investigate
-	local timeFallback = (meta.Time + meta.Offset) / 1000
-	return timeFallback, startLatAdjusted, startLocal
 end
 
 return {
