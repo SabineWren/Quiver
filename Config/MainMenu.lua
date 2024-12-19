@@ -141,7 +141,7 @@ local makeSelectDebugLevel = function(parent)
 	)
 end
 
----@param frameName nil|string
+---@param frameName string
 ---@return Frame
 ---@nodiscard
 local Create = function(frameName)
@@ -149,6 +149,9 @@ local Create = function(frameName)
 	local _PADDING_CLOSE = Const.Size.Border + 6
 	local _PADDING_FAR = Const.Size.Border + Const.Size.Gap
 	local dialog = Dialog.Create(_PADDING_CLOSE, frameName)
+	dialog:SetScript("OnShow", function() PlaySound("SPELLBOOKOPEN") end)
+	dialog:SetScript("OnHide", function() PlaySound("SPELLBOOKCLOSE") end)
+	table.insert(UISpecialFrames, frameName)
 
 	local titleText = "Quiver " .. GetAddOnMetadata("Quiver", "Version")
 	local titleBox = TitleBox.Create(dialog, titleText)
