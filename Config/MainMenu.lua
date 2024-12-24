@@ -1,3 +1,4 @@
+local Api = require "Api/Index.lua"
 local Button = require "Component/Button.lua"
 local CheckButton = require "Component/CheckButton.lua"
 local Dialog = require "Component/Dialog.lua"
@@ -149,8 +150,12 @@ local Create = function(frameName)
 	local _PADDING_CLOSE = Const.Size.Border + 6
 	local _PADDING_FAR = Const.Size.Border + Const.Size.Gap
 	local dialog = Dialog.Create(_PADDING_CLOSE, frameName)
-	dialog:SetScript("OnShow", function() PlaySound("SPELLBOOKOPEN") end)
-	dialog:SetScript("OnHide", function() PlaySound("SPELLBOOKCLOSE") end)
+	Api.Aero.SetScript(dialog, "OnShow", function()
+		PlaySoundFile("Interface\\AddOns\\Quiver\\Textures\\removing_wood_arrow_from_bow_4.wav")
+	end)
+	Api.Aero.SetScript(dialog, "OnHide", function()
+		PlaySoundFile("Interface\\AddOns\\Quiver\\Textures\\sheathing_a_few_arrows_loosely_into_a_quiver_3.wav")
+	end)
 	-- This allows escape key to close, and preserves frame position.
 	table.insert(UISpecialFrames, frameName)
 
@@ -168,7 +173,7 @@ local Create = function(frameName)
 		OnChange = function(isLocked) FrameLock.SetIsLocked(isLocked) end,
 		TexPathOff = Const.Icon.LockOpen,
 		TexPathOn = Const.Icon.LockClosed,
-		TooltipText=Quiver.T["Lock/Unlock Frames"],
+		TooltipText = Quiver.T["Lock/Unlock Frames"],
 	})
 	FrameLock.Init()
 

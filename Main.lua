@@ -1,3 +1,4 @@
+local Api = require "Api/Index.lua"
 local LoadLocale = require "Locale/Lang.lua"
 local MainMenu = require "Config/MainMenu.lua"
 local Migrations = require "Migrations/Runner.lua"
@@ -46,14 +47,8 @@ local initSlashCommandsAndModules = function()
 	SLASH_QUIVER2 = "/quiver"
 	local _, cl = UnitClass("player")
 	if cl == "HUNTER" then
-		-- Support Aero animations if installed.
-		-- https://github.com/gashole/Aero
-		local aeroTarget = "QuiverConfigDialog"
-		local frameConfigMenu = MainMenu.Create(aeroTarget)
-		Aero = Aero or nil-- suppresses undefined global
-		if IsAddOnLoaded("Aero") and Aero ~= nil then
-			Aero:RegisterFrames(aeroTarget)
-		end
+		local frameConfigMenu = MainMenu.Create("QuiverConfigDialog")
+		Api.Aero.RegisterFrame(frameConfigMenu)
 
 		SlashCmdList["QUIVER"] = function(_args, _box) frameConfigMenu:Show() end
 		for _k, v in _G.Quiver_Modules do
