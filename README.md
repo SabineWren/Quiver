@@ -121,18 +121,18 @@ This checks if you have Trueshot Aura talented. If so, Quiver tracks the buff an
 
 ## Installation
 ### Option 1 - Pre-bundled release zip
-Simplest installation, but doesn't automate version updates.
+This installation option is a manual install (i.e. no automated updates)
 1. [Download](https://github.com/SabineWren/Quiver/releases) latest version
-2. Extract the Zip file
-3. Change the folder name from `Quiver-x.x.x` to `Quiver`
+2. Extract folder from the Zip
+3. Rename folder from `Quiver-x.x.x` to `Quiver`
 4. Move folder into `<WoW install>/Interface/AddOns/`
 5. Restart WoW
-
 > [!Tip]
-> Release zip filenames ends with a version `-x.x.x` and contain the file `Quiver.bundle.lua`.
+> Release zip filenames ends with a numeric version `-x.x.x` and contain the file `Quiver.bundle.lua`.
+> If the name isn't versioned, then you downloaded a source code branch.
 
 ### Option 2 - Clone latest release
-Requires Git. Easy to update with addon managers or `git pull --rebase`
+For use with Git updates `git pull --rebase` or addon managers.
 1. Open a terminal in your addons directory
 2. `git clone https://github.com/SabineWren/Quiver --branch latest-release`
 3. Restart WoW
@@ -167,8 +167,16 @@ Files in `/Events` hook into game functions. Use these events if possible instea
 ### Module Lifecycle
 Features are packaged and enabled as 'modules' that implement lifecycle hooks. See the type definitions for details.
 
-### Missing Functionality
+### Possible Codebase Improvements
 - Layout engine [1](https://github.com/wolf81/composer) [2](https://www.youtube.com/watch?v=DYWTw19_8r4)
 - Full type safety
 - FD macro LoseControl integration (state not exposed, and no license provided)
-- Extra features (pet happiness alerts, aspect debouncing, proc watching)
+
+### Possible Extra Features
+- Better pet training UI (ex. see Wowhead pet talent calculator)
+- Optional sound alerts (pet happiness, ammo low, pet dismiss)
+- UI to select favourite food per pet. One-button command to feed any pet.
+- Aspect change API with cancellation and debouncing for Cheetah/Pack
+- Quickshots proc watch
+- Warn when pet attacking a different target
+- Stateful action API with current state indicator. ex. cycle between: Tranq Shot and Distracting Shot, pet-passive-follow and pet-passive-stay, mouseover-petattack and target-petattack, etc.
