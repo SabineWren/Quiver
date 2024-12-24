@@ -3,6 +3,14 @@ local neutral = function(text) DEFAULT_CHAT_FRAME:AddMessage(text) end
 local success = function(text) DEFAULT_CHAT_FRAME:AddMessage(text, 0, 1, 0) end
 local warning = function(text) DEFAULT_CHAT_FRAME:AddMessage(text, 1, 0.6, 0) end
 
+--- @param text string
+--- @return nil
+local logVerbose = function(text)
+	if Quiver_Store.DebugLevel == "Verbose" then
+		DEFAULT_CHAT_FRAME:AddMessage(text)
+	end
+end
+
 local PrintLine = {
 	Danger = function(text) danger("Quiver -- " .. text) end,
 	Neutral = function(text) neutral("Quiver -- " .. text) end,
@@ -27,6 +35,8 @@ local PrintPrefixedF = function(callerName)
 end
 
 return {
+	Debug = logVerbose,
+	Error = logVerbose,
 	Line = PrintLine,
 	PrefixedF = PrintPrefixedF,
 }

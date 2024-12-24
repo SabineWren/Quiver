@@ -1,5 +1,5 @@
 Create Table SpellsUsingAmmo (
-	English VarChar(450) Not Null,
+	English VarChar(100) Not Null,
 	Constraint PK_SpellsUsingAmmo Primary Key (English),
 );
 /*

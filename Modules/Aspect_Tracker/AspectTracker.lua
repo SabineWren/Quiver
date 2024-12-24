@@ -1,7 +1,6 @@
+local Api = require "Api/Index.lua"
 local Const = require "Constants.lua"
 local FrameLock = require "Events/FrameLock.lua"
-local Spell = require "Shiver/API/Spell.lua"
-local Aura = require "Util/Aura.lua"
 
 local MODULE_ID = "AspectTracker"
 local store = nil---@type StoreAspectTracker
@@ -12,18 +11,18 @@ local INSET = 5
 local TRANSPARENCY = 0.5
 
 local chooseIconTexture = function()
-	if Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Beast"]) then
+	if Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Beast"]) then
 		return Const.Icon.Aspect_Beast
-	elseif Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Cheetah"]) then
+	elseif Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Cheetah"]) then
 		return Const.Icon.Aspect_Cheetah
-	elseif Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Monkey"]) then
+	elseif Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Monkey"]) then
 		return Const.Icon.Aspect_Monkey
-	elseif Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Wild"]) then
+	elseif Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Wild"]) then
 		return Const.Icon.Aspect_Wild
-	elseif Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Wolf"]) then
+	elseif Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Wolf"]) then
 		return Const.Icon.Aspect_Wolf
-	elseif Spell.PredSpellLearned(Quiver.L.Spell["Aspect of the Hawk"])
-		and not Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Hawk"])
+	elseif Api.Spell.PredSpellLearned(Quiver.L.Spell["Aspect of the Hawk"])
+		and not Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Hawk"])
 		or not Quiver_Store.IsLockedFrames
 	then
 		return Const.Icon.Aspect_Hawk
@@ -45,7 +44,7 @@ local updateUI = function()
 	-- Exclude Pack from main texture, since party members can apply it.
 	-- I don't have a simple way of detecting who cast it, because
 	-- the cancellable bit is 1 even if a party member cast it.
-	if Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Pack"]) then
+	if Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Pack"]) then
 		frame:SetBackdrop({
 			bgFile = "Interface/Tooltips/UI-Tooltip-Background",
 			edgeFile = "Interface/Tooltips/UI-Tooltip-Border",

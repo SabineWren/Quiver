@@ -1,4 +1,4 @@
-local Spell = require "Shiver/API/Spell.lua"
+local Spell = require "Api/Spell.lua"
 
 local _MAX_NUM_ACTION_SLOTS = 120
 

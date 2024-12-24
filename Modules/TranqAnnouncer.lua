@@ -1,7 +1,7 @@
+local Api = require "Api/Index.lua"
 local FrameLock = require "Events/FrameLock.lua"
 local BorderStyle = require "Modules/BorderStyle.provider.lua"
-local Spell = require "Shiver/API/Spell.lua"
-local L = require "Shiver/Lib/All.lua"
+local L = require "Lib/Index.lua"
 local Print = require "Util/Print.lua"
 
 local MODULE_ID = "TranqAnnouncer"
@@ -254,7 +254,7 @@ local _EVENTS = {
 }
 local lastCastStart = 0
 local getHasFiredTranq = function()
-	local isCast, cdStart = Spell.CheckNewCd(
+	local isCast, cdStart = Api.Spell.CheckNewCd(
 		TRANQ_CD_SEC, lastCastStart, Quiver.L.Spell["Tranquilizing Shot"])
 	lastCastStart = cdStart
 	return isCast

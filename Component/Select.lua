@@ -1,6 +1,6 @@
 local Util = require "Component/_Util.lua"
 local Const = require "Constants.lua"
-local L = require "Shiver/Lib/All.lua"
+local L = require "Lib/Index.lua"
 
 local _BORDER, _INSET, _SPACING = 1, 4, 4
 local _OPTION_PAD_H, _OPTION_PAD_V = 8, 4

@@ -1,10 +1,10 @@
+local Api = require "Api/Index.lua"
 local Const = require "Constants.lua"
 local FrameLock = require "Events/FrameLock.lua"
 local Spellcast = require "Events/Spellcast.lua"
 local BorderStyle = require "Modules/BorderStyle.provider.lua"
-local Spell = require "Shiver/API/Spell.lua"
-local Haste = require "Shiver/Haste.lua"
-local Log = require "Util/Log.lua"
+local Haste = require "Util/Haste.lua"
+local Print = require "Util/Print.lua"
 
 -- Auto Shot
 local _AIMING_TIME = 0.5-- HSK, rais, and YaHT use 0.65. However, 0.5 seems better.
@@ -53,7 +53,7 @@ local timeReload = (function()
 			local speed, _, _, _, _, _ = UnitRangedDamage("player")
 			isReloading = true
 			reloadTime = speed - _AIMING_TIME
-			Log.Debug("starting reload")
+			Print.Debug("starting reload")
 		end,
 	}
 end)()
@@ -191,7 +191,7 @@ local updateBarReload = function()
 	if percentCompleted < 1.0 then
 		frame.BarAutoShot:SetWidth(maxBarWidth - maxBarWidth * percentCompleted)
 	else
-		Log.Debug("End reload")
+		Print.Debug("End reload")
 		isReloading = false
 		if isShooting then
 			startShooting()
@@ -272,7 +272,7 @@ local handleEventStateCasting = function(event, arg1)
 		isFiredInstant = false
 		isCasting = false -- Exit this handler
 		if not isReloading then timeShoot.Reset() end
-		Log.Debug("Stopped Casting")
+		Print.Debug("Stopped Casting")
 	elseif event == "ITEM_LOCK_CHANGED" then
 		-- Failed event means Stop, but we also dropped target before the cast finished.
 		-- Two possibilities:
@@ -288,7 +288,7 @@ local handleEventStateCasting = function(event, arg1)
 		-- Too low and we get stuck in a shooting state. This is much worse than an extra reload.
 		-- 0.4 frequently trigger reloads over 100ms latency.
 		local elapsed = GetTime() - timeStartCastLocal
-		Log.Debug(elapsed)
+		Print.Debug(elapsed)
 		if (elapsed < 0.25) then
 			-- We must have started the cast exactly as an auto shot fired.
 			-- This happens when server lag causes the bar the skip.
@@ -322,13 +322,13 @@ local handleEventStateShooting = function(event)
 				stateAuto.IsInitial = false
 				stateAuto.TimeLock = GetTime()
 				isFiredInstant = false
-				Log.Debug("State Advance")
+				Print.Debug("State Advance")
 			elseif timeReload.GetRemaining() > 0 then
 				-- Sometimes SPELLCAST_STOP triggers before ITEM_LOCK_CHANGED
 				-- No-op from multi-shot during reload.
-				Log.Debug("Edge case -- out-of-order events. Probably multi-shot: "..timeReload.GetRemaining())
+				Print.Debug("Edge case -- out-of-order events. Probably multi-shot: "..timeReload.GetRemaining())
 			else
-				Log.Debug("Auto Fired")
+				Print.Debug("Auto Fired")
 				timeReload.StartAt(GetTime())
 			end
 		end
@@ -341,12 +341,12 @@ local handleEventStateShooting = function(event)
 			stateAuto.IsInitial = true
 			isFiredInstant = false
 			timeReload.StartAt(stateAuto.TimeLock)
-			Log.Debug("State Reset: Auto -> Instant")
+			Print.Debug("State Reset: Auto -> Instant")
 		elseif event == "SPELLCAST_STOP" then
 			-- Previous shot must have been an instant, so reset state.
 			stateAuto.IsInitial = true
 			isFiredInstant = false
-			Log.Debug("State Reset: Instant")
+			Print.Debug("State Reset: Instant")
 		end
 		-- else ignore
 	end
@@ -359,7 +359,7 @@ local handleEventStateIdle = function(event)
 		or event == "SPELLCAST_FAILED"
 		or event == "SPELLCAST_INTERRUPTED"
 	then
-		if isFiredInstant then Log.Debug("Instant Shot") end
+		if isFiredInstant then Print.Debug("Instant Shot") end
 		isFiredInstant = false
 	end
 end
@@ -372,7 +372,7 @@ local onSpellcast = function(nameEnglish, nameLocalized)
 		isCasting = true
 		local _latAdjusted
 		castTime, _latAdjusted, timeStartCastLocal = Haste.CalcCastTime(nameEnglish)
-		Log.Debug("Start Cast")
+		Print.Debug("Start Cast")
 	end
 end
 
@@ -382,10 +382,10 @@ local handleEvent = function()
 	if e == "CHAT_MSG_SPELL_SELF_BUFF" then
 		isConsumable = getIsConsumable(arg1)
 	elseif e == "START_AUTOREPEAT_SPELL" then
-		Log.Debug("Start shooting")
+		Print.Debug("Start shooting")
 		startShooting()
 	elseif e == "STOP_AUTOREPEAT_SPELL" then
-		Log.Debug("Stop shooting")
+		Print.Debug("Stop shooting")
 		isShooting = false
 	elseif isConsumable and e == "ITEM_LOCK_CHANGED" then
 		isConsumable = false-- We drank a potion or something, so don't run any handlers
@@ -438,7 +438,7 @@ local onEnable = function()
 	end)
 	Spellcast.CastableShot.Subscribe(MODULE_ID, onSpellcast)
 	Spellcast.Instant.Subscribe(MODULE_ID, function(spellName)
-		isFiredInstant = Spell.PredInstantShot(spellName)
+		isFiredInstant = Api.Spell.PredInstantShot(spellName)
 	end)
 	frame:Show()
 end

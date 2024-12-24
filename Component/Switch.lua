@@ -1,7 +1,7 @@
 local Util = require "Component/_Util.lua"
 local Const = require "Constants.lua"
-local L = require "Shiver/Lib/All.lua"
-local Sugar = require "Shiver/Sugar.lua"
+local Api = require "Api/Index.lua"
+local L = require "Lib/Index.lua"
 
 local _GAP = 6
 local _SIZE = 18
@@ -117,8 +117,8 @@ function QqSwitch:Create(parent, bag)
 
 	r.Icon:SetPoint("Left", container, "Left", 0, 0)
 	r.Label:SetPoint("Right", container, "Right", 0, 0)
-	local h = L.Psi(L.Max, Sugar.Region._GetHeight, r.Icon, r.Label)
-	local w = L.Psi(L.Add, Sugar.Region._GetWidth, r.Icon, r.Label) + _GAP
+	local h = L.Psi(L.Max, Api.Region._Height, r.Icon, r.Label)
+	local w = L.Psi(L.Add, Api.Region._Width, r.Icon, r.Label) + _GAP
 	container:SetHeight(h)
 	container:SetWidth(w)
 

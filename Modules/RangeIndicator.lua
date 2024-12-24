@@ -1,6 +1,6 @@
+local Api = require "Api/Index.lua"
 local Const = require "Constants.lua"
 local FrameLock = require "Events/FrameLock.lua"
-local Action = require "Shiver/API/Action.lua"
 
 local MODULE_ID = "RangeIndicator"
 local store = nil
@@ -48,7 +48,7 @@ end
 ---@return boolean
 ---@nodiscard
 local predSpellInRange = function(name)
-	local slot = Action.FindBySpellName(name)
+	local slot = Api.Action.FindBySpellName(name)
 	if slot == nil then
 		return false
 	else

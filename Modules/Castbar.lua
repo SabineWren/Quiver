@@ -2,7 +2,7 @@ local Const = require "Constants.lua"
 local FrameLock = require "Events/FrameLock.lua"
 local Spellcast = require "Events/Spellcast.lua"
 local BorderStyle = require "Modules/BorderStyle.provider.lua"
-local Haste = require "Shiver/Haste.lua"
+local Haste = require "Util/Haste.lua"
 
 local MODULE_ID = "Castbar"
 local store = nil

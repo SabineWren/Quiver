@@ -1,13 +1,10 @@
-local Action = require "Shiver/API/Action.lua"
-local Spell = require "Shiver/API/Spell.lua"
-local DB_SPELL = require "Shiver/Data/Spell.lua"
-local Log = require "Util/Log.lua"
+local Api = require "Api/Index.lua"
 local Print = require "Util/Print.lua"
 
 -- Hooks get called even if spell didn't fire, but successful cast triggers GCD.
 local lastGcdStart = 0
 local checkGCD = function()
-	local isTriggeredGcd, newStart = Spell.CheckNewGCD(lastGcdStart)
+	local isTriggeredGcd, newStart = Api.Spell.CheckNewGCD(lastGcdStart)
 	lastGcdStart = newStart
 	return isTriggeredGcd
 end
@@ -72,14 +69,14 @@ local println = Print.PrefixedF("spellcast")
 local handleCastByName = function(nameLocalized, isCurrentAction)
 	local nameEnglish = Quiver.L.SpellReverse[nameLocalized]
 	if nameEnglish == nil then
-		Log.Error("Localized spellname not found: "..nameLocalized)
+		Print.Error("Localized spellname not found: "..nameLocalized)
 		nameEnglish = nameLocalized
 	-- We pre-hook the cast, so confirm we actually cast it before triggering callbacks.
 	-- If it's castable, then check we're casting it, else check that we triggered GCD.
-	elseif not Spell.PredInstantCast(nameEnglish) then
+	elseif not Api.Spell.PredInstantCast(nameEnglish) then
 		if isCurrentAction then
 			publishShotCastable(nameEnglish, nameLocalized)
-		elseif Action.FindBySpellName(nameLocalized) == nil then
+		elseif Api.Action.FindBySpellName(nameLocalized) == nil then
 			println.Warning(nameLocalized .. " not on action bars, so can't track cast.")
 		end
 	elseif checkGCD() then
@@ -94,8 +91,8 @@ CastSpell = function(spellIndex, bookType)
 	super.CastSpell(spellIndex, bookType)
 	local name, _rank = GetSpellName(spellIndex, bookType)
 	if name ~= nil then
-		Log.Debug("Cast as spell... " .. name)
-		handleCastByName(name, Action.PredSomeActionBusy())
+		Print.Debug("Cast as spell... " .. name)
+		handleCastByName(name, Api.Action.PredSomeActionBusy())
 	end
 end
 
@@ -105,8 +102,8 @@ end
 ---@return nil
 CastSpellByName = function(name, isSelf)
 	super.CastSpellByName(name, isSelf)
-	Log.Debug("Cast by name... " .. name)
-	handleCastByName(name, Action.PredSomeActionBusy())
+	Print.Debug("Cast by name... " .. name)
+	handleCastByName(name, Api.Action.PredSomeActionBusy())
 end
 
 -- Triggers multiple times when spamming the cast
@@ -124,12 +121,12 @@ UseAction = function(slot, checkCursor, onSelf)
 		-- If the macro uses the same texture, then both these hooks are called!
 		-- We *could* check macro text etc. to disambiguate, but it's okay
 		-- to duplicate the spell event since it won't change CD or start time.
-		local name, index = Spell.FindSpellByTexture(texturePath)
+		local name, index = Api.Spell.FindSpellByTexture(texturePath)
 		if name ~= nil and index ~= nil then
-			Log.Debug("Cast as Action... " .. name)
+			Print.Debug("Cast as Action... " .. name)
 			handleCastByName(name, IsCurrentAction(slot))
 		else
-			Log.Debug("Skip Action... ")
+			Print.Debug("Skip Action... ")
 		end
 	end
 end

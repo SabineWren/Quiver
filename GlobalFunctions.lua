@@ -1,6 +1,5 @@
+local Api = require "Api/Index.lua"
 local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
-local Pet = require "Shiver/API/Pet.lua"
-local Spell = require "Shiver/API/Spell.lua"
 
 ---@param spellName string
 ---@return nil
@@ -16,13 +15,13 @@ local CastPetActionByName = function(actionName)
 	-- local hasSpells = HasPetUI()
 	-- local hasUI = HasPetUI()
 	if GetPetActionsUsable() then
-		Pet.CastActionByName(actionName)
+		Api.Pet.CastActionByName(actionName)
 	end
 end
 
 ---@param spellNameLocalized string
 local predOffCd = function(spellNameLocalized)
-	local index = Spell.FindSpellIndex(spellNameLocalized)
+	local index = Api.Spell.FindSpellIndex(spellNameLocalized)
 	if index ~= nil then
 		local timeStartCd, _ = GetSpellCooldown(index, BOOKTYPE_SPELL)
 		return timeStartCd == 0

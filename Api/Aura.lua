@@ -1,5 +1,5 @@
+local Tooltip = require "Api/Tooltip.lua"
 local Const = require "Constants.lua"
-local ScanningTooltip = require "Shiver/ScanningTooltip.lua"
 
 -- This doesn't work for duplicate textures (ex. cheetah + zg mount).
 -- For those you have to scan by name using the GameTooltip.
@@ -19,13 +19,13 @@ end
 ---@param buffname string
 ---@nodiscard
 local PredBuffActive = function(buffname)
-	return ScanningTooltip.Scan(function(tooltip)
+	return Tooltip.Scan(function(tooltip)
 		for i=0, Const.Buff_Cap do
 			local buffIndex, _untilCancelled = GetPlayerBuff(i, "HELPFUL|PASSIVE")
 			if buffIndex >= 0 then
 				tooltip:ClearLines()
 				tooltip:SetPlayerBuff(buffIndex)
-				if ScanningTooltip.GetText("TextLeft", 1) == buffname then
+				if Tooltip.GetText("TextLeft", 1) == buffname then
 					return true
 				end
 			end
@@ -35,7 +35,11 @@ local PredBuffActive = function(buffname)
 end
 
 
--- This works great. Don't delete because I'm sure it will be useful in the future.
+-- This works great. Don't delete because switching from
+-- texture to tooltip scanning would increase reliability.
+-- UPDATE: Quiver now has as tooltip scanning library.
+-- Also, this time-parsing code isn't client-localized.
+-- This is still the right approach though.
 --[[
 local PredIsBuffActiveTimeLeftByName = function(buffname)
 	local tooltip = resetTooltip()

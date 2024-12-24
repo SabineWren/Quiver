@@ -1,6 +1,6 @@
+local Api = require "Api/Index.lua"
 local Util = require "Component/_Util.lua"
-local L = require "Shiver/Lib/All.lua"
-local Sugar = require "Shiver/Sugar.lua"
+local L = require "Lib/Index.lua"
 
 local _GAP = 6
 local _SIZE = 16
@@ -109,8 +109,8 @@ function QqButton:Create(parent, texPath, labelText, scale)
 		r.Label = container:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
 		r.Label:SetText(labelText)
 		r.Label:SetPoint("Right", container, "Right", 0, 0)
-		h = L.Psi(L.Max, Sugar.Region._GetHeight, r.Icon, r.Label)
-		w = L.Psi(L.Add, Sugar.Region._GetWidth, r.Icon, r.Label) + _GAP
+		h = L.Psi(L.Max, Api.Region._Height, r.Icon, r.Label)
+		w = L.Psi(L.Add, Api.Region._Width, r.Icon, r.Label) + _GAP
 	else
 		h = r.Icon:GetHeight()
 		w = r.Icon:GetWidth()

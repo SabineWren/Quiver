@@ -8,7 +8,7 @@ local RangeIndicator = require "Modules/RangeIndicator.lua"
 local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
 local TrueshotAuraAlarm = require "Modules/TrueshotAuraAlarm.lua"
 local UpdateNotifierInit = require "Modules/UpdateNotifier.lua"
-local RegisterApiFunctions = require "Api.lua"
+local RegisterGlobalFunctions = require "GlobalFunctions.lua"
 
 _G = _G or getfenv()
 Quiver = Quiver or {}
@@ -81,7 +81,7 @@ frame:SetScript("OnEvent", function()
 		Migrations()-- Modifies saved variables
 		savedVariablesRestore()-- Passes saved data to modules for init
 		initSlashCommandsAndModules()
-		RegisterApiFunctions()
+		RegisterGlobalFunctions()
 	elseif event == "PLAYER_LOGIN" then
 		UpdateNotifierInit()
 	elseif event == "PLAYER_LOGOUT" then

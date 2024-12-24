@@ -8,10 +8,10 @@ local Color = require "Config/Color.lua"
 local InputText = require "Config/InputText.lua"
 local Const = require "Constants.lua"
 local FrameLock = require "Events/FrameLock.lua"
+local L = require "Lib/Index.lua"
 local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
 local BorderStyle = require "Modules/BorderStyle.provider.lua"
 local TranqAnnouncer = require "Modules/TranqAnnouncer.lua"
-local L = require "Shiver/Lib/All.lua"
 
 local createModuleControls = function(parent, m)
 	local f = CreateFrame("Frame", nil, parent)
@@ -151,6 +151,7 @@ local Create = function(frameName)
 	local dialog = Dialog.Create(_PADDING_CLOSE, frameName)
 	dialog:SetScript("OnShow", function() PlaySound("SPELLBOOKOPEN") end)
 	dialog:SetScript("OnHide", function() PlaySound("SPELLBOOKCLOSE") end)
+	-- This allows escape key to close, and preserves frame position.
 	table.insert(UISpecialFrames, frameName)
 
 	local titleText = "Quiver " .. GetAddOnMetadata("Quiver", "Version")

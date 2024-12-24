@@ -1,4 +1,4 @@
-# Next
+# 3.1.1
 Config menu improvements:
 - Aero integration
 - Escape key closes

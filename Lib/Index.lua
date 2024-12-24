@@ -1,32 +1,31 @@
--- Reference library:
--- https://github.com/codereport/blackbird/blob/main/combinators.hpp
-local Array = require "Shiver/Lib/Array.lua"
+local Array = require "Lib/Array.lua"
+local Color = require "Lib/Color.lua"
+local Nil = require "Lib/Nil.lua"
 
----@class Lib
 local Lib = {}
-
 Lib.Array = Array
-
----@generic A
----@param x nil|A
----@param fallback A
----@return A
----@nodiscard
-Lib.GetNil = function(x, fallback)
-	if x == nil then return fallback else return x end
-end
+Lib.Color = Color
+Lib.Nil = Nil
 
 -- ************ Combinators ************
+-- Reference library:
+-- https://github.com/codereport/blackbird/blob/main/combinators.hpp
+
 --- (>>), forward function composition, pipe without application
 ---@generic A
 ---@generic B
 ---@generic C
----@param f fun(a: A): B
----@param g fun(y: B): C
----@return fun(x: A): C
-Lib.Flow = function(f, g)
+---@generic D
+--@type fun(f: (fun(a: A): B), g: (fun(b: B): C)): fun(a: A): C
+---@type fun(f: (fun(a: A): B), g: (fun(b: B): C), h: (fun(c: C): D)): fun(a: A): D
+Lib.Flow = function(...)
+	local functions = arg
 	return function(a)
-		return g(f(a))
+		local out = a
+		for _, fn in ipairs(functions) do
+			out = fn(out)
+		end
+		return out
 	end
 end
 

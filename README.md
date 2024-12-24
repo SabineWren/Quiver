@@ -165,4 +165,10 @@ Files in `/Events` hook into game functions. Use these events if possible instea
 - Spellcast: CastSpell, CastSpellByName, UseAction
 
 ### Module Lifecycle
-Feature are packaged and enabled as 'modules' that implement lifecycle hooks. See the type definitions for details.
+Features are packaged and enabled as 'modules' that implement lifecycle hooks. See the type definitions for details.
+
+### Missing Functionality
+- Layout engine [1](https://github.com/wolf81/composer) [2](https://www.youtube.com/watch?v=DYWTw19_8r4)
+- Full type safety
+- FD macro LoseControl integration (state not exposed, and no license provided)
+- Extra features (pet happiness alerts, aspect debouncing, proc watching)

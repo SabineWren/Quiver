@@ -1,34 +1,28 @@
-local DB_SPELL = require "Shiver/Data/Spell.lua"
-local ScanningTooltip = require "Shiver/ScanningTooltip.lua"
-local Enum = require "Shiver/Enum.lua"
+-- This file would be API extension code, except that it only supports
+-- hunter casts. I have no idea how to compute haste for non-hunter spells.
+local Api = require "Api/Index.lua"
+local L = require "Lib/Index.lua"
 
 -- GetInventoryItemLink("Player", slot#) returns a link, ex. [name]
--- Weapon name always appears at line TextLeft1
--- TODo Might be cachable. Experiment which events would clear cache.
-local calcRangedWeaponSpeedBase = function()
-	return ScanningTooltip.Scan(function(tooltip)
+-- <br>Weapon name always appears at line TextLeft1
+-- <br>ex. "Speed 3.2", but avoid matching on localized portions of text.
+-- <br>If nil, something went wrong. Maybe there's no ranged weapon equipped.
+---@return nil|integer
+local scanRangedWeaponSpeed = function()
+	return Api.Tooltip.Scan(function(tooltip)
 		tooltip:ClearLines()
-		local _RANGED = Enum.INVENTORY_SLOT.Ranged
-		local _, _, _ = tooltip:SetInventoryItem("player", _RANGED)
-
-		for i=1, tooltip:NumLines() do
-			local text = ScanningTooltip.GetText("TextRight", i)
-			if text ~= nil then
-				-- ex. "Speed 3.2"
-				-- Not matching on the text part since that requires localization
-				local _, _, speed = string.find(text, "(%d+%.%d+)")
-				if speed ~= nil then
-					local parsed = tonumber(speed)
-					if parsed ~= nil then
-						tooltip:Hide()
-						return parsed
-					end
-				end
-			end
-		end
-
-		-- Something went wrong. Maybe there's no ranged weapon equipped.
-		return nil
+		local _, _, _ = tooltip:SetInventoryItem("player", Api.Enum.INVENTORY_SLOT.Ranged)
+		return L.Array.GenerateFirst(
+			tooltip:NumLines(),
+			L.Flow(
+				function(i) return Api.Tooltip.GetText("TextRight", i) end,
+				L.Nil.Bind(function(text)
+					local _, _, speed = string.find(text, "(%d+%.%d+)")
+					return speed
+				end),
+				L.Nil.Bind(tonumber)
+			)
+		)
 	end)
 end
 
@@ -38,7 +32,7 @@ end
 ---@return number startLocal
 ---@nodiscard
 local CalcCastTime = function(nameEnglish)
-	local meta = DB_SPELL[nameEnglish]
+	local meta = Api.Spell.Db[nameEnglish]
 	local _,_, msLatency = GetNetStats()
 	local startLocal = GetTime()
 	local startLatAdjusted = startLocal + msLatency / 1000
@@ -48,9 +42,8 @@ local CalcCastTime = function(nameEnglish)
 		return 0, startLatAdjusted, startLocal
 	elseif meta.Haste == "range" then
 		local speedCurrent, _, _ , _, _, _ = UnitRangedDamage("player")
-		local speedBaseNil = calcRangedWeaponSpeedBase()
-		local speedBase = speedBaseNil and speedBaseNil or speedCurrent
-		local speedMultiplier = speedCurrent / speedBase
+		local speedWeapon = L.Nil.GetOr(scanRangedWeaponSpeed(), speedCurrent)
+		local speedMultiplier = speedCurrent / speedWeapon
 		-- https://www.mmo-champion.com/content/2188-Patch-4-0-6-Feb-22-Hotfixes-Blue-Posts-Artworks-Comic
 		local casttime = (meta.Offset + meta.Time * speedMultiplier) / 1000
 		return casttime, startLatAdjusted, startLocal
