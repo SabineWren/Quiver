@@ -5,6 +5,7 @@ local Array = {}
 ---@param xs A[]
 ---@param f fun(x: A): boolean
 ---@return boolean
+---@nodiscard
 Array.Every = function(xs, f)
 	for _k, v in ipairs(xs) do
 		if not f(v) then return false end
@@ -16,6 +17,7 @@ end
 ---@param xs A[]
 ---@param f fun(x: A): boolean
 ---@return nil|A
+---@nodiscard
 Array.Find = function(xs, f)
 	for _k, v in ipairs(xs) do
 		if f(v) then
@@ -42,10 +44,23 @@ Array.GenerateFirst = function(n, f)
 	return nil
 end
 
+---Since arrays are actually tables, Lua doesn't guarantee consistent indexing.
+---@generic A
+---@param xs A[]
+---@return nil|A
+---@nodiscard
+Array.Head = function(xs)
+	for _k, v in ipairs(xs) do
+		return v
+	end
+	return nil
+end
+
 ---ϴ(N)
 ---@generic A
 ---@param xs A[]
 ---@return integer
+---@nodiscard
 Array.Length = function(xs)
 	local l = 0
 	for _k, _v in ipairs(xs) do l = l + 1 end
@@ -57,6 +72,7 @@ end
 ---@param xs A[]
 ---@param f fun(x: A): B
 ---@return B[]
+---@nodiscard
 Array.Map = function(xs, f)
 	local ys = {}
 	for _k, v in ipairs(xs) do
@@ -70,6 +86,7 @@ end
 ---@param xs A[]
 ---@param f fun(x: A, i: integer): B
 ---@return B[]
+---@nodiscard
 Array.Mapi = function(xs, f)
 	local ys = {}
 	local i = 0
@@ -89,6 +106,7 @@ end
 ---@param reducer fun(b1: B, b2: B): B
 ---@param identity B
 ---@return B
+---@nodiscard
 Array.MapReduce = function(xs, f, reducer, identity)
 	local zRef = identity
 	for _k, x in ipairs(xs) do
@@ -97,10 +115,32 @@ Array.MapReduce = function(xs, f, reducer, identity)
 	return zRef
 end
 
+--- Map f >> Intercalate x >> Reduce (+)
+--- <br>@link https://typeclasses.com/featured/intercalate
+--- <br>@link https://en.wiktionary.org/wiki/intercalate
+--- - ϴ(1) memory allocation
+--- - ϴ(N) runtime complexity
+---@generic A
+---@param xs A[]
+---@param f fun(a: A): number
+---@param calate number
+---@return number
+---@nodiscard
+Array.MapIntercalateSum = function(xs, f, calate)
+	local id = 0
+	if Array.Head(xs) == nil then
+		return id
+	else
+		local add = function(a, b) return a + b end
+		return Array.MapReduce(xs, f, add, id) + calate * (Array.Length(xs) - 1)
+	end
+end
+
 ---@generic A
 ---@param xs A[]
 ---@param f fun(x: A): boolean
 ---@return boolean
+---@nodiscard
 Array.Some = function(xs, f)
 	for _k, v in ipairs(xs) do
 		if f(v) then return true end
@@ -110,6 +150,7 @@ end
 
 ---@param xs number[]
 ---@return number
+---@nodiscard
 Array.Sum = function(xs)
 	local total = 0
 	for _k, v in ipairs(xs) do
@@ -126,6 +167,7 @@ end
 ---@param reducer fun(b1: B, b2: B): B
 ---@param identity B
 ---@return B
+---@nodiscard
 Array.Reduce = function(xs, reducer, identity)
 	local zRef = identity
 	for _k, x in ipairs(xs) do
@@ -139,6 +181,7 @@ end
 ---@param as A[]
 ---@param bs B[]
 ---@return [A,B][]
+---@nodiscard
 Array.Zip2 = function(as, bs)
 	local zipped = {}
 	local l1, l2 = Array.Length(as), Array.Length(bs)

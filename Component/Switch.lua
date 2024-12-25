@@ -117,8 +117,8 @@ function QqSwitch:Create(parent, bag)
 
 	r.Icon:SetPoint("Left", container, "Left", 0, 0)
 	r.Label:SetPoint("Right", container, "Right", 0, 0)
-	local h = L.Psi(L.Max, Api.Region._Height, r.Icon, r.Label)
-	local w = L.Psi(L.Add, Api.Region._Width, r.Icon, r.Label) + _GAP
+	local h = L.Psi(L.Max, Api._Height, r.Icon, r.Label)
+	local w = L.Psi(L.Add, Api._Width, r.Icon, r.Label) + _GAP
 	container:SetHeight(h)
 	container:SetWidth(w)
 

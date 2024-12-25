@@ -30,11 +30,7 @@ local createModuleControls = function(parent, m)
 		TooltipText = m.GetTooltipText(),
 		OnChange = function (isChecked)
 			Quiver_Store.ModuleEnabled[m.Id] = isChecked
-			if isChecked then
-				m.OnEnable()
-			else
-				m.OnDisable()
-			end
+			;(isChecked and m.OnEnable or m.OnDisable)()
 			btnReset:ToggleEnabled(isChecked)
 		end,
 	})
@@ -61,11 +57,8 @@ local createAllModuleControls = function(parent, gap)
 		return frame
 	end)
 
-	local maxWidths =
-		L.Array.MapReduce(frames, function(x) return x:GetWidth() end, math.max, 0)
-	local totalHeight =
-		L.Array.MapReduce(frames, function(x) return x:GetHeight() + gap end, L.Add, 0)
-		- gap
+	local maxWidths = L.Array.MapReduce(frames, Api._Width, math.max, 0)
+	local totalHeight = L.Array.MapIntercalateSum(frames, Api._Height, gap)
 	f:SetHeight(totalHeight)
 	f:SetWidth(maxWidths)
 

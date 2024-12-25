@@ -1,3 +1,4 @@
+local Api = require "Api/Index.lua"
 local Util = require "Component/_Util.lua"
 local Const = require "Constants.lua"
 local L = require "Lib/Index.lua"
@@ -92,7 +93,7 @@ end
 ---@nodiscard
 function QqSelect:predMouseOver()
 	local xs = { self.Container, self.icon.Frame }
-	return L.Array.MapReduce(xs, function(x) return MouseIsOver(x) == 1 end, L.Or, false)
+	return L.Array.Some(xs, MouseIsOver)
 end
 
 ---@param parent Frame
@@ -174,10 +175,8 @@ function QqSelect:Create(parent, labelText, optionsText, selectedText, onSet)
 		end)
 	end
 
-	local sumOptionHeights =
-		L.Array.MapReduce(options, function(o) return o:GetHeight() end, L.Add, 0)
-	local maxOptionWidth =
-		L.Array.MapReduce(options, function(o) return o:GetFontString():GetWidth() end, math.max, 0)
+	local sumOptionHeights = L.Array.MapReduce(options, Api._Height, L.Add, 0)
+	local maxOptionWidth = L.Array.MapReduce(options, L.Flow(Api._FontString, Api._Width), math.max, 0)
 
 	select:SetScript("OnEnter", function() r:OnHoverStart() end)
 	select:SetScript("OnLeave", function() r:OnHoverEnd() end)

@@ -57,6 +57,7 @@ end
 ---@generic B
 ---@generic C
 ---@type fun(f: (fun(x: B, y: B): C), g: (fun(x: A): B), x: A, y: A): C
+---@nodiscard
 Lib.Psi = function(f, g, x, y)
 	return f(g(x), g(y))
 end
@@ -64,38 +65,11 @@ end
 -- ************ Operators ************
 -- ************ Binary / Unary ************
 ---@type fun(a: number, b: number): number
+---@nodiscard
 Lib.Add = function(a, b) return a + b end
 
 ---@type fun(a: number, b: number): number
+---@nodiscard
 Lib.Max = function(a, b) return math.max(a, b) end
-
--- ************ Comparison ************
----@generic A
----@type fun(a: A, b: A): boolean
-Lib.Lt = function(a, b) return a < b end
----@generic A
----@type fun(a: A, b: A): boolean
-Lib.Le = function(a, b) return a <= b end
----@generic A
----@type fun(a: A, b: A): boolean
-Lib.Eq = function(a, b) return a == b end
----@generic A
----@type fun(a: A, b: A): boolean
-Lib.Ne = function(a, b) return a ~= b end
----@generic A
----@type fun(a: A, b: A): boolean
-Lib.Ge = function(a, b) return a >= b end
----@generic A
----@type fun(a: A, b: A): boolean
-Lib.Gt = function(a, b) return a > b end
-
--- ************ Logic ************
----@type fun(a: boolean, b: boolean): boolean
-Lib.And = function(a, b) return a and b end
-
----@type fun(a: boolean, b: boolean): boolean
-Lib.Or = function(a, b) return a or b end-- ************ Comparison ************
----@generic A
----@type fun(a: A, b: A): boolean
 
 return Lib

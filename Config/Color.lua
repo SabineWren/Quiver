@@ -60,12 +60,8 @@ local Create = function(parent, gap)
 		swatch(f, Quiver.T["Out of Range"], storeRange.ColorTooFar, Const.ColorDefault.Range.TooFar),
 	}
 	-- Right align buttons using minimum amount of space
-	local labelMaxWidth = L.Array.MapReduce(
-		elements,
-		function(x) return x.Label and x.Label:GetWidth() or 0 end,
-		L.Max,
-		0
-	)
+	local getLabelWidth = function(x) return x.Label and x.Label:GetWidth() or 0 end
+	local labelMaxWidth = L.Array.MapReduce(elements, getLabelWidth, L.Max, 0)
 
 	local y = 0
 	for _,ele in elements do
