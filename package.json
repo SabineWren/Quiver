@@ -1,16 +1,16 @@
 {
 	"author": "SabineWren",
 	"devDependencies": {
+		"@types/node": "^22.10.2",
+		"effect": "^3.12.0",
 		"luabundle": "^1.7.0"
 	},
 	"engines": {
 		"node": ">= 22.4.1"
 	},
 	"scripts": {
-		"bundle": "node Build/Main.js --lua-watch --output=Quiver.bundle.lua",
-		"bundle-once": "node Build/Main.js --output=Quiver.bundle.lua",
-		"not-implemented-bun-bundle": "bun",
-		"not-implemented-node-23-ts-bundle": "node --experimental-strip-types"
+		"bundle": "node --experimental-strip-types Build/Main.ts --lua-watch --output=Quiver.bundle.lua",
+		"bundle-once": "node --experimental-strip-types Build/Main.ts --output=Quiver.bundle.lua"
 	},
 	"type": "module"
 }

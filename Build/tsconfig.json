@@ -1,0 +1,13 @@
+{
+	"compilerOptions": {
+		"allowImportingTsExtensions": true,
+		"allowJs": true,
+		"lib": ["ESNext"],
+		"module": "NodeNext",
+		"moduleResolution": "nodenext",
+		"noEmit": true,
+		"skipLibCheck": true,
+		"strict": true,
+	},
+	"exclude": ["node_modules/**/*"],
+}
