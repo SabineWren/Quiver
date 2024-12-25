@@ -1,7 +1,7 @@
 local Api = require "Api/Index.lua"
 local Button = require "Component/Button.lua"
-local CheckButton = require "Component/CheckButton.lua"
 local Dialog = require "Component/Dialog.lua"
+local IconButton = require "Component/IconButton.lua"
 local Select = require "Component/Select.lua"
 local Switch = require "Component/Switch.lua"
 local TitleBox = require "Component/TitleBox.lua"
@@ -168,7 +168,7 @@ local Create = function(frameName)
 	btnCloseTop.HookClick = function() dialog:Hide() end
 	btnCloseTop.Container:SetPoint("TopRight", dialog, "TopRight", -_PADDING_CLOSE, -_PADDING_CLOSE)
 
-	local btnToggleLock = CheckButton:Create(dialog, {
+	local btnToggleLock = IconButton:Create(dialog, {
 		IsChecked = Quiver_Store.IsLockedFrames,
 		OnChange = function(isLocked) FrameLock.SetIsLocked(isLocked) end,
 		TexPathOff = Const.Icon.LockOpen,

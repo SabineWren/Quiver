@@ -5,7 +5,7 @@ local L = require "Lib/Index.lua"
 local _GAP = 6
 local _SIZE = 16
 
--- see [CheckButton](lua://QqCheckButton)
+-- see [IconButton](lua://QqIconButton)
 -- see [Switch](lua://QqSwitch)
 ---@class (exact) QqButton : IMouseInteract
 ---@field private __index? QqButton

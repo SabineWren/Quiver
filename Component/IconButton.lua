@@ -4,8 +4,8 @@ local _SIZE = 16
 
 -- see [Button](lua://QqButton)
 -- see [Switch](lua://QqSwitch)
----@class (exact) QqCheckButton : IMouseInteract
----@field private __index? QqCheckButton
+---@class (exact) QqIconButtonButton : IMouseInteract
+---@field private __index? QqIconButtonButton
 ---@field Icon Frame
 ---@field IsChecked boolean
 ---@field TexPathOff string
@@ -14,16 +14,16 @@ local _SIZE = 16
 ---@field isEnabled boolean
 ---@field isHover boolean
 ---@field isMouseDown boolean
-local QqCheckButton = {}
+local QqIconButton = {}
 
----@class (exact) paramsCheckButton
+---@class (exact) paramsIconButton
 ---@field IsChecked boolean
 ---@field OnChange fun(b: boolean): nil
 ---@field TexPathOff string
 ---@field TexPathOn string
 ---@field TooltipText? string
 
----@param self QqCheckButton
+---@param self QqIconButtonButton
 local resetTexture = function(self)
 	local path = self.IsChecked and self.TexPathOn or self.TexPathOff
 	self.Texture:SetTexture(path)
@@ -33,13 +33,13 @@ local resetTexture = function(self)
 end
 
 ---@param parent Frame
----@param bag paramsCheckButton
----@return QqCheckButton
+---@param bag paramsIconButton
+---@return QqIconButtonButton
 ---@nodiscard
-function QqCheckButton:Create(parent, bag)
+function QqIconButton:Create(parent, bag)
 	local icon = CreateFrame("Frame", nil, parent, nil)
 
-	---@type QqCheckButton
+	---@type QqIconButtonButton
 	local r = {
 		Icon = icon,
 		IsChecked = bag.IsChecked,
@@ -92,4 +92,4 @@ function QqCheckButton:Create(parent, bag)
 	return r
 end
 
-return QqCheckButton
+return QqIconButton

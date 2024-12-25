@@ -1,6 +1,6 @@
+local Api = require "Api/Index.lua"
 local Util = require "Component/_Util.lua"
 local Const = require "Constants.lua"
-local Api = require "Api/Index.lua"
 local L = require "Lib/Index.lua"
 
 local _GAP = 6
@@ -28,7 +28,7 @@ local _SIZE = 18
 -- 3. Disabled not implemented.
 
 -- see [Button](lua://QqButton)
--- see [CheckButton](lua://QqCheckButton)
+-- see [IconButton](lua://QqIconButton)
 ---@class (exact) QqSwitch : IMouseInteract
 ---@field private __index? QqSwitch
 ---@field Container Frame
