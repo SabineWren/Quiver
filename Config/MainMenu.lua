@@ -176,7 +176,7 @@ local Create = function(frameName)
 	local btnResetFrames = Button:Create(dialog, Const.Icon.Reset)
 	btnResetFrames.TooltipText = Quiver.T["Reset All Frame Sizes and Positions"]
 	btnResetFrames.HookClick = function()
-		for _k, v in _G.Quiver_Modules do v.OnResetFrames() end
+		for _i, v in ipairs(_G.Quiver_Modules) do v.OnResetFrames() end
 	end
 	local resetOffsetX = lockOffsetX + btnResetFrames.Container:GetWidth() + Const.Size.Gap/2
 	btnResetFrames.Container:SetPoint("TopRight", dialog, "TopRight", -resetOffsetX, -_PADDING_CLOSE)

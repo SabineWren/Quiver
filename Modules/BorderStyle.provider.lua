@@ -23,7 +23,7 @@ return {
 	---@return nil
 	ChangeAndPublish = function(style)
 		Quiver_Store.Border_Style = style
-		for _i, v in pairs(callbacks) do
+		for _i, v in ipairs(callbacks) do
 			v(style)
 		end
 	end,

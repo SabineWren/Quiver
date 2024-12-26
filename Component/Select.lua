@@ -79,9 +79,9 @@ function QqSelect:OnMouseUp()
 	self.isMouseDown = false
 	if self:predMouseOver() then
 		local isVisible = self.Menu:IsVisible()
-		for _k, m in allSelects do
-			m.Menu:Hide()
-			m:resetTexture()
+		for _i, v in ipairs(allSelects) do
+			v.Menu:Hide()
+			v:resetTexture()
 		end
 		if not isVisible then self.Menu:Show() end
 	end
@@ -165,8 +165,8 @@ function QqSelect:Create(parent, labelText, optionsText, selectedText, onSet)
 		return option
 	end)
 
-	for _k, oLoop in options do
-		local option = oLoop---@type Button
+	for _i, v in ipairs(options) do
+		local option = v---@type Button
 		option:SetScript("OnClick", function()
 			local text = option:GetFontString():GetText() or ""
 			onSet(text)

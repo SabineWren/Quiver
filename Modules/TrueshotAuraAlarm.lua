@@ -97,7 +97,7 @@ local onEnable = function()
 	frame:SetScript("OnUpdate", function()
 		if aura.ShouldUpdate(arg1) then aura.UpdateUI() end
 	end)
-	for _k, e in _EVENTS do frame:RegisterEvent(e) end
+	for _i, v in ipairs(_EVENTS) do frame:RegisterEvent(v) end
 	frame:Show()
 	aura.UpdateUI()
 	Spellcast.Instant.Subscribe(MODULE_ID, function(spellName)
@@ -110,7 +110,7 @@ end
 local onDisable = function()
 	Spellcast.Instant.Dispose(MODULE_ID)
 	frame:Hide()
-	for _k, e in _EVENTS do frame:UnregisterEvent(e) end
+	for _i, v in ipairs(_EVENTS) do frame:UnregisterEvent(v) end
 end
 
 ---@type QqModule

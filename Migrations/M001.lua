@@ -15,7 +15,7 @@ return function()
 	Quiver_Store.FrameMeta["AutoShotCastbar"] = nil
 
 	-- Move all module-specific frame data into module stores
-	for _k, v in _G.Quiver_Modules do
+	for _i, v in ipairs(_G.Quiver_Modules) do
 		if mstore[v.Id] and Quiver_Store.FrameMeta[v.Id] then
 			mstore[v.Id].FrameMeta = Quiver_Store.FrameMeta[v.Id]
 		end

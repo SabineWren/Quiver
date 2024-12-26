@@ -132,22 +132,18 @@ local poolProgressBar = (function()
 end)()
 
 local getIdealFrameHeight = function()
-	local height = 0
-	for _i, bar in frame.Bars do
-		height = height + bar:GetHeight()
-	end
+	local height = L.Array.MapReduce(frame.Bars, Api._Height, L.Add, 0)
 	-- Make space for at least 1 bar when UI unlocked
-	if height == 0 then height = HEIGHT_BAR end
-	return height + 2 * INSET
+	return math.min(height, HEIGHT_BAR) + 2 * INSET
 end
 
 local adjustBarYOffsets = function()
 	local height = 0
-	for _i, bar in frame.Bars do
-		bar:SetPoint("Left", frame, "Left", INSET, 0)
-		bar:SetPoint("Right", frame, "Right", -INSET, 0)
-		bar:SetPoint("Top", frame, "Top", 0, -height - INSET)
-		height = height + bar:GetHeight()
+	for _i, v in ipairs(frame.Bars) do
+		v:SetPoint("Left", frame, "Left", INSET, 0)
+		v:SetPoint("Right", frame, "Right", -INSET, 0)
+		v:SetPoint("Top", frame, "Top", 0, -height - INSET)
+		height = height + v:GetHeight()
 	end
 end
 
@@ -193,8 +189,8 @@ end
 
 local hideFrameDeleteBars = function()
 	frame:Hide()
-	for _k, bar in frame.Bars do
-		poolProgressBar.Release(bar)
+	for _i, v in ipairs(frame.Bars) do
+		poolProgressBar.Release(v)
 	end
 	frame.Bars = {}
 end
@@ -203,20 +199,20 @@ local handleUpdate = function()
 	if getCanHide() then hideFrameDeleteBars() end
 	-- Animate Progress Bars
 	local now = GetTime()
-	for _k, bar in frame.Bars do
-		local secElapsed = now - bar.TimeCastSec
+	for _i, v in ipairs(frame.Bars) do
+		local secElapsed = now - v.TimeCastSec
 		local secProgress = secElapsed > TRANQ_CD_SEC and TRANQ_CD_SEC or secElapsed
 		local percentProgress = secProgress / TRANQ_CD_SEC
-		local width = (bar:GetWidth() - 2 * BORDER_BAR) * percentProgress
-		bar.ProgressFrame:SetWidth(width > 1 and width or 1)
-		bar.FsCdTimer:SetText(string.format("%.1f / %.0f", secProgress, TRANQ_CD_SEC))
+		local width = (v:GetWidth() - 2 * BORDER_BAR) * percentProgress
+		v.ProgressFrame:SetWidth(width > 1 and width or 1)
+		v.FsCdTimer:SetText(string.format("%.1f / %.0f", secProgress, TRANQ_CD_SEC))
 
 		local r, g, b = getColorForeground(percentProgress)
 		-- RGB scaling doesn't change brightness equally for all colors,
 		-- so we may need to make a separate gradient for bg
 		local s = 0.7
-		bar:SetBackdropColor(r*s, g*s, b*s, 0.8)
-		bar.ProgressFrame:SetBackdropColor(r, g, b, 0.9)
+		v:SetBackdropColor(r*s, g*s, b*s, 0.8)
+		v.ProgressFrame:SetBackdropColor(r, g, b, 0.9)
 	end
 end
 
@@ -287,12 +283,12 @@ local onEnable = function()
 	if frame == nil then frame = createUI() end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
-	for _k, e in _EVENTS do frame:RegisterEvent(e) end
+	for _i, v in ipairs(_EVENTS) do frame:RegisterEvent(v) end
 	if getCanHide() then hideFrameDeleteBars() else frame:Show() end
 end
 local onDisable = function()
 	frame:Hide()
-	for _k, e in _EVENTS do frame:UnregisterEvent(e) end
+	for _i, v in ipairs(_EVENTS) do frame:UnregisterEvent(v) end
 end
 
 ---@type QqModule

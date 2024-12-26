@@ -84,7 +84,7 @@ end
 
 local getIsConsumable = function(combatLogMsg)
 	if combatLogMsg == nil then return false end
-	for _k, v in Quiver.L.CombatLog.Consumes do
+	for _i, v in ipairs(Quiver.L.CombatLog.Consumes) do
 		local startPos, _ = string.find(combatLogMsg, v)
 		if startPos then return true end
 	end
@@ -431,7 +431,7 @@ local onEnable = function()
 	end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
-	for _k, e in _EVENTS do frame:RegisterEvent(e) end
+	for _i, v in ipairs(_EVENTS) do frame:RegisterEvent(v) end
 	if Quiver_Store.IsLockedFrames then frame:SetAlpha(0) else frame:SetAlpha(1) end
 	BorderStyle.Subscribe(MODULE_ID, function(_style)
 		if frame ~= nil then styleBarAutoShot(frame) end
@@ -449,7 +449,7 @@ local onDisable = function()
 	BorderStyle.Dispose(MODULE_ID)
 	if frame ~= nil then
 		frame:Hide()
-		for _k, e in _EVENTS do frame:UnregisterEvent(e) end
+		for _i, v in ipairs(_EVENTS) do frame:UnregisterEvent(v) end
 	end
 end
 

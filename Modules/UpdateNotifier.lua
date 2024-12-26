@@ -7,11 +7,11 @@ local hasNotified = false
 local CURRENT = Version:ParseThrows(GetAddOnMetadata("Quiver", "Version"))
 
 local broadcast = (function()
-	local channelsLogin = { "Battleground", "Raid", "guild" }
-	local channelsPlayerGroup = { "Battleground", "Raid" }
+	local channelsLogin = { "BATTLEGROUND", "RAID", "GUILD" }
+	local channelsPlayerGroup = { "BATTLEGROUND", "RAID" }
 	local send = function(channels)
-		for _k, chan in channels do
-			SendAddonMessage("Quiver", "VERSION:"..CURRENT.Text, chan)
+		for _i, v in ipairs(channels) do
+			SendAddonMessage("Quiver", "VERSION:"..CURRENT.Text, v)
 		end
 	end
 	return {
@@ -67,5 +67,5 @@ return function()
 	local frame = CreateFrame("Frame", nil)
 	frame:SetScript("OnEvent", handleEvent)
 	-- We don't need to unsubscribe, as we never disable the update notifier
-	for _k, e in _EVENTS do frame:RegisterEvent(e) end
+	for _i, v in ipairs(_EVENTS) do frame:RegisterEvent(v) end
 end

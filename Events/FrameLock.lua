@@ -81,29 +81,29 @@ end
 
 local lockFrames = function()
 	openWarning:Hide()
-	for _k, f in framesMoveable do
-		f:EnableMouse(false)
-		f:SetMovable(false)
+	for _i, v in ipairs(framesMoveable) do
+		v:EnableMouse(false)
+		v:SetMovable(false)
 	end
-	for _k, f in framesResizeable do
-		f.QuiverGripHandle.Container:Hide()
-		f:SetResizable(false)
+	for _i, v in ipairs(framesResizeable) do
+		v.QuiverGripHandle.Container:Hide()
+		v:SetResizable(false)
 	end
-	for _k, v in _G.Quiver_Modules do
+	for _i, v in ipairs(_G.Quiver_Modules) do
 		if Quiver_Store.ModuleEnabled[v.Id] then v.OnInterfaceLock() end
 	end
 end
 local unlockFrames = function()
 	openWarning:Show()
-	for _k, f in framesMoveable do
-		f:EnableMouse(true)
-		f:SetMovable(true)
+	for _i, v in ipairs(framesMoveable) do
+		v:EnableMouse(true)
+		v:SetMovable(true)
 	end
-	for _k, f in framesResizeable do
-		f.QuiverGripHandle.Container:Show()
-		f:SetResizable(true)
+	for _i, v in ipairs(framesResizeable) do
+		v.QuiverGripHandle.Container:Show()
+		v:SetResizable(true)
 	end
-	for _k, v in _G.Quiver_Modules do
+	for _i, v in ipairs(_G.Quiver_Modules) do
 		if Quiver_Store.ModuleEnabled[v.Id] then v.OnInterfaceUnlock() end
 	end
 end

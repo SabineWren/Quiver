@@ -126,13 +126,13 @@ local onEnable = function()
 	if frame == nil then frame, fontString = createUI() end
 	frame:SetScript("OnEvent", handleEvent)
 	frame:SetScript("OnUpdate", handleUpdate)
-	for _k, e in _EVENTS do frame:RegisterEvent(e) end
+	for _i, v in ipairs(_EVENTS) do frame:RegisterEvent(v) end
 	if Quiver_Store.IsLockedFrames then handleEvent() else frame:Show() end
 end
 
 local onDisable = function()
 	frame:Hide()
-	for _k, e in _EVENTS do frame:UnregisterEvent(e) end
+	for _i, v in ipairs(_EVENTS) do frame:UnregisterEvent(v) end
 end
 
 ---@type QqModule

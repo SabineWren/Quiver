@@ -64,13 +64,13 @@ local Create = function(parent, gap)
 	local labelMaxWidth = L.Array.MapReduce(elements, getLabelWidth, L.Max, 0)
 
 	local y = 0
-	for _,ele in elements do
-		if ele.WidthMinusLabel ~= nil then
-			ele.Container:SetWidth(ele.WidthMinusLabel + labelMaxWidth)
+	for _i, v in ipairs(elements) do
+		if v.WidthMinusLabel ~= nil then
+			v.Container:SetWidth(v.WidthMinusLabel + labelMaxWidth)
 		end
-		ele.Container:SetPoint("Left", f, "Left", 0, 0)
-		ele.Container:SetPoint("Top", f, "Top", 0, -y)
-		y = y + ele.Container:GetHeight() + gap
+		v.Container:SetPoint("Left", f, "Left", 0, 0)
+		v.Container:SetPoint("Top", f, "Top", 0, -y)
+		y = y + v.Container:GetHeight() + gap
 	end
 
 	f:SetWidth(L.Array.MapReduce(elements, function(x) return x.Container:GetWidth() end, math.max, 0))

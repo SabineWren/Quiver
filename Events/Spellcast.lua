@@ -19,7 +19,7 @@ local callbacksCastableShot = {}
 ---@param nameEnglish string
 ---@param nameLocalized string
 local publishShotCastable = function(nameEnglish, nameLocalized)
-	for _i, v in pairs(callbacksCastableShot) do
+	for _k, v in pairs(callbacksCastableShot) do
 		v(nameEnglish, nameLocalized)
 	end
 end
@@ -42,7 +42,7 @@ local callbacksInstant = {}
 ---@param nameEnglish string
 ---@param nameLocalized string
 local publishInstant = function(nameEnglish, nameLocalized)
-	for _i, v in pairs(callbacksInstant) do v(nameEnglish, nameLocalized) end
+	for _i, v in ipairs(callbacksInstant) do v(nameEnglish, nameLocalized) end
 end
 local Instant = {
 	---@param moduleId string

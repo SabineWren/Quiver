@@ -4,7 +4,7 @@ local _NUM_PET_ACTION_SLOTS = 10
 ---@return nil|1|2|3|4|5|6|7|8|9|10
 ---@nodiscard
 local findActionIndex = function(actionName)
-	for i=1, _NUM_PET_ACTION_SLOTS, 1 do
+	for i=1, _NUM_PET_ACTION_SLOTS do
 		local name, subtext, tex, isToken, isActive, isAutoCastAllowed, isAutoCastEnabled = GetPetActionInfo(i)
 		if (name == actionName) then
 			return i

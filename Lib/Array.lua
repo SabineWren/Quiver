@@ -7,7 +7,7 @@ local Array = {}
 ---@return boolean
 ---@nodiscard
 Array.Every = function(xs, f)
-	for _k, v in ipairs(xs) do
+	for _i, v in ipairs(xs) do
 		if not f(v) then return false end
 	end
 	return true
@@ -19,7 +19,7 @@ end
 ---@return nil|A
 ---@nodiscard
 Array.Find = function(xs, f)
-	for _k, v in ipairs(xs) do
+	for _i, v in ipairs(xs) do
 		if f(v) then
 			return v
 		end
@@ -50,22 +50,14 @@ end
 ---@return nil|A
 ---@nodiscard
 Array.Head = function(xs)
-	for _k, v in ipairs(xs) do
+	for _i, v in ipairs(xs) do
 		return v
 	end
 	return nil
 end
 
----ϴ(N)
----@generic A
----@param xs A[]
----@return integer
----@nodiscard
-Array.Length = function(xs)
-	local l = 0
-	for _k, _v in ipairs(xs) do l = l + 1 end
-	return l
-end
+--- Alias to avoid Lua 5.1 deprecation warning; we need this syntax for 5.1 compatibility.
+Array.Length = table.getn
 
 ---@generic A
 ---@generic B
@@ -75,7 +67,7 @@ end
 ---@nodiscard
 Array.Map = function(xs, f)
 	local ys = {}
-	for _k, v in ipairs(xs) do
+	for _i, v in ipairs(xs) do
 		table.insert(ys, f(v))
 	end
 	return ys
@@ -90,7 +82,7 @@ end
 Array.Mapi = function(xs, f)
 	local ys = {}
 	local i = 0
-	for _k, v in ipairs(xs) do
+	for _i, v in ipairs(xs) do
 		table.insert(ys, f(v, i))
 		i = i + 1
 	end
@@ -109,8 +101,8 @@ end
 ---@nodiscard
 Array.MapReduce = function(xs, f, reducer, identity)
 	local zRef = identity
-	for _k, x in ipairs(xs) do
-		zRef = reducer(f(x), zRef)
+	for _i, v in ipairs(xs) do
+		zRef = reducer(f(v), zRef)
 	end
 	return zRef
 end
@@ -142,7 +134,7 @@ end
 ---@return boolean
 ---@nodiscard
 Array.Some = function(xs, f)
-	for _k, v in ipairs(xs) do
+	for _i, v in ipairs(xs) do
 		if f(v) then return true end
 	end
 	return false
@@ -153,7 +145,7 @@ end
 ---@nodiscard
 Array.Sum = function(xs)
 	local total = 0
-	for _k, v in ipairs(xs) do
+	for _i, v in ipairs(xs) do
 		total = total + v
 	end
 	return total
@@ -170,8 +162,8 @@ end
 ---@nodiscard
 Array.Reduce = function(xs, reducer, identity)
 	local zRef = identity
-	for _k, x in ipairs(xs) do
-		zRef = reducer(x, zRef)
+	for _i, v in ipairs(xs) do
+		zRef = reducer(v, zRef)
 	end
 	return zRef
 end

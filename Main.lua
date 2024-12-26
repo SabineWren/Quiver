@@ -29,7 +29,7 @@ local savedVariablesRestore = function()
 	Quiver_Store.ModuleStore = Quiver_Store.ModuleStore or {}
 	Quiver_Store.DebugLevel = Quiver_Store.DebugLevel or "None"
 	Quiver_Store.Border_Style = Quiver_Store.Border_Style or "Simple"
-	for _k, v in _G.Quiver_Modules do
+	for _i, v in ipairs(_G.Quiver_Modules) do
 		Quiver_Store.ModuleEnabled[v.Id] = Quiver_Store.ModuleEnabled[v.Id] ~= false
 		Quiver_Store.ModuleStore[v.Id] = Quiver_Store.ModuleStore[v.Id] or {}
 		-- Loading saved variables into each module gives them a chance to set their own defaults.
@@ -37,7 +37,7 @@ local savedVariablesRestore = function()
 	end
 end
 local savedVariablesPersist = function()
-	for _k, v in _G.Quiver_Modules do
+	for _i, v in ipairs(_G.Quiver_Modules) do
 		Quiver_Store.ModuleStore[v.Id] = v.OnSavedVariablesPersist()
 	end
 end
@@ -51,7 +51,7 @@ local initSlashCommandsAndModules = function()
 		Api.Aero.RegisterFrame(frameConfigMenu)
 
 		SlashCmdList["QUIVER"] = function(_args, _box) frameConfigMenu:Show() end
-		for _k, v in _G.Quiver_Modules do
+		for _i, v in ipairs(_G.Quiver_Modules) do
 			if Quiver_Store.ModuleEnabled[v.Id] then v.OnEnable() end
 		end
 	else

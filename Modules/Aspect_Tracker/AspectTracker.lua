@@ -103,12 +103,12 @@ local onEnable = function()
 	if frame == nil then frame = createUI() end
 	updateUI()
 	frame:SetScript("OnEvent", handleEvent)
-	for _k, e in _EVENTS do frame:RegisterEvent(e) end
+	for _i, v in ipairs(_EVENTS) do frame:RegisterEvent(v) end
 	frame:Show()
 end
 local onDisable = function()
 	frame:Hide()
-	for _k, e in _EVENTS do frame:UnregisterEvent(e) end
+	for _i, v in ipairs(_EVENTS) do frame:UnregisterEvent(v) end
 end
 
 ---@type QqModule
