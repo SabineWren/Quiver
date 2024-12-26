@@ -17,9 +17,8 @@ Lib.Nil = Nil
 ---@generic B
 ---@generic C
 ---@generic D
---@type fun(f: (fun(a: A): B), g: (fun(b: B): C)): fun(a: A): C
----@type fun(f: (fun(a: A): B), g: (fun(b: B): C), h: (fun(c: C): D)): fun(a: A): D
-Lib.Flow = function(a1,a2,a3,a4,a5,a6,a7,a8,a9)
+-- Overloads type annotations don't work. See Pipe comments.
+local flow = function(a1,a2,a3,a4,a5,a6,a7,a8,a9)
 	return function(a)
 		local out = a
 		out = a1(out)
@@ -35,6 +34,18 @@ Lib.Flow = function(a1,a2,a3,a4,a5,a6,a7,a8,a9)
 	end
 end
 
+---@generic A
+---@generic B
+---@generic C
+---@type fun(f: (fun(a: A): B), g: (fun(b: B): C)): fun(a: A): C
+Lib.Flow = flow
+---@generic A
+---@generic B
+---@generic C
+---@generic D
+---@type fun(f: (fun(a: A): B), g: (fun(b: B): C), h: (fun(c: C): D)): fun(a: A): D
+Lib.Flow3 = flow
+
 -- No support yet for generic overloads
 -- https://github.com/LuaLS/lua-language-server/issues/723
 --
@@ -45,12 +56,11 @@ end
 ---@generic A
 ---@generic B
 ---@generic C
----@type fun(a: A, f: (fun(a: A): B), g: (fun(b: B): C)): C
 --@type fun(a: A, f: (fun(a: A): B)): B
 --@overload fun(a: A, f: (fun(a: A): B), g: (fun(b: B): C)): C
 --@overload fun(a: A, f: (fun(a: A): B), g: (fun(b: B): C), h: (fun(c: C): D)): D
 --@overload fun(a: A, f: (fun(a: A): B), g: (fun(b: B): C), h: (fun(c: C): D), i: (fun(d: D): E)): D
-Lib.Pipe = function(a,a1,a2,a3,a4,a5,a6,a7,a8,a9)
+local pipe = function(a,a1,a2,a3,a4,a5,a6,a7,a8,a9)
 	-- This looks ugly, but it's better than varargs:
 	-- 1 - Varargs use different syntax between Lua 5.0/5.1
 	-- 2 - Lua 5.0 varargs allocate an extra table
@@ -68,6 +78,22 @@ Lib.Pipe = function(a,a1,a2,a3,a4,a5,a6,a7,a8,a9)
 	return out
 end
 
+---@generic A
+---@generic B
+---@type fun(a: A, f: (fun(a: A): B)): B
+Lib.Pipe = pipe
+---@generic A
+---@generic B
+---@generic C
+---@type fun(a: A, f: (fun(a: A): B), g: (fun(b: B): C)): C
+Lib.Pipe2 = pipe
+---@generic A
+---@generic B
+---@generic C
+---@generic D
+---@type fun(a: A, f: (fun(a: A): B), g: (fun(b: B): C), h: (fun(c: C): D)): D
+Lib.Pipe3 = pipe
+
 --- f(g(x), (y))
 ---@generic A
 ---@generic B
@@ -82,14 +108,22 @@ Lib.Psi = function(f, g, x, y)
 	return f(g(x), g(y))
 end
 
--- ************ Operators ************
--- ************ Binary / Unary ************
+-- ************ Operators / Ternary / Binary / Unary ************
 ---@type fun(a: number, b: number): number
----@nodiscard
 Lib.Add = function(a, b) return a + b end
 
----@type fun(a: number, b: number): number
+---@param min number
+---@param max number
+---@return fun(x: number): number
 ---@nodiscard
-Lib.Max = function(a, b) return math.max(a, b) end
+Lib.Clamp = function(min, max)
+	return function(x) return math.max(min, math.min(x, max)) end
+end
+
+---@type fun(a: number, b: number): number
+Lib.Max = math.max
+
+---@type fun(a: number, b: number): number
+Lib.Min = math.min
 
 return Lib

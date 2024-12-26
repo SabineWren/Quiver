@@ -1,3 +1,4 @@
+local L = require "Lib/Index.lua"
 local Const = require "Constants.lua"
 local FrameLock = require "Events/FrameLock.lua"
 local Spellcast = require "Events/Spellcast.lua"
@@ -45,10 +46,7 @@ local styleCastbar = function(f)
 
 	local path, _size, flags = f.SpellName:GetFont()
 	local textMargin = 5
-	local calcFontSize = f:GetHeight() - sizeInset - textMargin
-	local fontSize = calcFontSize > 18 and 18
-		or calcFontSize < 10 and 10
-		or calcFontSize
+	local fontSize = L.Clamp(10, 18)(f:GetHeight() - sizeInset - textMargin)
 
 	f.SpellName:SetPoint("Left", f, "Left", textMargin, 0)
 	f.SpellTime:SetPoint("Right", f, "Right", -textMargin, 0)

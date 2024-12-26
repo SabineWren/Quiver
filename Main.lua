@@ -1,6 +1,6 @@
 local Api = require "Api/Index.lua"
-local LoadLocale = require "Locale/Lang.lua"
 local MainMenu = require "Config/MainMenu.lua"
+local LoadLocale = require "Locale/Lang.lua"
 local Migrations = require "Migrations/Runner.lua"
 local AspectTracker = require "Modules/Aspect_Tracker/AspectTracker.lua"
 local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"

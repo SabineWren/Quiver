@@ -176,7 +176,7 @@ function QqSelect:Create(parent, labelText, optionsText, selectedText, onSet)
 	end
 
 	local sumOptionHeights = L.Array.MapReduce(options, Api._Height, L.Add, 0)
-	local maxOptionWidth = L.Array.MapReduce(options, L.Flow(Api._FontString, Api._Width), math.max, 0)
+	local maxOptionWidth = L.Array.MapReduce(options, L.Flow(Api._FontString, Api._Width), L.Max, 0)
 
 	select:SetScript("OnEnter", function() r:OnHoverStart() end)
 	select:SetScript("OnLeave", function() r:OnHoverEnd() end)
@@ -186,15 +186,13 @@ function QqSelect:Create(parent, labelText, optionsText, selectedText, onSet)
 
 	select:SetHeight(
 		r.Selected:GetHeight()
-		+ _SPACING
 		+ r.label:GetHeight()
-		+ 2 * _INSET
+		+ _SPACING + 2 * _INSET
 	)
 	select:SetWidth(
-		math.max(r.label:GetWidth(), maxOptionWidth)
+		L.Max(r.label:GetWidth(), maxOptionWidth)
 		+ r.icon.Frame:GetWidth()
-		+ _SPACING
-		+ _INSET * 2
+		+ _SPACING + 2 * _INSET
 	)
 
 	r.Menu:SetHeight(sumOptionHeights + _MENU_PAD_TOP + 2 * _BORDER)

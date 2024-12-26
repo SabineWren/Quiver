@@ -73,7 +73,7 @@ local Create = function(parent, gap)
 		y = y + v.Container:GetHeight() + gap
 	end
 
-	f:SetWidth(L.Array.MapReduce(elements, function(x) return x.Container:GetWidth() end, math.max, 0))
+	f:SetWidth(L.Array.MapReduce(elements, function(x) return x.Container:GetWidth() end, L.Max, 0))
 	f:SetHeight(y)
 	return f
 end
