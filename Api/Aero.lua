@@ -13,22 +13,18 @@ local RegisterFrame = function(f)
 	end
 end
 
----@param f Frame
----@return boolean
----@nodiscard
-local predAnimating = function(f)
-	Aero = IsAddOnLoaded("Aero") and Aero or nil
-	local ff = f---@type { aero: { animating: boolean } }
-	return Aero ~= nil and ff.aero and ff.aero.animating
-end
-
 --- Aero calls Show/Hide internally, leading to duplicate calls.
+--- - https://github.com/gashole/Aero/issues/2
+--- - Update: Aero fixed in latest version, but it may take a long time for users to update.
 ---@param frame Frame
 ---@param event "OnHide"|"OnShow"
 ---@param f function
 local SetScript = function(frame, event, f)
+	local fAero = frame---@type any
 	frame:SetScript(event, function()
-		if not predAnimating(frame) then f() end
+		Aero = IsAddOnLoaded("Aero") and Aero or nil
+		local animating = Aero ~= nil and fAero.aero and fAero.aero.animating
+		if not animating then f() end
 	end)
 end
 

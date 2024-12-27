@@ -1,6 +1,6 @@
 # 3.1.1
 Config menu improvements:
-- Aero integration (dialog animations)
+- [Aero](https://github.com/gashole/Aero) integration (dialog animations)
 - Escape key closes the dialog
 - Open/Close dialog sound effects
 
