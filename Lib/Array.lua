@@ -27,23 +27,6 @@ Array.Find = function(xs, f)
 	return nil
 end
 
---- Array.Iota n 1 |> Array.Collect f |> Array.Head
---- - Does not allocate an intermediate array.
----@generic A
----@param n integer
----@param f fun(i: integer): nil|A
----@return nil|A
----@nodiscard
-Array.GenerateFirst = function(n, f)
-	for i=1, n do
-		local x = f(i)
-		if x ~= nil then
-			return x
-		end
-	end
-	return nil
-end
-
 ---Since arrays are actually tables, Lua doesn't guarantee consistent indexing.
 ---@generic A
 ---@param xs A[]

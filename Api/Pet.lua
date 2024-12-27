@@ -1,23 +1,17 @@
+local L = require "Lib/Index.lua"
 local _NUM_PET_ACTION_SLOTS = 10
-
----@param actionName string
----@return nil|1|2|3|4|5|6|7|8|9|10
----@nodiscard
-local findActionIndex = function(actionName)
-	for i=1, _NUM_PET_ACTION_SLOTS do
-		local name, subtext, tex, isToken, isActive, isAutoCastAllowed, isAutoCastEnabled = GetPetActionInfo(i)
-		if (name == actionName) then
-			return i
-		end
-	end
-	return nil
-end
 
 ---@param actionName string
 ---@return nil
 local CastActionByName = function(actionName)
-	local index = findActionIndex(actionName)
-	if index ~= nil then CastPetAction(index) end
+	local parseIndex = function(i)
+		local name, _, _, _, _, _, _ = GetPetActionInfo(i)
+		return name == actionName and i or nil
+	end
+	L.Pipe(
+		L.Nil.FirstBy(_NUM_PET_ACTION_SLOTS, parseIndex),
+		L.Nil.Iter(CastPetAction)
+	)
 end
 
 return {

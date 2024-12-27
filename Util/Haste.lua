@@ -12,7 +12,7 @@ local scanRangedWeaponSpeed = function()
 	return Api.Tooltip.Scan(function(tooltip)
 		tooltip:ClearLines()
 		local _, _, _ = tooltip:SetInventoryItem("player", Api.Enum.INVENTORY_SLOT.Ranged)
-		return L.Array.GenerateFirst(
+		return L.Nil.FirstBy(
 			tooltip:NumLines(),
 			L.Flow3(
 				function(i) return Api.Tooltip.GetText("TextRight", i) end,
