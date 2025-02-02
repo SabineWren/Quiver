@@ -1,5 +1,9 @@
 > [!IMPORTANT]
-> $${\color{red}\* \color{orange}\* \color{yellow}\*}$$ **[Installation Methods](#installation)** $${\color{yellow}\* \color{orange}\* \color{red}\*}$$
+> $${\color{red}\* \color{orange}\* \color{yellow}\*}$$ **[Installation Instructions](#installation)** $${\color{yellow}\* \color{orange}\* \color{red}\*}$$
+
+<img src="/Media/Config_UI_0f9e20.jpg" height="400px">
+
+Use `/Quiver` or `/qq` to open the configuration menu.
 
 ## Features
 - [Aspect Tracker](#aspect-tracker)
@@ -9,10 +13,6 @@
 - [Range Indicator](#range-indicator)
 - [Tranq Shot Announcer](#tranq-shot-announcer)
 - [Trueshot Aura Alarm](#trueshot-aura-alarm)
-
-<img src="/Media/Config_UI_0f9e20.jpg" height="400px">
-
-Use `/Quiver` or `/qq` to open the configuration menu.
 
 ### Aspect Tracker
 Never lose track of your current aspect
@@ -56,13 +56,13 @@ Inspired by:
 #### CastNoClip
 Cast spell by name if it won't clip a shot. Requires the Auto Shot module enabled in the config menu.
 ```lua
-/script Quiver.CastNoClip("Steady Shot")
+/run Quiver.CastNoClip("Steady Shot")
 ```
 
 #### CastPetAction
 Find and cast pet action if possible.
 ```lua
-/script Quiver.CastPetAction("Furious Howl"); CastSpellByName("Multi-Shot")
+/run Quiver.CastPetAction("Furious Howl"); CastSpellByName("Multi-Shot")
 ```
 
 #### FdPrepareTrap
@@ -71,10 +71,15 @@ Find and cast pet action if possible.
 - Casts: FD, petPassive, petFollow
 
 ```lua
-/script CastSpellByName("Frost Trap"); Quiver.FdPrepareTrap()
+-- Standard trap macro for most servers
+/run CastSpellByName("Frost Trap"); Quiver.FdPrepareTrap()
+
+-- Workaround for Turtle WoW CC2
+/run --CastSpellByName("Freezing Trap")
+/run Quiver.FdPrepareTrap(); CastSpellByName("Freezing Trap")
 ```
 > [!WARNING]
-> this will pull your pet even if you're stunned etc.
+> This will pull your pet even if you're stunned etc.
 
 #### GetSecondsRemainingReload
 #### GetSecondsRemainingShoot
@@ -83,12 +88,12 @@ Timing functions return true/false (isShooting/isReloading) and the time remaini
 -- This macro detects when the auto shot timer bugs out by more than
 -- 0.25 seconds, and switches from CastNoClip to CastSpellByName.
 -- Steady Shot can hang a while before firing, so tune the cutoff.
-/script local a, b = Quiver.GetSecondsRemainingShoot(); local c = a and b < -0.25; local f = c and CastSpellByName or Quiver.CastNoClip; f("Steady Shot")
+/run local a, b = Quiver.GetSecondsRemainingShoot(); local c = a and b < -0.25; local f = c and CastSpellByName or Quiver.CastNoClip; f("Steady Shot")
 ```
 
 #### PredMidShot – Low level predicate for no-clip behavior. Used internally to implement CastNoClip.
 ```lua
-/script if not Quiver.PredMidShot() then DEFAULT_CHAT_FRAME:AddMessage("Reloading") end
+/run if not Quiver.PredMidShot() then DEFAULT_CHAT_FRAME:AddMessage("Reloading") end
 ```
 
 ### Range Indicator
