@@ -61,7 +61,7 @@ local Create = function(parent, gap)
 	}
 	-- Right align buttons using minimum amount of space
 	local getLabelWidth = function(x) return x.Label and x.Label:GetWidth() or 0 end
-	local labelMaxWidth = L.Array.MapReduce(elements, getLabelWidth, L.Max, 0)
+	local labelMaxWidth = L.Array.MapSeduce(elements, getLabelWidth, L.Sg.Max, 0)
 
 	local y = 0
 	for _i, v in ipairs(elements) do
@@ -73,7 +73,7 @@ local Create = function(parent, gap)
 		y = y + v.Container:GetHeight() + gap
 	end
 
-	f:SetWidth(L.Array.MapReduce(elements, function(x) return x.Container:GetWidth() end, L.Max, 0))
+	f:SetWidth(L.Array.MapSeduce(elements, function(x) return x.Container:GetWidth() end, L.Sg.Max, 0))
 	f:SetHeight(y)
 	return f
 end

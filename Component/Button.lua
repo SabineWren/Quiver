@@ -109,8 +109,8 @@ function QqButton:Create(parent, texPath, labelText, scale)
 		r.Label = container:CreateFontString(nil, "BACKGROUND", "GameFontNormal")
 		r.Label:SetText(labelText)
 		r.Label:SetPoint("Right", container, "Right", 0, 0)
-		h = L.Psi(L.Max, Api._Height, r.Icon, r.Label)
-		w = L.Psi(L.Add, Api._Width, r.Icon, r.Label) + _GAP
+		h = L.Psi(L.Sg.Max.Op, Api._Height, r.Icon, r.Label)
+		w = L.Psi(L.M.Add.Op, Api._Width, r.Icon, r.Label) + _GAP
 	else
 		h = r.Icon:GetHeight()
 		w = r.Icon:GetWidth()

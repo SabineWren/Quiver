@@ -57,8 +57,8 @@ local createAllModuleControls = function(parent, gap)
 		return frame
 	end)
 
-	local maxWidths = L.Array.MapReduce(frames, Api._Width, L.Max, 0)
-	local totalHeight = L.Array.MapIntercalateSum(frames, Api._Height, gap)
+	local maxWidths = L.Array.MapSeduce(frames, Api._Width, L.Sg.Max, 0)
+	local totalHeight = L.Array.MapIntersperseSum(frames, Api._Height, gap)
 	f:SetHeight(totalHeight)
 	f:SetWidth(maxWidths)
 
@@ -220,7 +220,7 @@ local Create = function(frameName)
 	ddContainer:SetHeight(-dropdownY)
 
 	local dropdowns = { selectChannelHit, selectAutoShotTimerDirection, selectBorderStyle, selectDebugLevel }
-	local maxWidth = L.Array.MapReduce(dropdowns, function(x) return x.Container:GetWidth() end, L.Max, 0)
+	local maxWidth = L.Array.MapSeduce(dropdowns, function(x) return x.Container:GetWidth() end, L.Sg.Max, 0)
 	ddContainer:SetHeight(-dropdownY)
 	ddContainer:SetWidth(maxWidth)
 

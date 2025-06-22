@@ -1,11 +1,15 @@
 local Array = require "Lib/Array.lua"
 local Color = require "Lib/Color.lua"
+local M = require "Lib/Monoid.lua"
 local Nil = require "Lib/Nil.lua"
+local Sg = require "Lib/Semigroup.lua"
 
 local Lib = {}
 Lib.Array = Array
 Lib.Color = Color
+Lib.M = M
 Lib.Nil = Nil
+Lib.Sg = Sg
 
 -- ************ Combinators ************
 -- Reference library:
@@ -109,9 +113,6 @@ Lib.Psi = function(f, g, x, y)
 end
 
 -- ************ Operators / Ternary / Binary / Unary ************
----@type fun(a: number, b: number): number
-Lib.Add = function(a, b) return a + b end
-
 ---@param min number
 ---@param max number
 ---@return fun(x: number): number
@@ -119,11 +120,5 @@ Lib.Add = function(a, b) return a + b end
 Lib.Clamp = function(min, max)
 	return function(x) return math.max(min, math.min(x, max)) end
 end
-
----@type fun(a: number, b: number): number
-Lib.Max = math.max
-
----@type fun(a: number, b: number): number
-Lib.Min = math.min
 
 return Lib

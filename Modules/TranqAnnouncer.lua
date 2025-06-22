@@ -132,9 +132,9 @@ local poolProgressBar = (function()
 end)()
 
 local getIdealFrameHeight = function()
-	local heightBars = L.Array.MapReduce(frame.Bars, Api._Height, L.Add, 0)
+	local heightBars = L.Array.MapReduce(frame.Bars, Api._Height, L.M.Add)
 	-- Make space for at least 1 bar when UI unlocked
-	return L.Max(heightBars, HEIGHT_BAR) + 2 * INSET
+	return math.max(heightBars, HEIGHT_BAR) + 2 * INSET
 end
 
 local adjustBarYOffsets = function()

@@ -1,3 +1,5 @@
+local M = require "Lib/Monoid.lua"
+
 ---@class Array
 local Array = {}
 
@@ -72,25 +74,61 @@ Array.Mapi = function(xs, f)
 	return ys
 end
 
---- ϴ(1) memory allocation<br>
---- ϴ(N) runtime complexity
+--- - ϴ(1) memory allocation
+--- - ϴ(N) runtime complexity
 ---@generic A
 ---@generic B
 ---@param xs A[]
 ---@param f fun(a: A): B
----@param reducer fun(b1: B, b2: B): B
----@param identity B
+---@param folder fun(b1: B, b2: B): B
+---@param initial B
 ---@return B
 ---@nodiscard
-Array.MapReduce = function(xs, f, reducer, identity)
-	local zRef = identity
+Array.MapFoldL = function(xs, f, folder, initial)
+	local zRef = initial
 	for _i, v in ipairs(xs) do
-		zRef = reducer(f(v), zRef)
+		zRef = folder(f(v), zRef)
 	end
 	return zRef
 end
 
---- Map f >> Intercalate x >> Reduce (+)
+--- Constrained to [Monoid](lua://Monoid)\<number\>
+--- - ϴ(1) memory allocation
+--- - ϴ(N) runtime complexity
+---@generic A
+---@param xs A[]
+---@param f fun(a: A): number
+---@param monoid Monoid
+---@return number
+---@nodiscard
+Array.MapReduce = function(xs, f, monoid)
+	return Array.MapFoldL(xs, f, monoid.Op, monoid.Id)
+end
+
+--- Constrained to [Semigroup](lua://Semigroup)\<number\>
+--- - ϴ(1) memory allocation
+--- - ϴ(N) runtime complexity
+---@generic A
+---@param xs A[]
+---@param f fun(a: A): number
+---@param semigroup Semigroup
+---@param identity number
+---@return number
+---@nodiscard
+Array.MapSeduce = function(xs, f, semigroup, identity)
+	return Array.MapFoldL(xs, f, semigroup.Op, identity)
+end
+
+-- TODO Intercalate
+--- <br>@link https://typeclasses.com/featured/intercalate
+--- <br>@link https://en.wiktionary.org/wiki/intercalate
+--@generic A
+--@param calate A[]
+--@param xss A[][]
+--@return A[]
+--@nodiscard
+
+--- Map f >> Intersperse x >> Reduce (+)
 --- <br>@link https://typeclasses.com/featured/intercalate
 --- <br>@link https://en.wiktionary.org/wiki/intercalate
 --- - ϴ(1) memory allocation
@@ -98,17 +136,12 @@ end
 ---@generic A
 ---@param xs A[]
 ---@param f fun(a: A): number
----@param calate number
+---@param gap number
 ---@return number
 ---@nodiscard
-Array.MapIntercalateSum = function(xs, f, calate)
-	local id = 0
-	if Array.Head(xs) == nil then
-		return id
-	else
-		local add = function(a, b) return a + b end
-		return Array.MapReduce(xs, f, add, id) + calate * (Array.Length(xs) - 1)
-	end
+Array.MapIntersperseSum = function(xs, f, gap)
+	local numJoins = math.max(0, Array.Length(xs) - 1)
+	return gap * numJoins + Array.MapReduce(xs, f, M.Add)
 end
 
 ---@generic A
@@ -123,32 +156,44 @@ Array.Some = function(xs, f)
 	return false
 end
 
----@param xs number[]
----@return number
----@nodiscard
-Array.Sum = function(xs)
-	local total = 0
-	for _i, v in ipairs(xs) do
-		total = total + v
-	end
-	return total
-end
-
---- ϴ(1) memory allocation<br>
---- ϴ(N) runtime complexity
+--- - ϴ(1) memory allocation
+--- - ϴ(N) runtime complexity
 ---@generic A
 ---@generic B
 ---@param xs A[]
----@param reducer fun(b1: B, b2: B): B
+---@param folder fun(b1: B, b2: B): B
 ---@param identity B
 ---@return B
 ---@nodiscard
-Array.Reduce = function(xs, reducer, identity)
+Array.FoldL = function(xs, folder, identity)
 	local zRef = identity
 	for _i, v in ipairs(xs) do
-		zRef = reducer(v, zRef)
+		zRef = folder(v, zRef)
 	end
 	return zRef
+end
+
+--- Constrained to [Monoid](lua://Monoid)\<number\>
+--- - ϴ(1) memory allocation
+--- - ϴ(N) runtime complexity
+---@param xs number[]
+---@param monoid Monoid
+---@return number
+---@nodiscard
+Array.Reduce = function(xs, monoid)
+	return Array.FoldL(xs, monoid.Op, monoid.Id)
+end
+
+--- Constrained to [Semigroup](lua://Semigroup)\<number\>
+--- - ϴ(1) memory allocation
+--- - ϴ(N) runtime complexity
+---@param xs number[]
+---@param semigroup Semigroup
+---@param identity number
+---@return number
+---@nodiscard
+Array.Seduce = function(xs, semigroup, identity)
+	return Array.FoldL(xs, semigroup.Op, identity)
 end
 
 ---@generic A
