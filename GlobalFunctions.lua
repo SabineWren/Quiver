@@ -1,5 +1,6 @@
 local Api = require "Api/Index.lua"
 local AutoShotTimer = require "Modules/Auto_Shot_Timer/AutoShotTimer.lua"
+local TrinketSwap = require "Modules/TrinketSwap.lua"
 
 ---@param spellName string
 ---@return nil
@@ -54,4 +55,11 @@ return function()
 	Quiver.GetSecondsRemainingReload = AutoShotTimer.GetSecondsRemainingReload
 	Quiver.GetSecondsRemainingShoot = AutoShotTimer.GetSecondsRemainingShoot
 	Quiver.PredMidShot = AutoShotTimer.PredMidShot
+
+	-- WIP - starting with macros, should really be a UI like trinketmenu.
+	-- Not documented in README.md because you shouldn't expect this to work.
+	-- /run Quiver.TrinketSwap1("Interface\\Icons\\INV_Trinket_Naxxramas03")
+	-- /run Quiver.TrinketSwap2("Interface\\Icons\\INV_Misc_Token_ArgentDawn2")
+	Quiver.TrinketSwap1 = function(texName) TrinketSwap("Trinket0Slot", texName) end
+	Quiver.TrinketSwap2 = function(texName) TrinketSwap("Trinket1Slot", texName) end
 end
