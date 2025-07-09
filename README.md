@@ -47,18 +47,20 @@ Inspired by:
 - [HSK](https://github.com/anstellaire/HunterSwissKnife) -- Ignores instant spells such as Arcane Shot
 - [YaHT](https://github.com/Aviana/YaHT/tree/1.12.1) -- Resets swing timer while casting a shot
 
+Quiver exposes timer state (`GlobalFunctions.lua`). I recommend a no-clip macro:
+```lua
+-- This macro fires Steady Shot unless doing so will interrupt an auto shot.
+-- Steady Shot can hang a while before firing, so tune the cutoff (default -0.25).
+-- Negative values prevent interrupting, while positive account for latency.
+/run local a, b = Quiver.GetSecondsRemainingShoot(); local c = a and b < -0.25; local f = c and CastSpellByName or Quiver.CastNoClip; f("Steady Shot")
+```
+
 ### Castbar
 <img src="/Media/Bar_3_Casting.jpg" height="180px">
 
 - Shows Aimed Shot, Multi-Shot, and Steady Shot
 
 ### Lua Functions
-#### CastNoClip
-Cast spell by name if it won't clip a shot. Requires the Auto Shot module enabled in the config menu.
-```lua
-/run Quiver.CastNoClip("Steady Shot")
-```
-
 #### CastPetAction
 Find and cast pet action if possible.
 ```lua
@@ -80,21 +82,6 @@ Find and cast pet action if possible.
 ```
 > [!WARNING]
 > This will pull your pet even if you're stunned etc.
-
-#### GetSecondsRemainingReload
-#### GetSecondsRemainingShoot
-Timing functions return true/false (isShooting/isReloading) and the time remaining (zero if false).
-```lua
--- This macro detects when the auto shot timer bugs out by more than
--- 0.25 seconds, and switches from CastNoClip to CastSpellByName.
--- Steady Shot can hang a while before firing, so tune the cutoff.
-/run local a, b = Quiver.GetSecondsRemainingShoot(); local c = a and b < -0.25; local f = c and CastSpellByName or Quiver.CastNoClip; f("Steady Shot")
-```
-
-#### PredMidShot – Low level predicate for no-clip behavior. Used internally to implement CastNoClip.
-```lua
-/run if not Quiver.PredMidShot() then DEFAULT_CHAT_FRAME:AddMessage("Reloading") end
-```
 
 ### Range Indicator
 [<img src="/Media/Range_Indicator_Thumbnail.jpg" height="180px">](https://rawcdn.githack.com/SabineWren/Quiver/588c9f3a9b41746af2c2e612d536c49bbe40676d/Media/Range_Indicator_Preview.mp4)
