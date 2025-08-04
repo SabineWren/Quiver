@@ -4,7 +4,7 @@ import * as Path from "path"
 import * as Process from "process"
 import { ThrottleF } from "./Throttle.ts"
 import { Result } from "./Result.ts"
-import { CloneKeyToValue, ReverseLuaHashmap } from "../Locale/StaticTooling.ts"
+import { CloneKeyToValue, ReverseLuaHashmap } from "../Locale/LuaJsInterop.math.ts"
 import { Array, flow, Option, pipe } from "effect"
 
 const isWatch = Process.argv.includes("--lua-watch")

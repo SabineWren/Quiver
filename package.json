@@ -10,7 +10,8 @@
 	},
 	"scripts": {
 		"bundle": "node --experimental-strip-types Build/Main.ts --lua-watch --output=Quiver.bundle.lua",
-		"bundle-once": "node --experimental-strip-types Build/Main.ts --output=Quiver.bundle.lua"
+		"bundle-once": "node --experimental-strip-types Build/Main.ts --output=Quiver.bundle.lua",
+		"test": "node --test --experimental-strip-types Build/Main.test.ts"
 	},
 	"type": "module"
 }
