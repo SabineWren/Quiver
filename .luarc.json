@@ -18,6 +18,7 @@
 	"runtime.version": "Lua 5.1",
 	"type.checkTableShape": true,
 	"type.inferParamType": true,
+	"type.maxUnionVariants": 0,
 	"workspace.ignoreDir": ["*.bundle.lua"],
 	"workspace.library": ["wow-api-type-definitions"]
 }

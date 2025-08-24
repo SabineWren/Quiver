@@ -1,12 +1,14 @@
+local Config = require "Api/Config.lua"
 local Button = require "Component/Button.lua"
 local Const = require "Constants.lua"
+local L = require "Lib/Index.lua"
+local Nil = require "Lib/Nil.lua"
 
 --[[
 WoW persists positions for frames that have global names.
 However, we use custom meta (size+position) logic because
 otherwise each login clears all frame data for disabled addons.
 TopLeft origin because GetPoint() uses TopLeft
-
 
 Must use entire store as parameter for functions, because we reset by setting FrameMeta to null.
 If we only pass FrameMeta, then several event listeners will mutate the wrong object.
@@ -17,31 +19,12 @@ local framesMoveable = {}
 local framesResizeable = {}
 local openWarning
 
--- Screensize scales after initializing, but when it does, the UI scale value also changes.
--- Therefore, the result of size * scale never changes, but the result of either size or scale does.
--- Disabling useUIScale doesn't affect the scale value, so we have to conditionally scale saved frame positions.
-local getRealScreenWidth = function()
-	local scale = GetCVar("useUiScale") == 1 and UIParent:GetEffectiveScale() or 1
-	return GetScreenWidth() * scale
-end
-local getRealScreenheight = function()
-	local scale = GetCVar("useUiScale") == 1 and UIParent:GetEffectiveScale() or 1
-	return GetScreenHeight() * scale
-end
-
-local defaultOf = function(val, fallback)
-	if val == nil then return fallback else return val end
-end
-local SideEffectRestoreSize = function(store, args)
-	local sw = getRealScreenWidth()
-	local sh = getRealScreenheight()
-
+local SideEffectRestoreSize = function(store, df)
 	local m = store.FrameMeta or {}
-	local w, h, dx, dy = args.w, args.h, args.dx, args.dy
-	m.W = defaultOf(m.W, w)
-	m.H = defaultOf(m.H, h)
-	m.X = defaultOf(m.X, sw / 2 + dx)
-	m.Y = defaultOf(m.Y, -1 * sh / 2 + dy)
+	m.W = Nil.GetOr(m.W, df.w)
+	m.H = Nil.GetOr(m.H, df.h)
+	m.X = Nil.GetOr(m.X, Config.GetScreenWidthScaled() / 2 + df.dx)
+	m.Y = Nil.GetOr(m.Y, -1 * Config.GetScreenHeightScaled() / 2 + df.dy)
 	store.FrameMeta = m
 end
 
@@ -53,8 +36,8 @@ local Init = function()
 	openWarning.Text = openWarning:CreateFontString(nil, "ARTWORK", "GameFontNormal")
 	openWarning.Text:SetAllPoints(openWarning)
 	openWarning.Text:SetJustifyH("Center")
-	openWarning.Text:SetJustifyV("Center")
-	openWarning.Text:SetText(Quiver.T["Quiver Unlocked. Show config dialog with /qq or /quiver.\nClick the lock icon when done."])
+	openWarning.Text:SetJustifyV("Middle")
+	openWarning.Text:SetText(Quiver.T["Quiver Unlocked.Show config dialog with /qq or /quiver.\nClick the lock icon when done."])
 	openWarning.Text:SetTextColor(1, 1, 1)
 	openWarning:SetAllPoints(UIParent)
 	if Quiver_Store.IsLockedFrames
@@ -113,50 +96,22 @@ local SetIsLocked = function(isChecked)
 	if isChecked then lockFrames() else unlockFrames() end
 end
 
-local absClamp = function(vOpt, vMax)
-	local fallback = vMax / 2
-	if vOpt == nil then return fallback end
-
-	local v = math.abs(vOpt)
-	if v > 0 and v < vMax
-	then return v
-	else return fallback
-	end
-end
-
-
----@param a number
----@return integer
-local round = function(a)
-	return math.floor(a + 0.5)
-end
----@param a number
----@return integer
-local round4 = function(a)
-	return math.floor(a / 4 + 0.5) * 4
-end
-
 local SideEffectMakeMoveable = function(f, store)
+	f:SetClampedToScreen(true)
 	f:SetWidth(store.FrameMeta.W)
 	f:SetHeight(store.FrameMeta.H)
 	f:SetMinResize(30, GRIP_HEIGHT)
-	local sw = getRealScreenWidth()
-	local sh = getRealScreenheight()
-	f:SetMaxResize(sw/2, sh/2)
+	f:SetMaxResize(Config.GetScreenWidthScaled()/2, Config.GetScreenHeightScaled()/2)
+	f:SetPoint("TopLeft", nil, "TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
 
-	local xMax = sw - store.FrameMeta.W
-	local yMax = sh - store.FrameMeta.H
-	local x = absClamp(store.FrameMeta.X, xMax)
-	local y = -1 * absClamp(store.FrameMeta.Y, yMax)
-	f:SetPoint("TopLeft", nil, "TopLeft", x, y)
 	f:SetScript("OnMouseDown", function()
 		if not Quiver_Store.IsLockedFrames then f:StartMoving() end
 	end)
 	f:SetScript("OnMouseUp", function()
 		f:StopMovingOrSizing()
 		local _, _, _, x, y = f:GetPoint()
-		store.FrameMeta.X = round4(x)
-		store.FrameMeta.Y = round4(y)
+		store.FrameMeta.X = L.Round4(x)
+		store.FrameMeta.Y = L.Round4(y)
 		f:SetPoint("TopLeft", nil, "TopLeft", store.FrameMeta.X, store.FrameMeta.Y)
 	end)
 
@@ -170,7 +125,7 @@ local SideEffectMakeResizeable = function(frame, store, args)
 	if isCenterX then
 		frame:SetScript("OnSizeChanged", function()
 			local wOld = store.FrameMeta.W
-			local delta = round(frame:GetWidth() - wOld)
+			local delta = L.Round0(frame:GetWidth() - wOld)
 			store.FrameMeta.W = wOld + 2 * delta
 			store.FrameMeta.X = store.FrameMeta.X - delta
 			frame:SetWidth(store.FrameMeta.W)

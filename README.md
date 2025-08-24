@@ -137,9 +137,10 @@ For use with Git updates `git pull --rebase` or addon managers.
 Do you live on the bleeding edge?
 1. Open a terminal in your addons directory
 2. `git clone https://github.com/SabineWren/Quiver`
-3. `npm install`
-4. `npm run bundle-once`
-5. Restart WoW
+3. `cd Quiver`
+4. `npm install`
+5. `npm run bundle-once`
+6. Restart WoW
 
 ## Contributing
 ### Localization

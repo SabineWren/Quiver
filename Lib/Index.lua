@@ -121,4 +121,16 @@ Lib.Clamp = function(min, max)
 	return function(x) return math.max(min, math.min(x, max)) end
 end
 
+---@param a number
+---@return integer
+Lib.Round0 = function(a)
+	return math.floor(a + 0.5)
+end
+
+---@param a number
+---@return integer
+Lib.Round4 = function(a)
+	return math.floor(a / 4 + 0.5) * 4
+end
+
 return Lib

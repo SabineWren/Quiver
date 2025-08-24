@@ -22,7 +22,7 @@ return {
 	["None"] = "无",
 	["Out of Range"] = "超出范围",
 	["Quiver is for hunters."] = "Quiver仅适用于猎人。",
-	["Quiver Unlocked. Show config dialog with /qq or /quiver.\nClick the lock icon when done."] = "Quiver已解锁。使用/qq或/quiver显示配置对话框。\n完成后点击锁定图标。",
+	["Quiver Unlocked.\nShow config dialog with /qq or /quiver.\nClick the lock icon when done."] = "Quiver已解锁。\n使用/qq或/quiver显示配置对话框。\n完成后点击锁定图标。",
 	["Range Indicator"] = "距离指示器",
 	["Reloading"] = "正在装填",
 	["Reset All Frame Sizes and Positions"] = "重置所有框架大小和位置",
