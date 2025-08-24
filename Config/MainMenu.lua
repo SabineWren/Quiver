@@ -143,10 +143,10 @@ local Create = function(frameName)
 	local _PADDING_CLOSE = Const.Size.Border + 6
 	local _PADDING_FAR = Const.Size.Border + Const.Size.Gap
 	local dialog = Dialog.Create(_PADDING_CLOSE, frameName)
-	Api.Aero.SetScript(dialog, "OnShow", function()
+	dialog:SetScript("OnShow", function()
 		PlaySoundFile("Interface\\AddOns\\Quiver\\Assets\\removing_wood_arrow_from_bow_4.wav")
 	end)
-	Api.Aero.SetScript(dialog, "OnHide", function()
+	dialog:SetScript("OnHide", function()
 		PlaySoundFile("Interface\\AddOns\\Quiver\\Assets\\sheathing_a_few_arrows_loosely_into_a_quiver_3.wav")
 	end)
 	-- This allows escape key to close, and preserves frame position.

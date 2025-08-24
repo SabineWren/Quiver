@@ -1,3 +1,6 @@
+# Next
+- Removed workaround for a [bug](https://github.com/gashole/Aero/issues/2) in pre-2025 versions of Aero.
+
 # 3.1.1
 Config menu improvements:
 - [Aero](https://github.com/gashole/Aero) integration (dialog animations)
