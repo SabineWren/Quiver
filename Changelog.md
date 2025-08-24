@@ -1,4 +1,5 @@
-# Next
+# 3.1.2
+- Fixed issue with frames resetting saved position for some users.
 - Removed workaround for a [bug](https://github.com/gashole/Aero/issues/2) in pre-2025 versions of Aero.
 
 # 3.1.1
