@@ -1527,6 +1527,7 @@ local DB_SPELL = {
 
 	-- Instant Shots
 	["Arcane Shot"]={ Class="HUNTER", Haste="none", Icon="Ability_ImpalingBolt", IsAmmo=true },---@type SpellMetaInstantShot
+	["Baited Shot"]={ Class="HUNTER", Haste="none", Icon="inv_misc_food_66", IsAmmo=true },---@type SpellMetaInstantShot
 	["Concussive Shot"]={ Class="HUNTER", Haste="none", Icon="Spell_Frost_Stun", IsAmmo=true },---@type SpellMetaInstantShot
 	["Scatter Shot"]={ Class="HUNTER", Haste="none", Icon="Ability_GolemStormBolt", IsAmmo=true },---@type SpellMetaInstantShot
 	["Scorpid Sting"]={ Class="HUNTER", Haste="none", Icon="Ability_Hunter_CriticalShot", IsAmmo=true },---@type SpellMetaInstantShot
@@ -1983,7 +1984,7 @@ local callbacksInstant = {}
 ---@param nameEnglish string
 ---@param nameLocalized string
 local publishInstant = function(nameEnglish, nameLocalized)
-	for _i, v in ipairs(callbacksInstant) do
+	for _k, v in pairs(callbacksInstant) do
 		v(nameEnglish, nameLocalized)
 	end
 end
@@ -3706,6 +3707,7 @@ end)
 __bundle_register("Locale/zhCN/Spell.reverse.zhCN.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 return {
 	["孤狼守护"] = "Aspect of the Wolf",
+	["诱饵射击"] = "Baited Shot",
 	["驱除疾病"] = "Abolish Disease",
 	["驱毒术"] = "Abolish Poison",
 	["驱毒术效果"] = "Abolish Poison Effect",
@@ -5116,6 +5118,7 @@ end)
 __bundle_register("Locale/zhCN/Spell.zhCN.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 return {
 	["Aspect of the Wolf"] = "孤狼守护",
+	["Baited Shot"] = "诱饵射击",
 
 	-- Vanilla 1.12
 	["Abolish Disease"] = "驱除疾病",
@@ -6621,6 +6624,7 @@ end)
 __bundle_register("Locale/enUS/Spell.enUS.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 return {
 	["Aspect of the Wolf"] = "Aspect of the Wolf",
+	["Baited Shot"] = "Baited Shot",
 	["Abolish Disease"] = "Abolish Disease",
 	["Abolish Poison"] = "Abolish Poison",
 	["Abolish Poison Effect"] = "Abolish Poison Effect",
