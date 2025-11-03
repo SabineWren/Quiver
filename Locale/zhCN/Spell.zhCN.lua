@@ -1,5 +1,6 @@
 return {
 	["Aspect of the Wolf"] = "孤狼守护",
+	["Baited Shot"] = "诱饵射击",
 
 	-- Vanilla 1.12
 	["Abolish Disease"] = "驱除疾病",

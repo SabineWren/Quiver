@@ -6,6 +6,7 @@ Create Table SpellsUsingAmmo (
 Insert Into SpellsUsingAmmo
 
 -- Turtle 1.17.2
+Baited Shot
 Steady Shot
 
 -- Vanilla 1.12

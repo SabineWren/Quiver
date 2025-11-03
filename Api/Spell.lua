@@ -22,6 +22,7 @@ local DB_SPELL = {
 
 	-- Instant Shots
 	["Arcane Shot"]={ Class="HUNTER", Haste="none", Icon="Ability_ImpalingBolt", IsAmmo=true },---@type SpellMetaInstantShot
+	["Baited Shot"]={ Class="HUNTER", Haste="none", Icon="inv_misc_food_66", IsAmmo=true },---@type SpellMetaInstantShot
 	["Concussive Shot"]={ Class="HUNTER", Haste="none", Icon="Spell_Frost_Stun", IsAmmo=true },---@type SpellMetaInstantShot
 	["Scatter Shot"]={ Class="HUNTER", Haste="none", Icon="Ability_GolemStormBolt", IsAmmo=true },---@type SpellMetaInstantShot
 	["Scorpid Sting"]={ Class="HUNTER", Haste="none", Icon="Ability_Hunter_CriticalShot", IsAmmo=true },---@type SpellMetaInstantShot
