@@ -1,8 +1,8 @@
 ## Interface: 11200
 ## Title: Quiver - |cff00ff00Hunter
 ## Notes: A collection of hunter utilities.
-## Author: SabineWren, 2022-2024
-## Version: 3.1.2
+## Author: SabineWren, 2022-2025
+## Version: 3.1.3
 ## SavedVariables: Quiver_Store
 
 Quiver.bundle.lua
