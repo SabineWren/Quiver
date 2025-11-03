@@ -42,7 +42,7 @@ local callbacksInstant = {}
 ---@param nameEnglish string
 ---@param nameLocalized string
 local publishInstant = function(nameEnglish, nameLocalized)
-	for _i, v in ipairs(callbacksInstant) do
+	for _k, v in pairs(callbacksInstant) do
 		v(nameEnglish, nameLocalized)
 	end
 end
