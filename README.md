@@ -84,7 +84,7 @@ Find and cast pet action if possible.
 > This will pull your pet even if you're stunned etc.
 
 ### Range Indicator
-[<img src="/Media/Range_Indicator_Thumbnail.jpg" height="180px">](https://rawcdn.githack.com/SabineWren/Quiver/588c9f3a9b41746af2c2e612d536c49bbe40676d/Media/Range_Indicator_Preview.mp4)
+[<img src="/Media/Range_Indicator_Thumbnail.jpg" height="180px">](https://youtu.be/UxLJJ1ne52E)
 
 - Based on [Egnar](https://github.com/Medeah/Egnar)
 - Automatically locates action bar slots
