@@ -13,5 +13,8 @@
 		"bundle-once": "node --experimental-strip-types Build/Main.ts --output=Quiver.bundle.lua",
 		"test": "node --test --experimental-strip-types Build/Main.test.ts"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"purity-seal": "^0.0.0"
+	}
 }

@@ -1,5 +1,5 @@
 # generated files
-enUS/*.enUS.lua
-!enUS/Client.enUS.lua
+enUS/*.enUS.*.lua
+!enUS/Client.enUS.*.lua
 
 **/*.reverse.*.lua

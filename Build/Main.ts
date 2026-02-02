@@ -4,14 +4,31 @@ import * as Path from "path"
 import * as Process from "process"
 import { ThrottleF } from "./Throttle.ts"
 import { Result } from "./Result.ts"
-import { CloneKeyToValue, ReverseLuaHashmap } from "../Locale/LuaJsInterop.math.ts"
-import { Array, flow, Option, pipe } from "effect"
+import { CloneKeyToValue, ReverseLuaHashmap } from "../Locale/LuaJsInterop.pure.ts"
+import { Array, Option, pipe } from "effect"
+import * as PS from "purity-seal"
 
 const isWatch = Process.argv.includes("--lua-watch")
 const dirSource = Process.cwd()
 const _OUTPUT_EXT = ".bundle.lua"
 const _ENGLISH_EXT_IN = ".enUS.text"
-const _ENGLISH_EXT_OUT = ".enUS.lua"
+const _ENGLISH_EXT_OUT = ".enUS.pure.lua"
+
+const check = PS.Pipe(
+	PS.PartialOrder.Make([["wow", "state", "pure"]]),
+	PS.Checker.Build(PS.Classify.Extensions(["pure", "state", "wow"])),
+)
+const parseBag: PS.Plugin.Lua.Options =
+	{ luaVersion: "5.1", resolveModule: (x: string) => "./" +  x }
+const validateDeps = async () => {
+	const tStart = performance.now()
+	const deps = await PS.Plugin.Lua.BuildDeps(["Main.wow.lua"], parseBag)
+	const checked = PS.Checker.Validate(check, deps)
+	const msgTime = (performance.now() - tStart).toFixed(0).padStart(3, " ")
+	checked.warn.forEach(x => { console.log(x) })
+	checked.deny.forEach(x => { console.log(`PS Deny: ${x[0]} -> ${x[1]}`) })
+	console.log(`Deps validated in ${msgTime}ms`)
+}
 
 const bundleName = pipe(
 	Array.findFirst(Process.argv, x => x.startsWith("--output=")),
@@ -53,8 +70,9 @@ const reverseHashmap = async (partialPath: string) => {
 
 const runBundler = async (event: string, source?: string) => {
 	const tStart = performance.now()
+
 	// https://github.com/Benjamin-Dobell/luabundle
-	const bundledLua = bundle("Main.lua", {
+	const bundledLua = bundle("Main.wow.lua", {
 		isolate: true,
 		luaVersion: "5.1",
 		metadata: false,// un-bundling requires true
@@ -70,14 +88,15 @@ const runBundler = async (event: string, source?: string) => {
 	// https://stackoverflow.com/a/41407246
 	const colorize = (text: string) => "\x1b[33m" + text + "\x1b[0m"
 	console.log(`${colorize(msgTime)}ms -- ${bundleName} [${event}] ${msgSource}`)
+	await validateDeps()
 }
 
 await Promise.all([
 	makeEnglishTranslations("Locale/enUS/Spell.enUS.text"),
 	makeEnglishTranslations("Locale/enUS/Translations.enUS.text"),
 	makeEnglishTranslations("Locale/enUS/Zone.enUS.text"),
-	reverseHashmap("Locale/zhCN/Spell.zhCN.lua"),
-	// reverseHashmap("Locale/zhCN/Zone.zhCN.lua"), Not used by Quiver
+	reverseHashmap("Locale/zhCN/Spell.zhCN.pure.lua"),
+	// reverseHashmap("Locale/zhCN/Zone.zhCN.pure.lua"), Not used by Quiver
 ])
 await runBundler("Startup")
 

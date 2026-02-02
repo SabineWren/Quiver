@@ -1,6 +1,6 @@
 import * as assert from "node:assert"
 import { describe, it } from "node:test"
-import { CloneKeyToValue, ReverseLuaHashmap } from "./LuaJsInterop.math.ts"
+import { CloneKeyToValue, ReverseLuaHashmap } from "./LuaJsInterop.pure.ts"
 
 await describe("Lua JS Interop", async () => {
 	await it("Clone English to dictionary", () => {
