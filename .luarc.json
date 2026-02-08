@@ -20,5 +20,8 @@
 	"type.inferParamType": true,
 	"type.maxUnionVariants": 0,
 	"workspace.ignoreDir": ["*.bundle.lua"],
-	"workspace.library": ["wow-api-type-definitions"]
+	"workspace.library": [
+		"wow-api-type-definitions/Client",
+		"wow-api-type-definitions/UI_Turtle"
+	]
 }
