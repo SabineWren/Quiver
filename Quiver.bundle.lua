@@ -41,18 +41,18 @@ local __bundle_require, __bundle_loaded, __bundle_register, __bundle_modules = (
 	return require, loaded, register, modules
 end)(nil)
 __bundle_register("__root", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Api = require("Api/Index.lua")
-local MainMenu = require("Config/MainMenu.lua")
-local LoadLocale = require("Locale/Lang.lua")
-local Migrations = require("Migrations/Runner.lua")
-local AspectTracker = require("Modules/Aspect_Tracker/AspectTracker.lua")
-local AutoShotTimer = require("Modules/Auto_Shot_Timer/AutoShotTimer.lua")
-local Castbar = require("Modules/Castbar.lua")
-local RangeIndicator = require("Modules/RangeIndicator.lua")
-local TranqAnnouncer = require("Modules/TranqAnnouncer.lua")
-local TrueshotAuraAlarm = require("Modules/TrueshotAuraAlarm.lua")
-local UpdateNotifierInit = require("Modules/UpdateNotifier.lua")
-local RegisterGlobalFunctions = require("GlobalFunctions.lua")
+local Api = require("Api/Index.wow.lua")
+local MainMenu = require("Config/MainMenu.wow.lua")
+local LoadLocale = require("Locale/Lang.wow.lua")
+local Migrations = require("Migrations/Runner.wow.lua")
+local AspectTracker = require("Modules/Aspect_Tracker/AspectTracker.wow.lua")
+local AutoShotTimer = require("Modules/Auto_Shot_Timer/AutoShotTimer.wow.lua")
+local Castbar = require("Modules/Castbar.wow.lua")
+local RangeIndicator = require("Modules/RangeIndicator.wow.lua")
+local TranqAnnouncer = require("Modules/TranqAnnouncer.wow.lua")
+local TrueshotAuraAlarm = require("Modules/TrueshotAuraAlarm.wow.lua")
+local UpdateNotifierInit = require("Modules/UpdateNotifier.wow.lua")
+local RegisterGlobalFunctions = require("GlobalFunctions.wow.lua")
 
 _G = _G or getfenv()
 Quiver = Quiver or {}
@@ -128,10 +128,10 @@ frame:SetScript("OnEvent", function()
 end)
 
 end)
-__bundle_register("GlobalFunctions.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Api = require("Api/Index.lua")
-local AutoShotTimer = require("Modules/Auto_Shot_Timer/AutoShotTimer.lua")
-local TrinketSwap = require("Modules/TrinketSwap.lua")
+__bundle_register("GlobalFunctions.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Api = require("Api/Index.wow.lua")
+local AutoShotTimer = require("Modules/Auto_Shot_Timer/AutoShotTimer.wow.lua")
+local TrinketSwap = require("Modules/TrinketSwap.wow.lua")
 
 ---@param spellName string
 ---@return nil
@@ -196,7 +196,7 @@ return function()
 end
 
 end)
-__bundle_register("Modules/TrinketSwap.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Modules/TrinketSwap.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 --- @type BagId[]
 local _BAGS = { 0, 1, 2, 3, 4 }
 
@@ -256,14 +256,14 @@ end
 return TrinketSwap
 
 end)
-__bundle_register("Modules/Auto_Shot_Timer/AutoShotTimer.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Api = require("Api/Index.lua")
-local Const = require("Constants.lua")
-local FrameLock = require("Events/FrameLock.lua")
-local Spellcast = require("Events/Spellcast.lua")
-local BorderStyle = require("Modules/BorderStyle.provider.lua")
-local Haste = require("Util/Haste.lua")
-local Print = require("Util/Print.lua")
+__bundle_register("Modules/Auto_Shot_Timer/AutoShotTimer.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Api = require("Api/Index.wow.lua")
+local Const = require("Constants.pure.lua")
+local FrameLock = require("Events/FrameLock.wow.lua")
+local Spellcast = require("Events/Spellcast.wow.lua")
+local BorderStyle = require("Modules/BorderStyle.state.lua")
+local Haste = require("Util/Haste.wow.lua")
+local Print = require("Util/Print.wow.lua")
 
 -- Auto Shot
 local _AIMING_TIME = 0.5-- HSK, rais, and YaHT use 0.65. However, 0.5 seems better.
@@ -750,7 +750,7 @@ return {
 }
 
 end)
-__bundle_register("Util/Print.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Util/Print.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 local danger = function(text) DEFAULT_CHAT_FRAME:AddMessage(text, 1, 0, 0) end
 local neutral = function(text) DEFAULT_CHAT_FRAME:AddMessage(text) end
 local success = function(text) DEFAULT_CHAT_FRAME:AddMessage(text, 0, 1, 0) end
@@ -795,11 +795,12 @@ return {
 }
 
 end)
-__bundle_register("Util/Haste.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Util/Haste.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 -- This file would be API extension code, except that it only supports
 -- hunter casts. I have no idea how to compute haste for non-hunter spells.
-local Api = require("Api/Index.lua")
-local L = require("Lib/Index.lua")
+local Api = require("Api/Index.wow.lua")
+local Const = require("Constants.pure.lua")
+local L = require("Lib/Index.pure.lua")
 
 -- GetInventoryItemLink("Player", slot#) returns a link, ex. [name]
 -- <br>Weapon name always appears at line TextLeft1
@@ -825,6 +826,23 @@ local scanRangedWeaponSpeed = function()
 end
 
 ---@param nameEnglish string
+---@param meta SpellMetaCastedShot
+---@return number
+---@nodiscard
+local getCastTimeRaw = function(meta)
+	-- Kludge - The invariant is nil = "Aimed Shot"
+	if (meta.Time ~= nil) then
+		return meta.Time
+	elseif not TURTLE_WOW_VERSION then
+		return 3000
+	elseif (Api.Aura.GetIsActiveAndTimeLeftByTexture(Const.Icon.LockAndLoad)) then
+		return 1000
+	else
+		return 2000
+	end
+end
+
+---@param nameEnglish string
 ---@return number casttime
 ---@return number startLatAdjusted
 ---@return number startLocal
@@ -842,8 +860,9 @@ local CalcCastTime = function(nameEnglish)
 		local speedCurrent, _, _ , _, _, _ = UnitRangedDamage("player")
 		local speedWeapon = L.Nil.GetOr(scanRangedWeaponSpeed(), speedCurrent)
 		local speedMultiplier = speedCurrent / speedWeapon
+
 		-- https://www.mmo-champion.com/content/2188-Patch-4-0-6-Feb-22-Hotfixes-Blue-Posts-Artworks-Comic
-		local casttime = (meta.Offset + meta.Time * speedMultiplier) / 1000
+		local casttime = (meta.Offset + getCastTimeRaw(meta) * speedMultiplier) / 1000
 		return casttime, startLatAdjusted, startLocal
 	elseif meta.Haste == "none" then
 		return 0, startLatAdjusted, startLocal
@@ -864,12 +883,12 @@ return {
 }
 
 end)
-__bundle_register("Lib/Index.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Array = require("Lib/Array.lua")
-local Color = require("Lib/Color.lua")
-local M = require("Lib/Monoid.lua")
-local Nil = require("Lib/Nil.lua")
-local Sg = require("Lib/Semigroup.lua")
+__bundle_register("Lib/Index.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Array = require("Lib/Array.pure.lua")
+local Color = require("Lib/Color.pure.lua")
+local M = require("Lib/Monoid.pure.lua")
+local Nil = require("Lib/Nil.pure.lua")
+local Sg = require("Lib/Semigroup.pure.lua")
 
 local Lib = {}
 Lib.Array = Array
@@ -1003,7 +1022,7 @@ end
 return Lib
 
 end)
-__bundle_register("Lib/Semigroup.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Lib/Semigroup.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 local Semigroup = {}
 
 -- No support yet for generic classes
@@ -1024,7 +1043,7 @@ Semigroup.Min = {
 return Semigroup
 
 end)
-__bundle_register("Lib/Nil.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Lib/Nil.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 local Nil = {}
 
 ---@generic A
@@ -1097,7 +1116,7 @@ end
 return Nil
 
 end)
-__bundle_register("Lib/Monoid.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Lib/Monoid.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 local Monoid = {}
 
 -- No support yet for generic classes
@@ -1114,7 +1133,7 @@ Monoid.Add = {
 return Monoid
 
 end)
-__bundle_register("Lib/Color.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Lib/Color.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 ---@alias Rgb [number, number, number]
 
 ---@class (exact) Color
@@ -1181,8 +1200,8 @@ end
 return Color
 
 end)
-__bundle_register("Lib/Array.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local M = require("Lib/Monoid.lua")
+__bundle_register("Lib/Array.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local M = require("Lib/Monoid.pure.lua")
 
 ---@class Array
 local Array = {}
@@ -1403,14 +1422,71 @@ end
 return Array
 
 end)
-__bundle_register("Api/Index.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Action = require("Api/Action.lua")
-local Aero = require("Api/Aero.lua")
-local Aura = require("Api/Aura.lua")
-local Enum = require("Api/Enum.lua")
-local Pet = require("Api/Pet.lua")
-local Spell = require("Api/Spell.lua")
-local Tooltip = require("Api/Tooltip.lua")
+__bundle_register("Constants.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+return {
+	-- I don't know if hidden auras show via GameTooltip.
+	Buff_Cap = 32,-- I think UI shows up to 24.
+	Debuff_Cap = 24,-- UI shows 16. Turtle allows 8 more hidden.
+	Aura_Cap = 32 + 24,
+	ColorDefault = {
+		AutoShotReload = { 1, 0, 0 },
+		AutoShotShoot = { 1, 1, 0 },
+		Castbar = { 0.42, 0.41, 0.53 },
+		Range = {
+			Melee = { 0, 1, 0, 0.7 },
+			DeadZone = { 1, 0.5, 0, 0.7 },
+			ScareBeast = { 0, 1, 0.2, 0.7 },
+			ScatterShot = { 0, 1, 0.8, 0.7 },
+			Short = { 0, 0.8, 0.8, 0.7 },
+			Long = { 0, 0.8, 0.8, 0.7 },
+			Mark = { 1, 0.2, 0, 0.7 },
+			TooFar = { 1, 0, 0, 0.7 },
+		},
+	},
+	Size = {
+		Border = 12,
+		Button = 22,
+		Gap = 8,
+		Icon = 18,
+	},
+	Icon = {
+		-- Custom
+		ArrowsSwap = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\arrow-right-arrow-left",
+		CaretDown = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\caret-down-fill",
+		GripHandle = "Interface\\AddOns\\Quiver\\Assets\\grip-lines",
+		LockClosed = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\lock",
+		LockOpen = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\lock-open",
+		Reset = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\arrow-rotate-right",
+		ToggleOff = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\toggle-off",
+		ToggleOn = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\toggle-on",
+		XMark = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\xmark",
+		-- Client
+		Aspect_Beast = "Interface\\Icons\\Ability_Mount_PinkTiger",
+		Aspect_Cheetah = "Interface\\Icons\\Ability_Mount_JungleTiger",
+		Aspect_Fox = "Interface\\Icons\\ability_hunter_aspectofthefox",-- TWoW ability
+		Aspect_Hawk = "Interface\\Icons\\Spell_Nature_RavenForm",
+		Aspect_Monkey = "Interface\\Icons\\Ability_Hunter_AspectOfTheMonkey",
+		Aspect_Pack = "Interface\\Icons\\Ability_Mount_WhiteTiger",
+		Aspect_Wild = "Interface\\Icons\\Spell_Nature_ProtectionformNature",-- 'form' is not a typo.
+		Aspect_Wolf = "Interface\\Icons\\Ability_Mount_WhiteDireWolf",
+		Aspect_Viper = "Interface\\Icons\\ability_hunter_aspectoftheviper",-- TWoW ability
+		LockAndLoad = "Interface\\Icons\\ability_hunter_lockandload",-- TWoW ability
+		Quickshots = "Interface\\Icons\\Ability_Warrior_InnerRage",
+		RapidFire = "Interface\\Icons\\Ability_Hunter_RunningShot",
+		TrollBerserk = "Interface\\Icons\\Racial_Troll_Berserk",
+		TrueshotAura = "Interface\\Icons\\Ability_TrueShot",
+	},
+}
+
+end)
+__bundle_register("Api/Index.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Action = require("Api/Action.wow.lua")
+local Aero = require("Api/Aero.wow.lua")
+local Aura = require("Api/Aura.wow.lua")
+local Enum = require("Api/Enum.wow.lua")
+local Pet = require("Api/Pet.wow.lua")
+local Spell = require("Api/Spell.wow.lua")
+local Tooltip = require("Api/Tooltip.wow.lua")
 
 -- Elm and FSharp use underscore syntax for sugaring property getters.
 return {
@@ -1432,8 +1508,8 @@ return {
 }
 
 end)
-__bundle_register("Api/Tooltip.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local L = require("Lib/Index.lua")
+__bundle_register("Api/Tooltip.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local L = require("Lib/Index.pure.lua")
 
 -- TODO figure out how to let caller specify preferred side, then
 -- flip if there isn't enough room for tooltip. This is hard because
@@ -1502,7 +1578,7 @@ return {
 }
 
 end)
-__bundle_register("Api/Spell.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Api/Spell.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 ---@class SpellMetaAll
 ---@field Class CharacterClass
 ---@field Icon string
@@ -1510,7 +1586,7 @@ __bundle_register("Api/Spell.lua", function(require, _LOADED, __bundle_register,
 ---@class SpellMetaCastedShot: SpellMetaAll
 ---@field Haste "range"
 ---@field IsAmmo true
----@field Time integer
+---@field Time nil|integer -- Nil because TWoW uses variable cast time for aimed shot
 ---@field Offset integer
 
 ---@class SpellMetaInstantShot: SpellMetaAll
@@ -1521,13 +1597,12 @@ __bundle_register("Api/Spell.lua", function(require, _LOADED, __bundle_register,
 -- This will probably cause maintenance problems.
 local DB_SPELL = {
 	-- Casted Shots
-	["Aimed Shot"]={ Class="HUNTER", Time=3000, Offset=500, Haste="range", Icon="INV_Spear_07", IsAmmo=true },---@type SpellMetaCastedShot
+	["Aimed Shot"]={ Class="HUNTER", Time=nil, Offset=500, Haste="range", Icon="INV_Spear_07", IsAmmo=true },---@type SpellMetaCastedShot
 	["Multi-Shot"]={ Class="HUNTER", Time=0, Offset=500, Haste="range", Icon="Ability_UpgradeMoonGlaive", IsAmmo=true },---@type SpellMetaCastedShot
 	["Steady Shot"]={ Class="HUNTER", Time=1000, Offset=500, Haste="range", Icon="Ability_Hunter_SteadyShot", IsAmmo=true },---@type SpellMetaCastedShot
 
 	-- Instant Shots
 	["Arcane Shot"]={ Class="HUNTER", Haste="none", Icon="Ability_ImpalingBolt", IsAmmo=true },---@type SpellMetaInstantShot
-	["Baited Shot"]={ Class="HUNTER", Haste="none", Icon="inv_misc_food_66", IsAmmo=true },---@type SpellMetaInstantShot
 	["Concussive Shot"]={ Class="HUNTER", Haste="none", Icon="Spell_Frost_Stun", IsAmmo=true },---@type SpellMetaInstantShot
 	["Scatter Shot"]={ Class="HUNTER", Haste="none", Icon="Ability_GolemStormBolt", IsAmmo=true },---@type SpellMetaInstantShot
 	["Scorpid Sting"]={ Class="HUNTER", Haste="none", Icon="Ability_Hunter_CriticalShot", IsAmmo=true },---@type SpellMetaInstantShot
@@ -1635,8 +1710,8 @@ return {
 }
 
 end)
-__bundle_register("Api/Pet.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local L = require("Lib/Index.lua")
+__bundle_register("Api/Pet.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local L = require("Lib/Index.pure.lua")
 local _NUM_PET_ACTION_SLOTS = 10
 
 ---@param actionName string
@@ -1657,7 +1732,7 @@ return {
 }
 
 end)
-__bundle_register("Api/Enum.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Api/Enum.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 --- see API InventorySlot(lua://InventorySlot)
 local INVENTORY_SLOT = {
 	Ammo = 0,
@@ -1698,9 +1773,9 @@ return {
 }
 
 end)
-__bundle_register("Api/Aura.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Tooltip = require("Api/Tooltip.lua")
-local Const = require("Constants.lua")
+__bundle_register("Api/Aura.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Tooltip = require("Api/Tooltip.wow.lua")
+local Const = require("Constants.pure.lua")
 
 -- This doesn't work for duplicate textures (ex. cheetah + zg mount).
 -- For those you have to scan by name using the GameTooltip.
@@ -1776,61 +1851,7 @@ return {
 }
 
 end)
-__bundle_register("Constants.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-return {
-	-- I don't know if hidden auras show via GameTooltip.
-	Buff_Cap = 32,-- I think UI shows up to 24.
-	Debuff_Cap = 24,-- UI shows 16. Turtle allows 8 more hidden.
-	Aura_Cap = 32 + 24,
-	ColorDefault = {
-		AutoShotReload = { 1, 0, 0 },
-		AutoShotShoot = { 1, 1, 0 },
-		Castbar = { 0.42, 0.41, 0.53 },
-		Range = {
-			Melee = { 0, 1, 0, 0.7 },
-			DeadZone = { 1, 0.5, 0, 0.7 },
-			ScareBeast = { 0, 1, 0.2, 0.7 },
-			ScatterShot = { 0, 1, 0.8, 0.7 },
-			Short = { 0, 0.8, 0.8, 0.7 },
-			Long = { 0, 0.8, 0.8, 0.7 },
-			Mark = { 1, 0.2, 0, 0.7 },
-			TooFar = { 1, 0, 0, 0.7 },
-		},
-	},
-	Size = {
-		Border = 12,
-		Button = 22,
-		Gap = 8,
-		Icon = 18,
-	},
-	Icon = {
-		-- Custom
-		ArrowsSwap = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\arrow-right-arrow-left",
-		CaretDown = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\caret-down-fill",
-		GripHandle = "Interface\\AddOns\\Quiver\\Assets\\grip-lines",
-		LockClosed = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\lock",
-		LockOpen = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\lock-open",
-		Reset = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\arrow-rotate-right",
-		ToggleOff = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\toggle-off",
-		ToggleOn = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\toggle-on",
-		XMark = "Interface\\AddOns\\Quiver\\Assets\\Fa6\\xmark",
-		-- Client
-		Aspect_Beast = "Interface\\Icons\\Ability_Mount_PinkTiger",
-		Aspect_Cheetah = "Interface\\Icons\\Ability_Mount_JungleTiger",
-		Aspect_Hawk = "Interface\\Icons\\Spell_Nature_RavenForm",
-		Aspect_Monkey = "Interface\\Icons\\Ability_Hunter_AspectOfTheMonkey",
-		Aspect_Pack = "Interface\\Icons\\Ability_Mount_WhiteTiger",
-		Aspect_Wild = "Interface\\Icons\\Spell_Nature_ProtectionformNature",-- 'form' is not a typo.
-		Aspect_Wolf = "Interface\\Icons\\Ability_Mount_WhiteDireWolf",
-		Quickshots = "Interface\\Icons\\Ability_Warrior_InnerRage",
-		RapidFire = "Interface\\Icons\\Ability_Hunter_RunningShot",
-		TrollBerserk = "Interface\\Icons\\Racial_Troll_Berserk",
-		TrueshotAura = "Interface\\Icons\\Ability_TrueShot",
-	},
-}
-
-end)
-__bundle_register("Api/Aero.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Api/Aero.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 -- Support Aero animations if installed.
 -- https://github.com/gashole/Aero
 
@@ -1849,8 +1870,8 @@ return {
 }
 
 end)
-__bundle_register("Api/Action.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Spell = require("Api/Spell.lua")
+__bundle_register("Api/Action.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Spell = require("Api/Spell.wow.lua")
 
 local _MAX_NUM_ACTION_SLOTS = 120
 
@@ -1892,7 +1913,7 @@ return {
 }
 
 end)
-__bundle_register("Modules/BorderStyle.provider.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Modules/BorderStyle.state.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 ---@alias BorderStyle "Simple" | "Tooltip"
 
 ---@type (fun(x: BorderStyle): nil)[]
@@ -1939,9 +1960,9 @@ return {
 }
 
 end)
-__bundle_register("Events/Spellcast.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Api = require("Api/Index.lua")
-local Print = require("Util/Print.lua")
+__bundle_register("Events/Spellcast.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Api = require("Api/Index.wow.lua")
+local Print = require("Util/Print.wow.lua")
 
 -- Hooks get called even if spell didn't fire, but successful cast triggers GCD.
 local lastGcdStart = 0
@@ -2081,12 +2102,12 @@ return {
 }
 
 end)
-__bundle_register("Events/FrameLock.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Config = require("Api/Config.lua")
-local Button = require("Component/Button.lua")
-local Const = require("Constants.lua")
-local L = require("Lib/Index.lua")
-local Nil = require("Lib/Nil.lua")
+__bundle_register("Events/FrameLock.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Config = require("Api/Config.wow.lua")
+local Button = require("Component/Button.wow.lua")
+local Const = require("Constants.pure.lua")
+local L = require("Lib/Index.pure.lua")
+local Nil = require("Lib/Nil.pure.lua")
 
 --[[
 WoW persists positions for frames that have global names.
@@ -2247,10 +2268,10 @@ return {
 }
 
 end)
-__bundle_register("Component/Button.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Api = require("Api/Index.lua")
-local Util = require("Component/_Util.lua")
-local L = require("Lib/Index.lua")
+__bundle_register("Component/Button.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Api = require("Api/Index.wow.lua")
+local Util = require("Component/_Util.wow.lua")
+local L = require("Lib/Index.pure.lua")
 
 local _GAP = 6
 local _SIZE = 16
@@ -2375,9 +2396,9 @@ end
 return QqButton
 
 end)
-__bundle_register("Component/_Util.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Api = require("Api/Index.lua")
-local L = require("Lib/Index.lua")
+__bundle_register("Component/_Util.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Api = require("Api/Index.wow.lua")
+local L = require("Lib/Index.pure.lua")
 
 ---@class IMouseInteract
 ---@field isEnabled boolean
@@ -2425,7 +2446,7 @@ return {
 }
 
 end)
-__bundle_register("Api/Config.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Api/Config.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 -- Screen size scales after initializing, but when it does, the UI scale value also changes.
 -- Therefore, the result of size * scale never changes, but the result of either size or scale does.
 -- Disabling useUIScale doesn't affect the scale value, so we have to conditionally scale saved frame positions.
@@ -2444,8 +2465,8 @@ return {
 }
 
 end)
-__bundle_register("Modules/UpdateNotifier.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Version = require("Util/Version.lua")
+__bundle_register("Modules/UpdateNotifier.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Version = require("Util/Version.wow.lua")
 
 -- This file based on pfUI's updatenotify.lua
 -- Copyright (c) 2016-2021 Eric Mauser (Shagu)
@@ -2518,7 +2539,7 @@ return function()
 end
 
 end)
-__bundle_register("Util/Version.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Util/Version.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 ---@class (exact) Version
 ---@field private __index? Version
 ---@field private breaking integer
@@ -2569,11 +2590,11 @@ end
 return Version
 
 end)
-__bundle_register("Modules/TrueshotAuraAlarm.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Api = require("Api/Index.lua")
-local Const = require("Constants.lua")
-local FrameLock = require("Events/FrameLock.lua")
-local Spellcast = require("Events/Spellcast.lua")
+__bundle_register("Modules/TrueshotAuraAlarm.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Api = require("Api/Index.wow.lua")
+local Const = require("Constants.pure.lua")
+local FrameLock = require("Events/FrameLock.wow.lua")
+local Spellcast = require("Events/Spellcast.wow.lua")
 
 local MODULE_ID = "TrueshotAuraAlarm"
 local store = nil
@@ -2590,6 +2611,19 @@ local MINUTES_LEFT_WARNING = 5
 -- ************ State ************
 local aura = (function()
 	local knowsAura, isActive, lastUpdate, timeLeft = false, false, 1800, 0
+	local textureFull = function()
+		frame.Icon:SetAlpha(0.75)
+		frame:SetBackdropBorderColor(1, 0, 0, 0.8)
+	end
+	local textureOff = function()
+		updateDelay = UPDATE_DELAY_SLOW
+		frame.Icon:SetAlpha(0.0)
+		frame:SetBackdropBorderColor(0, 0, 0, 0)
+	end
+	local texturePartial = function()
+		frame.Icon:SetAlpha(0.4)
+		frame:SetBackdropBorderColor(0, 0, 0, 0.1)
+	end
 	return {
 		ShouldUpdate = function(elapsed)
 			lastUpdate = lastUpdate + elapsed
@@ -2597,20 +2631,19 @@ local aura = (function()
 		end,
 		UpdateUI = function()
 			knowsAura = Api.Spell.PredSpellLearned(Quiver.L.Spell["Trueshot Aura"])
-				or not Quiver_Store.IsLockedFrames
 			isActive, timeLeft = Api.Aura.GetIsActiveAndTimeLeftByTexture(Const.Icon.TrueshotAura)
 			lastUpdate = 0
 
-			if not Quiver_Store.IsLockedFrames or knowsAura and not isActive then
-				frame.Icon:SetAlpha(0.75)
-				frame:SetBackdropBorderColor(1, 0, 0, 0.8)
+			if not Quiver_Store.IsLockedFrames then
+				textureFull()
+			elseif UnitOnTaxi("player") then
+				textureOff()
+			elseif knowsAura and not isActive then
+				textureFull()
 			elseif knowsAura and isActive and timeLeft > 0 and timeLeft < MINUTES_LEFT_WARNING * 60 then
-				frame.Icon:SetAlpha(0.4)
-				frame:SetBackdropBorderColor(0, 0, 0, 0.1)
+				texturePartial()
 			else
-				updateDelay = UPDATE_DELAY_SLOW
-				frame.Icon:SetAlpha(0.0)
-				frame:SetBackdropBorderColor(0, 0, 0, 0)
+				textureOff()
 			end
 		end,
 	}
@@ -2629,15 +2662,11 @@ end
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("LOW")
-	f:SetBackdrop({
-		edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-		edgeSize = 16,
-		insets = { left=INSET, right=INSET, top=INSET, bottom=INSET },
-	})
+	f:SetBackdrop({ edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 20 })
 	setFramePosition(f, store)
 
-	f.Icon = CreateFrame("Frame", nil, f)
-	f.Icon:SetBackdrop({ bgFile = Const.Icon.TrueshotAura, tile = false })
+	f.Icon = f:CreateTexture(nil, "BACKGROUND")
+	f.Icon:SetTexture(Const.Icon.TrueshotAura)
 	f.Icon:SetPoint("Left", f, "Left", INSET, 0)
 	f.Icon:SetPoint("Right", f, "Right", -INSET, 0)
 	f.Icon:SetPoint("Top", f, "Top", 0, -INSET)
@@ -2652,11 +2681,13 @@ end
 --- @type Event[]
 local _EVENTS = {
 	"PLAYER_AURAS_CHANGED",
+	"UNIT_FLAGS", -- For hiding alert on taxi
 	"SPELLS_CHANGED",-- Open or click thru spellbook, learn/unlearn spell
 }
 local handleEvent = function()
 	if event == "SPELLS_CHANGED" and arg1 ~= "LeftButton"
 		or event == "PLAYER_AURAS_CHANGED"
+		or event == "UNIT_FLAGS" and arg1 == "player"
 	then
 		aura.UpdateUI()
 	end
@@ -2705,12 +2736,12 @@ return {
 }
 
 end)
-__bundle_register("Modules/TranqAnnouncer.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Api = require("Api/Index.lua")
-local FrameLock = require("Events/FrameLock.lua")
-local BorderStyle = require("Modules/BorderStyle.provider.lua")
-local L = require("Lib/Index.lua")
-local Print = require("Util/Print.lua")
+__bundle_register("Modules/TranqAnnouncer.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Api = require("Api/Index.wow.lua")
+local FrameLock = require("Events/FrameLock.wow.lua")
+local BorderStyle = require("Modules/BorderStyle.state.lua")
+local L = require("Lib/Index.pure.lua")
+local Print = require("Util/Print.wow.lua")
 
 local MODULE_ID = "TranqAnnouncer"
 local store = nil
@@ -3025,10 +3056,10 @@ return {
 }
 
 end)
-__bundle_register("Modules/RangeIndicator.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Api = require("Api/Index.lua")
-local Const = require("Constants.lua")
-local FrameLock = require("Events/FrameLock.lua")
+__bundle_register("Modules/RangeIndicator.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Api = require("Api/Index.wow.lua")
+local Const = require("Constants.pure.lua")
+local FrameLock = require("Events/FrameLock.wow.lua")
 
 local MODULE_ID = "RangeIndicator"
 local store = nil
@@ -3191,13 +3222,13 @@ return {
 }
 
 end)
-__bundle_register("Modules/Castbar.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local L = require("Lib/Index.lua")
-local Const = require("Constants.lua")
-local FrameLock = require("Events/FrameLock.lua")
-local Spellcast = require("Events/Spellcast.lua")
-local BorderStyle = require("Modules/BorderStyle.provider.lua")
-local Haste = require("Util/Haste.lua")
+__bundle_register("Modules/Castbar.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local L = require("Lib/Index.pure.lua")
+local Const = require("Constants.pure.lua")
+local FrameLock = require("Events/FrameLock.wow.lua")
+local Spellcast = require("Events/Spellcast.wow.lua")
+local BorderStyle = require("Modules/BorderStyle.state.lua")
+local Haste = require("Util/Haste.wow.lua")
 
 local MODULE_ID = "Castbar"
 local store = nil
@@ -3387,10 +3418,10 @@ return {
 }
 
 end)
-__bundle_register("Modules/Aspect_Tracker/AspectTracker.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Api = require("Api/Index.lua")
-local Const = require("Constants.lua")
-local FrameLock = require("Events/FrameLock.lua")
+__bundle_register("Modules/Aspect_Tracker/AspectTracker.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Api = require("Api/Index.wow.lua")
+local Const = require("Constants.pure.lua")
+local FrameLock = require("Events/FrameLock.wow.lua")
 
 local MODULE_ID = "AspectTracker"
 local store = nil---@type StoreAspectTracker
@@ -3405,8 +3436,12 @@ local chooseIconTexture = function()
 		return Const.Icon.Aspect_Beast
 	elseif Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Cheetah"]) then
 		return Const.Icon.Aspect_Cheetah
+	elseif Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Fox"]) then
+		return Const.Icon.Aspect_Fox
 	elseif Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Monkey"]) then
 		return Const.Icon.Aspect_Monkey
+	elseif Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Viper"]) then
+		return Const.Icon.Aspect_Viper
 	elseif Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Wild"]) then
 		return Const.Icon.Aspect_Wild
 	elseif Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Wolf"]) then
@@ -3425,28 +3460,23 @@ end
 local updateUI = function()
 	local activeTexture = chooseIconTexture()
 	if activeTexture then
-		frame.Icon:SetBackdrop({ bgFile = activeTexture, tile = false })
-		frame.Icon:SetAlpha(TRANSPARENCY)
+		frame.Icon:SetTexture(activeTexture)
+		frame.Icon:Show()
 	else
-		frame.Icon:SetAlpha(0.0)
+		frame.Icon:Hide()
 	end
 
 	-- Exclude Pack from main texture, since party members can apply it.
 	-- I don't have a simple way of detecting who cast it, because
 	-- the cancellable bit is 1 even if a party member cast it.
-	if Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Pack"]) then
-		frame:SetBackdrop({
-			bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-			edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-			edgeSize = 20,
-			insets = { left=INSET, right=INSET, top=INSET, bottom=INSET },
-			tile = false,
-		})
-		frame:SetBackdropBorderColor(0.7, 0.8, 0.9, 1.0)
+	local alpha = Api.Aura.PredBuffActive(Quiver.L.Spell["Aspect of the Pack"]) and 1.0 or 0.0
+	frame:SetBackdropBorderColor(0.7, 0.8, 0.9, alpha)
+
+	if UnitOnTaxi("player") and Quiver_Store.IsLockedFrames then
+		frame:Hide()
 	else
-		frame:SetBackdrop({ bgFile = "Interface/BUTTONS/WHITE8X8", tile = false })
+		frame:Show()
 	end
-	frame:SetBackdropColor(0, 0, 0, 0)
 end
 
 local setFramePosition = function(f, s)
@@ -3461,13 +3491,15 @@ end
 local createUI = function()
 	local f = CreateFrame("Frame", nil, UIParent)
 	f:SetFrameStrata("LOW")
+	f:SetBackdrop({ edgeFile = "Interface/Tooltips/UI-Tooltip-Border", edgeSize = 20 })
 	setFramePosition(f, store)
 
-	f.Icon = CreateFrame("Frame", nil, f)
+	f.Icon = f:CreateTexture(nil, "BACKGROUND")
 	f.Icon:SetPoint("Left", f, "Left", INSET, 0)
 	f.Icon:SetPoint("Right", f, "Right", -INSET, 0)
 	f.Icon:SetPoint("Top", f, "Top", 0, -INSET)
 	f.Icon:SetPoint("Bottom", f, "Bottom", 0, INSET)
+	f.Icon:SetAlpha(TRANSPARENCY)
 
 	FrameLock.SideEffectMakeMoveable(f, store)
 	FrameLock.SideEffectMakeResizeable(f, store, { GripMargin=0 })
@@ -3478,11 +3510,13 @@ end
 --- @type Event[]
 local _EVENTS = {
 	"PLAYER_AURAS_CHANGED",
+	"UNIT_FLAGS", -- For hiding tracker on taxi
 	"SPELLS_CHANGED",-- Open or click thru spellbook, learn/unlearn spell
 }
 local handleEvent = function()
 	if event == "SPELLS_CHANGED" and arg1 ~= "LeftButton"
 		or event == "PLAYER_AURAS_CHANGED"
+		or event == "UNIT_FLAGS" and arg1 == "player"
 	then
 		updateUI()
 	end
@@ -3522,11 +3556,11 @@ return {
 }
 
 end)
-__bundle_register("Migrations/Runner.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local M001 = require("Migrations/M001.lua")
-local M002 = require("Migrations/M002.lua")
-local M003 = require("Migrations/M003.lua")
-local Version = require("Util/Version.lua")
+__bundle_register("Migrations/Runner.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local M001 = require("Migrations/M001.wow.lua")
+local M002 = require("Migrations/M002.wow.lua")
+local M003 = require("Migrations/M003.wow.lua")
+local Version = require("Util/Version.wow.lua")
 
 return function()
 	-- toc version (after 1.0.0) persists to saved variables. A clean
@@ -3543,8 +3577,8 @@ return function()
 end
 
 end)
-__bundle_register("Migrations/M003.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local TranqAnnouncer = require("Modules/TranqAnnouncer.lua")
+__bundle_register("Migrations/M003.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local TranqAnnouncer = require("Modules/TranqAnnouncer.wow.lua")
 
 return function()
 	local mstore = Quiver_Store.ModuleStore or {}
@@ -3565,8 +3599,8 @@ return function()
 end
 
 end)
-__bundle_register("Migrations/M002.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local AutoShotTimer = require("Modules/Auto_Shot_Timer/AutoShotTimer.lua")
+__bundle_register("Migrations/M002.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local AutoShotTimer = require("Modules/Auto_Shot_Timer/AutoShotTimer.wow.lua")
 
 return function()
 	local mstore = Quiver_Store.ModuleStore or {}
@@ -3580,8 +3614,8 @@ return function()
 end
 
 end)
-__bundle_register("Migrations/M001.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local AutoShotTimer = require("Modules/Auto_Shot_Timer/AutoShotTimer.lua")
+__bundle_register("Migrations/M001.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local AutoShotTimer = require("Modules/Auto_Shot_Timer/AutoShotTimer.wow.lua")
 
 return function()
 	local mstore = Quiver_Store.ModuleStore
@@ -3607,11 +3641,11 @@ return function()
 end
 
 end)
-__bundle_register("Locale/Lang.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local enUS_C = require("Locale/enUS/Client.enUS.lua")
-local enUS_T = require("Locale/enUS/Translations.enUS.lua")
-local zhCN_C = require("Locale/zhCN/Client.zhCN.lua")
-local zhCN_T = require("Locale/zhCN/Translations.zhCN.lua")
+__bundle_register("Locale/Lang.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local enUS_C = require("Locale/enUS/Client.enUS.pure.lua")
+local enUS_T = require("Locale/enUS/Translations.enUS.pure.lua")
+local zhCN_C = require("Locale/zhCN/Client.zhCN.pure.lua")
+local zhCN_T = require("Locale/zhCN/Translations.zhCN.pure.lua")
 
 return function()
 	local translation = {
@@ -3628,7 +3662,7 @@ return function()
 end
 
 end)
-__bundle_register("Locale/zhCN/Translations.zhCN.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Locale/zhCN/Translations.zhCN.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 return {
 	["Announces in chat when your tranquilizing shot hits or misses a target."] = "在“/团队”聊天中通告你的宁神射击是否命中目标。",
 	["Aspect Tracker"] = "守护追踪器",
@@ -3678,10 +3712,10 @@ return {
 }
 
 end)
-__bundle_register("Locale/zhCN/Client.zhCN.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Spell = require("Locale/zhCN/Spell.zhCN.lua")
-local SpellReverse = require("Locale/zhCN/Spell.reverse.zhCN.lua")
--- local Zone = require "Locale/zhCN/Zone.zhCN.lua"
+__bundle_register("Locale/zhCN/Client.zhCN.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Spell = require("Locale/zhCN/Spell.zhCN.pure.lua")
+local SpellReverse = require("Locale/zhCN/Spell.reverse.zhCN.pure.lua")
+-- local Zone = require "Locale/zhCN/Zone.zhCN.pure.lua"
 
 return {
 	CombatLog = {
@@ -3704,10 +3738,10 @@ return {
 }
 
 end)
-__bundle_register("Locale/zhCN/Spell.reverse.zhCN.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Locale/zhCN/Spell.reverse.zhCN.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 return {
 	["孤狼守护"] = "Aspect of the Wolf",
-	["诱饵射击"] = "Baited Shot",
+	["灵狐守护"] = "Aspect of the Fox",
 	["驱除疾病"] = "Abolish Disease",
 	["驱毒术"] = "Abolish Poison",
 	["驱毒术效果"] = "Abolish Poison Effect",
@@ -3767,7 +3801,7 @@ return {
 	["雄鹰守护"] = "Aspect of the Hawk",
 	["灵猴守护"] = "Aspect of the Monkey",
 	["豹群守护"] = "Aspect of the Pack",
-	["Aspect of the Viper"] = "Aspect of the Viper",
+	["蝰蛇守护"] = "Aspect of the Viper",
 	["野性守护"] = "Aspect of the Wild",
 	["Aspect of Venoxis"] = "Aspect of Venoxis",
 	["星界传送"] = "Astral Recall",
@@ -5115,10 +5149,10 @@ return {
 }
 
 end)
-__bundle_register("Locale/zhCN/Spell.zhCN.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Locale/zhCN/Spell.zhCN.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 return {
 	["Aspect of the Wolf"] = "孤狼守护",
-	["Baited Shot"] = "诱饵射击",
+	["Aspect of the Fox"] = "灵狐守护",
 
 	-- Vanilla 1.12
 	["Abolish Disease"] = "驱除疾病",
@@ -5180,7 +5214,7 @@ return {
 	["Aspect of the Hawk"] = "雄鹰守护",
 	["Aspect of the Monkey"] = "灵猴守护",
 	["Aspect of the Pack"] = "豹群守护",
-	["Aspect of the Viper"] = "Aspect of the Viper",-- TODO translate
+	["Aspect of the Viper"] = "蝰蛇守护",
 	["Aspect of the Wild"] = "野性守护",
 	["Aspect of Venoxis"] = "Aspect of Venoxis",-- TODO translate
 	["Astral Recall"] = "星界传送",
@@ -6548,7 +6582,7 @@ return {
 }
 
 end)
-__bundle_register("Locale/enUS/Translations.enUS.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Locale/enUS/Translations.enUS.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 return {
 	["Announces in chat when your tranquilizing shot hits or misses a target."] = "Announces in chat when your tranquilizing shot hits or misses a target.",
 	["Aspect Tracker"] = "Aspect Tracker",
@@ -6598,9 +6632,9 @@ return {
 }
 
 end)
-__bundle_register("Locale/enUS/Client.enUS.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Spell = require("Locale/enUS/Spell.enUS.lua")
--- local Zone = require "Locale/enUS/Zone.enUS.lua"
+__bundle_register("Locale/enUS/Client.enUS.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Spell = require("Locale/enUS/Spell.enUS.pure.lua")
+-- local Zone = require "Locale/enUS/Zone.enUS.pure.lua"
 
 return {
 	CombatLog = {
@@ -6621,10 +6655,10 @@ return {
 }
 
 end)
-__bundle_register("Locale/enUS/Spell.enUS.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Locale/enUS/Spell.enUS.pure.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 return {
+	["Aspect of the Fox"] = "Aspect of the Fox",
 	["Aspect of the Wolf"] = "Aspect of the Wolf",
-	["Baited Shot"] = "Baited Shot",
 	["Abolish Disease"] = "Abolish Disease",
 	["Abolish Poison"] = "Abolish Poison",
 	["Abolish Poison Effect"] = "Abolish Poison Effect",
@@ -8052,22 +8086,22 @@ return {
 }
 
 end)
-__bundle_register("Config/MainMenu.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Api = require("Api/Index.lua")
-local Button = require("Component/Button.lua")
-local Dialog = require("Component/Dialog.lua")
-local IconButton = require("Component/IconButton.lua")
-local Select = require("Component/Select.lua")
-local Switch = require("Component/Switch.lua")
-local TitleBox = require("Component/TitleBox.lua")
-local Color = require("Config/Color.lua")
-local InputText = require("Config/InputText.lua")
-local Const = require("Constants.lua")
-local FrameLock = require("Events/FrameLock.lua")
-local L = require("Lib/Index.lua")
-local AutoShotTimer = require("Modules/Auto_Shot_Timer/AutoShotTimer.lua")
-local BorderStyle = require("Modules/BorderStyle.provider.lua")
-local TranqAnnouncer = require("Modules/TranqAnnouncer.lua")
+__bundle_register("Config/MainMenu.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Api = require("Api/Index.wow.lua")
+local Button = require("Component/Button.wow.lua")
+local Dialog = require("Component/Dialog.wow.lua")
+local IconButton = require("Component/IconButton.wow.lua")
+local Select = require("Component/Select.wow.lua")
+local Switch = require("Component/Switch.wow.lua")
+local TitleBox = require("Component/TitleBox.wow.lua")
+local Color = require("Config/Color.wow.lua")
+local InputText = require("Config/InputText.wow.lua")
+local Const = require("Constants.pure.lua")
+local FrameLock = require("Events/FrameLock.wow.lua")
+local L = require("Lib/Index.pure.lua")
+local AutoShotTimer = require("Modules/Auto_Shot_Timer/AutoShotTimer.wow.lua")
+local BorderStyle = require("Modules/BorderStyle.state.lua")
+local TranqAnnouncer = require("Modules/TranqAnnouncer.wow.lua")
 
 local createModuleControls = function(parent, m)
 	local f = CreateFrame("Frame", nil, parent)
@@ -8298,9 +8332,9 @@ return {
 }
 
 end)
-__bundle_register("Config/InputText.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local EditBox = require("Component/EditBox.lua")
-local TranqAnnouncer = require("Modules/TranqAnnouncer.lua")
+__bundle_register("Config/InputText.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local EditBox = require("Component/EditBox.wow.lua")
+local TranqAnnouncer = require("Modules/TranqAnnouncer.wow.lua")
 
 -- TODO this is tightly coupled to tranq announcer,
 -- which doesn't make sense for a separate component.
@@ -8340,9 +8374,9 @@ return {
 }
 
 end)
-__bundle_register("Component/EditBox.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Button = require("Component/Button.lua")
-local Const = require("Constants.lua")
+__bundle_register("Component/EditBox.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Button = require("Component/Button.wow.lua")
+local Const = require("Constants.pure.lua")
 
 local _GAP = Const.Size.Gap
 local _GAP_RESET = 4
@@ -8405,14 +8439,14 @@ end
 return QqEditBox
 
 end)
-__bundle_register("Config/Color.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Button = require("Component/Button.lua")
-local ColorSwatch = require("Component/ColorSwatch.lua")
-local Const = require("Constants.lua")
-local L = require("Lib/Index.lua")
-local AutoShotTimer = require("Modules/Auto_Shot_Timer/AutoShotTimer.lua")
-local Castbar = require("Modules/Castbar.lua")
-local RangeIndicator = require("Modules/RangeIndicator.lua")
+__bundle_register("Config/Color.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Button = require("Component/Button.wow.lua")
+local ColorSwatch = require("Component/ColorSwatch.wow.lua")
+local Const = require("Constants.pure.lua")
+local L = require("Lib/Index.pure.lua")
+local AutoShotTimer = require("Modules/Auto_Shot_Timer/AutoShotTimer.wow.lua")
+local Castbar = require("Modules/Castbar.wow.lua")
+local RangeIndicator = require("Modules/RangeIndicator.wow.lua")
 
 ---@param c1 Color
 ---@param c2 Color
@@ -8491,9 +8525,9 @@ return {
 }
 
 end)
-__bundle_register("Component/ColorSwatch.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Button = require("Component/Button.lua")
-local Const = require("Constants.lua")
+__bundle_register("Component/ColorSwatch.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Button = require("Component/Button.wow.lua")
+local Const = require("Constants.pure.lua")
 
 ---@param color Color
 ---@param button Frame
@@ -8590,7 +8624,7 @@ end
 return QqColorSwatch
 
 end)
-__bundle_register("Component/TitleBox.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+__bundle_register("Component/TitleBox.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
 ---@param parent Frame
 ---@param text string
 ---@return Frame
@@ -8623,11 +8657,11 @@ return {
 }
 
 end)
-__bundle_register("Component/Switch.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Api = require("Api/Index.lua")
-local Util = require("Component/_Util.lua")
-local Const = require("Constants.lua")
-local L = require("Lib/Index.lua")
+__bundle_register("Component/Switch.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Api = require("Api/Index.wow.lua")
+local Util = require("Component/_Util.wow.lua")
+local Const = require("Constants.pure.lua")
+local L = require("Lib/Index.pure.lua")
 
 local _GAP = 6
 local _SIZE = 18
@@ -8755,11 +8789,11 @@ end
 return QqSwitch
 
 end)
-__bundle_register("Component/Select.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Api = require("Api/Index.lua")
-local Util = require("Component/_Util.lua")
-local Const = require("Constants.lua")
-local L = require("Lib/Index.lua")
+__bundle_register("Component/Select.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Api = require("Api/Index.wow.lua")
+local Util = require("Component/_Util.wow.lua")
+local Const = require("Constants.pure.lua")
+local L = require("Lib/Index.pure.lua")
 
 local _BORDER, _INSET, _SPACING = 1, 4, 4
 local _OPTION_PAD_H, _OPTION_PAD_V = 8, 4
@@ -8966,8 +9000,8 @@ end
 return QqSelect
 
 end)
-__bundle_register("Component/IconButton.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Util = require("Component/_Util.lua")
+__bundle_register("Component/IconButton.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Util = require("Component/_Util.wow.lua")
 
 local _SIZE = 16
 
@@ -9064,8 +9098,8 @@ end
 return QqIconButton
 
 end)
-__bundle_register("Component/Dialog.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
-local Const = require("Constants.lua")
+__bundle_register("Component/Dialog.wow.lua", function(require, _LOADED, __bundle_register, __bundle_modules)
+local Const = require("Constants.pure.lua")
 
 ---@param padding number
 ---@param frameName nil|string

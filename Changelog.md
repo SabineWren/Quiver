@@ -1,3 +1,12 @@
+# 3.1.4
+- @Otari98 Remove aspect + trueshot alerts while flying/taxiing #54
+- (TWoW) Aspect Tracker - Added Fox and Viper aspects
+- (TWoW) Cast Bar - Added variable Aimed Shot cast time
+
+# 3.1.3
+- Added support for Baited Shot.
+- Fixed a regression bug related to instant shots.
+
 # 3.1.2
 - Fixed issue with frames resetting saved position for some users.
 - Removed workaround for a [bug](https://github.com/gashole/Aero/issues/2) in pre-2025 versions of Aero.
