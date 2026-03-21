@@ -1,5 +1,5 @@
 # 3.1.4
-- @Otari98 Remove aspect + trueshot alerts while flying/taxiing #54
+- [@Otari98](https://github.com/Otari98) [#54](https://github.com/SabineWren/Quiver/pull/54) Remove aspect + trueshot alerts while flying/taxiing
 - (TWoW) Aspect Tracker - Added Fox and Viper aspects
 - (TWoW) Cast Bar - Added variable Aimed Shot cast time
 
