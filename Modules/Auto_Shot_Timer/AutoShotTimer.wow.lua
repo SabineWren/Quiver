@@ -46,7 +46,7 @@ local timeReload = (function()
 			end
 		end,
 		GetRemaining = function() return reloadTime - getElapsed() end,
-		Reset = function() time = GetTime() end,
+		Reset = function() time = GetTime(); reloadTime = 0 end,
 		---@param t number
 		StartAt = function(t)
 			time = t
@@ -323,7 +323,7 @@ local handleEventStateShooting = function(event)
 				stateAuto.TimeLock = GetTime()
 				isFiredInstant = false
 				Print.Debug("State Advance")
-			elseif timeReload.GetRemaining() > 0 then
+			elseif isReloading and timeReload.GetRemaining() > 0 then
 				-- Sometimes SPELLCAST_STOP triggers before ITEM_LOCK_CHANGED
 				-- No-op from multi-shot during reload.
 				Print.Debug("Edge case -- out-of-order events. Probably multi-shot: "..timeReload.GetRemaining())
