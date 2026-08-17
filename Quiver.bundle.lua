@@ -434,11 +434,6 @@ end
 local tryHideBar = function()
 	if Quiver_Store.IsLockedFrames then
 		frame:SetAlpha(0)
-	else
-		-- Reset bar if it's locked open
-		frame.BarAutoShot:SetWidth(1)
-		timeShoot.Reset()
-		timeReload.Reset()
 	end
 end
 
@@ -466,8 +461,11 @@ local handleUpdate = function()
 	elseif isShooting and position.CheckStandingStill() then
 		updateBarShooting()
 	else
-		-- We probably moved while shooting
+		-- We probably moved while shooting.
 		timeShoot.Reset()
+		-- If frames are unlocked (either now or later),
+		-- then the bar visually appears in a stale position.
+		frame.BarAutoShot:SetWidth(1)
 		tryHideBar()
 	end
 end
@@ -582,7 +580,7 @@ local handleEventStateShooting = function(event)
 				stateAuto.TimeLock = GetTime()
 				isFiredInstant = false
 				Print.Debug("State Advance")
-			elseif timeReload.GetRemaining() > 0 then
+			elseif isReloading and timeReload.GetRemaining() > 0 then
 				-- Sometimes SPELLCAST_STOP triggers before ITEM_LOCK_CHANGED
 				-- No-op from multi-shot during reload.
 				Print.Debug("Edge case -- out-of-order events. Probably multi-shot: "..timeReload.GetRemaining())

@@ -1,3 +1,6 @@
+# 3.1.5
+- Fix a [bug](https://github.com/SabineWren/Quiver/pull/59) where unlocked frames overwrote shot timer state.
+
 # 3.1.4
 - [@Otari98](https://github.com/Otari98) [#54](https://github.com/SabineWren/Quiver/pull/54) Remove aspect + trueshot alerts while flying/taxiing
 - (TWoW) Aspect Tracker - Added Fox and Viper aspects
